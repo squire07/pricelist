@@ -1,8 +1,13 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+
+@section('title', 'Distributor List')
+
+@section('content_header')
+    <h1>Distributor List</h1>
+@stop
 
 @section('content')
     <div class="container-fluid">
-        <h1 class="text-black-50">Distributor List</h1>
         <div>
             <a href="{{ url('distributor/create') }}" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add New</a>
         </div>

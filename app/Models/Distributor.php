@@ -9,6 +9,8 @@ class Distributor extends Model
 {
     use HasFactory;
     protected $fillable = [
-        '',
+        'bcid',
+        'distributor',
+        'group',
     ];
 }

@@ -21,7 +21,7 @@ class DistributorController extends Controller
      */
     public function create()
     {
-        //
+        return view('distributor.create');
     }
 
     /**
@@ -29,7 +29,14 @@ class DistributorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Distributor::create([
+            'bcid' => $request['bcid'],
+            'distributor' => $request['distributor'],
+            'group' => $request['group'],
+
+        ]);
+        
+        return redirect('/distributor');
     }
 
     /**

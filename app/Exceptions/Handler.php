@@ -23,8 +23,15 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        // $this->reportable(function (Throwable $e) {
+        //     //
+        // });
+
+        // if page has expired, the user will be redirected at the login page
+        $this->renderable(function (\Exception $e) {
+            if ($e->getPrevious() instanceof \Illuminate\Session\TokenMismatchException) {
+                return redirect()->route('login');
+            };
         });
     }
 }

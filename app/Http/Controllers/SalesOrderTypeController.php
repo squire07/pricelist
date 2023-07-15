@@ -12,7 +12,8 @@ class SalesOrderTypeController extends Controller
      */
     public function index()
     {
-        //
+        $salesordertypes = SalesOrderType::all();
+        return view('salesordertype.salesordertype', compact('salesordertypes'));
     }
 
     /**

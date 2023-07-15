@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\DistributorController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\SalesOrderTypeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -24,3 +26,7 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::resource('Distributor', DistributorController::class);
 Route::resource('/distributor', DistributorController::class);
+Route::resource('Item', ItemController::class);
+Route::resource('/item', ItemController::class);
+Route::resource('SalesOrderType', SalesOrderTypeController::class);
+Route::resource('/salesordertype', SalesOrderTypeController::class);

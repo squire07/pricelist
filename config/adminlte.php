@@ -318,6 +318,16 @@ return [
             'label'       => 4,
             'label_color' => 'success',
         ],
+        [
+            'text' => 'Items',
+            'url'  => '/item',
+            'icon' => 'fas fa-fw fa-pencil-alt',
+        ],
+        [
+            'text' => 'Sales Order Type',
+            'url'  => '/salesordertype',
+            'icon' => 'fas fa-fw fa-shopping-cart',
+        ],
         ['header' => 'account_settings'],
         [
             'text' => 'profile',

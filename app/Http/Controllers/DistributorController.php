@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Distributor;
 use Illuminate\Http\Request;
+use DataTables;
+use Cache;
 
 class DistributorController extends Controller
 {
@@ -12,8 +14,16 @@ class DistributorController extends Controller
      */
     public function index()
     {
-        $distributors = Distributor::all();
-        return view('Distributor.distributor', compact('distributors'));
+        return view('Distributor.distributor');
+    }
+
+    /**
+     * Returns json object. DataTable with handle the get() property.
+     */
+    public function distributor_list() 
+    {
+        $distributors = Distributor::whereDeleted(false);
+        return DataTables::of($distributors)->toJson();
     }
 
     /**
@@ -21,7 +31,7 @@ class DistributorController extends Controller
      */
     public function create()
     {
-        return view('distributor.create');
+        // will be done at Prime Dashboard
     }
 
     /**
@@ -29,15 +39,9 @@ class DistributorController extends Controller
      */
     public function store(Request $request)
     {
-        Distributor::create([
-            'bcid' => $request['bcid'],
-            'distributor' => $request['distributor'],
-            'group' => $request['group'],
-
-        ]);
-        
-        return redirect('/distributor');
+        // will be done at Prime Dashboard
     }
+
 
     /**
      * Display the specified resource.

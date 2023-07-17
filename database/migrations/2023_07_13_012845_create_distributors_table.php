@@ -13,11 +13,19 @@ return new class extends Migration
     {
         Schema::create('distributors', function (Blueprint $table) {
             $table->id();
-            $table->integer('bcid')->nullable();
-            $table->string('distributor', 50)->nullable();
+            $table->string('bcid',15)->nullable();
+            $table->string('distributor', 150)->nullable();
             $table->string('group', 50)->nullable();
+            $table->string('subgroup', 50)->nullable();
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
+            $table->softDeletes();
+            $table->string('created_by',55)->nullable();
+            $table->string('updated_by',55)->nullable();
+            $table->string('deleted_by',55)->nullable();
+
+            // index bcid column
+            $table->index(['bcid']);
         });
     }
 

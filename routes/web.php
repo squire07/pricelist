@@ -22,5 +22,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::resource('Distributor', DistributorController::class);
-Route::resource('/distributor', DistributorController::class);
+
+// json 
+Route::get('distributor_list', [DistributorController::class, 'distributor_list'])->name('distributor_list');
+Route::resource('distributor', DistributorController::class)->only('index');
+

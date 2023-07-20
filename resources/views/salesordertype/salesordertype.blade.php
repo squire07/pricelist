@@ -22,8 +22,8 @@
             <td> {{ $salesordertype->sales_type_id }} </td>
             <td> {{ $salesordertype->sales_company }} </td>
             <td> {{ $salesordertype->sales_order_type }} </td>
-            <td> {{ $salesordertype->income_account }} </td>
-            <td> {{ $salesordertype->expense_account }} </td>
+            <td>{{ $salesordertype->income_account_id }} - {{ $salesordertype->income_account }} </td>
+            <td>{{ $salesordertype->expense_account_id }} - {{ $salesordertype->expense_account }} </td>
             </tr>
             @endforeach
             </tr>

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Cache;
 use App\Models\Distributor;
 use Illuminate\Http\Request;
-use DataTables;
-use Cache;
+use Yajra\DataTables\DataTables;
 
 class DistributorController extends Controller
 {

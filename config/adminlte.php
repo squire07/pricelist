@@ -319,6 +319,11 @@ return [
             'label_color' => 'success',
         ],
         [
+            'text' => 'Distributors',
+            'url'  => '/distributor',
+            'icon' => 'fas fa-fw fa-user',
+        ],
+        [
             'text' => 'Items',
             'url'  => '/item',
             'icon' => 'fas fa-fw fa-pencil-alt',

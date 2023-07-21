@@ -60,7 +60,11 @@
                 {data: 'sales_type_id', class: 'text-center'},
                 {data: 'sales_company'},
                 {data: 'sales_order_type'},
-                {data: 'income_account'},
+                // {data: 'income_account'},
+                {
+                    data: null,
+                    render: data => data.income_account + ' - ' + data.expense_account
+                },
                 {data: 'expense_account'},
             ],
             language: {

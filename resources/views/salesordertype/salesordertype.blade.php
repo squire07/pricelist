@@ -10,7 +10,8 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1>Sales Order Type</h1>
-
+            </div>
+        </div>
     </div>
 
 @stop
@@ -19,7 +20,7 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                <table id="dt_distributors" class="table table-bordered table-hover table-striped" width="100%">
+                <table id="dt_sales_order_types" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
                         <tr>
                             <th class="text-center">Sales Type ID</th>

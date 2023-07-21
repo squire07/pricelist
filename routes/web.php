@@ -28,8 +28,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 // json 
 Route::get('distributor_list', [DistributorController::class, 'distributor_list'])->name('distributor_list');
 Route::resource('distributor', DistributorController::class)->only('index');
-
+Route::get('salesordertype_list', [SalesOrderTypeController::class, 'salesordertype_list'])->name('salesordertype_list');
+Route::resource('salesordertype', SalesOrderTypeController::class)->only('index');
 Route::resource('Item', ItemController::class);
 Route::resource('/item', ItemController::class);
-Route::resource('SalesOrderType', SalesOrderTypeController::class);
-Route::resource('/salesordertype', SalesOrderTypeController::class);

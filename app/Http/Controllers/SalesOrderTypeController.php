@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SalesOrderType;
+use Cache;
 use Illuminate\Http\Request;
+use App\Models\SalesOrderType;
+use Yajra\DataTables\DataTables;
 
 class SalesOrderTypeController extends Controller
 {
@@ -12,11 +14,19 @@ class SalesOrderTypeController extends Controller
      */
     public function index()
     {
-        $salesordertypes = SalesOrderType::all();
-        return view('salesordertype.salesordertype', compact('salesordertypes'));
+        return view('salesordertype.salesordertype');
     }
 
     /**
+     * Returns json object. DataTable with handle the get() property.
+     */
+    public function salesordertype_list() 
+    {
+        $salesordertypes = SalesOrderType::whereDeleted(false);
+        return DataTables::of($salesordertypes)->toJson();
+    }
+
+    /**`
      * Show the form for creating a new resource.
      */
     public function create()

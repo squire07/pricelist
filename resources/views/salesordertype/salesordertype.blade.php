@@ -3,33 +3,70 @@
 @section('title', 'Sales Order Type')
 
 @section('content_header')
-    <h1>Sales Order Type</h1>
+    
+
+
     <div class="container-fluid">
-        <div class="card-body table-responsive p-0">
-            <table class="table table-hover text-nowrap">
-            <thead>
-            <tr>
-            <th>Sales Type ID</th>
-            <th>Company</th>
-            <th>Sales Order Type</th>
-            <th>Income Account</th>
-            <th>Expense Account</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-            @foreach ($salesordertypes as $salesordertype)
-            <td> {{ $salesordertype->sales_type_id }} </td>
-            <td> {{ $salesordertype->sales_company }} </td>
-            <td> {{ $salesordertype->sales_order_type }} </td>
-            <td>{{ $salesordertype->income_account_id }} - {{ $salesordertype->income_account }} </td>
-            <td>{{ $salesordertype->expense_account_id }} - {{ $salesordertype->expense_account }} </td>
-            </tr>
-            @endforeach
-            </tr>
-            </tbody>
-            </table>
-            </div>
-            
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Sales Order Type</h1>
+
     </div>
+
+@stop
+
+@section('content')
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
+                <table id="dt_distributors" class="table table-bordered table-hover table-striped" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Sales Type ID</th>
+                            <th class="text-center">Company</th>
+                            <th class="text-center">Sales Order Type</th>
+                            <th class="text-center">Income Account</th>
+                            <th class="text-center">Expense Account</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>    
+        </div>
+    </div>
+@endsection
+
+@section('adminlte_js')
+<script>
+    $(document).ready(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $('#dt_sales_order_types').DataTable({
+            serverSide: true,
+            processing: true,
+            deferRender: true,
+            paging: true,
+            searching: true,
+            ajax: $.fn.dataTable.pipeline({
+                url: "{{ route('salesordertype_list') }}",
+                pages: 20 // number of pages to fetch
+            }),
+            columns: [
+                {data: 'sales_type_id', class: 'text-center'},
+                {data: 'sales_company'},
+                {data: 'sales_order_type'},
+                {data: 'income_account'},
+                {data: 'expense_account'},
+            ],
+            language: {
+                processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
+            },
+
+        });
+    });
+</script>
 @endsection

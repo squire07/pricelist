@@ -11,9 +11,6 @@
             <div class="col-sm-6">
                 <h1>Distributor List</h1>
             </div>
-            <!-- <div class="col-sm-6 text-right">
-                <a href="{{ url('distributor/create') }}" class="btn btn-sm btn-primary"><i class="fas fa-user-plus"></i> Add New</a>
-            </div> -->
         </div>
     </div>
 

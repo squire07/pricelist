@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\BuildReportController;
 use App\Http\Controllers\DistributorController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\SalesOrderTypeController;
+use App\Http\Controllers\StockCardController;
+use App\Http\Controllers\TransactionListingController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -30,5 +33,11 @@ Route::get('distributor_list', [DistributorController::class, 'distributor_list'
 Route::resource('distributor', DistributorController::class)->only('index');
 Route::get('salesordertype_list', [SalesOrderTypeController::class, 'salesordertype_list'])->name('salesordertype_list');
 Route::resource('salesordertype', SalesOrderTypeController::class)->only('index');
+Route::get('transactionlisting_list', [TransactionListingController::class, 'transactionlisting_list'])->name('transactionlisting_list');
+Route::resource('transactionlisting', TransactionListingController::class)->only('index');
+Route::get('buildreport_list', [BuildReportController::class, 'buildreport_list'])->name('buildreport_list');
+Route::resource('buildreport', BuildReportController::class)->only('index');
+Route::get('stockcard_list', [StockCardController::class, 'stockcard_list'])->name('stockcard_list');
+Route::resource('stockcard', StockCardController::class)->only('index');
 Route::resource('Item', ItemController::class);
 Route::resource('/item', ItemController::class);

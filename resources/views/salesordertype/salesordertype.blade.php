@@ -63,9 +63,13 @@
                 // {data: 'income_account'},
                 {
                     data: null,
-                    render: data => data.income_account + ' - ' + data.expense_account
+                    render: data => data.income_account_id + ' - ' + data.income_account
                 },
-                {data: 'expense_account'},
+                // {data: 'expense_account'},
+                {
+                    data: null,
+                    render: data => data.expense_account_id + ' - ' + data.expense_account
+                },
             ],
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."

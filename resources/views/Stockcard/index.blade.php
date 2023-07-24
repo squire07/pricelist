@@ -5,16 +5,16 @@
 @section('content_header')
     <h1>Stock Card</h1>
 
-    <form class="submit">
+    <form action="" method="GET">
         <div class="col-md-3 col-sm-12">
             <div class="form-group">
                 <label>Start Date:</label>
                     <input type="date" class="form-control datetimepicker-input input-date" name="start_date" id="start_date" required/>
                 <label>End Date:</label>
                     <input type="date" class="form-control datetimepicker-input input-date" name="end_date" id="end_date" required/>           
-            </div>           
+            </div>   
+        <input type="submit" class="btn btn-info" name="submit" value="Generate">         
         </div> 
-        <button class="btn btn-info">Generate</button>
     </form>
     <div class="container-fluid">
         <div class="card-body table-responsive p-0">

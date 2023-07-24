@@ -9,24 +9,10 @@
         <div class="col-md-3 col-sm-12">
             <div class="form-group">
                 <label>Start Date:</label>
-                <div class="input-group date" id="date_picker" data-target-input="nearest">
-                    <input type="text" class="form-control datetimepicker-input input-date" name="pickup_date" data-target="#date_picker" data-toggle="datetimepicker" required/>
-                    <div class="input-group-append" data-target="#date_picker" data-toggle="datetimepicker">
-                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                    </div>
-                </div>
-            </div>
-        </div> 
-        <div class="col-md-3 col-sm-12">
-            <div class="form-group">
+                    <input type="date" class="form-control datetimepicker-input input-date" name="start_date" id="start_date" required/>
                 <label>End Date:</label>
-                <div class="input-group date" id="date_picker" data-target-input="nearest">
-                    <input type="text" class="form-control datetimepicker-input input-date" name="pickup_date" data-target="#date_picker" data-toggle="datetimepicker" required/>
-                    <div class="input-group-append" data-target="#date_picker" data-toggle="datetimepicker">
-                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                    </div>
-                </div>
-            </div>
+                    <input type="date" class="form-control datetimepicker-input input-date" name="end_date" id="end_date" required/>           
+            </div>           
         </div> 
         <button class="btn btn-info">Generate</button>
     </form>
@@ -54,4 +40,8 @@
             </div>
             
     </div>
+    <script>
+        document.getElementById("start_date").valueAsDate = new Date();
+        document.getElementById("end_date").valueAsDate = new Date();
+    </script>
 @endsection

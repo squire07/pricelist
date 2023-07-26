@@ -6,6 +6,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\SalesOrderTypeController;
 use App\Http\Controllers\StockCardController;
 use App\Http\Controllers\TransactionListingController;
+use App\Http\Controllers\SalesController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -41,3 +42,7 @@ Route::get('stockcard_list', [StockCardController::class, 'stockcard_list'])->na
 Route::resource('stockcard', StockCardController::class)->only('index');
 Route::resource('Item', ItemController::class);
 Route::resource('/item', ItemController::class);
+
+
+
+Route::resource('sales-orders', SalesController::class);

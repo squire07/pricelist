@@ -13,4 +13,14 @@ class SalesDetails extends Model
     {
         return $this->belongsTo('App\Models\Sales', 'id', 'sales_id');
     }
+
+    public function getAmountAttribute($value)
+    {
+        return number_format($value,2,'.',',');
+    }
+
+    public function getNucAttribute($value)
+    {
+        return number_format($value,2,'.',',');
+    }
 }

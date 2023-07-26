@@ -13,4 +13,14 @@ class Sales extends Model
     {
         return $this->hasMany('App\Models\SalesDetails', 'sales_id', 'id');
     }
+
+    public function getTotalAmountAttribute($value)
+    {
+        return number_format($value,2,'.',',');
+    }
+
+    public function getTotalNucAttribute($value)
+    {
+        return number_format($value,2,'.',',');
+    }
 }

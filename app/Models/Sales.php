@@ -23,4 +23,14 @@ class Sales extends Model
     {
         return number_format($value,2,'.',',');
     }
+
+    public function getSoNoAttribute($value)
+    {
+        return strtoupper($value);
+    }
+
+    public function getSiNoAttribute($value)
+    {
+        return strtoupper($value);
+    }
 }

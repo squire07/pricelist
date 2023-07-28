@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sales;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class SalesController extends Controller
 {
@@ -12,8 +13,7 @@ class SalesController extends Controller
      */
     public function index()
     {
-        $sales_orders = Sales::all();
-        return view('SalesOrder.index', compact('sales_orders'));
+        return view('SalesOrder.index');
     }
 
     /**
@@ -35,9 +35,9 @@ class SalesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show($uuid)
     {
-        $sales_order = Sales::with('sales_details')->whereId($id)->firstOrFail();
+        $sales_order = Sales::with('sales_details')->whereUuid($uuid)->firstOrFail();
 
         return view('SalesOrder.show', compact('sales_order'));
     }
@@ -65,4 +65,11 @@ class SalesController extends Controller
     {
         //
     }
+
+    public function sales_orders_list() 
+    {
+        $sales_orders = Sales::whereDeleted(false)->orderByDesc('id');
+        return DataTables::of($sales_orders)->toJson();
+    }
+
 }

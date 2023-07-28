@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid');
             $table->string('so_no', 25);
             $table->string('si_no', 25)->nullable();
             $table->double('total_amount')->default(0)->nullable();
             $table->double('total_nuc')->default(0)->nullable();
+            $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
         });
     }

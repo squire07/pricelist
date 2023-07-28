@@ -44,5 +44,6 @@ Route::resource('Item', ItemController::class);
 Route::resource('/item', ItemController::class);
 
 
-
+// json 
+Route::get('sales_orders_list', [SalesController::class, 'sales_orders_list'])->name('sales_orders_list');
 Route::resource('sales-orders', SalesController::class);

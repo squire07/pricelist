@@ -52,7 +52,7 @@
                     
                     </tbody>
                 </table><br>
-                <a href="/sales-orders" class="btn btn-info">Back</a>
+                <a href="{{ url()->previous() }}" class="btn btn-info">Back</a>
             </div>    
         </div>
     </div>

@@ -3,9 +3,6 @@
 @section('title', 'Sales Orders')
 
 @section('content_header')
-    
-
-
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
@@ -13,7 +10,6 @@
             </div>
         </div>
     </div>
-
 @stop
 
 @section('content')
@@ -65,7 +61,6 @@
                         }
                     }
                 },
-                {data: 'si_no'},
                 {data: 'total_amount', class: 'text-right'},
                 {data: 'total_nuc', class: 'text-right'},
                 {

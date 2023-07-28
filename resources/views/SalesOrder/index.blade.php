@@ -23,7 +23,6 @@
                 <table id="dt_sales_orders" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
                         <tr>
-                            <th class="text-center">Sales ID</th>
                             <th class="text-center">SO #</th>
                             <th class="text-center">Total Amount</th>
                             <th class="text-center">Total NUC</th>

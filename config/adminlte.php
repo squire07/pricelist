@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<b>UNO</b> GL',
+    'logo' => '<b>GL</b> v.2',
     'logo_img' => 'images/uno_logo.png',
     'logo_img_class' => 'brand-image',
     'logo_img_xl' => null,
@@ -253,7 +253,7 @@ return [
     */
 
     'use_route_url' => false,
-    'dashboard_url' => 'distributor',
+    'dashboard_url' => 'sales-orders',
     'logout_url' => 'logout',
     'login_url' => 'login',
     'register_url' => 'register',
@@ -303,35 +303,39 @@ return [
 
         // Sidebar items:
         [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
-        ],
-        [
             'text' => 'blog',
             'url'  => 'admin/blog',
             'can'  => 'manage-blog',
         ],
+
         [
-            'text'        => 'pages',
-            'url'         => 'admin/pages',
-            'icon'        => 'far fa-fw fa-file',
-            'label'       => 4,
-            'label_color' => 'success',
-        ],
-        [
-            'text' => 'Distributors',
-            'url'  => '/distributor',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'Items',
-            'url'  => '/item',
-            'icon' => 'fas fa-fw fa-pencil-alt',
-        ],
-        [
-            'text' => 'Sales Order Type',
-            'url'  => '/salesordertype',
+            'text' => 'Sales Order',
+            'url'  => '/sales-orders',
             'icon' => 'fas fa-fw fa-shopping-cart',
+        ],
+        [
+            'text' => 'Sales Invoice',
+            'url'  => '/salesinvoice',
+            'icon' => 'fas fa-fw fa-file-invoice',
+        ],
+        [
+            'text'    => 'Support Modules',
+            'icon'    => 'fas fa-fw fa-share',
+            'submenu' => [
+                [
+                    'text' => 'Distributors',
+                    'url'  => '/distributor',
+                ],
+                
+                [
+                    'text' => 'Items',
+                    'url'  => '/item',
+                ],
+                [
+                    'text' => 'Sales Order Type',
+                    'url'  => '/salesordertype',
+                ],
+            ],
         ],
         [
             'text'    => 'Reports',
@@ -351,14 +355,8 @@ return [
                     'url'  => 'stockcard',
                 ],
                 [
-                    'text'    => 'level_one',
-                    'url'     => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url'  => '#',
-                        ],
-                    ],
+                    'text' => ' For Testing',
+                    'url'  => 'testbuildreport',
                 ],
             ],
         ],
@@ -374,22 +372,33 @@ return [
             'icon' => 'fas fa-fw fa-lock',
         ],
         
-        ['header' => 'labels'],
-        [
-            'text'       => 'important',
-            'icon_color' => 'red',
-            'url'        => '#',
-        ],
-        [
-            'text'       => 'warning',
-            'icon_color' => 'yellow',
-            'url'        => '#',
-        ],
-        [
-            'text'       => 'information',
-            'icon_color' => 'cyan',
-            'url'        => '#',
-        ],
+        // ['header' => 'labels'],
+        // [
+        //     'text'       => 'important',
+        //     'icon_color' => 'red',
+        //     'url'        => '#',
+        // ],
+        // [
+        //     'text'       => 'warning',
+        //     'icon_color' => 'yellow',
+        //     'url'        => '#',
+        // ],
+        // [
+        //     'text'       => 'information',
+        //     'icon_color' => 'cyan',
+        //     'url'        => '#',
+        // ],
+        // [
+        //     'text'        => 'pages',
+        //     'url'         => 'admin/pages',
+        //     'icon'        => 'far fa-fw fa-file',
+        //     'label'       => 4,
+        //     'label_color' => 'success',
+        // ],
+        // [
+        //     'type' => 'sidebar-menu-search',
+        //     'text' => 'search',
+        // ],
     ],
 
     /*

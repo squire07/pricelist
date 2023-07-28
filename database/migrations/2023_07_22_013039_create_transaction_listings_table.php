@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('transaction_listings', function (Blueprint $table) {
             $table->id();
+            $table->date('date')->nullable();
+            $table->string('invoice_number', 50)->nullable();
+            $table->integer('bcid')->nullable();
+            $table->string('account_title', 50)->nullable();
+            $table->float('debit')->nullable();
+            $table->float('credit')->nullable();
             $table->timestamps();
         });
     }

@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('build_reports', function (Blueprint $table) {
+        Schema::create('test_build_reports', function (Blueprint $table) {
             $table->id();
             $table->date('date')->nullable();
             $table->string('invoice_number', 50)->nullable();
             $table->integer('bcid')->nullable();
             $table->string('name', 50)->nullable();
-            $table->integer('NUC')->nullable();
+            $table->float('NUC')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('build_reports');
+        Schema::dropIfExists('test_build_reports');
     }
 };

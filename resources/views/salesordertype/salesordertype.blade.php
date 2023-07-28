@@ -47,6 +47,7 @@
         });
 
         $('#dt_sales_order_types').DataTable({
+            dom: "Bftrip",
             serverSide: true,
             processing: true,
             deferRender: true,

@@ -5,6 +5,7 @@ use App\Http\Controllers\DistributorController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\SalesOrderTypeController;
 use App\Http\Controllers\StockCardController;
+use App\Http\Controllers\TestBuildReportController;
 use App\Http\Controllers\TransactionListingController;
 use App\Http\Controllers\SalesController;
 use Illuminate\Support\Facades\Auth;
@@ -47,3 +48,10 @@ Route::resource('/item', ItemController::class);
 // json 
 Route::get('sales_orders_list', [SalesController::class, 'sales_orders_list'])->name('sales_orders_list');
 Route::resource('sales-orders', SalesController::class);
+
+
+
+Route::get('testbuildreport', [TestBuildReportController::class, 'testbuildreport'])->name('testbuildreport');
+Route::resource('testbuildreport', TestBuildReportController::class)->only('index');
+// Route::get('salesorders_list', [SalesController::class, 'salesorders_list'])->name('salesorders_list');
+// Route::resource('sales-orders', SalesController::class);

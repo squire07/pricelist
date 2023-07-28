@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sales;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class SalesController extends Controller
 {
@@ -12,8 +13,15 @@ class SalesController extends Controller
      */
     public function index()
     {
-        $sales_orders = Sales::all();
-        return view('SalesOrder.index', compact('sales_orders'));
+        return view('SalesOrder.index');
+    }
+        /**
+     * Returns json object. DataTable with handle the get() property.
+     */
+    public function salesorders_list() 
+    {
+        $salesorders = Sales::whereDeleted(false);
+        return DataTables::of($salesorders)->toJson();
     }
 
     /**

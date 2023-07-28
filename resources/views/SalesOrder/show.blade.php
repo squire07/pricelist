@@ -9,7 +9,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Sales Orders</h1>
+                <h1>Sales Order Details</h1>
             </div>
         </div>
     </div>
@@ -22,13 +22,13 @@
             <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
                 
                 <div>
-                    {{ $sales_order->id }}
+                    <b>Sales Order ID: </b>{{ $sales_order->id }}
                     <br>
-                    {{ $sales_order->so_no }}
+                    <b>Order Number: </b>{{ $sales_order->so_no }}
                     <br>
-                    Total AMount {{ $sales_order->total_amount }}
+                    <b>Total Amount: </b>{{ $sales_order->total_amount }}
                     <br>
-                    Total NUC pts {{ $sales_order->total_nuc }}
+                    <b>Total NUC: </b> {{ $sales_order->total_nuc }}
                 </div>
             
                 <table id="" class="table table-bordered table-hover table-striped" width="100%">
@@ -43,14 +43,16 @@
                     <tbody>
                         @foreach($sales_order->sales_details as $sd)
                             <tr>
-                                <td>{{ $sd->item_name }}</td>
-                                <td>{{ $sd->quantity }}</td>
-                                <td>{{ $sd->amount }}</td>
-                                <td>{{ $sd->nuc }}</td>
+                                <td class="text-center">{{ $sd->item_name }}</td>
+                                <td class="text-center">{{ $sd->quantity }}</td>
+                                <td class="text-center">{{ $sd->amount }}</td>
+                                <td class="text-center">{{ $sd->nuc }}</td>
                             </tr>
                         @endforeach
+                    
                     </tbody>
-                </table>
+                </table><br>
+                <a href="/sales-orders" class="btn btn-info">Back</a>
             </div>    
         </div>
     </div>

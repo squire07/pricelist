@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('distributors', function (Blueprint $table) {
             $table->id();
             $table->string('bcid',15)->nullable();
-            $table->string('distributor', 150)->nullable();
+            $table->string('name', 150)->nullable();
             $table->string('group', 50)->nullable();
             $table->string('subgroup', 50)->nullable();
             $table->tinyInteger('deleted')->default(false);

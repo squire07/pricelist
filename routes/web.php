@@ -30,6 +30,7 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+
 // json 
 Route::get('distributor_list', [DistributorController::class, 'distributor_list'])->name('distributor_list');
 Route::resource('distributor', DistributorController::class)->only('index');

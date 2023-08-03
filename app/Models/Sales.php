@@ -14,6 +14,11 @@ class Sales extends Model
         return $this->hasMany('App\Models\SalesDetails', 'sales_id', 'id');
     }
 
+    public function status()
+    {
+        return $this->hasOne('App\Models\Status', 'id', 'status_id');
+    }
+
     public function getTotalAmountAttribute($value)
     {
         return number_format($value,2,'.',',');

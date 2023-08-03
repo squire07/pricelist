@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sales;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use App\Models\Branch;
+use App\Models\Sales;
+use App\Models\TransactionType;
 
 class SalesController extends Controller
 {
@@ -21,7 +23,9 @@ class SalesController extends Controller
      */
     public function create()
     {
-        //
+        $transaction_types = TransactionType::whereDeleted(false)->get(['id','name']);
+        $branches = Branch::whereDeleted(false)->get(['id','name']);
+        return view('SalesOrder.create', compact('transaction_types','branches'));
     }
 
     /**
@@ -68,8 +72,8 @@ class SalesController extends Controller
 
     public function sales_orders_list() 
     {
-        $sales_orders = Sales::whereDeleted(false)->orderByDesc('id');
-        return DataTables::of($sales_orders)->toJson();
+        $sales_orders = Sales::with('status')->whereStatusId(1)->whereDeleted(false)->orderByDesc('id');
+        return DataTables::of($sales_orders)->toJson(); 
     }
 
 }

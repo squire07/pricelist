@@ -13,16 +13,20 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->tinyInteger('item_id');
-            $table->string('item', 50)->nullable();
-            $table->string('description', 255)->nullable();
-            $table->integer('srp')->nullable();
-            $table->integer('distributor_srp')->nullable();
-            $table->integer('upc_srp')->nullable();
+            $table->uuid('uuid');
+            $table->string('code')->nullable();
+            $table->integer('transaction_type_id')->constrained();
+            $table->string('name')->nullable();
+            $table->string('description')->nullable();
+            $table->double('amount')->unsigned()->default(0)->nullable();
             $table->integer('nuc')->nullable();
             $table->integer('rs_points')->nullable();
-            $table->tinyInteger('delete')->default(false);
+            $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
+            $table->softDeletes();
+            $table->string('created_by',55)->nullable();
+            $table->string('updated_by',55)->nullable();
+            $table->string('deleted_by',55)->nullable();
         });
     }
 

@@ -23,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('sales_order_types', function (Blueprint $table) {
-            //
+            $table->dropColumn('income_account_id');
+            $table->dropColumn('expense_account_id');
         });
     }
 };

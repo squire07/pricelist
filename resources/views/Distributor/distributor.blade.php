@@ -3,9 +3,6 @@
 @section('title', 'Distributor List')
 
 @section('content_header')
-    
-
-
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
@@ -13,7 +10,6 @@
             </div>
         </div>
     </div>
-
 @stop
 
 @section('content')
@@ -46,6 +42,7 @@
         });
 
         $('#dt_distributors').DataTable({
+            dom: 'Bftrip',
             serverSide: true,
             processing: true,
             deferRender: true,

@@ -8,6 +8,9 @@
             <div class="col-sm-6">
                 <h1>Sales Orders</h1>
             </div>
+            <div class="col-sm-6 text-right">
+                <a href="{{ url('sales-orders/create') }}" target="_self" class="btn btn-primary">Create Sales Order</a>
+            </div>
         </div>
     </div>
 @stop
@@ -22,6 +25,7 @@
                             <th class="text-center">SO #</th>
                             <th class="text-center">Total Amount</th>
                             <th class="text-center">Total NUC</th>
+                            <th class="text-center">Status</th>
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -63,11 +67,12 @@
                 },
                 {data: 'total_amount', class: 'text-right'},
                 {data: 'total_nuc', class: 'text-right'},
+                {data: 'status.name', class: 'text-center'},
                 {
                     data: 'id',
                     class: 'text-center',
                     searchable: false,
-                    orderable: false,
+                    orderable: false, 
                     render: function(data, type, row, meta){
                         if(type === 'display'){
                             return '<button class="btn btn-sm btn-default mx-1"><i class="fas fa-sign-in-alt"></i>&nbsp;Submit</button>' + 

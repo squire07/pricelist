@@ -18,8 +18,13 @@ return new class extends Migration
             $table->string('si_no', 25)->nullable();
             $table->double('total_amount')->default(0)->nullable();
             $table->double('total_nuc')->default(0)->nullable();
+            $table->foreignId('status_id')->constrained();
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
+            $table->softDeletes();
+            $table->string('created_by',55)->nullable();
+            $table->string('updated_by',55)->nullable();
+            $table->string('deleted_by',55)->nullable();
         });
     }
 

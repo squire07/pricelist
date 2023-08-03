@@ -88,6 +88,17 @@
         <script src="{{ asset('vendor/adminlte/dist/js/adminlte.min.js') }}"></script>
 
         <script src="{{ asset('js/common.js') }}"></script>
+        <script>
+        $(document).ready(function() {
+            @if(Session::has('success'))
+                Swal.fire({ position: 'center', showConfirmButton: false, timer: 3000, text:"{{ Session::get('success') }}", icon: 'success' })
+            @elseif(Session::has('warning'))
+                Swal.fire({ position: 'center', showConfirmButton: false, timer: 3000, text:"{{ Session::get('warning') }}", icon: 'warning' })
+            @elseif(Session::has('error'))
+                Swal.fire({ position: 'center', showConfirmButton: false, timer: 3000, text:"{{ Session::get('error') }}", icon: 'error' })
+            @endif
+        });
+        </script>
     @else
         <script src="{{ mix(config('adminlte.laravel_mix_js_path', 'js/app.js')) }}"></script>
     @endif
@@ -106,7 +117,6 @@
 
     {{-- Custom Scripts --}}
     @yield('adminlte_js')
-
 </body>
 
 </html>

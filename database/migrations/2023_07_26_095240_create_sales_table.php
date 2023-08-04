@@ -14,8 +14,12 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
+            $table->foreignId('transaction_type_id')->constrained();
+            $table->foreignId('branch_id')->constrained();
             $table->string('so_no', 25);
             $table->string('si_no', 25)->nullable();
+            $table->integer('bcid');
+            $table->string('distributor_name');
             $table->double('total_amount')->default(0)->nullable();
             $table->double('total_nuc')->default(0)->nullable();
             $table->foreignId('status_id')->constrained();

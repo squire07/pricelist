@@ -11,6 +11,11 @@ class TransactionType extends Model
 
     public function item()
     {
-        return $this->belongsTo('App\Models\Item', 'transaction_type_id', 'id');
+        return $this->belongsTo('App\Models\Item', 'transaction_type_id', 'id'); 
+    }
+
+    public function sales()
+    {
+        return $this->belongsTo('App\Models\Sales', 'transaction_type_id', 'id');
     }
 }

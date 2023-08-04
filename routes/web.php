@@ -30,29 +30,32 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-
-// json 
-Route::get('distributor_list', [DistributorController::class, 'distributor_list'])->name('distributor_list');
-Route::resource('distributor', DistributorController::class)->only('index');
-Route::get('salesordertype_list', [SalesOrderTypeController::class, 'salesordertype_list'])->name('salesordertype_list');
-Route::resource('salesordertype', SalesOrderTypeController::class)->only('index');
-Route::get('transactionlisting_list', [TransactionListingController::class, 'transactionlisting_list'])->name('transactionlisting_list');
-Route::resource('transactionlisting', TransactionListingController::class)->only('index');
-Route::get('buildreport_list', [BuildReportController::class, 'buildreport_list'])->name('buildreport_list');
-Route::resource('buildreport', BuildReportController::class)->only('index');
-Route::get('stockcard_list', [StockCardController::class, 'stockcard_list'])->name('stockcard_list');
-Route::resource('stockcard', StockCardController::class)->only('index');
-Route::resource('Item', ItemController::class);
-Route::resource('/item', ItemController::class);
-
-
-// json 
-Route::get('sales_orders_list', [SalesController::class, 'sales_orders_list'])->name('sales_orders_list');
-Route::resource('sales-orders', SalesController::class);
+Route::middleware('auth')->group(function () {
+    // json 
+    Route::get('distributor_list', [DistributorController::class, 'distributor_list'])->name('distributor_list');
+    Route::resource('distributor', DistributorController::class)->only('index');
+    Route::get('salesordertype_list', [SalesOrderTypeController::class, 'salesordertype_list'])->name('salesordertype_list');
+    Route::resource('salesordertype', SalesOrderTypeController::class)->only('index');
+    Route::get('transactionlisting_list', [TransactionListingController::class, 'transactionlisting_list'])->name('transactionlisting_list');
+    Route::resource('transactionlisting', TransactionListingController::class)->only('index');
+    Route::get('buildreport_list', [BuildReportController::class, 'buildreport_list'])->name('buildreport_list');
+    Route::resource('buildreport', BuildReportController::class)->only('index');
+    Route::get('stockcard_list', [StockCardController::class, 'stockcard_list'])->name('stockcard_list');
+    Route::resource('stockcard', StockCardController::class)->only('index');
+    Route::resource('Item', ItemController::class);
+    Route::resource('/item', ItemController::class);
 
 
+    // json 
+    Route::get('sales_orders_list', [SalesController::class, 'sales_orders_list'])->name('sales_orders_list');
+    Route::resource('sales-orders', SalesController::class);
 
-Route::get('testbuildreport', [TestBuildReportController::class, 'testbuildreport'])->name('testbuildreport');
-Route::resource('testbuildreport', TestBuildReportController::class)->only('index');
-// Route::get('salesorders_list', [SalesController::class, 'salesorders_list'])->name('salesorders_list');
-// Route::resource('sales-orders', SalesController::class);
+
+
+    Route::get('testbuildreport', [TestBuildReportController::class, 'testbuildreport'])->name('testbuildreport');
+    Route::resource('testbuildreport', TestBuildReportController::class)->only('index');
+    // Route::get('salesorders_list', [SalesController::class, 'salesorders_list'])->name('salesorders_list');
+    // Route::resource('sales-orders', SalesController::class);
+
+    
+});

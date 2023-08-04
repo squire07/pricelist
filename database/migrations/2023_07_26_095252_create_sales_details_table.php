@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sales_id')->constrained();
             $table->string('item_name')->nullable();
+            $table->double('item_price')->nullable();
             $table->integer('quantity')->default(0)->nullable();
-            $table->float('amount')->default(0)->nullable();
-            $table->float('nuc')->default(0)->nullable();
+            $table->double('amount')->default(0)->nullable();
+            $table->double('nuc')->default(0)->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->string('created_by',55)->nullable();

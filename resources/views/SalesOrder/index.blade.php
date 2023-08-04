@@ -23,9 +23,11 @@
                     <thead>
                         <tr>
                             <th class="text-center">SO #</th>
+                            <th class="text-center">Transaction Type</th>
                             <th class="text-center">Total Amount</th>
                             <th class="text-center">Total NUC</th>
                             <th class="text-center">Status</th>
+                            <th class="text-center">Created By</th>
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -65,9 +67,17 @@
                         }
                     }
                 },
+                {data: 'transaction_type.name', class: 'text-center'},
                 {data: 'total_amount', class: 'text-right'},
                 {data: 'total_nuc', class: 'text-right'},
-                {data: 'status.name', class: 'text-center'},
+                {
+                    data: 'status.name',
+                    class: 'text-center',
+                    render: function(data, type, row, meta) {
+                        return '<span class="badge badge-info">' + data.toUpperCase() + '</span>'
+                    }
+                },
+                {data: 'created_by', class: 'text-center'},
                 {
                     data: 'id',
                     class: 'text-center',

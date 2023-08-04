@@ -16,14 +16,14 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                <form action="" method="POST">
+                <form class="form-horizontal" id="form_sales_order" action="{{ url('sales-orders') }}" method="POST" autocomplete="off">
                     @csrf
 
                     <div class="row">
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
                                 <label>Transaction Type</label>
-                                <select class="form-control form-control-sm select2 select2-primary" id="transaction_type" data-dropdown-css-class="select2-primary" style="width: 100%;">
+                                <select class="form-control form-control-sm select2 select2-primary" id="transaction_type" name="transaction_type_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
                                     <option value="">-- Select Transaction Type --</option>
                                     @foreach($transaction_types as $transaction_type)
                                         <option value="{{ $transaction_type->id }}">{{ $transaction_type->name }}</option>
@@ -34,7 +34,7 @@
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
                                 <label>Branch</label>
-                                <select class="form-control form-control-sm select2 select2-primary" id="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;">
+                                <select class="form-control form-control-sm select2 select2-primary" id="branch_id" name="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
                                     <option value="">-- Select Branch --</option>
                                     @foreach($branches as $branch)
                                         <option value="{{ $branch->id }}">{{ $branch->name }}</option>
@@ -77,16 +77,16 @@
                             <label for="amount">Amount</label>
                             <input type="text" class="form-control form-control-sm" id="amount" disabled>
                         </div>
-                        <div class="col-md-1 col-2">
+                        <div class="col-md-1 col-2 d-none">
                             <label for="nuc">NUC</label>
                             <input type="text" class="form-control form-control-sm" id="nuc" disabled>
                         </div>
-                        <div class="col-md-1 col-2">
+                        <div class="col-md-1 col-2 d-none">
                             <label for="rs_points">RS Points</label>
                             <input type="text" class="form-control form-control-sm" id="rs_points" disabled>
                         </div>
                         <div class="col-md-1 col-2">
-                            <input type="button" class="btn btn-primary btn-sm" id="add_item" value="Add Item" style="margin-top: 29px">
+                            <input type="button" class="btn btn-default btn-sm" id="add_item" value="Add Item" style="margin-top: 29px">
                         </div>
                     </div>
                 
@@ -100,8 +100,6 @@
                                         <th class="text-center">Item Name</th>
                                         <th class="text-center" style="width:125px">Quantity</th>
                                         <th class="text-center" style="width:135px">Amount</th>
-                                        <th class="text-center" style="width:135px">NUC</th>
-                                        <th class="text-center" style="width:135px">RS Points</th>
                                         <th class="text-center" style="width:155px">Subtotal</th>
                                         <th class="text-center" style="width:125px">Action</th>
                                     </tr>
@@ -111,8 +109,6 @@
                                     <tr>
                                         <td class="text-right text-bold">Total</td>
                                         <td class="text-right"></td>
-                                        <td class="text-right"></td>
-                                        <td class="text-right text-bold" id="tfoot_total_nuc"></td>
                                         <td class="text-right"></td>
                                         <td class="text-right text-bold" id="tfoot_total_amount"></td>
                                         <td>&nbsp;</td>
@@ -124,9 +120,13 @@
 
                     <div class="row">
                         <div class="col-12 text-center">
-                            <button class="btn btn-default btn-lg m-2"><i class="fas fa-save mr-2"></i>Save as Draft</button>
+                            <button class="btn btn-primary btn-lg m-2" id="btn_save_so"><i class="fas fa-save mr-2"></i>Save Sales Order</button>
                         </div>
                     </div>
+
+                    {{-- temporary --}}
+                    <input type="hidden" name="hidden_total_amount" id="hidden_total_amount">
+                    <input type="hidden" name="hidden_total_nuc" id="hidden_total_nuc">
 
                 </form>
             </div>    
@@ -320,21 +320,34 @@
 
                 // sum of amount
                 total_amount += quantity * item_selected.amount;
-                console.log(total_amount);
                 $('#tfoot_total_amount').text(total_amount.toFixed(2));
                 // sum of nuc
                 total_nuc += quantity * item_selected.nuc;
                 $('#tfoot_total_nuc').text(total_nuc.toFixed(2));
+
+                // temporary 
+                $('#hidden_total_amount').val(total_amount.toFixed(2));
+                $('#hidden_total_nuc').val(total_nuc.toFixed(2));
 
                 // populate the details table
                 var row = '<tr>' + 
                             '<td>' + item_selected.name + '</td>' +
                             '<td class="text-center">' + quantity + '</td>' +
                             '<td class="text-right">' + item_selected.amount + '</td>' +
-                            '<td class="text-right">' + item_selected.nuc + ' (' + (item_selected.nuc * quantity).toFixed(2) + ')' +'</td>' +
-                            '<td class="text-right">' + item_selected.rs_points + '</td>' +
+                            // '<td class="text-right">' + item_selected.nuc + ' (' + (item_selected.nuc * quantity).toFixed(2) + ')' +'</td>' +
+                            // '<td class="text-right">' + item_selected.rs_points + '</td>' +
                             '<td class="text-right">' + (item_selected.amount * quantity).toFixed(2) + '</td>' +
                             '<td class="text-center"><a href="#" class="btn-delete-item" data-quantity="' + quantity + '" data-amount="' + quantity * item_selected.amount + '" data-nuc="' + quantity * item_selected.nuc + '"><i class="far fa-trash-alt"></i></a></td>' +
+
+                            // hidden elements
+                            '<input type="hidden" name="item_name[]" value="' + item_selected.name + '" required>' + 
+                            '<input type="hidden" name="quantity[]" value="' + quantity + '" required>' + 
+                            '<input type="hidden" name="amount[]" value="' + item_selected.amount + '" required>' + 
+                            '<input type="hidden" name="nuc[]" value="' + item_selected.nuc + '" required>' + 
+                            '<input type="hidden" name="rs_points[]" value="' + item_selected.rs_points + '" required>' + 
+                            // hidden elements: computed
+                            '<input type="hidden" name="subtotal_nuc[]" value="' + (item_selected.nuc * quantity).toFixed(2) + '" required>' + 
+                            '<input type="hidden" name="subtotal_amount[]" value="' + (item_selected.amount * quantity).toFixed(2) + '" required>' + 
                             '</tr>';
 
                 // increment the item counter
@@ -387,6 +400,72 @@
             });
             
         });
+
+        $('#btn_save_so').on('click', function(e) {
+            // prevent auto submit
+            e.preventDefault();
+
+            // simple validation 
+            let allAreFilled = true;
+            document.getElementById("form_sales_order").querySelectorAll("[required]").forEach(function(i) {
+                if (!allAreFilled) return;
+                if (!i.value) { 
+                    allAreFilled = false;  
+                    return; 
+                } 
+            });
+            if (!allAreFilled) {
+                
+                // set focus to specific field
+                if($.trim($("#transaction_type").val()) == "") {
+                    $('#transaction_type').focus();
+                    required_field('Transaction Type');
+                } 
+                else if($.trim($("#branch_id").val()) == "") {
+                    $('#branch_id').focus();
+                    required_field('Branch');
+                } 
+                else if($.trim($("#bcid").val()) == "") {
+                    $('#bcid').focus();
+                    required_field('BCID');
+                }
+                else if($.trim($("#distributor_name").val()) == "") {
+                    $('#distributor_name').focus();
+                    required_field('Distributor name');
+                }
+            } 
+
+            // lets check if there is/are actual item(s) in the details table before submitting
+            // use `if else` statement to support older browser
+            else if(item_count > 0) {
+                Swal.fire({
+                    title: 'Are you sure you want to save this sales order?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, save!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#form_sales_order').submit();
+                    }
+                });
+            } else {
+                // show error
+                Swal.fire({
+                    title: 'Please add an item',
+                    text: 'Select an item and add quantity.', 
+                    icon: 'error',
+                });
+            }
+        });
+
+        function required_field(field) {
+            Swal.fire({
+                title: field + ' is required',
+                icon: 'error',
+            });
+        }
     });
 </script>
 @endsection

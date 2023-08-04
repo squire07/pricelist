@@ -19,6 +19,11 @@ class Sales extends Model
         return $this->hasOne('App\Models\Status', 'id', 'status_id');
     }
 
+    public function transaction_type()
+    {
+        return $this->hasOne('App\Models\TransactionType', 'id', 'transaction_type_id');
+    }
+
     public function getTotalAmountAttribute($value)
     {
         return number_format($value,2,'.',',');

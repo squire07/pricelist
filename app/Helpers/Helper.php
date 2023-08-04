@@ -27,7 +27,7 @@ class Helper {
     public static function generate_so_no()
     {
         $sales = Sales::latest()->first();
-        $id = $sales->id + 1 ?? 1; // if no existing record, start at 1
+        $id = !is_null($sales) && $sales->id ? $sales->id + 1 : 1; // if no existing record, start at 1
         return 'SO-' . Carbon::now()->format('Ymd') . '-' . substr(str_repeat(0, 3).$id, - 3);
     }
 

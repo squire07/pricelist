@@ -137,7 +137,35 @@ class SalesController extends Controller
      */
     public function update(Request $request, Sales $sales)
     {
-        //
+        $sales = Sales::whereUuid($request->uuid)->whereDeleted(false)->firstOrFail();   
+
+        // check if request contains status_id = 2
+        if(isset($request->status_id) && $request->status_id == 2) {
+            $sales->status_id = $request->status_id;
+            $sales->updated_by = Auth::user()->name; // updated_at will be automatically filled by laravel
+            if($sales->update()) {
+                // pass the message to user if the update is successful
+                $message = $sales->so_no . ' successfully marked for invoicing';
+            }
+        }
+
+        // other requests, status_id goes here. (from EDIT method)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // redirect to index page with dynamic message coming from different statuses
+        return redirect('sales-orders')->with('success', $message);
     }
 
     /**

@@ -36,6 +36,14 @@
             </div>    
         </div>
     </div>
+
+    {{-- hidden form to submit SO for invoicing --}}
+    <form id="form_for_invoicing" method="POST">
+        @method('PATCH')
+            <input type="hidden" name="uuid" id="hidden_uuid">
+            <input type="hidden" name="status_id" value="2">
+        @csrf
+    </form>
 @endsection
 
 @section('adminlte_js')
@@ -85,7 +93,7 @@
                     orderable: false, 
                     render: function(data, type, row, meta){
                         if(type === 'display'){
-                            return '<button class="btn btn-sm btn-default mx-1"><i class="fas fa-sign-in-alt"></i>&nbsp;Submit</button>' + 
+                            return '<button class="btn btn-sm btn-default mx-1 btn-for-invoice" data-uuid="' + row.uuid + '" data-so-no="' + row.so_no + '"><i class="fas fa-sign-in-alt"></i>&nbsp;Submit</button>' + 
                                     '<a href="' + window.location.origin + '/sales-orders/' + row.uuid + '" target="_self" class="btn btn-sm btn-primary mx-1"><i class="fas fa-edit"></i>&nbsp;Edit</a>';
                         }
                     }
@@ -96,6 +104,34 @@
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
             },
 
+        });
+
+        // use this format to target any class that is dynamically created by js 
+        $(document).on('click','.btn-for-invoice', function() {
+            var uuid = $(this).attr("data-uuid");
+            var so_no = $(this).attr("data-so-no");
+
+            // show the confirmation
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Submit ' + so_no + ' for Invoicing!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, submit!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // add uuid dynamically to hidden uuid field
+                    $('#hidden_uuid').val(uuid);
+
+                    // update the action of form_for_invoicing 
+                    $('#form_for_invoicing').attr('action', window.location.origin + '/sales-orders/' + uuid);
+
+                    // finally, submit the form
+                    $('#form_for_invoicing').submit();
+                }
+            });
         });
     });
 </script>

@@ -16,7 +16,7 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                <table id="dt_sales_invoice_cancelled" class="table table-bordered table-hover table-striped" width="100%">
+                <table id="dt_sales_invoice_all" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
                         <tr>
                             <th class="text-center">SO #</th>
@@ -44,14 +44,14 @@
             }
         });
 
-        $('#dt_sales_invoice_cancelled').DataTable({
+        $('#dt_sales_invoice_all').DataTable({
             serverSide: true,
             processing: true,
             deferRender: true,
             paging: true,
             searching: true,
             ajax: $.fn.dataTable.pipeline({
-                url: "{{ route('sales_invoice_cancel_list') }}",
+                url: "{{ route('sales_invoice_all_list') }}",
                 pages: 20 // number of pages to fetch
             }),
             columns: [
@@ -68,12 +68,22 @@
                 {data: 'total_amount', class: 'text-right'},
                 {data: 'total_nuc', class: 'text-right'},
                 {
-                    data: 'status.name',
+                    data: 'status',
                     class: 'text-center',
                     render: function(data, type, row, meta) {
-                        if(data === 'Cancelled'){
-                        return '<span class="badge badge-danger">' + data.toUpperCase() + '</span>'
+                        var status = data.name;
+                        var badge = '';
+                        if(data.id === 2){ // for invoice
+                            badge = 'badge-warning';
                         }
+                        else if(data.id === 3){ // cancelled
+                            badge = 'badge-danger';
+                        }
+                        else if(data.id === 4){ // released
+                            badge = 'badge-success';
+                        }
+
+                        return '<span class="badge ' + badge + '">' + status.toUpperCase() + '</span>';
                     }
                 },
                 {data: 'created_by', class: 'text-center'},

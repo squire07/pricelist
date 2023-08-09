@@ -8,10 +8,11 @@ use App\Http\Controllers\StockCardController;
 use App\Http\Controllers\TestBuildReportController;
 use App\Http\Controllers\TransactionListingController;
 use App\Http\Controllers\SalesController;
-use App\Http\Controllers\SalesInvoiceAllController;
-use App\Http\Controllers\SalesInvoiceCancelController;
-use App\Http\Controllers\SalesInvoiceController;
-use App\Http\Controllers\SalesInvoiceReleaseController;
+use App\Http\Controllers\SalesInvoice\AllController;
+use App\Http\Controllers\SalesInvoice\CancelledController;
+use App\Http\Controllers\SalesInvoice\ForInvoicingController;
+use App\Http\Controllers\SalesInvoice\ReleasedController;
+
 use App\Models\SalesInvoiceCancel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -54,14 +55,20 @@ Route::middleware('auth')->group(function () {
     // json 
     Route::get('sales_orders_list', [SalesController::class, 'sales_orders_list'])->name('sales_orders_list');
     Route::resource('sales-orders', SalesController::class);
-    Route::get('sales_invoice_list', [SalesInvoiceController::class, 'sales_invoice_list'])->name('sales_invoice_list');
-    Route::resource('sales-invoice/for-invoice', SalesInvoiceController::class);
-    Route::get('sales_invoice_released_list', [SalesInvoiceReleaseController::class, 'sales_invoice_released_list'])->name('sales_invoice_released_list');
-    Route::resource('sales-invoice/released', SalesInvoiceReleaseController::class);
-    Route::get('sales_invoice_cancel_list', [SalesInvoiceCancelController::class, 'sales_invoice_cancel_list'])->name('sales_invoice_cancel_list');
-    Route::resource('sales-invoice/cancelled', SalesInvoiceCancelController::class);
-    Route::get('sales_invoice_all_list', [SalesInvoiceAllController::class, 'sales_invoice_all_list'])->name('sales_invoice_all_list');
-    Route::resource('sales-invoice/all', SalesInvoiceAllController::class);
+
+    Route::group(['name' => 'sales-invoice', 'alias' => 'sales-invoice'], function() {
+        Route::get('sales_invoice_list', [ForInvoicingController::class, 'sales_invoice_list'])->name('sales_invoice_list');
+        Route::resource('sales-invoice/for-invoice', ForInvoicingController::class);
+
+        Route::get('sales_invoice_released_list', [ReleasedController::class, 'sales_invoice_released_list'])->name('sales_invoice_released_list');
+        Route::resource('sales-invoice/released', ReleasedController::class);
+
+        Route::get('sales_invoice_cancel_list', [CancelledController::class, 'sales_invoice_cancel_list'])->name('sales_invoice_cancel_list');
+        Route::resource('sales-invoice/cancelled', CancelledController::class);
+        
+        Route::get('sales_invoice_all_list', [AllController::class, 'sales_invoice_all_list'])->name('sales_invoice_all_list');
+        Route::resource('sales-invoice/all', AllController::class);
+    });
 
 
 

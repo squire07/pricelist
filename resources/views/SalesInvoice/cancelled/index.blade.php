@@ -16,7 +16,7 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                <table id="dt_sales_invoice_all" class="table table-bordered table-hover table-striped" width="100%">
+                <table id="dt_sales_invoice_cancelled" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
                         <tr>
                             <th class="text-center">SO #</th>
@@ -44,14 +44,14 @@
             }
         });
 
-        $('#dt_sales_invoice_all').DataTable({
+        $('#dt_sales_invoice_cancelled').DataTable({
             serverSide: true,
             processing: true,
             deferRender: true,
             paging: true,
             searching: true,
             ajax: $.fn.dataTable.pipeline({
-                url: "{{ route('sales_invoice_all_list') }}",
+                url: "{{ route('sales_invoice_cancel_list') }}",
                 pages: 20 // number of pages to fetch
             }),
             columns: [
@@ -71,15 +71,7 @@
                     data: 'status.name',
                     class: 'text-center',
                     render: function(data, type, row, meta) {
-                        if(data === 'For Invoice'){
-                        return '<span class="badge badge-warning">' + data.toUpperCase() + '</span>'
-                        }
-                        if(data === 'Cancelled'){
                         return '<span class="badge badge-danger">' + data.toUpperCase() + '</span>'
-                        }
-                        if(data === 'Released'){
-                        return '<span class="badge badge-success">' + data.toUpperCase() + '</span>'
-                        }
                     }
                 },
                 {data: 'created_by', class: 'text-center'},

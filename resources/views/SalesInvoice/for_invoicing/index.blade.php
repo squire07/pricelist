@@ -71,9 +71,7 @@
                     data: 'status.name',
                     class: 'text-center',
                     render: function(data, type, row, meta) {
-                        if(data === 'For Invoice'){
                         return '<span class="badge badge-warning">' + data.toUpperCase() + '</span>'
-                        }
                     }
                 },
                 {data: 'created_by', class: 'text-center'},

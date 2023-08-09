@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SalesInvoice;
 
+use App\Http\Controllers\Controller;
 use App\Models\Sales;
 use Illuminate\Http\Request;
-use App\Models\SalesInvoiceRelease;
+use App\Models\SalesInvoice;
 use Yajra\DataTables\Facades\DataTables;
 
-class SalesInvoiceReleaseController extends Controller
+class CancelledController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('SalesInvoice.released');
+        return view('SalesInvoice.cancelled.index');
     }
 
     /**
@@ -36,7 +37,7 @@ class SalesInvoiceReleaseController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(SalesInvoiceRelease $salesInvoiceRelease)
+    public function show(SalesInvoice $salesInvoice)
     {
         //
     }
@@ -44,7 +45,7 @@ class SalesInvoiceReleaseController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(SalesInvoiceRelease $salesInvoiceRelease)
+    public function edit(SalesInvoice $salesInvoice)
     {
         //
     }
@@ -52,7 +53,7 @@ class SalesInvoiceReleaseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, SalesInvoiceRelease $salesInvoiceRelease)
+    public function update(Request $request, SalesInvoice $salesInvoice)
     {
         //
     }
@@ -60,14 +61,14 @@ class SalesInvoiceReleaseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(SalesInvoiceRelease $salesInvoiceRelease)
+    public function destroy(SalesInvoice $salesInvoice)
     {
         //
     }
 
-    public function sales_invoice_released_list() 
+    public function sales_invoice_cancel_list() 
     {
-        $sales_invoice_released = Sales::with('status','transaction_type')->whereIn('status_id', [4])->whereDeleted(false)->orderByDesc('id');
-        return DataTables::of($sales_invoice_released)->toJson(); 
+        $sales_invoice_cancelled = Sales::with('status','transaction_type')->whereIn('status_id', [3])->whereDeleted(false)->orderByDesc('id');
+        return DataTables::of($sales_invoice_cancelled)->toJson(); 
     }
 }

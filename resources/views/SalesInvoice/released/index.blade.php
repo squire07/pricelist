@@ -71,9 +71,7 @@
                     data: 'status.name',
                     class: 'text-center',
                     render: function(data, type, row, meta) {
-                        if(data === 'Released'){
                         return '<span class="badge badge-success">' + data.toUpperCase() + '</span>'
-                        }
                     }
                 },
                 {data: 'created_by', class: 'text-center'},

@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SalesInvoice;
 
+use App\Http\Controllers\Controller;
 use App\Models\Sales;
 use Illuminate\Http\Request;
-use App\Models\SalesInvoiceAll;
+use App\Models\SalesInvoice;
 use Yajra\DataTables\Facades\DataTables;
 
-class SalesInvoiceAllController extends Controller
+class AllController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('SalesInvoice.All');
+        return view('SalesInvoice.all.index');
     }
 
     /**
@@ -36,7 +37,7 @@ class SalesInvoiceAllController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(SalesInvoiceAll $salesInvoiceAll)
+    public function show(SalesInvoice $salesInvoice)
     {
         //
     }
@@ -44,7 +45,7 @@ class SalesInvoiceAllController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(SalesInvoiceAll $salesInvoiceAll)
+    public function edit(SalesInvoice $salesInvoice)
     {
         //
     }
@@ -52,7 +53,7 @@ class SalesInvoiceAllController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, SalesInvoiceAll $salesInvoiceAll)
+    public function update(Request $request, SalesInvoice $salesInvoice)
     {
         //
     }
@@ -60,7 +61,7 @@ class SalesInvoiceAllController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(SalesInvoiceAll $salesInvoiceAll)
+    public function destroy(SalesInvoice $salesInvoice)
     {
         //
     }

@@ -6,7 +6,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Create Sales Order</h1>
+                <h1>Edit Sales Order</h1>
             </div>
         </div>
     </div>
@@ -16,30 +16,24 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                <form class="form-horizontal" id="form_sales_order" action="{{ url('sales-orders') }}" method="POST" autocomplete="off">
+                <form class="form-horizontal" id="form_sales_order" action="" method="POST" autocomplete="off">
                     @csrf
-
+                    @method('PUT')
                     <div class="row">
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
-                                <label>Transaction Type</label>
-                                <select class="form-control form-control-sm select2 select2-primary" id="transaction_type" name="transaction_type_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                    <option value="">-- Select Transaction Type --</option>
-                                    @foreach($transaction_types as $transaction_type)
-                                        <option value="{{ $transaction_type->id }}">{{ $transaction_type->name }}</option>
-                                    @endforeach
-                                </select>
+                                <b>Order Number: </b>{{ $sales_order->so_no }}
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
-                                <label>Branch</label>
-                                <select class="form-control form-control-sm select2 select2-primary" id="branch_id" name="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                    <option value="">-- Select Branch --</option>
-                                    @foreach($branches as $branch)
-                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                                    @endforeach
-                                </select>
+                                <b>Transaction Type: </b>{{ $sales_order->transaction_type->name }}
+                                {{-- <select class="form-control form-control-sm select2 select2-primary" id="transaction_type" name="transaction_type_id" data-dropdown-css-class="select2-primary" style="width: 100%;" disabled>
+                                    <option value="">-- Select Transaction Type --</option>
+                                        <option value="{{ $sales_order->transaction_type_id }}">{{ $sales_order->transaction_type->name }}</option>
+                                </select> --}}
                             </div>
                         </div>
                     </div>
@@ -50,7 +44,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text text-bold">BCID&nbsp;<span class="required"></span></span>
                                 </div>
-                                <input type="text" class="form-control form-control-sm" id="bcid" maxlength="12" name="bcid" required>
+                                <input type="text" class="form-control form-control-sm" id="bcid" maxlength="12" name="bcid" value="{{ $sales_order->bcid }}" required>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12 mb-3">
@@ -58,7 +52,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text text-bold">Name&nbsp;<span class="required"></span></span>
                                 </div>
-                                <input type="text" class="form-control form-control-sm" id="distributor_name" name="distributor_name" required>
+                                <input type="text" class="form-control form-control-sm" id="distributor_name" name="distributor_name" value="{{ $sales_order->distributor_name }}" required>
                             </div>
                         </div>
                     </div>
@@ -104,7 +98,17 @@
                                         <th class="text-center" style="width:125px">Action</th>
                                     </tr>
                                 </thead>
-                                <tbody></tbody>
+                                <tbody>
+                                    @foreach($sales_order->sales_details as $sd)
+                                    <tr>
+                                        <td>{{ $sd->item_name }}</td>
+                                        <td>{{ $sd->quantity }}</td>
+                                        <td>{{ $sd->item_price }}</td>
+                                        <td>{{ $sd->amount }}</td>
+                                        <td><i class="far fa fa-trash-alt"></i></td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
                                 <tfoot>
                                     <tr>
                                         <td class="text-right text-bold">Total</td>
@@ -120,7 +124,7 @@
 
                     <div class="row">
                         <div class="col-12 text-center">
-                            <button class="btn btn-primary btn-lg m-2" id="btn_save_so"><i class="fas fa-save mr-2"></i>Save Sales Order</button>
+                            <button class="btn btn-primary btn-lg m-2" id="btn_save_so"><i class="fas fa-save mr-2"></i>Update Sales Order</button>
                         </div>
                     </div>
 

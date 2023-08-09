@@ -8,6 +8,11 @@ use App\Http\Controllers\StockCardController;
 use App\Http\Controllers\TestBuildReportController;
 use App\Http\Controllers\TransactionListingController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\SalesInvoiceAllController;
+use App\Http\Controllers\SalesInvoiceCancelController;
+use App\Http\Controllers\SalesInvoiceController;
+use App\Http\Controllers\SalesInvoiceReleaseController;
+use App\Models\SalesInvoiceCancel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -49,6 +54,14 @@ Route::middleware('auth')->group(function () {
     // json 
     Route::get('sales_orders_list', [SalesController::class, 'sales_orders_list'])->name('sales_orders_list');
     Route::resource('sales-orders', SalesController::class);
+    Route::get('sales_invoice_list', [SalesInvoiceController::class, 'sales_invoice_list'])->name('sales_invoice_list');
+    Route::resource('sales-invoice/for-invoice', SalesInvoiceController::class);
+    Route::get('sales_invoice_released_list', [SalesInvoiceReleaseController::class, 'sales_invoice_released_list'])->name('sales_invoice_released_list');
+    Route::resource('released', SalesInvoiceReleaseController::class);
+    Route::get('sales_invoice_cancel_list', [SalesInvoiceCancelController::class, 'sales_invoice_cancel_list'])->name('sales_invoice_cancel_list');
+    Route::resource('cancelled', SalesInvoiceCancelController::class);
+    Route::get('sales_invoice_all_list', [SalesInvoiceAllController::class, 'sales_invoice_all_list'])->name('sales_invoice_all_list');
+    Route::resource('all', SalesInvoiceAllController::class);
 
 
 

@@ -314,9 +314,27 @@ return [
             'icon' => 'fas fa-fw fa-shopping-cart',
         ],
         [
-            'text' => 'Sales Invoice',
-            'url'  => '/salesinvoice',
+            'text'    => 'Sales Invoice',
             'icon' => 'fas fa-fw fa-file-invoice',
+            'submenu' => [
+                [
+                    'text' => 'For Invoice',
+                    'url'  => 'sales-invoice/for-invoice',
+                ],
+                
+                [
+                    'text' => 'Released',
+                    'url'  => 'sales-invoice//released',
+                ],
+                [
+                    'text' => 'Cancelled',
+                    'url'  => 'sales-invoice//cancelled',
+                ],
+                [
+                    'text' => 'All',
+                    'url'  => '/sales-invoice/all',
+                ],
+            ],
         ],
         [
             'text'    => 'Support Modules',

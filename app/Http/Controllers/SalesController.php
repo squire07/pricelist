@@ -127,9 +127,11 @@ class SalesController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Sales $sales)
+    public function edit(Sales $sales, $uuid)
     {
-        //
+        $sales_order = Sales::with('sales_details','transaction_type','status')->whereUuid($uuid)->firstOrFail();
+
+        return view('SalesOrder.edit', compact('sales_order'));
     }
 
     /**
@@ -151,7 +153,7 @@ class SalesController extends Controller
 
         // other requests, status_id goes here. (from EDIT method)
 
-
+        
 
 
 

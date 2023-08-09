@@ -17,19 +17,27 @@
 @stop
 
 @section('content')
-    <div class="container-fluid">
-        <div class="card">
-            <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                
-                <div>
-                    <b>Sales Order ID: </b>{{ $sales_order->id }}
-                    <br>
-                    <b>Order Number: </b>{{ $sales_order->so_no }}
-                    <br>
-                    <b>Total Amount: </b>{{ $sales_order->total_amount }}
-                    <br>
-                    <b>Total NUC: </b> {{ $sales_order->total_nuc }}
-                </div>
+<div class="card-body">
+    <div class="row">
+    <div class="col-lg-12" >
+    <div class="position-relative p-3 bg-light">
+    <div class="ribbon-wrapper ribbon-lg">
+    <div class="ribbon bg-primary text-bold" id="ribbon_bg">
+    {{ $sales_order->status->name }}
+    </div>
+    </div>
+    <div>
+    
+        <b>Sales Order ID: </b>{{ $sales_order->id }}
+        <br>
+        <b>Order Number: </b>{{ $sales_order->so_no }}
+        <br>
+        <b>Total Amount: </b>{{ $sales_order->total_amount }}
+        <br>
+        <b>Total NUC: </b> {{ $sales_order->total_nuc }}
+    </div>
+    <table id="" class="table table-bordered table-hover table-striped" width="100%">
+        <thead>  
             
                 <table id="" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
@@ -53,7 +61,6 @@
                     </tbody>
                 </table><br>
                 <a href="{{ url()->previous() }}" class="btn btn-info">Back</a>
-            </div>    
         </div>
     </div>
 @endsection

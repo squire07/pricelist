@@ -324,15 +324,15 @@ return [
                 
                 [
                     'text' => 'Released',
-                    'url'  => 'sales-invoice//released',
+                    'url'  => 'sales-invoice/released',
                 ],
                 [
                     'text' => 'Cancelled',
-                    'url'  => 'sales-invoice//cancelled',
+                    'url'  => 'sales-invoice/cancelled',
                 ],
                 [
                     'text' => 'All',
-                    'url'  => '/sales-invoice/all',
+                    'url'  => 'sales-invoice/all',
                 ],
             ],
         ],

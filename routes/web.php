@@ -12,6 +12,8 @@ use App\Http\Controllers\SalesInvoice\AllController;
 use App\Http\Controllers\SalesInvoice\CancelledController;
 use App\Http\Controllers\SalesInvoice\ForInvoicingController;
 use App\Http\Controllers\SalesInvoice\ReleasedController;
+use App\Http\Controllers\BranchController;
+use App\Http\Controllers\RoleController;
 
 use App\Models\SalesInvoiceCancel;
 use Illuminate\Support\Facades\Auth;
@@ -69,6 +71,9 @@ Route::middleware('auth')->group(function () {
         Route::get('sales_invoice_all_list', [AllController::class, 'sales_invoice_all_list'])->name('sales_invoice_all_list');
         Route::resource('sales-invoice/all', AllController::class);
     });
+
+    Route::resource('branches', BranchController::class);
+    Route::resource('roles', RoleController::class);
 
 
 

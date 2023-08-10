@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use Illuminate\Http\Request;
+use App\Models\Branches;
+use Carbon\Carbon;
+use Auth;
 
 class RoleController extends Controller
 {
@@ -12,7 +15,8 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //
+        $roles = Role::whereDeleted(false)->get();
+        return view('role.index',compact('roles'));
     }
 
     /**

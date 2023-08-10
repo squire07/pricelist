@@ -341,13 +341,20 @@ return [
             'icon'    => 'fas fa-fw fa-share',
             'submenu' => [
                 [
+                    'text' => 'Branches',
+                    'url'  => '/branches',
+                ],
+                [
                     'text' => 'Distributors',
                     'url'  => '/distributor',
                 ],
-                
                 [
                     'text' => 'Items',
                     'url'  => '/item',
+                ],
+                [
+                    'text' => 'Roles',
+                    'url'  => '/roles',
                 ],
                 [
                     'text' => 'Sales Order Type',

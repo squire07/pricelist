@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\SalesInvoice;
 
 use App\Http\Controllers\Controller;
+use App\Models\PaymentList;
 use Illuminate\Http\Request;
 use App\Models\Sales;
 use App\Models\SalesInvoice;
@@ -45,9 +46,11 @@ class ForInvoicingController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Sales $sales, $uuid)
     {
-        //
+        $sales_order = Sales::with('sales_details','transaction_type','status')->whereUuid($uuid)->firstOrFail();
+        $payment_types = PaymentList::whereDeleted(false)->get(['id','name']);
+        return view('SalesInvoice.for_invoicing.edit', compact('sales_order','payment_types'));
     }
 
     /**
@@ -71,4 +74,5 @@ class ForInvoicingController extends Controller
         $sales_invoice = Sales::with('status','transaction_type')->whereIn('status_id', [2])->whereDeleted(false)->orderByDesc('id');
         return DataTables::of($sales_invoice)->toJson(); 
     }
+
 }

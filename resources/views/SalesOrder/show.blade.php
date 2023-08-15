@@ -28,9 +28,11 @@
     </div>
     <div>
     
-        <b>Sales Order ID: </b>{{ $sales_order->id }}
+        <b>Sales Order Type: </b>{{ $sales_order->transaction_type->name }}
         <br>
         <b>Order Number: </b>{{ $sales_order->so_no }}
+        <br>
+        <b>Distributor: </b>{{ $sales_order->distributor_name }}
         <br>
         <b>Total Amount: </b>{{ $sales_order->total_amount }}
         <br>

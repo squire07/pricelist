@@ -54,16 +54,26 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Role $role)
+    public function update(Request $request, $uuid)
     {
-        //
+        $role = role::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
+        $role->name = $request->name;
+        $role->update();
+
+        return redirect('roles')->with('success', 'role has been updated!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Role $role)
+    public function destroy($uuid)
     {
-        //
+        $role = role::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
+        $role->deleted = 1; // boolean 1 = true
+        $role->deleted_at = Carbon::now();
+        $role->deleted_by = Auth::user()->name;
+        $role->update();
+
+        return redirect('roles')->with('success', $role->name . ' role has been deleted!');
     }
 }

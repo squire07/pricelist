@@ -25,7 +25,7 @@
                             <th class="text-center">Total NUC</th>
                             <th class="text-center">Status</th>
                             <th class="text-center">Created By</th>
-                            <th class="text-center">Action</th>
+                            {{-- <th class="text-center">Action</th> --}}
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -75,20 +75,20 @@
                     }
                 },
                 {data: 'created_by', class: 'text-center'},
-                {
-                    data: 'id',
-                    class: 'text-center',
-                    searchable: false,
-                    orderable: false, 
-                    render: function(data, type, row, meta){
-                        if(type === 'display'){
-                            return '<button class="btn btn-sm btn-default mx-1"><i class="fas fa-sign-in-alt"></i>&nbsp;Submit</button>' + 
-                                    '<a href="' + window.location.origin + '/sales-orders/' + row.uuid + '" target="_self" class="btn btn-sm btn-primary mx-1"><i class="fas fa-edit"></i>&nbsp;Edit</a>';
-                        }
+                // {
+                //     data: 'id',
+                //     class: 'text-center',
+                //     searchable: false,
+                //     orderable: false, 
+                //     render: function(data, type, row, meta){
+                //         if(type === 'display'){
+                //             return '<button class="btn btn-sm btn-default mx-1"><i class="fas fa-sign-in-alt"></i>&nbsp;Submit</button>' + 
+                //                     '<a href="' + window.location.origin + '/sales-orders/' + row.uuid + '" target="_self" class="btn btn-sm btn-primary mx-1"><i class="fas fa-edit"></i>&nbsp;Edit</a>';
+                //         }
                         
-                    }
+                //     }
 
-                },
+                // },
             ],
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."

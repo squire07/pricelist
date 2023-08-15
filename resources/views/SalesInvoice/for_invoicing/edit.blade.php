@@ -1,12 +1,12 @@
 @extends('adminlte::page')
 
-@section('title', 'Create Sales Orders')
+@section('title', 'Sales Invoice Payments')
 
 @section('content_header')
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Edit Sales Order</h1>
+                <h1>Sales Invoice Payment</h1>
             </div>
         </div>
     </div>
@@ -15,6 +15,14 @@
 @section('content')
     <div class="container-fluid">
         <div class="card">
+            <div class="row">
+                <div class="col-lg-12" >
+                <div class="position-relative p-3 bg-light">
+                <div class="ribbon-wrapper ribbon-lg">
+                <div class="ribbon bg-primary text-bold" id="ribbon_bg">
+                {{ $sales_order->status->name }}
+                </div>
+                </div>
             <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
                 <form class="form-horizontal" id="form_sales_order" action="" method="POST" autocomplete="off">
                     @csrf
@@ -22,76 +30,34 @@
                     <div class="row">
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
-                                <b>Order Number: </b>{{ $sales_order->so_no }}
+                                <b>Order Number: </b>{{ $sales_order->so_no }}<br>
+                                <b>Transaction Type: </b>{{ $sales_order->transaction_type->name }}<br>
+                                <b>Distributor Name: </b>{{ $sales_order->distributor_name }}<br>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-4 col-sm-12">
-                            <div class="form-group">
-                                <b>Transaction Type: </b>{{ $sales_order->transaction_type->name }}
-                                {{-- <select class="form-control form-control-sm select2 select2-primary" id="transaction_type" name="transaction_type_id" data-dropdown-css-class="select2-primary" style="width: 100%;" disabled>
-                                    <option value="">-- Select Transaction Type --</option>
-                                        <option value="{{ $sales_order->transaction_type_id }}">{{ $sales_order->transaction_type->name }}</option>
-                                </select> --}}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4 col-sm-12 mb-3">
-                            <div class="input-group input-group-sm">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text text-bold">BCID&nbsp;<span class="required"></span></span>
-                                </div>
-                                <input type="text" class="form-control form-control-sm" id="bcid" maxlength="12" name="bcid" value="{{ $sales_order->bcid }}" required>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-sm-12 mb-3">
-                            <div class="input-group input-group-sm">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text text-bold">Name&nbsp;<span class="required"></span></span>
-                                </div>
-                                <input type="text" class="form-control form-control-sm" id="distributor_name" name="distributor_name" value="{{ $sales_order->distributor_name }}" required>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-sm-12 mb-3">
-                            <div class="input-group input-group-sm">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text text-bold">Group&nbsp;<span class="required"></span></span>
-                                </div>
-                                <input type="text" class="form-control form-control-sm" id="group_name" name="group_name" value="{{ $sales_order->group_name }}" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4 col-4">
-                            <label for="item_name">Item Name</label>
-                            <select class="form-control form-control-sm select2 select2-primary" id="item_name" data-dropdown-css-class="select2-primary">
+                    <div class="col-md-4 col-sm-12">
+                        <div class="form-group">
+                            <label>Payment Type</label>
+                            <select class="form-control form-control-sm select2 select2-primary" id="transaction_type" name="transaction_type_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                <option value="">-- Select Payment Type --</option>
+                                @foreach($payment_types as $payment_type)
+                                    <option value="{{ $payment_type->id }}">{{ $payment_type->name }}</option>
+                                @endforeach
                             </select>
                         </div>
-                        <div class="col-md-1 col-2">
-                            <label for="quantity">Quantity</label>
-                            <input type="number" class="form-control form-control-sm" min="1" id="quantity">
-                        </div>
-                        <div class="col-md-1 col-2">
-                            <label for="amount">Amount</label>
-                            <input type="text" class="form-control form-control-sm" id="amount" disabled>
-                        </div>
-                        <div class="col-md-1 col-2">
-                            <label for="nuc">NUC</label>
-                            <input type="text" class="form-control form-control-sm" id="nuc" disabled>
-                        </div>
-                        <div class="col-md-1 col-2 d-none">
-                            <label for="rs_points">RS Points</label>
-                            <input type="text" class="form-control form-control-sm" id="rs_points" disabled>
-                        </div>
-                        <div class="col-md-1 col-2">
-                            <input type="button" class="btn btn-primary btn-sm" id="add_item" value="Add Item" style="margin-top: 29px">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Remarks</label>
+                                <input type="text" class="form-control form-control-sm" id="remarks" name="remarks">
+                            </div>
                         </div>
                     </div>
-                
+                 </div>
+             </div>
+                    
 
                     {{-- details --}}
                     <div class="row mt-5">
@@ -103,7 +69,6 @@
                                         <th class="text-center" style="width:125px">Quantity</th>
                                         <th class="text-center" style="width:135px">Amount</th>
                                         <th class="text-center" style="width:155px">Subtotal</th>
-                                        <th class="text-center" style="width:125px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -113,14 +78,12 @@
                                         <td>{{ $sd->quantity }}</td>
                                         <td>{{ $sd->item_price }}</td>
                                         <td>{{ $sd->amount }}</td>
-                                        <td><i class="far fa fa-trash-alt"></i></td>
                                     </tr>
                                     @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <td class="text-right text-bold">Total</td>
-                                        <td class="text-right"></td>
                                         <td class="text-right"></td>
                                         <td class="text-right text-bold" id="tfoot_total_amount"></td>
                                         <td>&nbsp;</td>
@@ -132,7 +95,7 @@
 
                     <div class="row">
                         <div class="col-12 text-center">
-                            <button class="btn btn-primary btn-lg m-2" id="btn_save_so"><i class="fas fa-save mr-2"></i>Update Sales Order</button>
+                            <button class="btn btn-primary btn-lg m-2" id="btn_save_so"><i class="fas fa-sign-in-alt"></i>&nbsp;Proceed Payment</button>
                         </div>
                     </div>
 

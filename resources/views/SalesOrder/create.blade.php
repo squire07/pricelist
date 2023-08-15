@@ -61,6 +61,19 @@
                                 <input type="text" class="form-control form-control-sm" id="distributor_name" name="distributor_name" required>
                             </div>
                         </div>
+                        <div class="col-md-4 col-sm-12 mb-3">
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text text-bold">Group&nbsp;<span class="required"></span></span>
+                                </div>
+                                <input type="text" class="form-control form-control-sm" id="group_name" name="group_name" readonly required>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-12 mb-3">
+                            <div class="input-group input-group-sm">
+                                <input type="hidden" class="form-control form-control-sm" id="company" name="company" value="UNO International Corp." required>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row">
@@ -71,13 +84,13 @@
                         </div>
                         <div class="col-md-1 col-2">
                             <label for="quantity">Quantity</label>
-                            <input type="number" class="form-control form-control-sm" min="1" id="quantity">
+                            <input type="number" class="form-control form-control-sm" min="1" id="quantity" value="0" required oninput="validity.valid||(value=value.replace(/\D+/g, ''))">
                         </div>
                         <div class="col-md-1 col-2">
                             <label for="amount">Amount</label>
                             <input type="text" class="form-control form-control-sm" id="amount" disabled>
                         </div>
-                        <div class="col-md-1 col-2 d-none">
+                        <div class="col-md-1 col-2">
                             <label for="nuc">NUC</label>
                             <input type="text" class="form-control form-control-sm" id="nuc" disabled>
                         </div>
@@ -234,12 +247,15 @@
                         });
                         // remove name field content
                         $('#distributor_name').val('');
+                        $('#group_name').val('');
 
                     } else {
                         if(obj[0].name != '') {
                             $('#distributor_name').val(obj[0].name);
+                            $('#group_name').val(obj[0].group);
                         } else {
                             $('#distributor_name').val('');
+                            $('#group_name').val('');
                         }
                     }
                 })
@@ -247,6 +263,7 @@
             } else {
                 // be sure to empty the name field
                 $('#distributor_name').val('');
+                $('#group_name').val('');
             }
         });
 
@@ -303,6 +320,51 @@
                 });
             }
 
+            // simple validation 
+            let allAreFilled = true;
+            document.getElementById("form_sales_order").querySelectorAll("[required]").forEach(function(i) {
+                if (!allAreFilled) return;
+                if (!i.value) { 
+                    allAreFilled = false;  
+                    return; 
+                } 
+            });
+            if (!allAreFilled) {
+                
+                // set focus to specific field
+                if($.trim($("#transaction_type").val()) == "") {
+                    $('#transaction_type').focus();
+                    required_field('Transaction Type');
+                } 
+                else if($.trim($("#branch_id").val()) == "") {
+                    $('#branch_id').focus();
+                    required_field('Branch');
+                } 
+                else if($.trim($("#bcid").val()) == "") {
+                    $('#bcid').focus();
+                    required_field('BCID');
+                }
+                else if($.trim($("#distributor_name").val()) == "") {
+                    $('#distributor_name').focus();
+                    required_field('Distributor name');
+                }
+                    else if($.trim($("#group_name").val()) == "") {
+                    $('#group_name').focus();
+                    required_field('Group');
+                }
+                else if($.trim($("#company").val()) == "") {
+                    $('#company').focus();
+                    required_field('Company');
+                }
+                else if($.trim($("#item_name").val()) == "") {
+                    $('#item_name').focus();
+                    required_field('Item');
+                }
+                else if($.trim($("#quantity").val()) == "") {
+                    $('#quantity').focus();
+                    required_field('Quantity');
+                }
+            } 
             // make sure that item and quantity are not empty
             if($('#item_name').val().length > 0 != '' && $('#quantity').val().length > 0 != '' && $('#quantity').val() != 0) {
                 // get the quantity
@@ -310,7 +372,7 @@
 
                 // clear the item name, quantity and other fields after clicking the Add Item button
                 $('#item_name').val(null).trigger('change'); // this is for select2 type dropdown only
-                $('#quantity').val('');
+                $('#quantity').val('0');
                 $('#amount').val('');
                 $('#nuc').val('');
                 $('#rs_points').val('');
@@ -432,6 +494,10 @@
                 else if($.trim($("#distributor_name").val()) == "") {
                     $('#distributor_name').focus();
                     required_field('Distributor name');
+                }
+                else if($.trim($("#group_name").val()) == "") {
+                    $('#group_name').focus();
+                    required_field('Group');
                 }
             } 
 

@@ -54,7 +54,7 @@
             }),
             columns: [
                 {data: 'bcid', class: 'text-center'},
-                {data: 'distributor'},
+                {data: 'name'},
                 {data: 'group'},
                 {data: 'subgroup'},
             ],

@@ -38,8 +38,8 @@
                                 <td class="text-center">{{ $branch->updated_by }}</td>
                                 <td class="text-center">{{ $branch->updated_at }}</td>
                                 <td class="text-center">
-                                    <button class="btn btn-sm btn-default btn_edit" data-uuid="{{ $branch->uuid }}" data-branch-name="{{ $branch->name }}"><i class="far fa-edit"></i> Edit</button>
-                                    <button class="btn btn-sm btn-default btn_delete" data-uuid="{{ $branch->uuid }}" data-branch-name="{{ $branch->name }}"><i class="far fa-trash-alt"></i> Delete</button>
+                                    <button class="btn btn-sm btn-primary btn_edit" data-uuid="{{ $branch->uuid }}" data-branch-name="{{ $branch->name }}"><i class="far fa-edit"></i> Edit</button>
+                                    <button class="btn btn-sm btn-danger btn_delete" data-uuid="{{ $branch->uuid }}" data-branch-name="{{ $branch->name }}"><i class="far fa-trash-alt"></i> Delete</button>
                                 </td>
                             </tr>
                         @endforeach

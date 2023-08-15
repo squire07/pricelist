@@ -82,8 +82,8 @@
                     orderable: false, 
                     render: function(data, type, row, meta){
                         if(type === 'display'){
-                            return '<button class="btn btn-sm btn-default mx-1"><i class="fas fa-sign-in-alt"></i>&nbsp;Submit</button>' + 
-                                    '<a href="' + window.location.origin + '/sales-orders/' + row.uuid + '" target="_self" class="btn btn-sm btn-primary mx-1"><i class="fas fa-edit"></i>&nbsp;Edit</a>';
+                            return '<a href="' + window.location.origin + '/sales-invoice/for-invoice/' + row.uuid + '/edit' + '"target="_self" class="btn btn-sm btn-default mx-1"><i class="fas fa-sign-in-alt"></i>&nbsp;Submit</a>'; //+
+                                    // '<a href="' + window.location.origin + '/sales-orders/' + row.uuid + '" target="_self" class="btn btn-sm btn-primary mx-1"><i class="fas fa-edit"></i>&nbsp;Edit</a>';
                         }
                         
                     }

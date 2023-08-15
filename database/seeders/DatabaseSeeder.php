@@ -19,10 +19,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         \App\Models\User::factory()->create([
-            'uuid' => '7febda16-1893-4084-be0f-99f81514ab58',
-            'name' => 'Test User',
-            'username' => 'test',
-            'email' => 'test@test.com',
+            'uuid' => '7febda16-1893-4084-be0f-99f81514ab99',
+            'name' => 'Aris Flores',
+            'username' => 'aris',
+            'email' => 'test1234@test.com',
             'password' => Hash::make('12345678'),
             'created_by' => 'System',
             'updated_by' => 'System'

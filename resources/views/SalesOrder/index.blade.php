@@ -24,6 +24,8 @@
                         <tr>
                             <th class="text-center">SO #</th>
                             <th class="text-center">Transaction Type</th>
+                            <th class="text-center">BCID</th>
+                            <th class="text-center">Name</th>
                             <th class="text-center">Total Amount</th>
                             <th class="text-center">Total NUC</th>
                             <th class="text-center">Status</th>
@@ -76,6 +78,8 @@
                     }
                 },
                 {data: 'transaction_type.name', class: 'text-center'},
+                {data: 'bcid', class: 'text-center'},
+                {data: 'distributor_name', class: 'text-center'},
                 {data: 'total_amount', class: 'text-right'},
                 {data: 'total_nuc', class: 'text-right'},
                 {

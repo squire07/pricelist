@@ -44,6 +44,8 @@ class SalesController extends Controller
         $sales->so_no = Helper::generate_so_no();
         $sales->bcid = $request->bcid;
         $sales->distributor_name = $request->distributor_name;
+        $sales->group_name = $request->group_name;
+        $sales->company = $request->company;
         $sales->total_amount = $request->hidden_total_amount; // must be refactored
         $sales->total_nuc = $request->hidden_total_nuc; // must be refactored
         $sales->status_id = 1; //set to default - 1 (Draft)
@@ -119,7 +121,7 @@ class SalesController extends Controller
      */
     public function show($uuid)
     {
-        $sales_order = Sales::with('sales_details')->whereUuid($uuid)->firstOrFail();
+        $sales_order = Sales::with('sales_details','transaction_type')->whereUuid($uuid)->firstOrFail();
 
         return view('SalesOrder.show', compact('sales_order'));
     }

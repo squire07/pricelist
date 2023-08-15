@@ -38,8 +38,8 @@
                                 <td class="text-center">{{ $role->updated_by }}</td>
                                 <td class="text-center">{{ $role->updated_at }}</td>
                                 <td class="text-center">
-                                    <button class="btn btn-sm btn-default btn_edit" data-uuid="{{ $role->uuid }}" data-role-name="{{ $role->name }}"><i class="far fa-edit"></i> Edit</button>
-                                    <button class="btn btn-sm btn-default btn_delete" data-uuid="{{ $role->uuid }}" data-role-name="{{ $role->name }}"><i class="far fa-trash-alt"></i> Delete</button>
+                                    <button class="btn btn-sm btn-primary btn_edit" data-uuid="{{ $role->uuid }}" data-role-name="{{ $role->name }}"><i class="far fa-edit"></i> Edit</button>
+                                    <button class="btn btn-sm btn-danger btn_delete" data-uuid="{{ $role->uuid }}" data-role-name="{{ $role->name }}"><i class="far fa-trash-alt"></i> Delete</button>
                                 </td>
                             </tr>
                         @endforeach
@@ -92,83 +92,83 @@
         });
     });
 
-    // $('.btn_edit').on('click', function() {
-    //     var uuid = $(this).attr("data-uuid");
-    //     var branch_name = $(this).attr("data-branch-name");
+    $('.btn_edit').on('click', function() {
+        var uuid = $(this).attr("data-uuid");
+        var role = $(this).attr("data-role-name");
 
-    //     // show the confirmation
-    //     Swal.fire({
-    //         title: 'Edit Branch',
-    //         input: 'text',
-    //         inputValue: branch_name,
-    //         inputAttributes: {
-    //             autocapitalize: 'off',
-    //             efaultValue: branch_name,
-    //             required: 'true',
-    //         },
-    //         inputValidator: (value) => {
-    //             return new Promise((resolve) => {
-    //                 if (value.length >= 4) {
-    //                     resolve();
-    //                 } else if (value.length == 0) {
-    //                     resolve('Branch name is required!');
-    //                 } else if (value.length <= 3) {
-    //                     resolve('Branch name is not valid!');
-    //                 }
-    //             });
-    //         },
-    //         inputPlaceholder: branch_name,
-    //         showCancelButton: true,
-    //         confirmButtonText: 'Update',
-    //         cancelButtonColor: '#d33',
-    //         confirmButtonColor: '#3085d6',
-    //         showLoaderOnConfirm: true,
-    //         allowOutsideClick: () => !Swal.isLoading()
-    //         }).then((result) => {
-    //             if (result.isConfirmed) {
-    //                 // get the uuid and pass to form_edit
-    //                 $('#hidden_edit_uuid').val(uuid);
+        // show the confirmation
+        Swal.fire({
+            title: 'Edit Role',
+            input: 'text',
+            inputValue: role,
+            inputAttributes: {
+                autocapitalize: 'off',
+                efaultValue: role,
+                required: 'true',
+            },
+            inputValidator: (value) => {
+                return new Promise((resolve) => {
+                    if (value.length >= 4) {
+                        resolve();
+                    } else if (value.length == 0) {
+                        resolve('Branch name is required!');
+                    } else if (value.length <= 3) {
+                        resolve('Branch name is not valid!');
+                    }
+                });
+            },
+            inputPlaceholder: role,
+            showCancelButton: true,
+            confirmButtonText: 'Update',
+            cancelButtonColor: '#d33',
+            confirmButtonColor: '#3085d6',
+            showLoaderOnConfirm: true,
+            allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // get the uuid and pass to form_edit
+                    $('#hidden_edit_uuid').val(uuid);
 
-    //                 // get the updated branch name and pass to form_edit 
-    //                 $('#hidden_edit_name').val(result.value);
+                    // get the updated branch name and pass to form_edit 
+                    $('#hidden_edit_name').val(result.value);
 
-    //                 // update the action of form_edit
-    //                 $('#form_edit').attr('action', window.location.origin + '/branches/' + uuid);
+                    // update the action of form_edit
+                    $('#form_edit').attr('action', window.location.origin + '/roles/' + uuid);
 
-    //                 // submit the form to controller -> Update method
-    //                 $('#form_edit').submit();
+                    // submit the form to controller -> Update method
+                    $('#form_edit').submit();
 
-    //                 // final confirmation will come from Update method
-    //             }
-    //         })
-    // });
+                    // final confirmation will come from Update method
+                }
+            })
+    });
 
-    // $('.btn_delete').on('click', function() {
-    //     var uuid = $(this).attr("data-uuid");
-    //     var branch_name = $(this).attr("data-branch-name");
+    $('.btn_delete').on('click', function() {
+        var uuid = $(this).attr("data-uuid");
+        var role = $(this).attr("data-role-name");
 
-    //     Swal.fire({
-    //         title: 'Are you sure you want to delete ' + branch_name + ' branch?',
-    //         text: "You won't be able to revert this!",
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonColor: '#3085d6',
-    //         cancelButtonColor: '#d33',
-    //         confirmButtonText: 'Yes, delete it!'
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             // get the uuid and pass to form_edit
-    //             $('#hidden_delete_uuid').val(uuid);
+        Swal.fire({
+            title: 'Are you sure you want to delete ' + role + ' role?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // get the uuid and pass to form_edit
+                $('#hidden_delete_uuid').val(uuid);
 
-    //             // update the action of form_edit
-    //             $('#form_delete').attr('action', window.location.origin + '/branches/' + uuid);
+                // update the action of form_edit
+                $('#form_delete').attr('action', window.location.origin + '/roles/' + uuid);
 
-    //             // submit the form to controller -> Update method
-    //             $('#form_delete ').submit();
+                // submit the form to controller -> Update method
+                $('#form_delete ').submit();
 
-    //             // final confirmation will come from Delete method
-    //         }
-    //     })
-    // });
+                // final confirmation will come from Delete method
+            }
+        })
+    });
 </script>
 @endsection

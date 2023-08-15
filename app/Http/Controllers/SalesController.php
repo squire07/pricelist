@@ -133,15 +133,19 @@ class SalesController extends Controller
     {
         $sales_order = Sales::with('sales_details','transaction_type','status')->whereUuid($uuid)->firstOrFail();
 
-        return view('SalesOrder.edit', compact('sales_order'));
+        $transaction_types = TransactionType::whereDeleted(false)->get();
+
+        return view('SalesOrder.edit', compact('sales_order','transaction_types'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Sales $sales)
+    public function update(Request $request, $uuid)
     {
-        $sales = Sales::whereUuid($request->uuid)->whereDeleted(false)->firstOrFail();   
+        $uuid = $request->uuid ?? $uuid;
+        
+        $sales = Sales::whereUuid($uuid)->whereDeleted(false)->firstOrFail();  
 
         // check if request contains status_id = 2
         if(isset($request->status_id) && $request->status_id == 2) {
@@ -151,9 +155,9 @@ class SalesController extends Controller
                 // pass the message to user if the update is successful
                 $message = $sales->so_no . ' successfully marked for invoicing';
             }
-        }
-
-        // other requests, status_id goes here. (from EDIT method)
+        } else {
+            // other requests, status_id goes here. (from EDIT method)
+            dd($request);
 
         
 
@@ -166,7 +170,7 @@ class SalesController extends Controller
 
 
 
-
+        }
 
         // redirect to index page with dynamic message coming from different statuses
         return redirect('sales-orders')->with('success', $message);

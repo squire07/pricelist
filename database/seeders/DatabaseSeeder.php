@@ -28,6 +28,16 @@ class DatabaseSeeder extends Seeder
             'updated_by' => 'System'
         ]);
 
+        \App\Models\User::factory()->create([
+            'uuid' => 'a1872ec9-9cf5-4257-82e6-d97a3d77fa5f',
+            'name' => 'Test User',
+            'username' => 'test',
+            'email' => 'test@test.com',
+            'password' => Hash::make('12345678'),
+            'created_by' => 'System',
+            'updated_by' => 'System'
+        ]);
+
         $this->call(BranchSeeder::class);
         $this->call(DistributorSeeder::class);
         $this->call(RoleSeeder::class);

@@ -16,7 +16,7 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                <form class="form-horizontal" id="form_sales_order" action="" method="POST" autocomplete="off">
+                <form class="form-horizontal" id="form_sales_order" action="{{ route('sales-orders.update', $sales_order->uuid) }}" method="POST" autocomplete="off">
                     @csrf
                     @method('PUT')
                     <div class="row">
@@ -30,10 +30,12 @@
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
                                 <b>Transaction Type: </b>{{ $sales_order->transaction_type->name }}
-                                {{-- <select class="form-control form-control-sm select2 select2-primary" id="transaction_type" name="transaction_type_id" data-dropdown-css-class="select2-primary" style="width: 100%;" disabled>
+                                <select class="form-control form-control-sm select2 select2-primary" id="transaction_type" name="transaction_type_id" data-dropdown-css-class="select2-primary" style="width: 100%;" disabled>
                                     <option value="">-- Select Transaction Type --</option>
-                                        <option value="{{ $sales_order->transaction_type_id }}">{{ $sales_order->transaction_type->name }}</option>
-                                </select> --}}
+                                    @foreach($transaction_types as $transaction_type)
+                                        <option value="{{ $transaction_type->id }}" {{ $sales_order->transaction_type_id == $transaction_type->id ? 'selected' : '' }}>{{ $transaction_type->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -110,10 +112,12 @@
                                     @foreach($sales_order->sales_details as $sd)
                                     <tr>
                                         <td>{{ $sd->item_name }}</td>
-                                        <td>{{ $sd->quantity }}</td>
-                                        <td>{{ $sd->item_price }}</td>
-                                        <td>{{ $sd->amount }}</td>
-                                        <td><i class="far fa fa-trash-alt"></i></td>
+                                        <td class="text-center">{{ $sd->quantity }}</td>
+                                        <td class="text-right">{{ $sd->item_price }}</td>
+                                        <td class="text-right">{{ $sd->amount }}</td>
+                                        <td class="text-center">
+                                            <a href="#" class="btn-delete-item" type="button" data-id="{{ $sd->id }}" data-quantity="{{ $sd->quantity }}" data-amount="{{ $sd->amount }}" data-nuc="{{ $sd->nuc }}"><i class="far fa-trash-alt"></i></a>
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -122,7 +126,7 @@
                                         <td class="text-right text-bold">Total</td>
                                         <td class="text-right"></td>
                                         <td class="text-right"></td>
-                                        <td class="text-right text-bold" id="tfoot_total_amount"></td>
+                                        <td class="text-right text-bold" id="tfoot_total_amount">{{ $sales_order->total_amount }}</td>
                                         <td>&nbsp;</td>
                                     </tr>
                                 </tfoot>
@@ -137,8 +141,11 @@
                     </div>
 
                     {{-- temporary --}}
-                    <input type="hidden" name="hidden_total_amount" id="hidden_total_amount">
-                    <input type="hidden" name="hidden_total_nuc" id="hidden_total_nuc">
+                    <input type="hidden" name="hidden_total_amount" id="hidden_total_amount" value="{{ $sales_order->total_amount }}">
+                    <input type="hidden" name="hidden_total_nuc" id="hidden_total_nuc" value="{{ $sales_order->total_nuc }}">
+
+                    {{-- this will handle the original item count from original data  --}}
+                    <input type="hidden" name="item_count" id="hidden_item_count" value="{{ count($sales_order->sales_details) }}">
 
                 </form>
             </div>    
@@ -165,61 +172,34 @@
 
 
         // initialize item counter: this will trigger if there is/are items in the table; This will be used by btn-delete-item AND transaction_type change event 
-        var item_count = 0;
+        var item_count = $('#hidden_item_count').val();
 
-
-        // fetch the items details by transaction type id using FETCH API
-        $('#transaction_type').on('change', function() {
-
-            // get the current value of transaction type
-            var currently_selected = this.value;
-
-            // check if there is/are item(s) in the details table
-            if(item_count > 0) {
-                 // show notification
-                Swal.fire({
-                    title: 'Change Transaction Type?',
-                    text: 'Your current sales order will be deleted.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // just refresh the page and remove all existing data; no longer needed to remove all data from elements
-                        location.reload();
-                    }
-                });
+        // fetch the item details by transaction type id using FETCH API
+        var transaction_type =  $('#transaction_type').val();
+        fetch(window.location.origin + '/api/item/transaction_type/' + transaction_type, {
+            method: 'get',
+            headers: {
+                'Content-type': 'application/json',
             }
+        })
+        .then(response => response.json())
+        .then((response) => {
+            obj = JSON.parse(JSON.stringify(response));
 
-            if(this.value !== '') {
-                fetch(window.location.origin + '/api/item/transaction_type/' + this.value, {
-                    method: 'get',
-                    headers: {
-                        'Content-type': 'application/json',
-                    }
-                })
-                .then(response => response.json())
-                .then((response) => {
-                    obj = JSON.parse(JSON.stringify(response));
+            // make sure the select element is empty before populating with values
+            $('#item_name').empty();
+            // add blank as first value
+            $('#item_name').append($('<option></option>').val('').html('-- Select Item --'));
+            // add some values to item dropdown element
+            $.each(obj, function(key, data) {
+                $('#item_name').append($('<option></option>').val(data.id).html(data.name));
+            });
 
-                    // make sure the select element is empty before populating with values
-                    $('#item_name').empty();
-                    // add blank as first value
-                    $('#item_name').append($('<option></option>').val('').html('-- Select Item --'));
-                    // add some values to item dropdown element
-                    $.each(obj, function(key, data) {
-                        $('#item_name').append($('<option></option>').val(data.id).html(data.name));
-                    });
+            // clear the sessionStorage first before storing another obj
+            sessionStorage.clear();
 
-                    // clear the sessionStorage first before storing another obj
-                    sessionStorage.clear();
-
-                    // store the `obj` to sessionStorage
-                    window.sessionStorage.setItem('item_object', JSON.stringify(obj));
-                })
-            }
+            // store the `obj` to sessionStorage
+            window.sessionStorage.setItem('item_object', JSON.stringify(obj));
         });
 
         // fetch the distributor's name by bcid using FETCH API
@@ -298,9 +278,9 @@
 
 
 
-        // initialize total amount and nuc
-        var total_amount = 0;
-        var total_nuc = 0;
+        // initialize total amount and nuc from original record and force the variable to be a NUMBER type
+        var total_amount = Number($('#hidden_total_amount').val());
+        var total_nuc = Number($('#hidden_total_nuc').val());
 
         // add item 
         $('#add_item').on('click', function() {
@@ -331,8 +311,9 @@
                 var item_selected = JSON.parse(sessionStorage.getItem('item_selected'));
 
                 // sum of amount
-                total_amount += quantity * item_selected.amount;
+                total_amount += (quantity * item_selected.amount);
                 $('#tfoot_total_amount').text(total_amount.toFixed(2));
+
                 // sum of nuc
                 total_nuc += quantity * item_selected.nuc;
                 $('#tfoot_total_nuc').text(total_nuc.toFixed(2));
@@ -374,9 +355,9 @@
         $(document).on('click','.btn-delete-item', function() {
 
             // get the data to be subtracted
-            var quantity = $(this).attr("data-quantity");
-            var amount = $(this).attr("data-amount");
-            var nuc = $(this).attr("data-nuc");
+            var quantity = Number($(this).attr("data-quantity"));
+            var amount = Number($(this).attr("data-amount"));
+            var nuc = Number($(this).attr("data-nuc"));
 
             // show notification
             Swal.fire({
@@ -391,10 +372,18 @@
 
                     // subtract the amount and nuc
                     total_amount = total_amount - amount;
-                    $('#tfoot_total_amount').text(total_amount.toFixed(2));
+                    if(total_amount > 0) {
+                        $('#tfoot_total_amount').text(total_amount.toFixed(2));
+                    } else {
+                        $('#tfoot_total_amount').text('0.00');
+                    }
 
                     total_nuc = total_nuc - nuc;
-                    $('#tfoot_total_nuc').text(total_nuc.toFixed(2));
+                    if(total_amount > 0) {
+                        $('#tfoot_total_nuc').text(total_nuc.toFixed(2));
+                    } else {
+                        $('#tfoot_total_nuc').text('0.00');
+                    }
 
                     // update the item count
                     item_count--;

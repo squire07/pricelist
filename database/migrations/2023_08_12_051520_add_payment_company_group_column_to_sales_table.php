@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('sales', function (Blueprint $table) {
             $table->tinyInteger('payment_method')->after('deleted')->default(false);
             $table->string('group_name', 100)->after('payment_method')->nullable();
-            $table->string('company', 100)->after('group')->nullable();
+            $table->string('company', 100)->after('group_name')->nullable();
         });
     }
 
@@ -24,7 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('sales', function (Blueprint $table) {
-            //
+            $table->dropColumn('payment_method');
+            $table->dropColumn('group_name');
+            $table->dropColumn('company');
         });
     }
 };

@@ -29,7 +29,7 @@
                     <div class="row">
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
-                                <b>Transaction Type: </b>{{ $sales_order->transaction_type->name }}
+                                <b>Transaction Type:
                                 <select class="form-control form-control-sm select2 select2-primary" id="transaction_type" name="transaction_type_id" data-dropdown-css-class="select2-primary" style="width: 100%;" disabled>
                                     <option value="">-- Select Transaction Type --</option>
                                     @foreach($transaction_types as $transaction_type)

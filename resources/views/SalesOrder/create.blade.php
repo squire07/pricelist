@@ -366,7 +366,7 @@
                 }
             } 
             // make sure that item and quantity are not empty
-            if($('#item_name').val().length > 0 != '' && $('#quantity').val().length > 0 != '' && $('#quantity').val() != 0) {
+            if($('#item_name').val().length > 0 && $('#quantity').val() != '' && $('#quantity').val() != 0) {
                 // get the quantity
                 var quantity = $('#quantity').val();
 
@@ -417,8 +417,26 @@
 
                 // append the table with dynamic rows
                 $("#table_item_details tbody").append(row);
+            } else if($('#item_name').val().length == 0) {
+                Swal.fire({
+                    title: 'Select an item',
+                    text: 'Select an item.', 
+                    icon: 'error',
+                });
+            } else if($('#quantity').val() == '' || $('#quantity').val() == 0) {
+                Swal.fire({
+                    title: 'Invalid quantity',
+                    text: 'Add quantity.', 
+                    icon: 'error',
+                });
+            } else {
+                Swal.fire({
+                    title: 'Please add an item',
+                    text: 'Select an item and add quantity.', 
+                    icon: 'error',
+                });
             }
-        });
+        }); 
 
         // delete row
         $(document).on('click','.btn-delete-item', function() {

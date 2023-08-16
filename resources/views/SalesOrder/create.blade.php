@@ -66,12 +66,12 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text text-bold">Group&nbsp;<span class="required"></span></span>
                                 </div>
-                                <input type="text" class="form-control form-control-sm" id="group_name" name="group_name" readonly required>
+                                <input type="text" class="form-control form-control-sm" id="group_name" name="group_name" readonly>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12 mb-3">
                             <div class="input-group input-group-sm">
-                                <input type="hidden" class="form-control form-control-sm" id="company" name="company" value="UNO International Corp." required>
+                                <input type="hidden" class="form-control form-control-sm" id="company" name="company" value="UNO International Corp.">
                             </div>
                         </div>
                     </div>
@@ -84,7 +84,7 @@
                         </div>
                         <div class="col-md-1 col-2">
                             <label for="quantity">Quantity</label>
-                            <input type="number" class="form-control form-control-sm" min="1" id="quantity" value="0" required oninput="validity.valid||(value=value.replace(/\D+/g, ''))">
+                            <input type="number" class="form-control form-control-sm" min="1" id="quantity" oninput="validity.valid||(value=value.replace(/\D+/g, ''))">
                         </div>
                         <div class="col-md-1 col-2">
                             <label for="amount">Amount</label>
@@ -372,7 +372,7 @@
 
                 // clear the item name, quantity and other fields after clicking the Add Item button
                 $('#item_name').val(null).trigger('change'); // this is for select2 type dropdown only
-                $('#quantity').val('0');
+                $('#quantity').val('');
                 $('#amount').val('');
                 $('#nuc').val('');
                 $('#rs_points').val('');
@@ -476,6 +476,7 @@
                     return; 
                 } 
             });
+
             if (!allAreFilled) {
                 
                 // set focus to specific field

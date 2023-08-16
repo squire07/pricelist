@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
-use Illuminate\Http\Request;
-use App\Models\Branches;
-use Carbon\Carbon;
 use Auth;
+use Carbon\Carbon;
+use App\Models\Role;
+use App\Models\Branches;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
@@ -32,7 +33,17 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $exist = Role::whereName($request->name)->whereDeleted(false)->first();
+        if(!$exist) {
+            $role = new Role();
+            $role->uuid = Str::uuid();
+            $role->name = $request->name;
+            $role->created_by = Auth::user()->name;
+            $role->save();
+            return redirect()->back()->with('success', 'Role has been created!');
+        } else {
+            return redirect()->back()->with('error', 'Role already exists!');
+        }
     }
 
     /**

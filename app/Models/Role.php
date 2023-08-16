@@ -20,4 +20,9 @@ class Role extends Model
         {
             return $value != null ? Carbon::parse($value)->format('m/d/Y h:i:s A') : '';
         }
+
+        public function setNameAttribute($value)
+        {
+            $this->attributes['name'] = ucwords($value);
+        }
 }

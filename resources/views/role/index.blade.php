@@ -8,6 +8,9 @@
             <div class="col-sm-6">
                 <h1>Roles</h1>
             </div>
+            <div class="col-sm-6 text-right">
+                <a href="#" target="_self" class="btn btn-primary" id="btn_add_role">Add Role</a>
+            </div>
         </div>
     </div>
 @stop
@@ -63,6 +66,11 @@
         <input type="hidden" name="uuid" id="hidden_delete_uuid">
     </form>
 
+    <form id="form_add" action="{{ url('roles') }}" method="POST" autocomplete="off">
+        @csrf
+        <input type="hidden" name="name" id="hidden_create_role">
+    </form>
+
 @endsection
 
 @section('adminlte_js')
@@ -94,7 +102,7 @@
 
     $('.btn_edit').on('click', function() {
         var uuid = $(this).attr("data-uuid");
-        var role = $(this).attr("data-role-name");
+        var branch_name = $(this).attr("data-role-name");
 
         // show the confirmation
         Swal.fire({
@@ -103,7 +111,7 @@
             inputValue: role,
             inputAttributes: {
                 autocapitalize: 'off',
-                efaultValue: role,
+                defaultValue: role,
                 required: 'true',
             },
             inputValidator: (value) => {
@@ -111,9 +119,9 @@
                     if (value.length >= 4) {
                         resolve();
                     } else if (value.length == 0) {
-                        resolve('Branch name is required!');
+                        resolve('Role is required!');
                     } else if (value.length <= 3) {
-                        resolve('Branch name is not valid!');
+                        resolve('Role is not valid!');
                     }
                 });
             },
@@ -169,6 +177,46 @@
                 // final confirmation will come from Delete method
             }
         })
+    });
+
+    $('#btn_add_role').on('click', function() {
+        // show the confirmation
+        Swal.fire({
+            title: 'Add Role',
+            input: 'text',
+            inputValue: '',
+            inputAttributes: {
+                autocapitalize: 'off',
+                defaultValue: '',
+                required: 'true',
+            },
+            inputValidator: (value) => {
+                return new Promise((resolve) => {
+                    if (value.length >= 4) {
+                        resolve();
+                    } else if (value.length == 0) {
+                        resolve('Role is required!');
+                    } else if (value.length <= 3) {
+                        resolve('Role is not valid!');
+                    }
+                });
+            },
+            inputPlaceholder: 'Role',
+            showCancelButton: true,
+            confirmButtonText: 'Save',
+            cancelButtonColor: '#d33',
+            confirmButtonColor: '#3085d6',
+            showLoaderOnConfirm: true,
+            allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // get the updated branch name and pass to form_edit 
+                    $('#hidden_create_role').val(result.value);
+
+                    // submit the form to controller -> Update method
+                    $('#form_add').submit();
+                }
+            })
     });
 </script>
 @endsection

@@ -8,6 +8,9 @@
             <div class="col-sm-6">
                 <h1>Branches</h1>
             </div>
+            <div class="col-sm-6 text-right">
+                <a href="#" target="_self" class="btn btn-primary" id="btn_add_branch">Add Branch</a>
+            </div>
         </div>
     </div>
 @stop
@@ -63,6 +66,11 @@
         <input type="hidden" name="uuid" id="hidden_delete_uuid">
     </form>
 
+    <form id="form_add" action="{{ url('branches') }}" method="POST" autocomplete="off">
+        @csrf
+        <input type="hidden" name="name" id="hidden_create_branch">
+    </form>
+
 @endsection
 
 @section('adminlte_js')
@@ -103,7 +111,7 @@
             inputValue: branch_name,
             inputAttributes: {
                 autocapitalize: 'off',
-                efaultValue: branch_name,
+                defaultValue: branch_name,
                 required: 'true',
             },
             inputValidator: (value) => {
@@ -169,6 +177,46 @@
                 // final confirmation will come from Delete method
             }
         })
+    });
+
+    $('#btn_add_branch').on('click', function() {
+        // show the confirmation
+        Swal.fire({
+            title: 'Add Branch',
+            input: 'text',
+            inputValue: '',
+            inputAttributes: {
+                autocapitalize: 'off',
+                defaultValue: '',
+                required: 'true',
+            },
+            inputValidator: (value) => {
+                return new Promise((resolve) => {
+                    if (value.length >= 4) {
+                        resolve();
+                    } else if (value.length == 0) {
+                        resolve('Branch name is required!');
+                    } else if (value.length <= 3) {
+                        resolve('Branch name is not valid!');
+                    }
+                });
+            },
+            inputPlaceholder: 'Branch Name',
+            showCancelButton: true,
+            confirmButtonText: 'Save',
+            cancelButtonColor: '#d33',
+            confirmButtonColor: '#3085d6',
+            showLoaderOnConfirm: true,
+            allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // get the updated branch name and pass to form_edit 
+                    $('#hidden_create_branch').val(result.value);
+
+                    // submit the form to controller -> Update method
+                    $('#form_add').submit();
+                }
+            })
     });
 </script>
 @endsection

@@ -28,7 +28,7 @@ class Helper {
     {
         $sales = Sales::latest()->first();
         $id = !is_null($sales) && $sales->id ? $sales->id + 1 : 1; // if no existing record, start at 1
-        return 'SO-' . Carbon::now()->format('Ymd') . '-' . substr(str_repeat(0, 3).$id, - 3);
+        return 'SO-' . Carbon::now()->format('Ymd') . '-' . substr(str_repeat(0, 4).$id, - 4);
     }
 
 }

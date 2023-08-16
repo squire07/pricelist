@@ -6,6 +6,7 @@ use App\Models\Branch;
 use Illuminate\Http\Request;
 use App\Models\Branches;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Auth;
 
 class BranchController extends Controller
@@ -32,7 +33,17 @@ class BranchController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $exist = Branch::whereName($request->name)->whereDeleted(false)->first();
+        if(!$exist) {
+            $branch = new Branch();
+            $branch->uuid = Str::uuid();
+            $branch->name = $request->name;
+            $branch->created_by = Auth::user()->name;
+            $branch->save();
+            return redirect()->back()->with('success', 'Branch has been created!');
+        } else {
+            return redirect()->back()->with('error', 'Branch already exists!');
+        }
     }
 
     /**

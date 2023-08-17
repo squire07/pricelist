@@ -33,6 +33,13 @@
             </div>    
         </div>
     </div>
+    {{-- hidden form to return SO to draft --}}
+    <form id="form_for_return" method="POST">
+        @method('PATCH')
+            <input type="hidden" name="uuid" id="hidden_uuid">
+            <input type="hidden" name="status_id" value="1">
+        @csrf
+    </form>
 @endsection
 
 @section('adminlte_js')
@@ -82,8 +89,8 @@
                     orderable: false, 
                     render: function(data, type, row, meta){
                         if(type === 'display'){
-                            return '<a href="' + window.location.origin + '/sales-invoice/for-invoice/' + row.uuid + '/edit' + '"target="_self" class="btn btn-sm btn-default mx-1"><i class="fas fa-sign-in-alt"></i>&nbsp;Submit</a>'; //+
-                                    // '<a href="' + window.location.origin + '/sales-orders/' + row.uuid + '" target="_self" class="btn btn-sm btn-primary mx-1"><i class="fas fa-edit"></i>&nbsp;Edit</a>';
+                            return '<a href="' + window.location.origin + '/sales-invoice/for-invoice/' + row.uuid + '/edit' + '"target="_self" class="btn btn-sm btn-default mx-1"><i class="fas fa-sign-in-alt"></i>&nbsp;Submit</a>' +
+                            '<button class="btn btn-sm btn-danger mx-1 btn-for-return" data-uuid="' + row.uuid + '" data-so-no="' + row.so_no + '"><i class="fas fa-undo-alt"></i>&nbsp;Return</button>';
                         }
                         
                     }
@@ -96,5 +103,34 @@
 
         });
     });
+            // use this format to target any class that is dynamically created by js 
+            $(document).on('click','.btn-for-return', function() {
+            var uuid = $(this).attr("data-uuid");
+            var so_no = $(this).attr("data-so-no");
+
+            // show the confirmation
+            Swal.fire({
+                title: 'Return ' + so_no + ' to Draft Status!',
+                text: 'Remarks:',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                input: 'text',
+                inputValue: '',
+                confirmButtonText: 'Save'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // add uuid dynamically to hidden uuid field
+                    $('#hidden_uuid').val(uuid);
+
+                    // update the action of form_for_return 
+                    $('#form_for_return').attr('action', window.location.origin + '/sales-invoice/for-invoice/' + uuid);
+
+                    // finally, submit the form
+                    $('#form_for_return').submit();
+                }
+            });
+        });
 </script>
 @endsection

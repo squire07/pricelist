@@ -75,7 +75,7 @@
                         </div>
                         <div class="col-md-1 col-2">
                             <label for="quantity">Quantity</label>
-                            <input type="number" class="form-control form-control-sm" min="1" id="quantity">
+                            <input type="number" class="form-control form-control-sm" min="1" id="quantity" oninput="validity.valid||(value=value.replace(/\D+/g, ''))">
                         </div>
                         <div class="col-md-1 col-2">
                             <label for="amount">Amount</label>

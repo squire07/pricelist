@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\SalesInvoice;
 
-use App\Http\Controllers\Controller;
 use App\Models\Sales;
-use Illuminate\Http\Request;
 use App\Models\SalesInvoice;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
 class ReleasedController extends Controller
@@ -53,9 +54,36 @@ class ReleasedController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, SalesInvoice $salesInvoice)
+    public function update(Request $request, $uuid)
     {
-        //
+        $uuid = $request->uuid ?? $uuid;
+        
+        $sales = Sales::whereUuid($uuid)->whereDeleted(false)->firstOrFail();  
+
+        // check if request contains status_id = 3
+        if(isset($request->status_id) && $request->status_id == 3) {
+            $sales->status_id = $request->status_id;
+            $sales->updated_by = Auth::user()->name; // updated_at will be automatically filled by laravel
+            if($sales->update()) {
+                // pass the message to user if the update is successful
+                $message = $sales->so_no . ' successfully marked as Cancelled!';
+            }
+        }
+
+        
+
+
+
+
+
+
+
+
+
+
+
+        // redirect to index page with dynamic message coming from different statuses
+        return redirect('sales-invoice/released')->with('success', $message);
     }
 
     /**

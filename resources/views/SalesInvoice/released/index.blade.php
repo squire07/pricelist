@@ -33,6 +33,13 @@
             </div>    
         </div>
     </div>
+        {{-- hidden form Mark SI to cancelled --}}
+        <form id="form_for_cancel" method="POST">
+            @method('PATCH')
+                <input type="hidden" name="uuid" id="hidden_uuid">
+                <input type="hidden" name="status_id" value="3">
+            @csrf
+        </form>
 @endsection
 
 @section('adminlte_js')
@@ -82,12 +89,11 @@
                     orderable: false, 
                     render: function(data, type, row, meta){
                         if(type === 'display'){
-                            return '<button class="btn btn-sm btn-default mx-1 btn-for-cancel" data-uuid="' + row.uuid + '" data-so-no="' + row.so_no + '"><i class="fas fa-ban"></i>&nbsp;Cancel Invoice</button>' + 
-                                    '<a href="' + window.location.origin + '/sales-orders/' + row.uuid + '" target="_self" class="btn btn-sm btn-primary mx-1"><i class="fas fa-edit"></i>&nbsp;Edit</a>';
-                        }
+                            return '<a href="' + window.location.origin + '/sales-orders/' + row.uuid + '" target="_self" class="btn btn-sm btn-primary mx-1"><i class="fas fa-edit"></i>&nbsp;Edit</a>' +
+                            '<button class="btn btn-sm btn-default mx-1 btn-for-cancel" data-uuid="' + row.uuid + '" data-so-no="' + row.so_no + '"><i class="fas fa-ban"></i>&nbsp;Cancel Invoice</button>';
                         
                     }
-
+                    }
                 },
             ],
             language: {
@@ -101,23 +107,25 @@
 
             // show the confirmation
             Swal.fire({
-                title: 'Are you sure?',
-                text: 'Submit ' + so_no + ' for Cancellation!',
+                title: 'Mark ' + so_no + ' as Cancelled?',
+                text: 'Remarks:',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, submit!'
+                input: 'text',
+                inputValue: '',
+                confirmButtonText: 'Save'
             }).then((result) => {
                 if (result.isConfirmed) {
                     // add uuid dynamically to hidden uuid field
                     $('#hidden_uuid').val(uuid);
 
                     // update the action of form_for_invoicing 
-                    $('#form_for_invoicing').attr('action', window.location.origin + '/sales-orders/' + uuid);
+                    $('#form_for_cancel').attr('action', window.location.origin + '/sales-invoice/released/' + uuid);
 
                     // finally, submit the form
-                    $('#form_for_invoicing').submit();
+                    $('#form_for_cancel').submit();
                 }
             });
         });

@@ -62,7 +62,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text text-bold">Group&nbsp;<span class="required"></span></span>
                                 </div>
-                                <input type="text" class="form-control form-control-sm" id="group_name" name="group_name" value="{{ $sales_order->group_name }}" required>
+                                <input type="text" class="form-control form-control-sm" id="group_name" name="group_name" value="{{ $sales_order->group_name }}">
                             </div>
                         </div>
                     </div>
@@ -439,10 +439,6 @@
                 if($.trim($("#transaction_type").val()) == "") {
                     $('#transaction_type').focus();
                     required_field('Transaction Type');
-                } 
-                else if($.trim($("#branch_id").val()) == "") {
-                    $('#branch_id').focus();
-                    required_field('Branch');
                 } 
                 else if($.trim($("#bcid").val()) == "") {
                     $('#bcid').focus();

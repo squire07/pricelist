@@ -19,7 +19,8 @@ class PaymentListSeeder extends Seeder
             'Cash',
             'Credit Card',
             'E-Banks',
-            'Gift Certificate'
+            'Gift Certificate',
+            'E-Store Commission'
         ];
 
         foreach($payment_list as $key => $name) {

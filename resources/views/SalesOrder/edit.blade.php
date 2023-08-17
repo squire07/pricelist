@@ -147,6 +147,8 @@
                     {{-- this will handle the original item count from original data  --}}
                     <input type="hidden" name="item_count" id="hidden_item_count" value="{{ count($sales_order->sales_details) }}">
 
+                    {{-- item(s) for deletion --}}
+                    <input type="hidden" name="deleted_item_id" id="deleted_item_id">
                 </form>
             </div>    
         </div>
@@ -168,11 +170,11 @@
             document.querySelector('.select2-search__field').focus();
         });
 
-
-
-
         // initialize item counter: this will trigger if there is/are items in the table; This will be used by btn-delete-item AND transaction_type change event 
         var item_count = $('#hidden_item_count').val();
+
+        // initialize id handler for deleted item(s)
+        let deleted_item_id = [];
 
         // fetch the item details by transaction type id using FETCH API
         var transaction_type =  $('#transaction_type').val();
@@ -285,7 +287,7 @@
         // add item 
         $('#add_item').on('click', function() {
 
-            if($('#quantity').val().length > 0 != '' && $('#quantity').val() == 0) {
+            if($('#quantity').val().length > 0 && $('#quantity').val() != '' && $('#quantity').val() == 0) {
                 // set focus to quantity field
                 $('#quantity').focus();
                 // show invalid notification
@@ -296,7 +298,7 @@
             }
 
             // make sure that item and quantity are not empty
-            if($('#item_name').val().length > 0 != '' && $('#quantity').val().length > 0 != '' && $('#quantity').val() != 0) {
+            if($('#item_name').val().length > 0 != '' && $('#quantity').val() != '' && $('#quantity').val() != 0) {
                 // get the quantity
                 var quantity = $('#quantity').val();
 
@@ -359,6 +361,9 @@
             var amount = Number($(this).attr("data-amount"));
             var nuc = Number($(this).attr("data-nuc"));
 
+            // item id
+            var item_id = Number($(this).attr("data-id"));
+
             // show notification
             Swal.fire({
                 title: 'Are you sure you want to remove this item?',
@@ -385,11 +390,24 @@
                         $('#tfoot_total_nuc').text('0.00');
                     }
 
+                    // temporary 
+                    $('#hidden_total_amount').val(total_amount.toFixed(2));
+                    $('#hidden_total_nuc').val(total_nuc.toFixed(2));
+
                     // update the item count
                     item_count--;
 
                     // remove the row
                     this.closest('tr').remove();
+
+                    // check if `item_id` is a NUMBER. Add the item id in the deleted_item_id array;
+                    // reason: newly added item has no sales_details id
+                    if(!isNaN(item_id)) {
+                        deleted_item_id.push(item_id);
+
+                        // pass deleted_item_id new value to input type hidden
+                        $('#deleted_item_id').val(deleted_item_id); 
+                    }
 
                     // show confirmation
                     Swal.fire(

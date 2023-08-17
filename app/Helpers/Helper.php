@@ -27,8 +27,18 @@ class Helper {
     public static function generate_so_no()
     {
         $sales = Sales::latest()->first();
-        $id = !is_null($sales) && $sales->id ? $sales->id + 1 : 1; // if no existing record, start at 1
-        return 'SO-' . Carbon::now()->format('Ymd') . '-' . substr(str_repeat(0, 4).$id, - 4);
+
+        // get the last 4 character of so number
+        $last = substr($sales->so_no, strlen($sales->so_no)-4);
+        // remove leading zeros, then increment by 1
+        $last_number = ltrim($last, 0) + 1;
+
+        $check = strpos($sales->so_no, Carbon::now()->format('Ymd')); // get current date in yyyymmdd format and compare with the last so_no
+        if($check) { // true? increment by 1
+            return 'SO-' . Carbon::now()->format('Ymd') . '-' . substr(str_repeat(0, 4) . $last_number, - 4);
+        } else { // false? start at 1 again with new date
+            return 'SO-' . Carbon::now()->format('Ymd') . '-' . substr(str_repeat(0, 4) . '1', - 4);
+        }
     }
 
 }

@@ -11,8 +11,7 @@ use App\Models\Branch;
 use App\Models\Sales;
 use App\Models\SalesDetails;
 use App\Models\TransactionType;
-use Carbon\Carbon; use DB;
-use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon; 
 class SalesController extends Controller
 {
     /**

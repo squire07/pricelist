@@ -21,6 +21,8 @@
                         <tr>
                             <th class="text-center">SO #</th>
                             <th class="text-center">Transaction Type</th>
+                            <th class="text-center">BCID</th>
+                            <th class="text-center">Distributor Name</th>
                             <th class="text-center">Total Amount</th>
                             <th class="text-center">Total NUC</th>
                             <th class="text-center">Status</th>
@@ -72,6 +74,8 @@
                     }
                 },
                 {data: 'transaction_type.name', class: 'text-center'},
+                {data: 'bcid', class: 'text-center'},
+                {data: 'distributor_name', class: 'text-center'},
                 {data: 'total_amount', class: 'text-right'},
                 {data: 'total_nuc', class: 'text-right'},
                 {
@@ -90,7 +94,7 @@
                     render: function(data, type, row, meta){
                         if(type === 'display'){
                             return '<a href="' + window.location.origin + '/sales-orders/' + row.uuid + '" target="_self" class="btn btn-sm btn-primary mx-1"><i class="fas fa-edit"></i>&nbsp;Edit</a>' +
-                            '<button class="btn btn-sm btn-default mx-1 btn-for-cancel" data-uuid="' + row.uuid + '" data-so-no="' + row.so_no + '"><i class="fas fa-ban"></i>&nbsp;Cancel Invoice</button>';
+                            '<button class="btn btn-sm btn-default mx-1 btn-for-cancel" data-uuid="' + row.uuid + '" data-so-no="' + row.so_no + '"><i class="fas fa-ban"></i>&nbsp;Cancel</button>';
                         
                     }
                     }

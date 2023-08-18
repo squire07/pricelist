@@ -69,6 +69,7 @@ class BranchController extends Controller
     {
         $branch = Branch::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
         $branch->name = $request->name;
+        $branch->updated_by = Auth::user()->name;
         $branch->update();
 
         return redirect('branches')->with('success', 'Branch has been updated!');

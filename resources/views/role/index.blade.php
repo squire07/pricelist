@@ -102,7 +102,7 @@
 
     $('.btn_edit').on('click', function() {
         var uuid = $(this).attr("data-uuid");
-        var branch_name = $(this).attr("data-role-name");
+        var role = $(this).attr("data-role-name");
 
         // show the confirmation
         Swal.fire({

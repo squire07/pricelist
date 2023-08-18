@@ -69,6 +69,7 @@ class RoleController extends Controller
     {
         $role = role::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
         $role->name = $request->name;
+        $role->updated_by = Auth::user()->name;
         $role->update();
 
         return redirect('roles')->with('success', 'role has been updated!');

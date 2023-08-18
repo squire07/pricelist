@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use Illuminate\Http\Request;
-use App\Models\Branches;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Auth;

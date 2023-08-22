@@ -29,11 +29,11 @@ class Helper {
         $sales = Sales::latest()->first();
 
         // get the last 4 character of so number
-        $last = substr($sales->so_no, strlen($sales->so_no)-4);
+        $last = isset($sales->so_no) ? substr($sales->so_no, strlen($sales->so_no)-4) : 0;
         // remove leading zeros, then increment by 1
-        $last_number = ltrim($last, 0) + 1;
+        $last_number = $last == 0 ? 1 : ltrim($last, 0) + 1;
 
-        $check = strpos($sales->so_no, Carbon::now()->format('Ymd')); // get current date in yyyymmdd format and compare with the last so_no
+        $check = isset($sales->so_no) && strpos($sales->so_no, Carbon::now()->format('Ymd')); // get current date in yyyymmdd format and compare with the last so_no
         if($check) { // true? increment by 1
             return 'SO-' . Carbon::now()->format('Ymd') . '-' . substr(str_repeat(0, 4) . $last_number, - 4);
         } else { // false? start at 1 again with new date

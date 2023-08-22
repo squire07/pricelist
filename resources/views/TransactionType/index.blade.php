@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Sales Order Type')
+@section('title', 'Transaction Type')
 
 @section('content_header')
     
@@ -9,7 +9,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Sales Order Type</h1>
+                <h1>Transaction Types</h1>
             </div>
         </div>
     </div>

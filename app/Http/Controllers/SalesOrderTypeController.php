@@ -14,7 +14,7 @@ class SalesOrderTypeController extends Controller
      */
     public function index()
     {
-        return view('salesordertype.salesordertype');
+        return view('TransactionType.index');
     }
 
     /**

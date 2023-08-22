@@ -13,6 +13,7 @@ use App\Http\Controllers\SalesInvoice\CancelledController;
 use App\Http\Controllers\SalesInvoice\ForInvoicingController;
 use App\Http\Controllers\SalesInvoice\ReleasedController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\RoleController;
 
 use App\Models\SalesInvoiceCancel;
@@ -43,7 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::get('distributor_list', [DistributorController::class, 'distributor_list'])->name('distributor_list');
     Route::resource('distributor', DistributorController::class)->only('index');
     Route::get('salesordertype_list', [SalesOrderTypeController::class, 'salesordertype_list'])->name('salesordertype_list');
-    Route::resource('salesordertype', SalesOrderTypeController::class)->only('index');
+    Route::resource('transaction-type', SalesOrderTypeController::class)->only('index');
     Route::get('transactionlisting_list', [TransactionListingController::class, 'transactionlisting_list'])->name('transactionlisting_list');
     Route::resource('transactionlisting', TransactionListingController::class)->only('index');
     Route::get('buildreport_list', [BuildReportController::class, 'buildreport_list'])->name('buildreport_list');
@@ -52,6 +53,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('stockcard', StockCardController::class)->only('index');
     Route::resource('Item', ItemController::class);
     Route::resource('/item', ItemController::class);
+    Route::get('payment_types_list', [SalesOrderTypeController::class, 'payment_types_list'])->name('payment_types_list');
+    Route::resource('payment-type', SalesOrderTypeController::class)->only('index');
 
 
     // json 
@@ -76,6 +79,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('branches', BranchController::class);
     Route::resource('roles', RoleController::class);
+    Route::resource('company', CompanyController::class);
 
 
 

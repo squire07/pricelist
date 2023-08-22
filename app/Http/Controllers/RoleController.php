@@ -72,7 +72,7 @@ class RoleController extends Controller
         $role->updated_by = Auth::user()->name;
         $role->update();
 
-        return redirect('roles')->with('success', 'role has been updated!');
+        return redirect('roles')->with('success', 'Role has been updated!');
     }
 
     /**
@@ -86,6 +86,6 @@ class RoleController extends Controller
         $role->deleted_by = Auth::user()->name;
         $role->update();
 
-        return redirect('roles')->with('success', $role->name . ' role has been deleted!');
+        return redirect('roles')->with('success', $role->name . ' Role has been deleted!');
     }
 }

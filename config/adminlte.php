@@ -361,8 +361,12 @@ return [
                     'url'  => '/roles',
                 ],
                 [
-                    'text' => 'Sales Order Type',
-                    'url'  => '/salesordertype',
+                    'text' => 'Transaction Types',
+                    'url'  => '/transaction-type',
+                ],
+                [
+                    'text' => 'Payment Types',
+                    'url'  => '/payment-types',
                 ],
             ],
         ],

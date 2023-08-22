@@ -4,11 +4,13 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Database\Seeders\CompanySeeder;
 use Database\Seeders\DistributorSeeder;
 use Database\Seeders\ItemSeeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\StatusSeeder;
 use Database\Seeders\TransactionTypeSeeder;
+use Database\Seeders\UserSeeder;
 use Hash;
 
 class DatabaseSeeder extends Seeder
@@ -39,10 +41,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(BranchSeeder::class);
+        $this->call(CompanySeeder::class);
         $this->call(DistributorSeeder::class);
         $this->call(RoleSeeder::class);
         $this->call(StatusSeeder::class);
         $this->call(TransactionTypeSeeder::class);
+        $this->call(UserSeeder::class);
 
         // dummy data only
         $this->call(ItemSeeder::class);

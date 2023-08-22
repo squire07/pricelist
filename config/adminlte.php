@@ -345,6 +345,10 @@ return [
                     'url'  => '/branches',
                 ],
                 [
+                    'text' => 'Companies',
+                    'url'  => '/companies',
+                ],
+                [
                     'text' => 'Distributors',
                     'url'  => '/distributor',
                 ],

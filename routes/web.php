@@ -14,6 +14,7 @@ use App\Http\Controllers\SalesInvoice\ForInvoicingController;
 use App\Http\Controllers\SalesInvoice\ReleasedController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\CompanyController;
 
 use App\Models\SalesInvoiceCancel;
 use Illuminate\Support\Facades\Auth;
@@ -76,6 +77,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('branches', BranchController::class);
     Route::resource('roles', RoleController::class);
+    Route::resource('companies', CompanyController::class);
 
 
 

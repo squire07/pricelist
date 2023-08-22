@@ -37,6 +37,7 @@ class BranchController extends Controller
             $branch = new Branch();
             $branch->uuid = Str::uuid();
             $branch->name = $request->name;
+            $branch->code = $request->code;
             $branch->created_by = Auth::user()->name;
             $branch->save();
             return redirect()->back()->with('success', 'Branch has been created!');
@@ -68,6 +69,7 @@ class BranchController extends Controller
     {
         $branch = Branch::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
         $branch->name = $request->name;
+        $branch->code = $request->code;
         $branch->updated_by = Auth::user()->name;
         $branch->update();
 

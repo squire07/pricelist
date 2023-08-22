@@ -16,25 +16,25 @@ class BranchSeeder extends Seeder
     public function run(): void
     {
         $branches = [
-            'West Insula Local',
-            'Cebu Local',
-            'Calamba Local',
-            'Davao Local',
-            'Baguio Local',
-            'Gensan Local',
-            'West Insula Premier',
-            'Cebu Premier',
-            'Calamba Premier',
-            'Davao Premier',
-            'Baguio Premier',
-            'Gensan Premier',
-            'E-Commerce - UNO BILIS'
+            1 => array('name' => 'West Insula Local', 'code' => 'WES'),
+            2 => array('name' => 'Cebu Local', 'code' => 'CEB'),
+            3 => array('name' => 'Calamba Local', 'code' => 'CAL'),
+            4 => array('name' => 'Baguio Local', 'code' => 'BAG'),
+            5 => array('name' => 'Gensan Local', 'code' => 'GEN'),
+            6 => array('name' => 'E-Commerce Local', 'code' => 'ECO'),
+            7 => array('name' => 'West Insula Premier', 'code' => 'WES'),
+            8 => array('name' => 'Cebu Premier', 'code' => 'CEB'),
+            9 => array('name' => 'Calamba Premier', 'code' => 'CAL'),   
+            10 => array('name' => 'Baguio Premier', 'code' => 'BAG'),
+            11 => array('name' => 'Gensan Premier', 'code' => 'GEN'),
+            12 => array('name' => 'E-Commerce Premier', 'code' => 'ECO'),
         ];
 
-        foreach($branches as $key => $name) {
+        foreach($branches as $key => $branch) {
             Branch::create([
                 'uuid' => Str::uuid(),
-                'name' => $name,
+                'name' => $branch['name'],
+                'code' => $branch['code'],
                 'created_at' => Carbon::now()->toDateTimeString(),
                 'updated_at' => Carbon::now()->toDateTimeString(),
                 'created_by' => 'System',

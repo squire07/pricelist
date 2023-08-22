@@ -25,4 +25,9 @@ class Branch extends Model
     {
         $this->attributes['name'] = ucwords($value);
     }
+
+    public function setCodeAttribute($value)
+    {
+        $this->attributes['code'] = strtoupper($value);
+    }
 }

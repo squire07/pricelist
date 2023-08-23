@@ -266,7 +266,7 @@ class SalesController extends Controller
 
     public function sales_orders_list() 
     {
-        $sales_orders = Sales::with('status','transaction_type')->whereStatusId(1)->whereDeleted(false)->orderByDesc('id');
+        $sales_orders = Sales::with('status','transaction_type')->whereStatusId(1)->whereDeleted(false)->orderByDESC('id')->whereDate('created_at', Carbon::today())->get();
         return DataTables::of($sales_orders)->toJson(); 
     }
 

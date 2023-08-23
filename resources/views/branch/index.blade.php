@@ -123,7 +123,7 @@
                 '<label for="swal-edit-input1">Name</label>' +
                 '<input id="swal-edit-input1" class="swal2-input" placeholder="Name" style="width:100%;display:flex" value="' + branch_name + '" required>' +
                 '<label for="swal-edit-input2">Code</label>' +
-                '<input id="swal-edit-input2" class="swal2-input" placeholder="Code" style="width:100%;display:flex" value="' + branch_code + '" required>',
+                '<input id="swal-edit-input2" class="swal2-input" placeholder="Code" style="width:100%;display:flex" value="' + branch_code + '" required maxlength="4">',
             // inputValidator: (value) => {
             //     return new Promise((resolve) => {
             //         if (value.length >= 4) {
@@ -208,7 +208,7 @@
                 '<label for="swal-input1">Name</label>' +
                 '<input id="swal-input1" class="swal2-input" placeholder="Name" style="width:100%;display:flex" required>' +
                 '<label for="swal-input2">Code</label>' +
-                '<input id="swal-input2" class="swal2-input" placeholder="Code" style="width:100%;display:flex" required>',
+                '<input id="swal-input2" class="swal2-input" placeholder="Code" style="width:100%;display:flex" required maxlength="4">',
             onOpen: function () {
                 $('#swal-input1').focus()
             },

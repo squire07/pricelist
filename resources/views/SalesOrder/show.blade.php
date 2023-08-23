@@ -27,16 +27,29 @@
     </div>
     </div>
     <div>
-    
-        <b>Sales Order Type: </b>{{ $sales_order->transaction_type->name }}
-        <br>
-        <b>Order Number: </b>{{ $sales_order->so_no }}
+        {{-- <b>Transaction Type: </b>{{ $sales_order->transaction_type->name }}
         <br>
         <b>Distributor: </b>{{ $sales_order->distributor_name }}
         <br>
-        <b>Total Amount: </b>{{ $sales_order->total_amount }}
+        <b>BCID: </b>{{ $sales_order->bcid }}
         <br>
-        <b>Total NUC: </b> {{ $sales_order->total_nuc }}
+        <b>Group: </b>{{ $sales_order->group_name }}
+        <br> --}}
+        <div class="row mb-4">
+            <div class="col-md-6 col-sm-12">
+                Name: <span class="text-bold">{{ $sales_order->distributor_name }}</span>
+                <br>
+                BCID: <span class="text-bold">{{ $sales_order->bcid }}</span>
+                <br>
+                Group: <span class="text-bold">{{ $sales_order->group_name }}</span>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                Transaction Type: <span class="text-bold">{{ $sales_order->transaction_type->name }}</span>
+                <br>
+                Sales Order Number: <span class="text-bold">{{ $sales_order->so_no }}</span>
+                <br>
+            </div>
+        </div>
     </div>
     <table id="" class="table table-bordered table-hover table-striped" width="100%">
         <thead>  
@@ -55,11 +68,18 @@
                             <tr>
                                 <td class="text-center">{{ $sd->item_name }}</td>
                                 <td class="text-center">{{ $sd->quantity }}</td>
-                                <td class="text-center">{{ $sd->amount }}</td>
-                                <td class="text-center">{{ $sd->nuc }}</td>
+                                <td class="text-right">{{ $sd->amount }}</td>
+                                <td class="text-right">{{ $sd->nuc }}</td>
                             </tr>
                         @endforeach
-                    
+                        <tfoot>
+                            <tr>
+                                <td class="text-right"></td>
+                                <td class="text-right text-bold">Total</td>
+                                <td class="text-right text-bold" id="tfoot_total_amount"></b>{{ $sales_order->total_amount }}</td>
+                                <td class="text-right text-bold" id="tfoot_total_amount"></b>{{ $sales_order->total_nuc }}</td>
+                            </tr>
+                        </tfoot>
                     </tbody>
                 </table><br>
                 <a href="{{ url()->previous() }}" class="btn btn-info">Back</a>

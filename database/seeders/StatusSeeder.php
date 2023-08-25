@@ -16,10 +16,11 @@ class StatusSeeder extends Seeder
     public function run(): void
     {
         $statuses = [
-            'Draft',
-            'For Invoice',
-            'Cancelled',
-            'Released'
+            'For Posting',
+            'Enabled',
+            'Disabled',
+            'Active',
+            'Inactive',
         ];
 
         foreach($statuses as $key => $name) {

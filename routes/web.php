@@ -54,7 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('stockcard', StockCardController::class)->only('index');
     Route::resource('Item', ItemController::class);
     Route::resource('/item', ItemController::class);
-    Route::get('payment_types_list', [SalesOrderTypeController::class, 'payment_types_list'])->name('payment_types_list');
+    // Route::get('payment_types_list', [SalesOrderTypeController::class, 'payment_types_list'])->name('payment_types_list');
     Route::resource('payment-type', SalesOrderTypeController::class)->only('index');
 
 

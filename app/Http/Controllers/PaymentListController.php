@@ -19,9 +19,8 @@ class PaymentListController extends Controller
      */
     public function index()
     {
-        $payments = PaymentList::whereDeleted(false)->get();
+        $payments = PaymentList::with('status')->whereDeleted(false)->get();
         $companies = Company::whereDeleted(false)->get(['id','name']);
-        // $payment_types = PaymentList::where('uuid', $uuid)->firstOrFail();
         return view('PaymentType.index',compact('payments','companies'));
     }
 
@@ -30,8 +29,7 @@ class PaymentListController extends Controller
      */
     public function create()
     {
-        $companies = Company::whereDeleted(false)->get(['id','name']);
-        return view('PaymentType.create', compact('companies'));
+        //
     }
 
     /**
@@ -46,12 +44,12 @@ class PaymentListController extends Controller
             $payment_type->company_id = $request->company_id;
             $payment_type->name = $request->name;
             $payment_type->code = $request->code;
-            $payment_type->status_id = 6;
+            $payment_type->status_id = 6; // default to draft ?
             $payment_type->created_by = Auth::user()->name;
             $payment_type->save();
             return redirect('payment-types')->with('success','Payment Type Saved!');
         } else {
-            return redirect('payment-types/create')->with('error', 'Payment Type already exists!');
+            return redirect('payment-types')->with('error', 'Payment Type already exists!');
         }
     }
 
@@ -68,9 +66,7 @@ class PaymentListController extends Controller
      */
     public function edit(PaymentList $paymentList, string $uuid)
     {
-        $payment_types = PaymentList::where('uuid', $uuid)->firstOrFail();
-        $companies = Company::whereDeleted(false)->get(['id','name']);
-        return view('PaymentType.edit',compact('payment_types','companies'));
+        //
     }
 
     /**
@@ -82,7 +78,7 @@ class PaymentListController extends Controller
         $payment_type->company_id = $request->company_id;
         $payment_type->name = $request->name;
         $payment_type->code = $request->code;
-        $payment_type->status_id = $request->status;
+        $payment_type->status_id = $request->status ?? 6; // set default to enabled
         $payment_type->remarks = $request->remarks;
         $payment_type->updated_at = Carbon::now();
         $payment_type->updated_by = Auth::user()->name;
@@ -106,9 +102,9 @@ class PaymentListController extends Controller
         return redirect('payment-types')->with('success', $payment_type->name . ' Payment Type has been deleted!');
     }
 
-    public function payment_types_list() 
-    {
-        $payment_types = PaymentList::with('status', 'company')->whereDeleted(false);
-        return DataTables::of($payment_types)->toJson();
-    }
+    // public function payment_types_list() 
+    // {
+    //     $payment_types = PaymentList::with('status', 'company')->whereDeleted(false);
+    //     return DataTables::of($payment_types)->toJson();
+    // }
 }

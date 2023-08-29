@@ -115,12 +115,15 @@
                 required: 'true',
             },
             inputValidator: (value) => {
+                var regex = /^[a-zA-Z0-9\s]*$/;
                 return new Promise((resolve) => {
-                    if (value.length >= 4) {
+                    if (value.length >= 4 && regex.test(value) === true) {
                         resolve();
                     } else if (value.length == 0) {
                         resolve('Role is required!');
                     } else if (value.length <= 3) {
+                        resolve('Role is not valid!');
+                    } else {
                         resolve('Role is not valid!');
                     }
                 });
@@ -191,12 +194,15 @@
                 required: 'true',
             },
             inputValidator: (value) => {
+                var regex = /^[a-zA-Z0-9\s]*$/;
                 return new Promise((resolve) => {
-                    if (value.length >= 4) {
+                    if (value.length >= 4 && regex.test(value) === true) {
                         resolve();
                     } else if (value.length == 0) {
                         resolve('Role is required!');
                     } else if (value.length <= 3) {
+                        resolve('Role is not valid!');
+                    } else {
                         resolve('Role is not valid!');
                     }
                 });

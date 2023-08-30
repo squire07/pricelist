@@ -27,14 +27,6 @@
     </div>
     </div>
     <div>
-        {{-- <b>Transaction Type: </b>{{ $sales_order->transaction_type->name }}
-        <br>
-        <b>Distributor: </b>{{ $sales_order->distributor_name }}
-        <br>
-        <b>BCID: </b>{{ $sales_order->bcid }}
-        <br>
-        <b>Group: </b>{{ $sales_order->group_name }}
-        <br> --}}
         <div class="row mb-4">
             <div class="col-md-6 col-sm-12">
                 Name: <span class="text-bold">{{ $sales_order->distributor_name }}</span>

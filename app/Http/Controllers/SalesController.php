@@ -143,8 +143,9 @@ class SalesController extends Controller
                         ->firstOrFail();
 
         $transaction_types = TransactionType::whereDeleted(false)->get();
+        $branches = Branch::whereDeleted(false)->get(['id','name']);
 
-        return view('SalesOrder.edit', compact('sales_order','transaction_types'));
+        return view('SalesOrder.edit', compact('sales_order','transaction_types','branches'));
     }
 
     /**

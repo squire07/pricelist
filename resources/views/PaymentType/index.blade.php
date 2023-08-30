@@ -43,7 +43,9 @@
                                         data-uuid="{{ $payment->uuid }}" 
                                         data-payment-company-id="{{ $payment->company->id }}" 
                                         data-payment-name="{{ $payment->name }}" 
-                                        data-payment-code="{{ $payment->code }}">
+                                        data-payment-code="{{ $payment->code }}"
+                                        data-payment-status_id="{{ $payment->status->name }}"
+                                        data-payment-remarks="{{ $payment->remarks }}">
                                         <i class="far fa-eye"></i>&nbsp;Show
                                     </button>
                                     <button type="button" class="btn btn-sm btn-primary btn_edit" 
@@ -52,7 +54,9 @@
                                         data-uuid="{{ $payment->uuid }}" 
                                         data-payment-company-id="{{ $payment->company->id }}" 
                                         data-payment-name="{{ $payment->name }}" 
-                                        data-payment-code="{{ $payment->code }}">
+                                        data-payment-code="{{ $payment->code }}"
+                                        data-payment-status_id="{{ $payment->status->id }}"
+                                        data-payment-remarks="{{ $payment->remarks }}">
                                         <i class="fas fa-pencil-alt"></i>&nbsp;Edit
                                     </button>
                                 </td>
@@ -140,17 +144,30 @@
                             </div>
                             <div class="col-12">
                                 <label for="name">Name</label>
-                                <input type="text" class="form-control form-control-sm" name="name" id="modal_edit_name" required>
+                                <input type="text" class="form-control form-control-sm" name="name" id="modal_edit_name" required style="text-transform:uppercase">
                             </div>
                             <div class="col-12">
                                 <label for="code">Account Number</label>
                                 <input type="number" class="form-control form-control-sm" maxlength="12" min="0" name="code" id="modal_edit_code" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" required>
+                            </div><br>
+                            <div class="col-12">
+                                <label for="">Disable Payment?</label><br>
+                                <input type="radio" id="modal_edit_status_id" name="status" value="7" checked="checked">
+                                <label for="">YES</label><br>
+                                <input type="radio" id="modal_edit_status_id" name="status" value="6">
+                                <label for="">NO</label><br>
+                            </p>
+                            </div>
+                            <div class="col-12">
+                                <label for="remarks">Remarks</label>
+                                <input type="" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks" required oninput="this.value = this.value.toUpperCase()">
                             </div>
                         </div>
+                        
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary btn-sm m-2" id="btn_modal_edit_submit"><i class="fas fa-save mr-2"></i>Save</button>
+                        <button type="submit" class="btn btn-primary btn-sm m-2" id="btn_modal_edit_submit"><i class="fas fa-save mr-2"></i>Update</button>
                     </div>
                 </form>
             </div>
@@ -162,7 +179,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Payment Type</h4>
+                    <h4 class="modal-title">Payment Type Details</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -182,11 +199,19 @@
                         </div>
                         <div class="col-12">
                             <label for="name">Name</label>
-                            <input type="text" class="form-control form-control-sm" name="name" id="modal_show_name" disabled>
+                            <input type="" class="form-control form-control-sm" name="name" id="modal_show_name" disabled>
                         </div>
                         <div class="col-12">
                             <label for="code">Account Number</label>
                             <input type="number" class="form-control form-control-sm" maxlength="12" min="0" name="code" id="modal_show_code" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" disabled>
+                        </div>
+                        <div class="col-12">
+                            <label for="status">Status</label>
+                            <input type="" class="form-control form-control-sm" name="status" id="modal_show_status_id" disabled>
+                        </div>
+                        <div class="col-12">
+                            <label for="remarks">Remarks</label>
+                            <input type="" class="form-control form-control-sm" name="remarks" id="modal_show_remarks" disabled>
                         </div>
                     </div>
                 </div>
@@ -238,10 +263,14 @@
             var c_id = $(this).attr("data-payment-company-id");
             var name = $(this).attr("data-payment-name");
             var code = $(this).attr("data-payment-code");
+            var remarks = $(this).attr("data-payment-remarks");
+            var status_id = $(this).attr("data-payment-status_id");
 
             $('#modal_edit_company_id option[value=' + c_id + ']').attr('selected', 'selected');
             $('#modal_edit_name').val(name); 
-            $('#modal_edit_code').val(code); 
+            $('#modal_edit_code').val(code);
+            $('#modal_show_remarks').val(remarks);
+            $('#modal_show_status_id').val(status_id);
 
             // define the edit form action
             let action = window.location.origin + "/payment-types/" + uuid;
@@ -254,11 +283,15 @@
             var c_id = $(this).attr("data-payment-company-id");
             var name = $(this).attr("data-payment-name");
             var code = $(this).attr("data-payment-code");
+            var remarks = $(this).attr("data-payment-remarks");
+            var status_id = $(this).attr("data-payment-status_id");
 
             // set multiple attributes
             $('#modal_show_company_id option[value=' + c_id + ']').attr('selected', 'selected');
             $('#modal_show_name').val(name);
             $('#modal_show_code').val(code);
+            $('#modal_show_remarks').val(remarks);
+            $('#modal_show_status_id').val(status_id);
         });
     });
 </script>

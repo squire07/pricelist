@@ -29,7 +29,7 @@
                     <div class="row">
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
-                                <b>Transaction Type:
+                                <b>Transaction Type:</b>
                                 <select class="form-control form-control-sm select2 select2-primary" id="transaction_type" name="transaction_type_id" data-dropdown-css-class="select2-primary" style="width: 100%;" disabled>
                                     <option value="">-- Select Transaction Type --</option>
                                     @foreach($transaction_types as $transaction_type)
@@ -38,6 +38,17 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-4 col-sm-12">
+                            <div class="form-group">
+                                <b>Branch:</b>
+                                <select class="form-control form-control-sm select2 select2-primary" id="branch" name="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" disabled>
+                                    <option value="">-- Select Branch --</option>
+                                    @foreach($branches as $branch)
+                                        <option value="{{ $branch->id }}" {{ $sales_order->branch_id == $branch->id ? 'selected' : '' }}>{{ $branch->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>   
                     </div>
 
                     <div class="row">

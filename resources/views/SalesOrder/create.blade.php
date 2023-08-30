@@ -24,7 +24,7 @@
                             <div class="form-group">
                                 <label>Transaction Type</label>
                                 <select class="form-control form-control-sm select2 select2-primary" id="transaction_type" name="transaction_type_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                    <option value="">-- Select Transaction Type --</option>
+                                    <option value="" selected="true" disabled>-- Select Transaction Type --</option>
                                     @foreach($transaction_types as $transaction_type)
                                         <option value="{{ $transaction_type->id }}">{{ $transaction_type->name }}</option>
                                     @endforeach
@@ -35,7 +35,7 @@
                             <div class="form-group">
                                 <label>Branch</label>
                                 <select class="form-control form-control-sm select2 select2-primary" id="branch_id" name="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                    <option value="">-- Select Branch --</option>
+                                    <option value="" selected="true" disabled>-- Select Branch --</option>
                                     @foreach($branches as $branch)
                                         <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                                     @endforeach

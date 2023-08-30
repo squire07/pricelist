@@ -364,77 +364,78 @@
                     $('#quantity').focus();
                     required_field('Quantity');
                 }
-            } 
-            // make sure that item and quantity are not empty
-            if($('#item_name').val().length > 0 && $('#quantity').val() != '' && $('#quantity').val() != 0) {
-                // get the quantity
-                var quantity = $('#quantity').val();
-
-                // clear the item name, quantity and other fields after clicking the Add Item button
-                $('#item_name').val(null).trigger('change'); // this is for select2 type dropdown only
-                $('#quantity').val('');
-                $('#amount').val('');
-                $('#nuc').val('');
-                $('#rs_points').val('');
-
-                // get the sessionStorage object from item selected
-                var item_selected = JSON.parse(sessionStorage.getItem('item_selected'));
-
-                // sum of amount
-                total_amount += quantity * item_selected.amount;
-                $('#tfoot_total_amount').text(total_amount.toFixed(2));
-                // sum of nuc
-                total_nuc += quantity * item_selected.nuc;
-                $('#tfoot_total_nuc').text(total_nuc.toFixed(2));
-
-                // temporary 
-                $('#hidden_total_amount').val(total_amount.toFixed(2));
-                $('#hidden_total_nuc').val(total_nuc.toFixed(2));
-
-                // populate the details table
-                var row = '<tr>' + 
-                            '<td>' + item_selected.name + '</td>' +
-                            '<td class="text-center">' + quantity + '</td>' +
-                            '<td class="text-right">' + item_selected.amount + '</td>' +
-                            // '<td class="text-right">' + item_selected.nuc + ' (' + (item_selected.nuc * quantity).toFixed(2) + ')' +'</td>' +
-                            // '<td class="text-right">' + item_selected.rs_points + '</td>' +
-                            '<td class="text-right">' + (item_selected.amount * quantity).toFixed(2) + '</td>' +
-                            '<td class="text-center"><a href="#" class="btn-delete-item" data-quantity="' + quantity + '" data-amount="' + quantity * item_selected.amount + '" data-nuc="' + quantity * item_selected.nuc + '"><i class="far fa-trash-alt"></i></a></td>' +
-
-                            // hidden elements
-                            '<input type="hidden" name="item_name[]" value="' + item_selected.name + '" required>' + 
-                            '<input type="hidden" name="quantity[]" value="' + quantity + '" required>' + 
-                            '<input type="hidden" name="amount[]" value="' + item_selected.amount + '" required>' + 
-                            '<input type="hidden" name="nuc[]" value="' + item_selected.nuc + '" required>' + 
-                            '<input type="hidden" name="rs_points[]" value="' + item_selected.rs_points + '" required>' + 
-                            // hidden elements: computed
-                            '<input type="hidden" name="subtotal_nuc[]" value="' + (item_selected.nuc * quantity).toFixed(2) + '" required>' + 
-                            '<input type="hidden" name="subtotal_amount[]" value="' + (item_selected.amount * quantity).toFixed(2) + '" required>' + 
-                            '</tr>';
-
-                // increment the item counter
-                item_count++;
-
-                // append the table with dynamic rows
-                $("#table_item_details tbody").append(row);
-            } else if($('#item_name').val().length == 0) {
-                Swal.fire({
-                    title: 'Select an item',
-                    text: 'Select an item.', 
-                    icon: 'error',
-                });
-            } else if($('#quantity').val() == '' || $('#quantity').val() == 0) {
-                Swal.fire({
-                    title: 'Invalid quantity',
-                    text: 'Add quantity.', 
-                    icon: 'error',
-                });
             } else {
-                Swal.fire({
-                    title: 'Please add an item',
-                    text: 'Select an item and add quantity.', 
-                    icon: 'error',
-                });
+                // make sure that item and quantity are not empty
+                if($('#item_name').val().length > 0 && $('#quantity').val() != '' && $('#quantity').val() != 0) {
+                    // get the quantity
+                    var quantity = $('#quantity').val();
+
+                    // clear the item name, quantity and other fields after clicking the Add Item button
+                    $('#item_name').val(null).trigger('change'); // this is for select2 type dropdown only
+                    $('#quantity').val('');
+                    $('#amount').val('');
+                    $('#nuc').val('');
+                    $('#rs_points').val('');
+
+                    // get the sessionStorage object from item selected
+                    var item_selected = JSON.parse(sessionStorage.getItem('item_selected'));
+
+                    // sum of amount
+                    total_amount += quantity * item_selected.amount;
+                    $('#tfoot_total_amount').text(total_amount.toFixed(2));
+                    // sum of nuc
+                    total_nuc += quantity * item_selected.nuc;
+                    $('#tfoot_total_nuc').text(total_nuc.toFixed(2));
+
+                    // temporary 
+                    $('#hidden_total_amount').val(total_amount.toFixed(2));
+                    $('#hidden_total_nuc').val(total_nuc.toFixed(2));
+
+                    // populate the details table
+                    var row = '<tr>' + 
+                                '<td>' + item_selected.name + '</td>' +
+                                '<td class="text-center">' + quantity + '</td>' +
+                                '<td class="text-right">' + item_selected.amount + '</td>' +
+                                // '<td class="text-right">' + item_selected.nuc + ' (' + (item_selected.nuc * quantity).toFixed(2) + ')' +'</td>' +
+                                // '<td class="text-right">' + item_selected.rs_points + '</td>' +
+                                '<td class="text-right">' + (item_selected.amount * quantity).toFixed(2) + '</td>' +
+                                '<td class="text-center"><a href="#" class="btn-delete-item" data-quantity="' + quantity + '" data-amount="' + quantity * item_selected.amount + '" data-nuc="' + quantity * item_selected.nuc + '"><i class="far fa-trash-alt"></i></a></td>' +
+
+                                // hidden elements
+                                '<input type="hidden" name="item_name[]" value="' + item_selected.name + '" required>' + 
+                                '<input type="hidden" name="quantity[]" value="' + quantity + '" required>' + 
+                                '<input type="hidden" name="amount[]" value="' + item_selected.amount + '" required>' + 
+                                '<input type="hidden" name="nuc[]" value="' + item_selected.nuc + '" required>' + 
+                                '<input type="hidden" name="rs_points[]" value="' + item_selected.rs_points + '" required>' + 
+                                // hidden elements: computed
+                                '<input type="hidden" name="subtotal_nuc[]" value="' + (item_selected.nuc * quantity).toFixed(2) + '" required>' + 
+                                '<input type="hidden" name="subtotal_amount[]" value="' + (item_selected.amount * quantity).toFixed(2) + '" required>' + 
+                                '</tr>';
+
+                    // increment the item counter
+                    item_count++;
+
+                    // append the table with dynamic rows
+                    $("#table_item_details tbody").append(row);
+                } else if($('#item_name').val().length == 0) {
+                    Swal.fire({
+                        title: 'Select an item',
+                        text: 'Select an item.', 
+                        icon: 'error',
+                    });
+                } else if($('#quantity').val() == '' || $('#quantity').val() == 0) {
+                    Swal.fire({
+                        title: 'Invalid quantity',
+                        text: 'Add quantity.', 
+                        icon: 'error',
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Please add an item',
+                        text: 'Select an item and add quantity.', 
+                        icon: 'error',
+                    });
+                }
             }
         }); 
 

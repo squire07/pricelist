@@ -264,9 +264,26 @@ class SalesController extends Controller
         //
     }
 
-    public function sales_orders_list() 
+    public function sales_orders_list(Request $request) 
     {
-        $sales_orders = Sales::with('status','transaction_type')->whereStatusId(1)->whereDeleted(false)->orderByDESC('id')->whereDate('created_at', Carbon::today())->get();
+
+        // default to today's date
+        $from = Carbon::now()->format('Y-m-d') . ' 00:00:00';
+        $to = Carbon::now()->format('Y-m-d') . ' 23:59:59';
+
+        if($request->has('daterange')) {
+            $date = explode(' - ',$request->daterange);
+            $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
+            $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
+        } 
+
+        $sales_orders = Sales::with('status','transaction_type')
+                            ->whereBetween('created_at', [$from, $to])
+                            ->whereStatusId(1)
+                            ->whereDeleted(false)
+                            ->orderByDesc('id')
+                            ->get();
+
         return DataTables::of($sales_orders)->toJson(); 
     }
 

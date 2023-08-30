@@ -89,6 +89,12 @@
                     className: 'btn-default btn-sm',
                 },
             ],
+            columnDefs: [ 
+                {
+                    targets: [6], // column index (start from 0)
+                    orderable: false, // set orderable false for selected columns
+                }
+            ],
             initComplete: function () {
                 $("#dt_role").wrap("<div style='overflow:auto;width:100%;position:relative;'></div>");
 

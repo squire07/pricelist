@@ -3,9 +3,6 @@
 @section('title', 'Sales Orders')
 
 @section('content_header')
-    
-
-
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
@@ -13,20 +10,20 @@
             </div>
         </div>
     </div>
-
 @stop
 
 @section('content')
 <div class="card-body">
     <div class="row">
-    <div class="col-lg-12" >
-    <div class="position-relative p-3 bg-light">
-    <div class="ribbon-wrapper ribbon-lg">
-    <div class="ribbon bg-primary text-bold" id="ribbon_bg">
-    {{ $sales_order->status->name }}
-    </div>
-    </div>
-    <div>
+        <div class="col-lg-12" >
+            <div class="position-relative p-3 bg-light">
+                <div class="ribbon-wrapper ribbon-lg">
+                    <div class="ribbon {{ App\Helpers\HELPER::badge($sales_order->status_id) }} text-bold" id="ribbon_bg">
+                        {{ $sales_order->status->name }}
+                    </div>
+                </div>
+            <div>
+        </div>
         {{-- <b>Transaction Type: </b>{{ $sales_order->transaction_type->name }}
         <br>
         <b>Distributor: </b>{{ $sales_order->distributor_name }}

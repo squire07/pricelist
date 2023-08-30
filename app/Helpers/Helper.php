@@ -41,4 +41,20 @@ class Helper {
         }
     }
 
+    public static function badge($status_id)
+    {
+        switch($status_id) {
+            case 1: 
+                return 'bg-info';
+            case 2: 
+                return 'bg-warning';
+            case 3: 
+                return 'bg-danger';
+            case 4: 
+                return 'bg-success';
+            default: 
+                return 'bg-primary';
+        }
+    }
+
 }

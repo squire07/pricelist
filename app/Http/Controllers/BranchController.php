@@ -15,7 +15,8 @@ class BranchController extends Controller
      */
     public function index()
     {
-        $branches = Branch::whereDeleted(false)->get();
+        $branches = Branch::with('status')->whereDeleted(false)->get();
+        // dd($branches);
         return view('branch.index',compact('branches'));
     }
 
@@ -38,6 +39,7 @@ class BranchController extends Controller
             $branch->uuid = Str::uuid();
             $branch->name = $request->name;
             $branch->code = $request->code;
+            $branch->status_id = 8; //set default status to Active
             $branch->created_by = Auth::user()->name;
             $branch->save();
             return redirect()->back()->with('success', 'Branch has been created!');
@@ -70,6 +72,8 @@ class BranchController extends Controller
         $branch = Branch::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
         $branch->name = $request->name;
         $branch->code = $request->code;
+        $branch->status_id = $request->status;
+        $branch->remarks = $request->remarks;
         $branch->updated_by = Auth::user()->name;
         $branch->update();
 

@@ -52,6 +52,14 @@ class Helper {
                 return 'bg-danger';
             case 4: 
                 return 'bg-success';
+            case 6: 
+                return 'bg-success';
+            case 7: 
+                return 'bg-danger';
+            case 8: 
+                return 'bg-success';
+            case 9: 
+                return 'bg-danger';
             default: 
                 return 'bg-primary';
         }

@@ -15,7 +15,7 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $companies = Company::whereDeleted(false)->get();
+        $companies = Company::with('status')->whereDeleted(false)->get();
         return view('company.index',compact('companies'));
     }
 
@@ -70,6 +70,8 @@ class CompanyController extends Controller
         $company = Company::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
         $company->name = $request->name;
         $company->code = $request->code;
+        $company->status_id = $request->status;
+        $company->remarks = $request->remarks;
         $company->updated_by = Auth::user()->name;
         $company->update();
 

@@ -9,7 +9,7 @@
                 <h1>Branches</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <a href="#" target="_self" class="btn btn-primary" id="btn_add_branch">Add Branch</a>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add">Add Branch</button>
             </div>
         </div>
     </div>
@@ -22,29 +22,42 @@
                 <table id="dt_branch" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
                         <tr>
-                            <th class="text-center">ID</th>
                             <th class="text-center">Name</th>
                             <th class="text-center">Code</th>
                             <th class="text-center">Created By</th>
-                            <th class="text-center">Created At</th>
-                            <th class="text-center">Updated By</th>
-                            <th class="text-center">Updated At</th>
+                            <th class="text-center">Status</th>
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($branches as $branch)
                             <tr>
-                                <td class="text-center">{{ $branch->id }}</td>
-                                <td>{{ $branch->name }}</td>
+                                <td class="text-center">{{ $branch->name }}</td>
                                 <td class="text-center">{{ $branch->code }}</td>
                                 <td class="text-center">{{ $branch->created_by }}</td>
-                                <td class="text-center">{{ $branch->created_at }}</td>
-                                <td class="text-center">{{ $branch->updated_by }}</td>
-                                <td class="text-center">{{ $branch->updated_at }}</td>
+                                <td class="text-center"><span class="badge {{ Helper::badge($branch->status_id) }}">{{ $branch->status->name }}</span></td>
                                 <td class="text-center">
-                                    <button class="btn btn-sm btn-primary btn_edit" data-uuid="{{ $branch->uuid }}" data-branch-name="{{ $branch->name }}" data-branch-code="{{ $branch->code }}"><i class="far fa-edit"></i> Edit</button>
-                                    <button class="btn btn-sm btn-danger btn_delete" data-uuid="{{ $branch->uuid }}" data-branch-name="{{ $branch->name }}" data-branch-code="{{ $branch->code }}"><i class="far fa-trash-alt"></i> Delete</button>
+                                    <button type="button" class="btn btn-sm btn-default btn_show" 
+                                        data-toggle="modal"
+                                        data-target="#modal-show"
+                                        data-uuid="{{ $branch->uuid }}"
+                                        data-branch-name="{{ $branch->name }}" 
+                                        data-branch-code="{{ $branch->code }}"
+                                        data-branch-status_id="{{ $branch->status->name}}"
+                                        data-branch-remarks="{{ $branch->remarks }}"
+                                        data-branch-updated_by="{{ $branch->updated_by }}">
+                                        <i class="far fa-eye"></i>&nbsp;Show
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-primary btn_edit" 
+                                        data-toggle="modal" 
+                                        data-target="#modal-edit" 
+                                        data-uuid="{{ $branch->uuid }}" 
+                                        data-branch-name="{{ $branch->name }}" 
+                                        data-branch-code="{{ $branch->code }}"
+                                        data-branch-status_id="{{ $branch->status->name}}"
+                                        data-branch-remarks="{{ $branch->remarks }}">
+                                        <i class="fas fa-pencil-alt"></i>&nbsp;Edit
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -54,26 +67,131 @@
         </div>
     </div>
 
-    {{-- hidden form to submit SO for invoicing --}}
-    <form id="form_edit" method="POST">
-        @method('PATCH')
-        @csrf
-        <input type="hidden" name="uuid" id="hidden_edit_uuid">
-        <input type="hidden" name="name" id="hidden_edit_name">
-        <input type="hidden" name="code" id="hidden_edit_code">
-    </form>
 
-    <form id="form_delete" method="POST">
-        @method('DELETE')
-        @csrf
-        <input type="hidden" name="uuid" id="hidden_delete_uuid">
-    </form>
+    <div class="modal fade" id="modal-add">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Create New Branch</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
 
-    <form id="form_add" action="{{ url('branches') }}" method="POST" autocomplete="off">
-        @csrf
-        <input type="hidden" name="name" id="hidden_create_branch_name">
-        <input type="hidden" name="code" id="hidden_create_branch_code">
-    </form>
+                <form class="form-horizontal" action="{{ route('branches.store') }}" method="POST" id="form_modal_add" autocomplete="off">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="col-12">
+                                <label for="name">Branch Name</label>
+                                <input type="text" class="form-control form-control-sm" name="name" maxlength="25"  pattern="[a-zA-Z0-9\s]+" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="name">Branch Code</label>
+                                <input type="text" class="form-control form-control-sm" name="code" maxlength="3"  pattern="[a-zA-Z0-9\s]+" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary btn-sm m-2"><i class="fas fa-save mr-2"></i>Save</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    {{--  modal for create --}}
+    <div class="modal fade" id="modal-edit">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Edit Branch</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form class="form-horizontal" action="" method="POST" id="form_modal_edit" autocomplete="off">
+                    @method('PATCH')
+                    @csrf
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="col-12">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control form-control-sm" maxlength="25" name="name" id="modal_edit_name" required pattern="[a-zA-Z0-9\s]+">
+                            </div>
+                            <div class="col-12">
+                                <label for="code">Branch Code</label>
+                                <input type="text" class="form-control form-control-sm" maxlength="3" name="code" id="modal_edit_code" required pattern="[a-zA-Z0-9\s]+">
+                            </div><br>
+                            <div class="col-12">
+                                <label for="">Disable Branch?</label><br>
+                                <input type="radio" id="modal_edit_status_id" name="status" value="9" checked="checked">
+                                <label for="">YES</label><br>
+                                <input type="radio" id="modal_edit_status_id" name="status" value="8">
+                                <label for="">NO</label><br>
+                            </p>
+                            </div>
+                            <div class="col-12">
+                                <label for="remarks">Remarks</label>
+                                <input type="" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks" required oninput="this.value = this.value.toUpperCase()" pattern="[a-zA-Z0-9\s]+">
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary btn-sm m-2" id="btn_modal_edit_submit"><i class="fas fa-save mr-2"></i>Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{--  modal for show --}}
+    <div class="modal fade" id="modal-show">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Branch Details</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="col-12">
+                            <label for="name">Name</label>
+                            <input type="" class="form-control form-control-sm" name="name" id="modal_show_name" disabled>
+                        </div>
+                        <div class="col-12">
+                            <label for="code">Branch Code</label>
+                            <input type="text" class="form-control form-control-sm" maxlength="3" min="0" name="code" id="modal_show_code" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" disabled>
+                        </div>
+                        <div class="col-12">
+                            <label for="status">Status</label>
+                            <input type="" class="form-control form-control-sm" name="status" id="modal_show_status_id" disabled>
+                        </div>
+                        <div class="col-12">
+                            <label for="remarks">Remarks</label>
+                            <input type="" class="form-control form-control-sm" name="remarks" id="modal_show_remarks" disabled>
+                        </div>
+                        <div class="col-12">
+                            <label for="updated_by">Updated By</label>
+                            <input type="" class="form-control form-control-sm" name="updated_by" id="modal_show_updated_by" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 @endsection
 
@@ -95,7 +213,7 @@
             ],
             columnDefs: [ 
                 {
-                    targets: [7], // column index (start from 0)
+                    targets: [4], // column index (start from 0)
                     orderable: false, // set orderable false for selected columns
                 }
             ],
@@ -110,138 +228,39 @@
         });
     });
 
-    $('.btn_edit').on('click', function() {
-        var uuid = $(this).attr("data-uuid");
-        var branch_name = $(this).attr("data-branch-name");
-        var branch_code = $(this).attr("data-branch-code");
+        // use class instead of id because the button are repeating. ID can be only used once
+        $('.btn_edit').on('click', function() {
+            var uuid = $(this).attr("data-uuid");
+            var name = $(this).attr("data-branch-name");
+            var code = $(this).attr("data-branch-code");
+            var remarks = $(this).attr("data-branch-remarks");
+            var status_id = $(this).attr("data-branch-status_id");
 
-        // show the confirmation
-        Swal.fire({
-            title: 'Edit Branch',
-            // input: 'text',
-            // inputValue: branch_name,
-            // inputAttributes: {
-            //     autocapitalize: 'off',
-            //     defaultValue: branch_name,
-            //     required: 'true',
-            // },
-            html:
-                '<label for="swal-edit-input1">Name</label>' +
-                '<input id="swal-edit-input1" class="swal2-input" placeholder="Name" style="width:100%;display:flex" value="' + branch_name + '" required>' +
-                '<label for="swal-edit-input2">Code</label>' +
-                '<input id="swal-edit-input2" class="swal2-input" placeholder="Code" style="width:100%;display:flex" value="' + branch_code + '" required maxlength="4">',
-            // inputValidator: (value) => {
-            //     return new Promise((resolve) => {
-            //         if (value.length >= 4) {
-            //             resolve();
-            //         } else if (value.length == 0) {
-            //             resolve('Branch name is required!');
-            //         } else if (value.length <= 3) {
-            //             resolve('Branch name is not valid!');
-            //         }
-            //     });
-            // },
-            inputPlaceholder: branch_name,
-            showCancelButton: true,
-            confirmButtonText: 'Update',
-            cancelButtonColor: '#d33',
-            confirmButtonColor: '#3085d6',
-            showLoaderOnConfirm: true,
-            allowOutsideClick: () => !Swal.isLoading(),
-            preConfirm: function () {
-                return new Promise(function (resolve) {
-                    resolve([
-                        $('#swal-edit-input1').val(),
-                        $('#swal-edit-input2').val(),
-                    ])
-                })
-            },
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // get the uuid and pass to form_edit
-                    $('#hidden_edit_uuid').val(uuid);
+            $('#modal_edit_name').val(name); 
+            $('#modal_edit_code').val(code);
+            $('#modal_show_remarks').val(remarks);
+            $('#modal_show_status_id').val(status_id);
 
-                    // get the updated branch name and pass to form_edit 
-                    $('#hidden_edit_name').val(result.value[0]);
+            // define the edit form action
+            let action = window.location.origin + "/branches/" + uuid;
+            $('#form_modal_edit').attr('action', action);
+        });
 
-                    // get the updated company code and pass to form_edit 
-                    $('#hidden_edit_code').val(result.value[1]);
 
-                    // update the action of form_edit
-                    $('#form_edit').attr('action', window.location.origin + '/branches/' + uuid);
+        $('.btn_show').on('click', function() {
+            var uuid = $(this).attr("data-uuid");
+            var name = $(this).attr("data-branch-name");
+            var code = $(this).attr("data-branch-code");
+            var remarks = $(this).attr("data-branch-remarks");
+            var status_id = $(this).attr("data-branch-status_id");
+            var updated_by = $(this).attr("data-branch-updated_by");
 
-                    // submit the form to controller -> Update method
-                    $('#form_edit').submit();
-
-                    // final confirmation will come from Update method
-                }
-            })
-    });
-
-    $('.btn_delete').on('click', function() {
-        var uuid = $(this).attr("data-uuid");
-        var branch_name = $(this).attr("data-branch-name");
-
-        Swal.fire({
-            title: 'Are you sure you want to delete ' + branch_name + ' branch?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // get the uuid and pass to form_edit
-                $('#hidden_delete_uuid').val(uuid);
-
-                // update the action of form_edit
-                $('#form_delete').attr('action', window.location.origin + '/branches/' + uuid);
-
-                // submit the form to controller -> Update method
-                $('#form_delete ').submit();
-
-                // final confirmation will come from Delete method
-            }
-        })
-    });
-
-    $('#btn_add_branch').on('click', function() {
-        // show the confirmation
-        Swal.fire({
-            title: 'Add Branch',
-            html:
-                '<label for="swal-input1">Name</label>' +
-                '<input id="swal-input1" class="swal2-input" placeholder="Name" style="width:100%;display:flex" required>' +
-                '<label for="swal-input2">Code</label>' +
-                '<input id="swal-input2" class="swal2-input" placeholder="Code" style="width:100%;display:flex" required maxlength="4">',
-            onOpen: function () {
-                $('#swal-input1').focus()
-            },
-            showCancelButton: true,
-            confirmButtonText: 'Save',
-            cancelButtonColor: '#d33',
-            confirmButtonColor: '#3085d6',
-            showLoaderOnConfirm: true,
-            allowOutsideClick: () => !Swal.isLoading(),
-            preConfirm: function () {
-                return new Promise(function (resolve) {
-                    resolve([
-                        $('#swal-input1').val(),
-                        $('#swal-input2').val(),
-                    ])
-                })
-            },
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // get the updated branch name and pass to form_edit 
-                    $('#hidden_create_branch_name').val(result.value[0]);
-                    $('#hidden_create_branch_code').val(result.value[1]);
-
-                    // submit the form to controller -> Update method
-                    $('#form_add').submit();
-                }
-            })
-    });
+            // set multiple attributes
+            $('#modal_show_name').val(name);
+            $('#modal_show_code').val(code);
+            $('#modal_show_remarks').val(remarks);
+            $('#modal_show_status_id').val(status_id);
+            $('#modal_show_updated_by').val(updated_by);
+        });
 </script>
 @endsection

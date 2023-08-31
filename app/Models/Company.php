@@ -30,4 +30,9 @@ class Company extends Model
     {
         $this->attributes['code'] = strtoupper($value);
     }
+
+    public function status()
+    {
+        return $this->hasOne('App\Models\Status', 'id', 'status_id');
+    }
 }

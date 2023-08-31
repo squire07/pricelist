@@ -87,7 +87,6 @@
         <script src="{{ asset('vendor/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
         <script src="{{ asset('vendor/adminlte/dist/js/adminlte.min.js') }}"></script>
 
-        <script src="{{ asset('js/common.js') }}"></script>
         <script>
         $(document).ready(function() {
             @if(Session::has('success'))
@@ -105,6 +104,9 @@
 
     {{-- Extra Configured Plugins Scripts --}}
     @include('adminlte::plugins', ['type' => 'js'])
+
+    {{-- move common js here --}}
+    <script src="{{ asset('js/common.js') }}"></script>
 
     {{-- Livewire Script --}}
     @if(config('adminlte.livewire'))

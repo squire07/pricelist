@@ -17,9 +17,26 @@ class SalesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('SalesOrder.index');
+        // default to today's date
+        $from = Carbon::now()->format('Y-m-d') . ' 00:00:00';
+        $to = Carbon::now()->format('Y-m-d') . ' 23:59:59';
+
+        if($request->has('daterange')) {
+            $date = explode(' - ',$request->daterange);
+            $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
+            $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
+        } 
+
+        $sales_orders = Sales::with('status','transaction_type')
+                            ->whereBetween('created_at', [$from, $to])
+                            ->whereStatusId(1)
+                            ->whereDeleted(false)
+                            ->orderByDesc('id')
+                            ->get();
+
+        return view('SalesOrder.index', compact('sales_orders'));
     }
 
     /**
@@ -266,9 +283,7 @@ class SalesController extends Controller
     }
 
     public function sales_orders_list(Request $request) 
-    {
-
-        // default to today's date
+    {   
         $from = Carbon::now()->format('Y-m-d') . ' 00:00:00';
         $to = Carbon::now()->format('Y-m-d') . ' 23:59:59';
 
@@ -285,7 +300,7 @@ class SalesController extends Controller
                             ->orderByDesc('id')
                             ->get();
 
-        return DataTables::of($sales_orders)->toJson(); 
+        return DataTables::of($sales_orders)->toJson();
     }
 
 }

@@ -147,6 +147,7 @@
 
                     <div class="row">
                         <div class="col-12 text-center">
+                            <a href="{{ url()->previous() }}" class="btn btn-lg btn-info"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
                             <button class="btn btn-primary btn-lg m-2" id="btn_save_so"><i class="fas fa-save mr-2"></i>Update Sales Order</button>
                         </div>
                     </div>

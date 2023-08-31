@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Sales extends Model
 {
@@ -43,4 +44,10 @@ class Sales extends Model
     {
         return strtoupper($value);
     }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return $value != null ? Carbon::parse($value)->format('m/d/Y h:i:s A') : '';
+    }
+
 }

@@ -111,4 +111,12 @@ $(document).ready(function() {
             settings.clearCache = true;
         } );
     } );
+
+
+
+    // trigger for date range picker
+    $('#daterange').daterangepicker({
+        maxDate: new Date(),
+        autoApply: true,
+    });
 })

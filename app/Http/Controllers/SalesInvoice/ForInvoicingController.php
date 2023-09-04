@@ -6,6 +6,7 @@ use App\Models\Sales;
 use App\Models\PaymentList;
 use App\Models\SalesInvoice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -15,9 +16,26 @@ class ForInvoicingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('SalesInvoice.for_invoicing.index');
+        // default to today's date
+        $from = Carbon::now()->format('Y-m-d') . ' 00:00:00';
+        $to = Carbon::now()->format('Y-m-d') . ' 23:59:59';
+
+        if($request->has('daterange')) {
+            $date = explode(' - ',$request->daterange);
+            $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
+            $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
+        } 
+
+        $sales_orders = Sales::with('status','transaction_type')
+                            ->whereBetween('created_at', [$from, $to])
+                            ->whereStatusId(2)
+                            ->whereDeleted(false)
+                            ->orderByDesc('id')
+                            ->get();
+
+        return view('SalesInvoice.for_invoicing.index', compact('sales_orders'));
     }
 
     /**
@@ -39,9 +57,15 @@ class ForInvoicingController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($uuid)
     {
-        //
+        $sales_order = Sales::whereUuid($uuid)
+        ->with('transaction_type')
+        ->with('sales_details', function($query) {
+            $query->where('deleted',0);
+        })
+        ->firstOrFail();
+        return view('SalesInvoice.for_invoicing.show', compact('sales_order'));
     }
 
     /**

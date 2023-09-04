@@ -9,7 +9,7 @@
                 <h1>Payment Types</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-add">Create Payment Type</button>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add">Add Payment Type</button>
             </div>
         </div>
     </div>
@@ -35,7 +35,7 @@
                                 <td class="text-center">{{ $payment->name }}</td>
                                 <td class="text-center">{{ $payment->code }}</td>
                                 <td class="text-center">{{ $payment->company->name}}</td>
-                                <td class="text-center">{{ $payment->status->name }}</td>
+                                <td class="text-center"><span class="badge {{ Helper::badge($payment->status_id) }}">{{ $payment->status->name }}</span></td>
                                 <td class="text-center">
                                     <button type="button" class="btn btn-sm btn-default btn_show" 
                                         data-toggle="modal" 
@@ -96,7 +96,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="name">Name</label>
-                                <input type="text" class="form-control form-control-sm" name="name" required>
+                                <input type="text" class="form-control form-control-sm" name="name" pattern="[a-zA-Z0-9\s]+" required>
                             </div>
                             <div class="col-12">
                                 <label for="code">Account Number</label>
@@ -144,7 +144,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="name">Name</label>
-                                <input type="text" class="form-control form-control-sm" name="name" id="modal_edit_name" required style="text-transform:uppercase">
+                                <input type="text" class="form-control form-control-sm" name="name" id="modal_edit_name" required pattern="[a-zA-Z0-9\s]+">
                             </div>
                             <div class="col-12">
                                 <label for="code">Account Number</label>
@@ -256,6 +256,7 @@
                 }
             }
         });
+    });
 
         // use class instead of id because the button are repeating. ID can be only used once
         $('.btn_edit').on('click', function() {
@@ -293,6 +294,5 @@
             $('#modal_show_remarks').val(remarks);
             $('#modal_show_status_id').val(status_id);
         });
-    });
 </script>
 @endsection

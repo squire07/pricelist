@@ -16,7 +16,7 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\PaymentListController;
 use App\Http\Controllers\RoleController;
-
+use App\Http\Controllers\SalesInvoice\ForValidationController;
 use App\Models\SalesInvoiceCancel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -76,6 +76,9 @@ Route::middleware('auth')->group(function () {
         
         Route::get('sales_invoice_all_list', [AllController::class, 'sales_invoice_all_list'])->name('sales_invoice_all_list');
         Route::resource('sales-invoice/all', AllController::class);
+
+        Route::get('sales_invoice_for_validation_list', [ForValidationController::class, 'sales_invoice_for_validation_list'])->name('sales_invoice_for_validation_list');
+        Route::resource('sales-invoice/for-validation', ForValidationController::class);
     });
 
     Route::resource('branches', BranchController::class);

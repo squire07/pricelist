@@ -69,17 +69,17 @@
             </div>
         </div>
         <div class="card-footer text-center">
-            <a href="{{ url('sales-orders') }}" class="btn btn-lg btn-info float-left"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-            <button class="btn btn-lg btn-success float-right" style="margin-top: 8px" id="btn-for-invoice" data-uuid="{{ $sales_order->uuid }}" data-so-no="{{ $sales_order->so_no }}"><i class="far fa-share-square"></i>&nbsp;Submit</button>
-            <a href="{{ url('sales-orders/' . $sales_order->uuid . '/edit' ) }}" class="btn btn-lg btn-primary m-2 float-right"><i class="far fa-edit"></i>&nbsp;Edit</a>
+            <a href="{{ url('sales-invoice/for-validation') }}" class="btn btn-lg btn-info float-left"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+            <a href="{{ url('sales-invoice/for-invoice/' . $sales_order->uuid . '/edit' ) }}" class="btn btn-lg btn-success m-2 float-right"><i class="far fa-share-square"></i>&nbsp;Validate</a>
+            <button class="btn btn-lg btn-danger float-right" style="margin-top: 8px" id="btn-for-cancel" data-uuid="{{ $sales_order->uuid }}" data-so-no="{{ $sales_order->so_no }}"><i class="fas fa-ban"></i>&nbsp;Cancel Invoice</button>
         </div>
     </div>
 
-    {{-- hidden form to submit SO for invoicing --}}
-    <form id="form_for_invoicing" method="POST">
+    {{-- hidden form to return SO to Draft --}}
+    <form id="form_for_cancel" method="POST">
         @method('PATCH')
             <input type="hidden" name="uuid" id="hidden_uuid">
-            <input type="hidden" name="status_id" value="2">
+            <input type="hidden" name="status_id" value="3">
         @csrf
     </form>
 @endsection
@@ -87,7 +87,7 @@
 @section('adminlte_js')
 <script>
 $(document).ready(function() {
-    $('#btn-for-invoice').on('click', function() {
+    $('#btn-for-cancel').on('click', function() {
         var uuid = $(this).attr("data-uuid");
         var so_no = $(this).attr("data-so-no");
 
@@ -95,12 +95,14 @@ $(document).ready(function() {
 
         // show the confirmation
         Swal.fire({
-            title: 'Are you sure?',
-            text: 'Submit ' + so_no + ' for Invoicing!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            title: 'Are you sure to cancel ' + so_no + ' ?',
+                text: 'Remarks:',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                input: 'text',
+                inputValue: '',
             confirmButtonText: 'Yes, submit!'
         }).then((result) => {
             if (result.isConfirmed) {
@@ -108,10 +110,10 @@ $(document).ready(function() {
                 $('#hidden_uuid').val(uuid);
 
                 // update the action of form_for_invoicing 
-                $('#form_for_invoicing').attr('action', window.location.origin + '/sales-orders/' + uuid);
+                $('#form_for_cancel').attr('action', window.location.origin + '/sales-invoice/for-validation/' + uuid);
 
                 // finally, submit the form
-                $('#form_for_invoicing').submit();
+                $('#form_for_cancel').submit();
             }
         });
     });

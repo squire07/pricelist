@@ -69,52 +69,7 @@
             </div>
         </div>
         <div class="card-footer text-center">
-            <a href="{{ url('sales-orders') }}" class="btn btn-lg btn-info float-left"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-            <button class="btn btn-lg btn-success float-right" style="margin-top: 8px" id="btn-for-invoice" data-uuid="{{ $sales_order->uuid }}" data-so-no="{{ $sales_order->so_no }}"><i class="far fa-share-square"></i>&nbsp;Submit</button>
-            <a href="{{ url('sales-orders/' . $sales_order->uuid . '/edit' ) }}" class="btn btn-lg btn-primary m-2 float-right"><i class="far fa-edit"></i>&nbsp;Edit</a>
+            <a href="{{ url('sales-invoice/cancelled') }}" class="btn btn-lg btn-info float-left"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
         </div>
     </div>
-
-    {{-- hidden form to submit SO for invoicing --}}
-    <form id="form_for_invoicing" method="POST">
-        @method('PATCH')
-            <input type="hidden" name="uuid" id="hidden_uuid">
-            <input type="hidden" name="status_id" value="2">
-        @csrf
-    </form>
-@endsection
-
-@section('adminlte_js')
-<script>
-$(document).ready(function() {
-    $('#btn-for-invoice').on('click', function() {
-        var uuid = $(this).attr("data-uuid");
-        var so_no = $(this).attr("data-so-no");
-
-        console.log('test');
-
-        // show the confirmation
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'Submit ' + so_no + ' for Invoicing!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, submit!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // add uuid dynamically to hidden uuid field
-                $('#hidden_uuid').val(uuid);
-
-                // update the action of form_for_invoicing 
-                $('#form_for_invoicing').attr('action', window.location.origin + '/sales-orders/' + uuid);
-
-                // finally, submit the form
-                $('#form_for_invoicing').submit();
-            }
-        });
-    });
-});
-</script>
 @endsection

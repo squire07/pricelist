@@ -128,11 +128,11 @@
                                 <input type="text" class="form-control form-control-sm" maxlength="2" name="code" id="modal_edit_code" required pattern="[a-zA-Z0-9\s]+">
                             </div><br>
                             <div class="col-12">
-                                <label for="">Disable Company?</label><br>
-                                <input type="radio" id="modal_edit_status_id" name="status" value="9" checked="checked">
-                                <label for="">YES</label><br>
-                                <input type="radio" id="modal_edit_status_id" name="status" value="8">
-                                <label for="">NO</label><br>
+                                <label for="">Company Status?</label><br>
+                                <input type="radio" id="modal_edit_status_id" name="status" value="8" checked="checked">
+                                <label for="">Active</label><br>
+                                <input type="radio" id="modal_edit_status_id" name="status" value="9">
+                                <label for="">Inactive</label><br>
                             </p>
                             </div>
                             <div class="col-12">
@@ -212,7 +212,7 @@
             ],
             columnDefs: [ 
                 {
-                    targets: [4], // column index (start from 0)
+                    targets: [5], // column index (start from 0)
                     orderable: false, // set orderable false for selected columns
                 }
             ],

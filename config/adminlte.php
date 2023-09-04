@@ -327,6 +327,10 @@ return [
                     'url'  => 'sales-invoice/released',
                 ],
                 [
+                    'text' => 'For Validation - In Progress',
+                    'url'  => 'sales-invoice/for-validation',
+                ],
+                [
                     'text' => 'Cancelled',
                     'url'  => 'sales-invoice/cancelled',
                 ],

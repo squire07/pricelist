@@ -3,76 +3,59 @@
 @section('title', 'Sales Invoice Payments')
 
 @section('content_header')
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1>Sales Invoice Payment</h1>
-            </div>
-        </div>
-    </div>
-@stop
-
-@section('content')
-    <div class="container-fluid">
-        <div class="card">
-            <div class="row">
-                <div class="col-lg-12" >
-                <div class="position-relative p-3 bg-light">
-                <div class="ribbon-wrapper ribbon-lg">
-                <div class="ribbon bg-primary text-bold" id="ribbon_bg">
-                {{ $sales_order->status->name }}
-                </div>
-                </div>
-            <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                <form class="form-horizontal" id="form_sales_order" action="" method="POST" autocomplete="off">
-                    @csrf
-                    @method('PUT')
-                    <div class="row">
-                        <div class="col-md-4 col-sm-12">
-                            <div class="form-group">
-                                <b>Order Number: </b>{{ $sales_order->so_no }}<br>
-                                <b>Transaction Type: </b>{{ $sales_order->transaction_type->name }}<br>
-                                <b>Distributor Name: </b>{{ $sales_order->distributor_name }}<br>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="ribbon-wrapper ribbon-lg">
+                                <div class="ribbon {{ Helper::badge($sales_order->status_id) }} text-bold" id="ribbon_bg">
+                                    {{ $sales_order->status->name }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                Name: <span class="text-bold">{{ $sales_order->distributor_name }}</span>
+                                <br>
+                                BCID: <span class="text-bold">{{ $sales_order->bcid }}</span>
+                                <br>
+                                Group: <span class="text-bold">{{ $sales_order->group_name }}</span>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                Transaction Type: <span class="text-bold">{{ $sales_order->transaction_type->name }}</span>
+                                <br>
+                                Sales Order Number: <span class="text-bold">{{ $sales_order->so_no }}</span>
+                                <br>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                    <div class="col-md-4 col-sm-12">
-                    <div class="row">
-                        <div class="col-12">
-                        </div>
-                    </div>
-                 </div>
-             </div>
-                    
-
-                <table id="" class="table table-bordered table-hover table-striped" width="100%">
-                    <thead>  
-                        
-                            <table id="" class="table table-bordered table-hover table-striped" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Quantity</th>
-                                        <th class="text-center">Item Name</th>
-                                        <th class="text-center">Amount</th>
-                                        <th class="text-center">Total NUC</th>
-                                        <th class="text-center">Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($sales_order->sales_details as $sd)
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <table class="table table-bordered table-hover table-striped" width="100%">
+                                    <thead>
                                         <tr>
-                                            <td class="text-center">{{ $sd->quantity }}</td>
-                                            <td class="text-center">{{ $sd->item_name }}</td>
-                                            <td class="text-center">{{ $sd->item_price }}</td>
-                                            <td class="text-center">{{ $sd->nuc }}</td>
-                                            <td class="text-center">{{ $sd->amount }}</td>
+                                            <th class="text-center">Item Name</th>
+                                            <th class="text-center">Quantity</th>
+                                            <th class="text-center">Amount</th>
+                                            <th class="text-center">NUC</th>
                                         </tr>
-                                    @endforeach
-                                
-                                </tbody>
-                            </table>
-                </div>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($sales_order->sales_details as $sd)
+                                            <tr>
+                                                <td>{{ $sd->item_name }}</td>
+                                                <td class="text-center">{{ $sd->quantity }}</td>
+                                                <td class="text-right">{{ $sd->amount }}</td>
+                                                <td class="text-right">{{ $sd->nuc }}</td>
+                                            </tr>
+                                        @endforeach
+                                        <tfoot>
+                                            <tr>
+                                                <td class="text-right"></td>
+                                                <td class="text-right text-bold">Total</td>
+                                                <td class="text-right text-bold" id="tfoot_total_amount"></b>{{ $sales_order->total_amount }}</td>
+                                                <td class="text-right text-bold" id="tfoot_total_amount"></b>{{ $sales_order->total_nuc }}</td>
+                                            </tr>
+                                        </tfoot>
+                                    </tbody>
+                                </table>
+
                 <div class="row">
 
                     <div class="col-6">
@@ -94,19 +77,19 @@
                 <table class="table">
                 <tr>
                 <th style="width:50%">Subtotal:</th>
-                <td>$250.30</td>
+                <td><b>{{ $sales_order->total_amount }}</b></td>
                 </tr>
                 <tr>
-                <th>Tax (9.3%)</th>
-                <td>$10.34</td>
+                <th>Tax (12%)</th>
+                <td></td>
                 </tr>
                 <tr>
                 <th>Shipping:</th>
-                <td>$5.80</td>
+                <td></td>
                 </tr>
                 <tr>
                 <th>Total:</th>
-                <td>$265.24</td>
+                <td><b>{{ $sales_order->total_amount }}</b></td>
                 </tr>
                 </table>
                 </div>
@@ -117,36 +100,65 @@
                 
                 <div class="row no-print">
                 <div class="col-12">
+                <a href="{{ url('sales-invoice/for-invoice') }}" class="btn btn-info"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
                 <a href="invoice-print.html" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
-                <button type="button" class="btn btn-success float-right"><i class="far fa-credit-card"></i> Submit
+                {{-- <button type="button" class="btn btn-success float-right"><i class="far fa-credit-card"></i> Submit
                 Payment
-                </button>
-                <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
+                </button> --}}
+                <button type="button" class="btn btn-success float-right" data-toggle="modal" data-target="#modal-submit-payment"><i class="far fa-credit-card"> Submit Payment</i></button>
+                {{-- <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
                 <i class="fas fa-download"></i> Generate PDF
-                </button>
+                </button> --}}
+
                 </div>
-                </div>
-                </div>
-                
-                </div>
-                </div>
+
+                <div class="modal fade" id="modal-submit-payment">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Submit Payment</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+            
+                            <form class="form-horizontal" action="#" method="POST" id="form_modal_submit_payment" autocomplete="off">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="container-fluid">
+                                        {{-- <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Company</label>
+                                                <select class="form-control form-control-sm" name="company_id" required>
+                                                    <option value="" disabled>-- Select Company --</option>
+                                                    @foreach($companies as $company)
+                                                        <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div> --}}
+                                        <div class="col-12">
+                                            Total Amount:
+                                            <b>{{ $sales_order->total_amount }}</b>
+                                        </div>
+                                        <div class="col-6">
+                                            Cash Tendered:
+                                            <input type="number" class="form-control form-control-sm" id="cash_tendered" name="cash_tendered" maxlength="12" min="0" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" required>
+                                        </div><br>
+                                        <div class="col-12">
+                                            Change:
+                                            <b>{{ $sales_order->total_amount }}</b>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-success btn-sm m-2"><i class="fas fa-print mr-2"></i>Print Invoice</button>
+                                </div>
+            
+                            </form>
+                        </div>
+                    </div>
                 </div>
                 </section>
-                
-                </div>
-                
-                <aside class="control-sidebar control-sidebar-dark">
-                
-                </aside>
-                
-                </div>
-                
-                
-                <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="../../plugins/jquery/jquery.min.js"></script>
-                
-                <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-                
-                <script src="../../dist/js/adminlte.min.js?v=3.2.0"></script>
-                
-                <script src="../../dist/js/demo.js"></script>
 @endsection

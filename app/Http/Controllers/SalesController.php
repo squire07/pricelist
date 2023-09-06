@@ -125,10 +125,12 @@ class SalesController extends Controller
                 $details->updated_by = Auth::user()->name;
                 $details->save();
             }
-        }
 
-        // save to history
-        // code goes here for HISTORY
+            // save to history
+            // code goes here for HISTORY
+
+            Helper::history($sales->id,  $sales->uuid, 'Sales Order', 'Save', NULL);
+        }
 
         return redirect('sales-orders')->with('success','Sales Order Saved!');
     }
@@ -144,6 +146,9 @@ class SalesController extends Controller
                                 $query->where('deleted',0);
                             })
                             ->firstOrFail();
+
+        Helper::history($sales_order->id,  $sales_order->uuid, 'Sales Order', 'View Sales Order Details ' . $sales_order->so_no, NULL);
+        
         return view('SalesOrder.show', compact('sales_order'));
     }
 
@@ -173,7 +178,7 @@ class SalesController extends Controller
         $uuid = $request->uuid ?? $uuid;
         
         $sales = Sales::whereUuid($uuid)->whereDeleted(false)->firstOrFail();  
-
+        
         // check if request contains status_id = 2
         if(isset($request->status_id) && $request->status_id == 2) {
             $sales->status_id = $request->status_id;
@@ -182,6 +187,9 @@ class SalesController extends Controller
                 // pass the message to user if the update is successful
                 $message = $sales->so_no . ' successfully marked for invoicing';
             }
+
+            Helper::history($sales->id,  $sales->uuid, 'Sales Order', 'Mark as For Invoicing', NULL);
+
         } else {
             // other requests, status_id goes here. (from EDIT method)
             //dd($request);
@@ -267,6 +275,8 @@ class SalesController extends Controller
 
                 $message = $sales->so_no . ' successfully updated';
             }
+
+            Helper::history($sales->id,  $sales->uuid, 'Sales Order', 'Update', NULL);
 
         }
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Auth;
 use App\Models\Sales;
+use App\Models\History;
 
 class Helper {
 
@@ -67,4 +68,16 @@ class Helper {
         }
     }
 
+    public static function history($record_id, $record_uuid, $module, $event_name, $remarks) {
+        $history = new History();
+        $history->record_id = $record_id;
+        $history->uuid = $record_uuid;
+        $history->module = $module;
+        $history->event_name = $event_name;
+        $history->remarks = $remarks;
+        $history->created_by = Auth::user()->name;
+        $history->save();
+
+        return true;
+    }
 }

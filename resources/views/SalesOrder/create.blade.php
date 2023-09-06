@@ -58,7 +58,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text text-bold">Name&nbsp;<span class="required"></span></span>
                                 </div>
-                                <input type="text" class="form-control form-control-sm" id="distributor_name" name="distributor_name" required>
+                                <input type="text" class="form-control form-control-sm" id="distributor_name" name="distributor_name" required disabled>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12 mb-3">

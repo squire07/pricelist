@@ -22,7 +22,7 @@
                     <div class="row">
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
-                                <b>Order Number: </b>{{ $sales_order->so_no }}
+                                Sales Order Number: <b>{{ $sales_order->so_no }}</b>
                             </div>
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                     <div class="row">
                         <div class="col-md-4 col-4">
                             <label for="item_name">Item Name</label>
-                            <select class="form-control form-control-sm select2 select2-primary" id="item_name" data-dropdown-css-class="select2-primary">
+                            <select class="form-control form-control-sm select2 select2-primary" id="item_name" data-dropdown-css-class="select2-primary" required>
                             </select>
                         </div>
                         <div class="col-md-1 col-2">
@@ -147,8 +147,8 @@
 
                     <div class="row">
                         <div class="col-12 text-center">
-                            <a href="{{ url()->previous() }}" class="btn btn-lg btn-info"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-                            <button class="btn btn-primary btn-lg m-2" id="btn_save_so"><i class="fas fa-save mr-2"></i>Update Sales Order</button>
+                            <a href="{{ url()->previous() }}" class="btn btn-lg btn-info float-left"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+                            <button class="btn btn-primary btn-lg m-2 float-right" id="btn_save_so"><i class="fas fa-save mr-2"></i>Update Sales Order</button>
                         </div>
                     </div>
 
@@ -299,7 +299,7 @@
         // add item 
         $('#add_item').on('click', function() {
 
-            if($('#quantity').val().length > 0 && $('#quantity').val() != '' && $('#quantity').val() == 0) {
+            if($('#quantity').val().length > 0 != '' && $('#quantity').val() == 0) {
                 // set focus to quantity field
                 $('#quantity').focus();
                 // show invalid notification
@@ -309,62 +309,102 @@
                 });
             }
 
-            // make sure that item and quantity are not empty
-            if($('#item_name').val().length > 0 != '' && $('#quantity').val() != '' && $('#quantity').val() != 0) {
-                // get the quantity
-                var quantity = $('#quantity').val();
+            // simple validation 
+            let allAreFilled = true;
+            document.getElementById("form_sales_order").querySelectorAll("[required]").forEach(function(i) {
+                if (!allAreFilled) return;
+                if (!i.value) { 
+                    allAreFilled = false;  
+                    return; 
+                } 
+            });
+            if (!allAreFilled) {
+                
+                // set focus to specific field
+              if($.trim($("#item_name").val()) == "") {
+                    $('#item_name').focus();
+                    required_field('Item');
+                }
+                else if($.trim($("#quantity").val()) == "") {
+                    $('#quantity').focus();
+                    required_field('Quantity');
+                }
+            } else {
+                // make sure that item and quantity are not empty
+                if($('#item_name').val().length > 0 && $('#quantity').val() != '' && $('#quantity').val() != 0) {
+                    // get the quantity
+                    var quantity = $('#quantity').val();
 
-                // clear the item name, quantity and other fields after clicking the Add Item button
-                $('#item_name').val(null).trigger('change'); // this is for select2 type dropdown only
-                $('#quantity').val('');
-                $('#amount').val('');
-                $('#nuc').val('');
-                $('#rs_points').val('');
+                    // clear the item name, quantity and other fields after clicking the Add Item button
+                    $('#item_name').val(null).trigger('change'); // this is for select2 type dropdown only
+                    $('#quantity').val('');
+                    $('#amount').val('');
+                    $('#nuc').val('');
+                    $('#rs_points').val('');
 
-                // get the sessionStorage object from item selected
-                var item_selected = JSON.parse(sessionStorage.getItem('item_selected'));
+                    // get the sessionStorage object from item selected
+                    var item_selected = JSON.parse(sessionStorage.getItem('item_selected'));
 
-                // sum of amount
-                total_amount += (quantity * item_selected.amount);
-                $('#tfoot_total_amount').text(total_amount.toFixed(2));
+                    // sum of amount
+                    total_amount += quantity * item_selected.amount;
+                    $('#tfoot_total_amount').text(total_amount.toFixed(2));
+                    // sum of nuc
+                    total_nuc += quantity * item_selected.nuc;
+                    $('#tfoot_total_nuc').text(total_nuc.toFixed(2));
 
-                // sum of nuc
-                total_nuc += quantity * item_selected.nuc;
-                $('#tfoot_total_nuc').text(total_nuc.toFixed(2));
+                    // temporary 
+                    $('#hidden_total_amount').val(total_amount.toFixed(2));
+                    $('#hidden_total_nuc').val(total_nuc.toFixed(2));
 
-                // temporary 
-                $('#hidden_total_amount').val(total_amount.toFixed(2));
-                $('#hidden_total_nuc').val(total_nuc.toFixed(2));
+                    // populate the details table
+                    var row = '<tr>' + 
+                                '<td>' + item_selected.name + '</td>' +
+                                '<td class="text-center">' + quantity + '</td>' +
+                                '<td class="text-right">' + item_selected.amount + '</td>' +
+                                // '<td class="text-right">' + item_selected.nuc + ' (' + (item_selected.nuc * quantity).toFixed(2) + ')' +'</td>' +
+                                // '<td class="text-right">' + item_selected.rs_points + '</td>' +
+                                '<td class="text-right">' + (item_selected.amount * quantity).toFixed(2) + '</td>' +
+                                '<td class="text-center"><a href="#" class="btn-delete-item" data-quantity="' + quantity + '" data-amount="' + quantity * item_selected.amount + '" data-nuc="' + quantity * item_selected.nuc + '"><i class="far fa-trash-alt"></i></a></td>' +
 
-                // populate the details table
-                var row = '<tr>' + 
-                            '<td>' + item_selected.name + '</td>' +
-                            '<td class="text-center">' + quantity + '</td>' +
-                            '<td class="text-right">' + item_selected.amount + '</td>' +
-                            // '<td class="text-right">' + item_selected.nuc + ' (' + (item_selected.nuc * quantity).toFixed(2) + ')' +'</td>' +
-                            // '<td class="text-right">' + item_selected.rs_points + '</td>' +
-                            '<td class="text-right">' + (item_selected.amount * quantity).toFixed(2) + '</td>' +
-                            '<td class="text-center"><a href="#" class="btn-delete-item" data-quantity="' + quantity + '" data-amount="' + quantity * item_selected.amount + '" data-nuc="' + quantity * item_selected.nuc + '"><i class="far fa-trash-alt"></i></a></td>' +
+                                // hidden elements
+                                '<input type="hidden" name="item_name[]" value="' + item_selected.name + '" required>' + 
+                                '<input type="hidden" name="quantity[]" value="' + quantity + '" required>' + 
+                                '<input type="hidden" name="amount[]" value="' + item_selected.amount + '" required>' + 
+                                '<input type="hidden" name="nuc[]" value="' + item_selected.nuc + '" required>' + 
+                                '<input type="hidden" name="rs_points[]" value="' + item_selected.rs_points + '" required>' + 
+                                // hidden elements: computed
+                                '<input type="hidden" name="subtotal_nuc[]" value="' + (item_selected.nuc * quantity).toFixed(2) + '" required>' + 
+                                '<input type="hidden" name="subtotal_amount[]" value="' + (item_selected.amount * quantity).toFixed(2) + '" required>' + 
+                                '</tr>';
 
-                            // hidden elements
-                            '<input type="hidden" name="item_name[]" value="' + item_selected.name + '" required>' + 
-                            '<input type="hidden" name="quantity[]" value="' + quantity + '" required>' + 
-                            '<input type="hidden" name="amount[]" value="' + item_selected.amount + '" required>' + 
-                            '<input type="hidden" name="nuc[]" value="' + item_selected.nuc + '" required>' + 
-                            '<input type="hidden" name="rs_points[]" value="' + item_selected.rs_points + '" required>' + 
-                            // hidden elements: computed
-                            '<input type="hidden" name="subtotal_nuc[]" value="' + (item_selected.nuc * quantity).toFixed(2) + '" required>' + 
-                            '<input type="hidden" name="subtotal_amount[]" value="' + (item_selected.amount * quantity).toFixed(2) + '" required>' + 
-                            '</tr>';
+                    // increment the item counter
+                    item_count++;
 
-                // increment the item counter
-                item_count++;
-
-                // append the table with dynamic rows
-                $("#table_item_details tbody").append(row);
+                    // append the table with dynamic rows
+                    $("#table_item_details tbody").append(row);
+                } else if($('#item_name').val().length == 0) {
+                    Swal.fire({
+                        title: 'Select an item',
+                        text: 'Select an item.', 
+                        icon: 'error',
+                    });
+                } else if($('#quantity').val() == '' || $('#quantity').val() == 0) {
+                    Swal.fire({
+                        title: 'Invalid quantity',
+                        text: 'Add quantity.', 
+                        icon: 'error',
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Please add an item',
+                        text: 'Select an item and add quantity.', 
+                        icon: 'error',
+                    });
+                }
             }
-        });
+        }); 
 
+    
         // delete row
         $(document).on('click','.btn-delete-item', function() {
 
@@ -445,26 +485,9 @@
                     return; 
                 } 
             });
-            if (!allAreFilled) {
-                
-                // set focus to specific field
-                if($.trim($("#transaction_type").val()) == "") {
-                    $('#transaction_type').focus();
-                    required_field('Transaction Type');
-                } 
-                else if($.trim($("#bcid").val()) == "") {
-                    $('#bcid').focus();
-                    required_field('BCID');
-                }
-                else if($.trim($("#distributor_name").val()) == "") {
-                    $('#distributor_name').focus();
-                    required_field('Distributor name');
-                }
-            } 
-
             // lets check if there is/are actual item(s) in the details table before submitting
             // use `if else` statement to support older browser
-            else if(item_count > 0) {
+            if(item_count > 0) {
                 Swal.fire({
                     title: 'Are you sure you want to save this sales order?',
                     icon: 'warning',

@@ -14,6 +14,7 @@ use App\Http\Controllers\SalesInvoice\ForInvoicingController;
 use App\Http\Controllers\SalesInvoice\ReleasedController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\PaymentListController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalesInvoice\ForValidationController;
@@ -85,6 +86,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('roles', RoleController::class);
     Route::resource('companies', CompanyController::class);
     Route::resource('payment-types', PaymentListController::class);
+    Route::resource('history', HistoryController::class);
 
 
 

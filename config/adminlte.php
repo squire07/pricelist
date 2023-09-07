@@ -392,6 +392,10 @@ return [
                     'url'  => 'stockcard',
                 ],
                 [
+                    'text' => ' History',
+                    'url'  => 'history',
+                ],
+                [
                     'text' => ' For Testing',
                     'url'  => 'testbuildreport',
                 ],

@@ -10,6 +10,7 @@ use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
+use App\Helpers\Helper;
 
 class ForInvoicingController extends Controller
 {
@@ -90,25 +91,17 @@ class ForInvoicingController extends Controller
         // check if request contains status_id = 1
         if(isset($request->status_id) && $request->status_id == 1) {
             $sales->status_id = $request->status_id;
+            $sales->so_remarks = $request->so_remarks;
             $sales->updated_by = Auth::user()->name; // updated_at will be automatically filled by laravel
             if($sales->update()) {
                 // pass the message to user if the update is successful
                 $message = $sales->so_no . ' successfully returned to Draft!';
             }
+
+            Helper::history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Return Sales Order to Draft', $sales->so_remarks);
+
         }
-
         
-
-
-
-
-
-
-
-
-
-
-
         // redirect to index page with dynamic message coming from different statuses
         return redirect('sales-invoice/for-invoice')->with('success', $message);
     }

@@ -105,7 +105,7 @@
                 {{-- <button type="button" class="btn btn-success float-right"><i class="far fa-credit-card"></i> Submit
                 Payment
                 </button> --}}
-                <button type="button" class="btn btn-success float-right" data-toggle="modal" data-target="#modal-submit-payment"><i class="far fa-credit-card"> Submit Payment</i></button>
+                <button type="button" class="btn btn-success float-right" data-toggle="modal" data-target="#modal-submit-payment"><i class="far fa-credit-card"></i> Submit Payment</button>
                 {{-- <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
                 <i class="fas fa-download"></i> Generate PDF
                 </button> --}}
@@ -137,17 +137,18 @@
                                                 </select>
                                             </div>
                                         </div> --}}
-                                        <div class="col-12">
+                                        <div class="col-9">
                                             Total Amount:
-                                            <b>{{ $sales_order->total_amount }}</b>
+                                            <input type="number" class="form-control form-control-sm" id="total_amount"  style="font-size:25px;" value="{{ $sales_order->total_amount }}" disabled/>
+                                        <br>
                                         </div>
-                                        <div class="col-6">
+                                        <div class="col-9">
                                             Cash Tendered:
-                                            <input type="number" class="form-control form-control-sm" id="cash_tendered" name="cash_tendered" maxlength="12" min="0" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" required>
+                                            <input type="number" class="form-control form-control-sm" id="cash_tendered" style="font-size:25px;" name="cash_tendered" maxlength="12" min="0" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" required>
                                         </div><br>
-                                        <div class="col-12">
-                                            Change:
-                                            <b>{{ $sales_order->total_amount }}</b>
+                                        <div class="col-9">
+                                            Cash Change:
+                                            <input type="number" class="form-control form-control-sm" id="cash_change"  style="font-size:25px;" name="cash_change" maxlength="12" min="0" disabled>
                                         </div>
                                     </div>
                                 </div>
@@ -161,4 +162,28 @@
                     </div>
                 </div>
                 </section>
+@endsection
+
+@section('adminlte_js')
+<script>
+$(document).ready(function() {
+    $("#total_amount, #cash_tendered").keyup(function()
+    {
+        var cchange = 0;
+        var tamount = Number($("#total_amount").val());
+        var ctendered = Number($("#cash_tendered").val());
+        
+        console.log('TEST: ' + $(this).val());
+
+        if ($(this).length > 0 && $(this).val != '') {
+            var cchange = ctendered-tamount;
+
+            $("#cash_change").val(cchange.toFixed(2));
+        } else if ($(this).length < 1) {
+            $("#cash_change").val('0.00');
+        }
+    });
+});
+</script>
+
 @endsection

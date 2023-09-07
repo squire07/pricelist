@@ -68,14 +68,21 @@ class Helper {
         }
     }
 
-    public static function history($record_id, $record_uuid, $module, $event_name, $remarks) {
+    public static function history($record_id, $record_uuid, $transaction_type_id, $status_id, $so_no, $module, $event_name, $so_remarks) {
         $history = new History();
         $history->record_id = $record_id;
         $history->uuid = $record_uuid;
+        $history->transaction_type_id = $transaction_type_id;
+        $history->status_id = $status_id;
+        $history->so_no = $so_no;
         $history->module = $module;
         $history->event_name = $event_name;
-        $history->remarks = $remarks;
+        $history->remarks = $so_remarks;
+    //  $history->remarks = $so_remarks;
         $history->created_by = Auth::user()->name;
+        $history->updated_by = Auth::user()->name;
+        $history->created_at = Carbon::now();
+        $history->updated_at = Carbon::now();
         $history->save();
 
         return true;

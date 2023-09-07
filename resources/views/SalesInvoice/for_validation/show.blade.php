@@ -80,6 +80,7 @@
         @method('PATCH')
             <input type="hidden" name="uuid" id="hidden_uuid">
             <input type="hidden" name="status_id" value="3">
+            <input type="hidden" name="si_remarks" id="hidden_si_remarks">
         @csrf
     </form>
 @endsection
@@ -102,7 +103,25 @@ $(document).ready(function() {
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 input: 'text',
-                inputValue: '',
+                inputName: '',
+                inputAttributes: {
+                    autocapitalize: 'on',
+                    required: 'true',
+                },
+                inputValidator: (value) => {
+                var regex = /^[a-zA-Z0-9\s]*$/;
+                return new Promise((resolve) => {
+                    if (value.length >= 4 && regex.test(value) === true) {
+                        resolve();
+                    } else if (value.length == 0) {
+                        resolve('Please fill out this field!');
+                    } else if (value.length <= 3) {
+                        resolve('Remarks too short!');
+                    } else {
+                        resolve('Invalid Format!');
+                    }
+                });
+            },
             confirmButtonText: 'Yes, submit!'
         }).then((result) => {
             if (result.isConfirmed) {
@@ -110,6 +129,7 @@ $(document).ready(function() {
                 $('#hidden_uuid').val(uuid);
 
                 // update the action of form_for_invoicing 
+                $('#hidden_si_remarks').val(result.value);
                 $('#form_for_cancel').attr('action', window.location.origin + '/sales-invoice/for-validation/' + uuid);
 
                 // finally, submit the form

@@ -129,7 +129,7 @@ class SalesController extends Controller
             // save to history
             // code goes here for HISTORY
 
-            Helper::history($sales->id,  $sales->uuid, 'Sales Order', 'Save', NULL);
+            Helper::history($sales->id, $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Order', 'Create Sales Order', NULL);
         }
 
         return redirect('sales-orders')->with('success','Sales Order Saved!');
@@ -147,7 +147,7 @@ class SalesController extends Controller
                             })
                             ->firstOrFail();
 
-        Helper::history($sales_order->id,  $sales_order->uuid, 'Sales Order', 'View Sales Order Details ' . $sales_order->so_no, NULL);
+        //  Helper::history($sales_order->id,  $sales_order->uuid, $sales_order->transaction_type_id, $sales_order->status_id, $sales_order->so_no, 'Sales Order', 'View Sales Order Details ' . $sales_order->so_no, NULL);
         
         return view('SalesOrder.show', compact('sales_order'));
     }
@@ -188,7 +188,7 @@ class SalesController extends Controller
                 $message = $sales->so_no . ' successfully marked for invoicing';
             }
 
-            Helper::history($sales->id,  $sales->uuid, 'Sales Order', 'Mark as For Invoicing', NULL);
+            Helper::history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Order', 'Submitted For Invoicing', NULL);
 
         } else {
             // other requests, status_id goes here. (from EDIT method)
@@ -276,7 +276,7 @@ class SalesController extends Controller
                 $message = $sales->so_no . ' successfully updated';
             }
 
-            Helper::history($sales->id,  $sales->uuid, 'Sales Order', 'Update', NULL);
+            Helper::history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Order', 'Update Sales Order', NULL);
 
         }
 

@@ -69,7 +69,7 @@
             </div>
         </div>
         <div class="card-footer text-center">
-            <a href="{{ url('sales-orders') }}" class="btn btn-lg btn-info float-left"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+            <a href="{{ url('sales-orders') }}" class="btn btn-lg btn-info float-left" style="margin-top: 8px"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
             <button class="btn btn-lg btn-success float-right" style="margin-top: 8px" id="btn-for-invoice" data-uuid="{{ $sales_order->uuid }}" data-so-no="{{ $sales_order->so_no }}"><i class="far fa-share-square"></i>&nbsp;Submit</button>
             <a href="{{ url('sales-orders/' . $sales_order->uuid . '/edit' ) }}" class="btn btn-lg btn-primary m-2 float-right"><i class="far fa-edit"></i>&nbsp;Edit</a>
         </div>

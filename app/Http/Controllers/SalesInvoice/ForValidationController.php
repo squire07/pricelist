@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\SalesInvoiceForValidation;
+use App\Helpers\Helper;
 
 
 class ForValidationController extends Controller
@@ -88,11 +89,13 @@ class ForValidationController extends Controller
         // check if request contains status_id = 3
         if(isset($request->status_id) && $request->status_id == 3) {
             $sales->status_id = $request->status_id;
+            $sales->si_remarks = $request->si_remarks;
             $sales->updated_by = Auth::user()->name; // updated_at will be automatically filled by laravel
             if($sales->update()) {
                 // pass the message to user if the update is successful
                 $message = $sales->so_no . ' successfully marked Cancelled';
             }
+            Helper::history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Cancel Sales Invoice - ', $sales->si_remarks);
         }
 
         

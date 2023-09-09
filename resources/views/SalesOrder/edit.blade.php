@@ -147,8 +147,8 @@
 
                     <div class="row">
                         <div class="col-12 text-center">
-                            <a href="{{ url()->previous() }}" class="btn btn-lg btn-info float-left"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-                            <button class="btn btn-primary btn-lg m-2 float-right" id="btn_save_so"><i class="fas fa-save mr-2"></i>Update Sales Order</button>
+                            <a href="{{ url()->previous() }}" class="btn btn-lg btn-info float-left" style="margin-top: 8px"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+                            <button class="btn btn-primary btn-lg m-2 float-right" style="margin-top: 8px" id="btn_save_so"><i class="fas fa-save mr-2"></i>Update Sales Order</button>
                         </div>
                     </div>
 

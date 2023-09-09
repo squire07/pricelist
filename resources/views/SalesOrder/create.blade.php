@@ -50,7 +50,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text text-bold">BCID&nbsp;<span class="required"></span></span>
                                 </div>
-                                <input type="text" class="form-control form-control-sm" id="bcid" maxlength="12" name="bcid" required>
+                                <input type="text" class="form-control form-control-sm" id="bcid" maxlength="12" name="bcid" disabled>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12 mb-3">
@@ -79,12 +79,12 @@
                     <div class="row">
                         <div class="col-md-4 col-4">
                             <label for="item_name">Item Name</label>
-                            <select class="form-control form-control-sm select2 select2-primary" id="item_name" data-dropdown-css-class="select2-primary">
+                            <select class="form-control form-control-sm select2 select2-primary" id="item_name" data-dropdown-css-class="select2-primary " disabled>
                             </select>
                         </div>
                         <div class="col-md-1 col-2">
                             <label for="quantity">Quantity</label>
-                            <input type="number" class="form-control form-control-sm" min="1" id="quantity" oninput="validity.valid||(value=value.replace(/\D+/g, ''))">
+                            <input type="number" class="form-control form-control-sm" min="1" id="quantity" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" disabled>
                         </div>
                         <div class="col-md-1 col-2">
                             <label for="amount">Amount</label>
@@ -204,7 +204,7 @@
                 .then(response => response.json())
                 .then((response) => {
                     obj = JSON.parse(JSON.stringify(response));
-
+                    $('#bcid').attr('disabled', false);
                     // make sure the select element is empty before populating with values
                     $('#item_name').empty();
                     // add blank as first value
@@ -253,6 +253,9 @@
                         if(obj[0].name != '') {
                             $('#distributor_name').val(obj[0].name);
                             $('#group_name').val(obj[0].group);
+                            $('#bcid').attr('readonly','readonly');
+                            $('#item_name').attr('disabled', false);
+                            $('#quantity').attr('disabled', false);
                         } else {
                             $('#distributor_name').val('');
                             $('#group_name').val('');
@@ -356,14 +359,14 @@
                     $('#company').focus();
                     required_field('Company');
                 }
-                else if($.trim($("#item_name").val()) == "") {
-                    $('#item_name').focus();
-                    required_field('Item');
-                }
-                else if($.trim($("#quantity").val()) == "") {
-                    $('#quantity').focus();
-                    required_field('Quantity');
-                }
+                // else if($.trim($("#item_name").val()) == "") {
+                //     $('#item_name').focus();
+                //     required_field('Item');
+                // }
+                // else if($.trim($("#quantity").val()) == "") {
+                //     $('#quantity').focus();
+                //     required_field('Quantity');
+                // }
             } else {
                 // make sure that item and quantity are not empty
                 if($('#item_name').val().length > 0 && $('#quantity').val() != '' && $('#quantity').val() != 0) {

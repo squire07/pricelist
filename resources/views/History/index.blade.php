@@ -67,8 +67,8 @@
                                 <td class="text-center">{{ $sales_history->event_name }}</td>
                                 <td class="text-center"><span class="badge {{ Helper::badge($sales_history->status_id) }}">{{ $sales_history->status->name }}</span></td>
                                 <td class="text-center">{{ $sales_history->remarks }}</td>
-                                <td class="text-right">{{ $sales_history->created_by }}</td>
-                                <td class="text-right">{{ $sales_history->created_at }}</td>
+                                <td class="text-center">{{ $sales_history->created_by }}</td>
+                                <td class="text-center">{{ $sales_history->created_at }}</td>
                             </tr>
                         @endforeach
                     </tbody>

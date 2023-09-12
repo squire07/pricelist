@@ -50,7 +50,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text text-bold">BCID&nbsp;<span class="required"></span></span>
                                 </div>
-                                <input type="text" class="form-control form-control-sm" id="bcid" maxlength="12" name="bcid" disabled>
+                                <input type="number" class="form-control form-control-sm" id="bcid" maxlength="12" name="bcid" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" disabled>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12 mb-3">
@@ -197,7 +197,8 @@
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes'
+                    confirmButtonText: 'Yes',
+                    allowOutsideClick: false
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // just refresh the page and remove all existing data; no longer needed to remove all data from elements

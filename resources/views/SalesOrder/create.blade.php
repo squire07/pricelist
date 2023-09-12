@@ -168,15 +168,27 @@
         // initialize item counter: this will trigger if there is/are items in the table; This will be used by btn-delete-item AND transaction_type change event 
         var item_count = 0;
 
+        // default state
+        var old_transaction_type = 0;
+
+        var change_count = 0;
+
 
         // fetch the items details by transaction type id using FETCH API
-        $('#transaction_type').on('change', function() {
+        $('#transaction_type').on('change', function(e) {
+
+            // count the change event
+            change_count++;
 
             // get the current value of transaction type
             var currently_selected = this.value;
 
+            if(change_count == 1) {
+                old_transaction_type = this.value
+            }
+
             // check if there is/are item(s) in the details table
-            if(item_count > 0) {
+            if(item_count > 0 && currently_selected != old_transaction_type) {
                  // show notification
                 Swal.fire({
                     title: 'Change Transaction Type?',
@@ -190,8 +202,10 @@
                     if (result.isConfirmed) {
                         // just refresh the page and remove all existing data; no longer needed to remove all data from elements
                         location.reload();
-                    }
+                    } 
                 });
+
+                $(this).select2('val', old_transaction_type);
             }
 
             if(this.value !== '') {

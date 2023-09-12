@@ -8,6 +8,7 @@ use Yajra\DataTables\DataTables;
 use Auth;
 use App\Helpers\Helper;
 use App\Models\Branch;
+use App\Models\History;
 use App\Models\Sales;
 use App\Models\SalesDetails;
 use App\Models\TransactionType;
@@ -147,9 +148,9 @@ class SalesController extends Controller
                             })
                             ->firstOrFail();
 
-        //  Helper::history($sales_order->id,  $sales_order->uuid, $sales_order->transaction_type_id, $sales_order->status_id, $sales_order->so_no, 'Sales Order', 'View Sales Order Details ' . $sales_order->so_no, NULL);
+        $histories = History::whereUuid($sales_order->uuid)->whereDeleted(false)->get();
         
-        return view('SalesOrder.show', compact('sales_order'));
+        return view('SalesOrder.show', compact('sales_order','histories'));
     }
 
     /**

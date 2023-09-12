@@ -50,7 +50,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text text-bold">BCID&nbsp;<span class="required"></span></span>
                                 </div>
-                                <input type="number" class="form-control form-control-sm" id="bcid" maxlength="12" name="bcid" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" disabled>
+                                <input type="number" class="form-control form-control-sm" id="bcid" min="0" maxlength="12" name="bcid" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" disabled>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12 mb-3">

@@ -43,6 +43,7 @@ class DatabaseSeeder extends Seeder
         $this->call(BranchSeeder::class);
         $this->call(CompanySeeder::class);
         $this->call(DistributorSeeder::class);
+        $this->call(PaymentListSeeder::class);
         $this->call(RoleSeeder::class);
         $this->call(StatusSeeder::class);
         $this->call(TransactionTypeSeeder::class);

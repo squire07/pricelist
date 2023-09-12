@@ -39,6 +39,7 @@ class PaymentListSeeder extends Seeder
                 'uuid' => Str::uuid(),
                 'name' => $payment_list['name'],
                 'code' => $payment_list['code'],
+                'company_id' => 1,
                 'created_at' => Carbon::now()->toDateTimeString(),
                 'updated_at' => Carbon::now()->toDateTimeString(),
                 'created_by' => 'System',

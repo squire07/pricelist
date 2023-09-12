@@ -101,7 +101,11 @@
                 <div class="row no-print">
                 <div class="col-12">
                 <a href="{{ url('sales-invoice/for-invoice') }}" class="btn btn-info"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-                <a href="invoice-print.html" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
+
+                @if($sales_order->status_id == 4)
+                    <a href="invoice-print.html" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
+                @endif
+                
                 {{-- <button type="button" class="btn btn-success float-right"><i class="far fa-credit-card"></i> Submit
                 Payment
                 </button> --}}

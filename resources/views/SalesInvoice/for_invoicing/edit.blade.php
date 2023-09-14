@@ -3,6 +3,16 @@
 @section('title', 'Sales Invoice Payments')
 
 @section('content_header')
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>For Invoicing</h1>
+            </div>
+        </div>
+    </div>
+@stop
+
+@section('content')
     <div class="card">
         <div class="card-body">
             <div class="row">
@@ -49,8 +59,9 @@
                                 <tr>
                                     <td class="text-right"></td>
                                     <td class="text-right text-bold">Total</td>
-                                    <td class="text-right text-bold" id="tfoot_total_amount"></b>{{ $sales_order->total_amount }}</td>
-                                    <td class="text-right text-bold" id="tfoot_total_amount"></b>{{ $sales_order->total_nuc }}</td>
+                                    <td class="text-right text-bold" id="tfoot_total_nuc">{{ $sales_order->total_nuc }}</td>
+                                    <td class="text-right text-bold" id="tfoot_total_amount">{{ $sales_order->total_amount }}</td>
+                                    
                                 </tr>
                             </tfoot>
                         </tbody>
@@ -62,8 +73,8 @@
             <div class="row">
                 <div class="col-6">
                     <p class="lead">Payment Methods:</p>
-                    <select class="form-control form-control-sm select2 select2-primary" id="payment_type" name="payment_type_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                        <option value="">-- Select Payment Type --</option>
+                    <select class="select2" multiple="multiple" id="payment_type" name="payment_type_id[]" data-name="payment_type_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                        <option value="" disabled>-- Select Payment Type --</option>
                         @foreach($payment_types as $payment_type)
                             <option value="{{ $payment_type->id }}">{{ $payment_type->name }}</option>
                         @endforeach
@@ -114,7 +125,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal-submit-payment">
+    <div class="modal fade" id="modal-submit-payment" data-backdrop='static'>
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -124,22 +135,38 @@
                     </button>
                 </div>
 
-                <form class="form-horizontal" action="#" method="POST" id="form_modal_submit_payment" autocomplete="off">
+                <form class="form-horizontal" action="{{ route('for-invoice.update', $sales_order->uuid)}}" method="POST" id="form_modal_submit_payment" autocomplete="off">
                     @csrf
-                    <div class="modal-body">
+                    @method('PUT')
+
+                    {{-- 3 fields:  payment_type_id, remarks, cash_tendered --}}
+
+                    <div class="modal-body form-horizontal">
                         <div class="col-12">
-                            Total Amount:
-                            <input type="number" class="form-control form-control-sm text-right" id="total_amount"  style="font-size:25px;" value="{{ $sales_order->total_amount }}" disabled/>
-                        <br>
+                            <div class="form-group row">
+                                <label for="total_amount" class="col-sm-5 col-form-label">Total Amount:</label>
+                                <div class="col-sm-7">
+                                    <input type="number" class="form-control form-control-sm text-right" id="total_amount" style="font-size:25px;" value="{{ $sales_order->total_amount }}" disabled>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-12">
+
+                        {{-- <div class="col-12">
                             Cash Tendered:
-                            <input type="number" class="form-control form-control-sm text-right" id="cash_tendered" style="font-size:25px;" name="cash_tendered" maxlength="12" min="0" pattern="^\d+(?:\.\d{1,2})?$" required>
+                            <input type="number" class="form-control form-control-sm text-right" id="cash_tendered" style="font-size:25px;" name="cash_tendered" maxlength="12" min="0" pattern="^\d+(?:\.\d{1,2})?$" required> --}}
                             {{-- pattern="^\d+(?:\.\d{1,2})?$" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" required> --}}
-                        </div><br>
+                        {{-- </div> --}}
+
+                        {{-- dynamic cash tendered field --}}
+                        <div id="cash_tendered_fields"></div>
+
                         <div class="col-12">
-                            Cash Change:
-                            <input type="number" class="form-control form-control-sm text-right" id="cash_change"  style="font-size:25px;" name="cash_change" maxlength="12" min="0" placeholder="0.00" value="0.00" disabled>
+                            <div class="form-group row">
+                                <label for="cash_change" class="col-sm-5 col-form-label">Cash Change:</label>
+                                <div class="col-sm-7">
+                                    <input type="number" class="form-control form-control-sm text-right" id="cash_change" style="font-size:25px;" name="cash_change" value="0.00" disabled>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -151,20 +178,64 @@
         </div>
     </div>
 
+    {{-- hidden element: this will be used by js fx for dynamic fields computation --}}
+    <input type="hidden" id="count_payment_type" value="0">
+
 @endsection
 
 @section('adminlte_js')
 <script>
 $(document).ready(function() {
+    //Initialize Select2 Elements
+    $('.select2').select2();
+
+    //Initialize Select2 Elements
+    $('.select2bs4').select2({
+      theme: 'bootstrap4'
+    });
 
     $('#btn_submit_payment').prop('disabled', true);
     $('#btn_modal_print_invoice').prop('disabled', true);
 
     $('#btn_submit_payment').on('click', function() {
-        $('#cash_tendered').val('');
+
+        // always reset to zero
         $("#cash_change").val('0.00');
+
+        // count the number of payment type
+        var count_payment_type = $('#payment_type').val();
+        // update the value of hidden field `count_payment_type` from zero to new value
+        $('#count_payment_type').val(count_payment_type.length);
+
+        // empty first
+        $('#cash_tendered_fields').empty();
+
+        // get the names of payment type
+        var selected_payment_types = $("#payment_type :selected").select2(this.data);
+        
+        // create selected_payment_type_names array
+        var selected_payment_type_names = [];
+        for (var i = 0; i <= selected_payment_types.length-1; i++) {
+            selected_payment_type_names.push(selected_payment_types[i].text);
+        };
+
+        let divs = '';
+        // render html inside cash_tendered_fields div
+        for(let i = 1; i <= count_payment_type.length; i++) {
+            divs += "<div class='col-12'>" +
+                        "<div class='form-group row'>" +
+                            "<label for='" + selected_payment_type_names[i - 1] + "' class='col-sm-5 col-form-label'>" + selected_payment_type_names[i - 1] + ":</label>" +
+                            "<div class='col-sm-7'>" +
+                                "<input type='number' class='form-control form-control-sm text-right input_amount_field' id='dynamic_amount_field_" + i + "' style='font-size:25px;' name='payments[]' placeholder='0.00' required>" +
+                            "</div>" +
+                        "</div>" +
+                    "</div>";
+        }
+        $('#cash_tendered_fields').append(divs);
     });
 
+
+    // if payment_type field is empty, then disable the submit payment button
     $("#payment_type").on('change', function() {
         if($(this).val() != '') {
             $('#btn_submit_payment').prop('disabled', false);
@@ -173,37 +244,88 @@ $(document).ready(function() {
         }
     });
 
-    $("#total_amount, #cash_tendered").keyup(function()
-    {
-        var cchange = 0;
-        var tamount = Number($("#total_amount").val());
-        var ctendered = Number($("#cash_tendered").val());
-        var cchange = 0;
-
-        if ($(this).length > 0 && ctendered > 0) {
-            cchange = ctendered - tamount;
-        } else {
-            cchange = 0;
-        }
-
-        console.log(cchange);       
-
-        $("#cash_change").val(cchange.toFixed(2));
+    // prevent the user from using the "-" minus sign
+    // 109 is the minus key from number pad or num pad
+    // 189 is the minus key from alpha numeric keys
+    $(document).on('keydown', '.input_amount_field', function(e) {    
+        var charCode = e.which || e.keyCode;  
+        if (charCode == 109 || charCode == 189) {
+            e.preventDefault();
+        } 
     });
 
 
-    $('#cash_tendered').on('keyup change', function() {
-        if(Number($(this).val()) >= Number($('#total_amount').val())) {
+    // for dynamic input amount field
+    $(document).on('keyup', '.input_amount_field', function(e) {
+        // lets assume that every keyup event, the `total` is always set to 0 so we can get the right summation
+        let total = 0;
+        
+        // lets count the `cash tendered` field that is/are not null or empty
+        let non_empty_fields = 0;
+        
+        for(let i = 1; i <= $('#count_payment_type').val(); i++) {
+            if($('#dynamic_amount_field_' + i).val() != '') {
+                total += Number($('#dynamic_amount_field_' + i).val());
+
+                // increment the non_empty_fields
+                non_empty_fields++;
+            }
+        }
+
+        let cash_change = 0;
+        if (total > 0) {
+            cash_change = Number($("#total_amount").val()) - total;
+
+            // cash change cannot be more than 0 (positive value), the value must always be 0 or negative
+            if(cash_change >= 0) {
+                cash_change = 0;
+            }
+        } else {
+            cash_change = 0;
+        }
+        // cash_change = total.toFixed(2) - Number($("#total_amount").val());
+        $("#cash_change").val(cash_change.toFixed(2));
+
+        // enable, disable the print invoice button, if:
+        // 1. the `total cash tendered` is greater or equal with the total amount of sales invoice, and
+        // 2. the `count_payment_type` is equal to the count of non_empty_fields, in this way, we can prevent a NULL or empty dynamic field
+        if(total >= Number($("#total_amount").val()) && $('#count_payment_type').val() == non_empty_fields) {
             $('#btn_modal_print_invoice').prop('disabled', false);
         } else {
             $('#btn_modal_print_invoice').prop('disabled', true);
         }
     });
 
-    // submit
+    // format the dynamic field to two decimal places when the dynamic field has lost it's focus
+    $(document).on('blur', '.input_amount_field', function() {
+        // Get the current value of the input
+        let inputValue = this.value;
+
+        // Convert the value to a number
+        inputValue = parseFloat(inputValue);
+
+        // Check if the input is a valid number
+        if (!isNaN(inputValue)) {
+            // Round the number to two decimal places
+            inputValue = inputValue.toFixed(2);
+            
+            // Update the input value with the formatted value
+            this.value = inputValue;
+        }
+    });
+
+    // prevent paste event in dynamic fields
+    $(document).on('paste', '.input_amount_field', function(e) {
+        e.preventDefault();
+    });
+
+
+    // submit the final form with payment type details 
     $('#btn_modal_print_invoice').on('click', function() {
         // console.log('test')
     }); 
+
+    
 });
 </script>
 

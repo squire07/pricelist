@@ -6,7 +6,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Records History</h1>
+                <h1>Event Logs</h1>
             </div>
         </div>
     </div>

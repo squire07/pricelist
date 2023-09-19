@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\SalesInvoice;
 
 use App\Models\Sales;
+use App\Helpers\Helper;
+use App\Models\History;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\SalesInvoiceForValidation;
-use App\Helpers\Helper;
 
 
 class ForValidationController extends Controller
@@ -64,9 +65,11 @@ class ForValidationController extends Controller
         ->with('transaction_type')
         ->with('sales_details', function($query) {
             $query->where('deleted',0);
-        })
-        ->firstOrFail();
-        return view('SalesInvoice.for_validation.show', compact('sales_order'));
+        })->firstOrFail();
+
+        $histories = History::whereUuid($sales_order->uuid)->whereDeleted(false)->get();
+        
+        return view('SalesInvoice.for_validation.show', compact('sales_order','histories'));
     }
 
     /**

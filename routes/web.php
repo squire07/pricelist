@@ -86,7 +86,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('roles', RoleController::class);
     Route::resource('companies', CompanyController::class);
     Route::resource('payment-types', PaymentListController::class);
-    Route::resource('history', HistoryController::class);
+    Route::resource('logs', HistoryController::class);
 
 
 

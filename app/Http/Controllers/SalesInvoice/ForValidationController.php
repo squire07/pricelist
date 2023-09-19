@@ -20,24 +20,24 @@ class ForValidationController extends Controller
      */
     public function index(Request $request)
     {
-                    // default to today's date
-                    $from = Carbon::now()->format('Y-m-d') . ' 00:00:00';
-                    $to = Carbon::now()->format('Y-m-d') . ' 23:59:59';
-            
-                    if($request->has('daterange')) {
-                        $date = explode(' - ',$request->daterange);
-                        $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';                                                                                                                                                      
-                        $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
-                    } 
-            
-                    $sales_orders = Sales::with('status','transaction_type')
-                                        ->whereBetween('created_at', [$from, $to])
-                                        ->whereStatusId(4)
-                                        ->whereDeleted(false)
-                                        ->orderByDesc('id')
-                                        ->get();
-            
-                    return view('SalesInvoice.for_validation.index', compact('sales_orders'));
+        // default to today's date
+        $from = Carbon::now()->format('Y-m-d') . ' 00:00:00';
+        $to = Carbon::now()->format('Y-m-d') . ' 23:59:59';
+
+        if($request->has('daterange')) {
+            $date = explode(' - ',$request->daterange);
+            $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';                                                                                                                                                      
+            $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
+        } 
+
+        $sales_orders = Sales::with('status','transaction_type')
+                            ->whereBetween('created_at', [$from, $to])
+                            ->whereStatusId(4)
+                            ->whereDeleted(false)
+                            ->orderByDesc('id')
+                            ->get();
+
+        return view('SalesInvoice.for_validation.index', compact('sales_orders'));
     }
 
     /**
@@ -62,10 +62,10 @@ class ForValidationController extends Controller
     public function show($uuid)
     {
         $sales_order = Sales::whereUuid($uuid)
-        ->with('transaction_type')
-        ->with('sales_details', function($query) {
-            $query->where('deleted',0);
-        })->firstOrFail();
+                        ->with('transaction_type')
+                        ->with('sales_details', function($query) {
+                            $query->where('deleted',0);
+                        })->firstOrFail();
 
         $histories = History::whereUuid($sales_order->uuid)->whereDeleted(false)->get();
         

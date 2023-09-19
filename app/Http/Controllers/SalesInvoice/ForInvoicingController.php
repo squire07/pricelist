@@ -62,11 +62,10 @@ class ForInvoicingController extends Controller
     public function show($uuid)
     {
         $sales_order = Sales::whereUuid($uuid)
-        ->with('transaction_type')
-        ->with('sales_details', function($query) {
-            $query->where('deleted',0);
-        })->firstOrFail();
-
+                        ->with('transaction_type')
+                        ->with('sales_details', function($query) {
+                            $query->where('deleted',0);
+                        })->firstOrFail();
         
         $histories = History::whereUuid($sales_order->uuid)->whereDeleted(false)->get();
         

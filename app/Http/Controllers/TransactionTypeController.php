@@ -12,7 +12,7 @@ class TransactionTypeController extends Controller
      */
     public function index()
     {
-        //
+        return view('TransactionType.index');
     }
 
     /**

@@ -20,7 +20,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalesInvoice\ForValidationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SalesInvoiceAssignmentController;
-use App\Models\SalesInvoiceCancel;
+use App\Http\Controllers\TransactionTypeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -73,6 +73,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('distributors', DistributorController::class)->only('index');
     Route::resource('items', ItemController::class);
     Route::resource('payment-types', PaymentListController::class);
+    Route::resource('roles', RoleController::class);
+    Route::resource('sales-invoice-assignment', SalesInvoiceAssignmentController::class);
+    Route::resource('transaction-types', TransactionTypeController::class);
     Route::resource('users', UserController::class);
 
 

@@ -157,9 +157,9 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ url('reports/history') }}" class="nav-link {{ $url_segment_2 == 'history' ? 'active':'' }}" target="_self">
+                    <a href="{{ url('reports/logs') }}" class="nav-link {{ $url_segment_2 == 'logs' ? 'active':'' }}" target="_self">
                         <i class="far fa-circle nav-icon"></i>
-                        <p>History</p>
+                        <p>Logs</p>
                     </a>
                 </li>
                 <li class="nav-item">

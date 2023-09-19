@@ -46,7 +46,19 @@ class SalesController extends Controller
     public function create()
     {
         $transaction_types = TransactionType::whereDeleted(false)->get(['id','name']);
+ 
+        // users without branch id
         $branches = Branch::whereDeleted(false)->get(['id','name']);
+
+        // users with branch id
+        if(!empty(Auth::user()->branch_id)) {
+            $branch_ids = explode(',', Auth::user()->branch_id);
+
+            $branches = Branch::whereDeleted(false)
+                            ->whereIn('id', $branch_ids)
+                            ->get(['id','name']);
+        }
+
         return view('SalesOrder.create', compact('transaction_types','branches'));
     }
 

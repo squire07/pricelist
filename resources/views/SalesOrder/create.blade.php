@@ -34,11 +34,18 @@
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
                                 <label>Branch</label>
-                                <select class="form-control form-control-sm select2 select2-primary" id="branch_id" name="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                    <option value="" selected="true" disabled>-- Select Branch --</option>
-                                    @foreach($branches as $branch)
-                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                                    @endforeach
+                                <select class="form-control form-control-sm select2 select2-primary" id="branch_id" name="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required {{ count($branches) > 1 ? '':'disabled' }}>
+                                    
+                                    @if(count($branches) > 1)
+                                        <option value="" selected="true" disabled>-- Select Branch --</option>
+                                        @foreach($branches as $branch)
+                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                        @endforeach
+                                    @else
+                                        @foreach($branches as $branch)
+                                            <option value="{{ $branch->id }}" selected>{{ $branch->name }}</option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                         </div>

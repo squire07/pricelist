@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\SalesInvoice;
 
 use App\Models\Sales;
+use App\Models\History;
 use App\Models\SalesInvoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -61,9 +62,11 @@ class AllController extends Controller
         ->with('transaction_type')
         ->with('sales_details', function($query) {
             $query->where('deleted',0);
-        })
-        ->firstOrFail();
-        return view('SalesInvoice.all.show', compact('sales_order'));
+        })->firstOrFail();
+        
+        $histories = History::whereUuid($sales_order->uuid)->whereDeleted(false)->get();
+        
+        return view('SalesInvoice.all.show', compact('sales_order','histories'));
     }
 
     /**

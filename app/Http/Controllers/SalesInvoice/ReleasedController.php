@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\SalesInvoice;
 
 use App\Models\Sales;
+use App\Models\History;
 use App\Models\SalesInvoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -62,9 +63,11 @@ class ReleasedController extends Controller
         ->with('transaction_type')
         ->with('sales_details', function($query) {
             $query->where('deleted',0);
-        })
-        ->firstOrFail();
-        return view('SalesInvoice.released.show', compact('sales_order'));
+        })->firstOrFail();
+
+        $histories = History::whereUuid($sales_order->uuid)->whereDeleted(false)->get();
+        
+        return view('SalesInvoice.released.show', compact('sales_order','histories'));
     }
 
     /**
@@ -93,18 +96,6 @@ class ReleasedController extends Controller
                 $message = $sales->so_no . ' successfully marked as Cancelled!';
             }
         }
-
-        
-
-
-
-
-
-
-
-
-
-
 
         // redirect to index page with dynamic message coming from different statuses
         return redirect('sales-invoice/released')->with('success', $message);

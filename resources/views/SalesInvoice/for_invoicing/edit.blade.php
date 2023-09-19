@@ -58,7 +58,7 @@
                             <tfoot>
                                 <tr>
                                     <td class="text-right"></td>
-                                    <td class="text-right text-bold">Total</td>
+                                    <td class="text-right text-bold">Subtotal</td>
                                     <td class="text-right text-bold" id="tfoot_total_nuc">{{ $sales_order->total_nuc }}</td>
                                     <td class="text-right text-bold" id="tfoot_total_amount">{{ $sales_order->total_amount }}</td>
                                     
@@ -94,13 +94,17 @@
                                 <td class="text-right text-bold">{{ $sales_order->total_amount }}</td>
                             </tr>
                             <tr>
+                                <th style="width:50%">Shipping Fee:</th>
+                                <td class="text-right text-bold">{{ $sales_order->shipping_fee }}</td>
+                            </tr>
+                            <tr>
                                 <th>Tax (12%)</th>
                                 <td></td>
                             </tr>
                             <tr>
                                 <br>
-                                <th>Total:</th>
-                                <td class="text-right text-bold">{{ $sales_order->total_amount }}</td>
+                                <th>Grand Total:</th>
+                                <td class="text-right text-bold">{{ $sales_order->grandtotal_amount }}</td>
                             </tr>
                         </table>
                     </div>

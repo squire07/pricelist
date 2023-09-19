@@ -73,10 +73,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('distributors', DistributorController::class)->only('index');
     Route::resource('items', ItemController::class);
     Route::resource('payment-types', PaymentListController::class);
-    Route::resource('roles', RoleController::class);
-    Route::resource('sales-invoice-assignment', SalesInvoiceAssignmentController::class);
-    Route::resource('transaction-types', SalesOrderTypeController::class)->only('index');
-    Route::get('transactionlisting_list', [TransactionListingController::class, 'transactionlisting_list'])->name('transactionlisting_list');
     Route::resource('users', UserController::class);
 
 
@@ -84,7 +80,7 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'reports', 'alias' => 'reports'], function() {
         Route::get('buildreport_list', [BuildReportController::class, 'buildreport_list'])->name('buildreport_list');
         Route::resource('build-report', BuildReportController::class)->only('index');
-        Route::resource('history', HistoryController::class);
+        Route::resource('logs', HistoryController::class);
         Route::get('stockcard_list', [StockCardController::class, 'stockcard_list'])->name('stockcard_list');
         Route::resource('stock-card', StockCardController::class)->only('index');
         Route::resource('transaction-listing', TransactionListingController::class)->only('index');

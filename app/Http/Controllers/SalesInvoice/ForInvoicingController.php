@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\SalesInvoice;
 
 use App\Models\Sales;
+use App\Helpers\Helper;
+use App\Models\History;
 use App\Models\PaymentList;
 use App\Models\SalesInvoice;
 use Illuminate\Http\Request;
@@ -10,7 +12,6 @@ use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
-use App\Helpers\Helper;
 
 class ForInvoicingController extends Controller
 {
@@ -64,9 +65,12 @@ class ForInvoicingController extends Controller
         ->with('transaction_type')
         ->with('sales_details', function($query) {
             $query->where('deleted',0);
-        })
-        ->firstOrFail();
-        return view('SalesInvoice.for_invoicing.show', compact('sales_order'));
+        })->firstOrFail();
+
+        
+        $histories = History::whereUuid($sales_order->uuid)->whereDeleted(false)->get();
+        
+        return view('SalesInvoice.for_invoicing.show', compact('sales_order','histories'));
     }
 
     /**

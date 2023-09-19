@@ -79,10 +79,10 @@
                             <option value="{{ $payment_type->id }}">{{ $payment_type->name }}</option>
                         @endforeach
                     </select>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <p class="lead">Remarks:</p>
                         <input type="text" class="form-control form-control-sm" id="remarks" name="remarks">
-                    </div>
+                    </div> --}}
                 </div>
     
                 <div class="col-6">
@@ -98,10 +98,7 @@
                                 <td></td>
                             </tr>
                             <tr>
-                                <th>Shipping:</th>
-                                <td></td>
-                            </tr>
-                            <tr>
+                                <br>
                                 <th>Total:</th>
                                 <td class="text-right text-bold">{{ $sales_order->total_amount }}</td>
                             </tr>
@@ -168,6 +165,14 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-12">
+                            <div class="form-group row">
+                                <label for="ref_number" class="col-sm-5 col-form-label">Reference Number:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control form-control-sm text-right" id="ref_number" style="font-size:25px;" name="ref_number" disabled>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
@@ -226,13 +231,21 @@ $(document).ready(function() {
                         "<div class='form-group row'>" +
                             "<label for='" + selected_payment_type_names[i - 1] + "' class='col-sm-5 col-form-label'>" + selected_payment_type_names[i - 1] + ":</label>" +
                             "<div class='col-sm-7'>" +
-                                "<input type='number' class='form-control form-control-sm text-right input_amount_field' id='dynamic_amount_field_" + i + "' style='font-size:25px;' name='payments[]' placeholder='0.00' required>" +
+                                "<input type='text' class='form-control form-control-sm text-right input_amount_field' id='dynamic_amount_field_" + i + "' style='font-size:25px;' name='payments[]' placeholder='0.00' maxlength='12' required>" +
                             "</div>" +
                         "</div>" +
                     "</div>";
         }
         $('#cash_tendered_fields').append(divs);
     });
+
+    // $("#selected_payment_type_name").on('change', function() {
+    //     if($(this).val() != 'CASH') {
+    //         $('#ref_number').prop('disabled', true);
+    //     } else {
+    //         $('#ref_number').prop('disabled', false);
+    //     }
+    // });
 
 
     // if payment_type field is empty, then disable the submit payment button

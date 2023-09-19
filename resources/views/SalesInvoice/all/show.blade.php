@@ -58,9 +58,27 @@
                             <tfoot>
                                 <tr>
                                     <td class="text-right"></td>
-                                    <td class="text-right text-bold">Total</td>
-                                    <td class="text-right text-bold" id="tfoot_total_amount"></b>{{ $sales_order->total_amount }}</td>
-                                    <td class="text-right text-bold" id="tfoot_total_amount"></b>{{ $sales_order->total_nuc }}</td>
+                                    <td class="text-right text-bold">Sub-Total</td>
+                                    <td class="text-right" id="tfoot_sub_total_amount">{{ $sales_order->total_amount }}</td>
+                                    <td class="text-right text-bold" id="tfoot_total_amount">{{ $sales_order->total_nuc }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right"></td>
+                                    <td class="text-right text-bold">Shipping Fee</td>
+                                    <td class="text-right" id="tfoot_shipping_fee">{{ $sales_order->shipping_fee }}</td>
+                                    <td class="text-right text-bold"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right"></td>
+                                    <td class="text-right text-bold"></td>
+                                    <td class="text-right text-bold"></td>
+                                    <td class="text-right text-bold"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right"></td>
+                                    <td class="text-right text-bold">Grand Total</td>
+                                    <td class="text-right text-bold" id="tfoot_grandtotal_amount"><b>{{ $sales_order->grandtotal_amount }}</b></td>
+                                    <td class="text-right text-bold" id="tfoot_grandtotal_amount"></td>
                                 </tr>
                             </tfoot>
                         </tbody>
@@ -72,4 +90,7 @@
             <a href="{{ url('sales-invoice/all') }}" class="btn btn-lg btn-info float-left"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
         </div>
     </div>
+
+    @include('components.history')
+
 @endsection

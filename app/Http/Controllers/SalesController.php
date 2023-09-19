@@ -64,6 +64,8 @@ class SalesController extends Controller
         $sales->distributor_name = $request->distributor_name;
         $sales->group_name = $request->group_name;
         $sales->company = $request->company;
+        $sales->shipping_fee = $request->shipping_fee;
+        $sales->grandtotal_amount = $request->hidden_grandtotal_amount;
         $sales->total_amount = $request->hidden_total_amount; // must be refactored
         $sales->total_nuc = $request->hidden_total_nuc; // must be refactored
         $sales->status_id = 1; //set to default - 1 (Draft)

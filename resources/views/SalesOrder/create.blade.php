@@ -42,6 +42,16 @@
                                 </select>
                             </div>
                         </div>
+                        {{-- <div class="col-md-4 col-sm-12">
+                            <div class="form-group">
+                                <div class="checkbox"> 
+                                    <label class="checkbox-custom"> 
+                                    <input type="checkbox" name="clases" id="sf_checkbox" value="yes">
+                                    <i class="fa fa-fw fa-square-o"></i>With Shipping Fee?
+                                    </label> 
+                                </div>
+                            </div>
+                        </div> --}}
                     </div>
 
                     <div class="row">
@@ -94,6 +104,14 @@
                             <label for="nuc">NUC</label>
                             <input type="text" class="form-control form-control-sm" id="nuc" disabled>
                         </div>
+                        <div class="col-md-2 col-2">
+                            <div class="checkbox"> 
+                                <label class="checkbox">
+                                <input type="checkbox" name="sf_checkbox" id="sf_checkbox" value="yes" disabled>  With Shipping Fee?
+                                <span class="required"></span>
+                                <input type="text" class="form-control form-control-sm text-right" id="shipping_fee" style="margin-top: 8px" name="shipping_fee" placeholder="0.00" maxlength="12" value="0.00" readonly>
+                            </div>
+                        </div>
                         <div class="col-md-1 col-2 d-none">
                             <label for="rs_points">RS Points</label>
                             <input type="text" class="form-control form-control-sm" id="rs_points" disabled>
@@ -140,6 +158,7 @@
                     {{-- temporary --}}
                     <input type="hidden" name="hidden_total_amount" id="hidden_total_amount">
                     <input type="hidden" name="hidden_total_nuc" id="hidden_total_nuc">
+                    <input type="hidden" name="hidden_grandtotal_amount" id="hidden_grandtotal_amount">
 
                 </form>
             </div>    
@@ -271,6 +290,7 @@
                             $('#bcid').attr('readonly','readonly');
                             $('#item_name').attr('disabled', false);
                             $('#quantity').attr('disabled', false);
+                            $('#sf_checkbox').attr('disabled', false);
                         } else {
                             $('#distributor_name').val('');
                             $('#group_name').val('');
@@ -319,9 +339,26 @@
             } 
         }); 
 
-
-
-        // initialize total amount and nuc
+        // set shipping fee to enable
+        $("#sf_checkbox").on('click', function () {
+        $("#shipping_fee").attr('readonly', false);
+        $('#shipping_fee').attr('readonly',!this.checked);
+        $('#shipping_fee').val('',!this.checked)
+        });
+ 
+        // set shipping fee to disable on focus out
+        $("#shipping_fee").on('focusout', function () {
+        $("#shipping_fee").attr('readonly', true);
+        });
+ 
+        // set shipping fee input to two decimal places  
+        $('#shipping_fee').on('input', function () {
+        this.value = this.value.match(/^\d+\.?\d{0,2}/);
+        });
+        
+        // initialize total amount nuc grandtotal and shipping fee
+        var grandtotal_amount = 0;
+        var shipping_fee = 0;
         var total_amount = 0;
         var total_nuc = 0;
 
@@ -374,14 +411,6 @@
                     $('#company').focus();
                     required_field('Company');
                 }
-                // else if($.trim($("#item_name").val()) == "") {
-                //     $('#item_name').focus();
-                //     required_field('Item');
-                // }
-                // else if($.trim($("#quantity").val()) == "") {
-                //     $('#quantity').focus();
-                //     required_field('Quantity');
-                // }
             } else {
                 // make sure that item and quantity are not empty
                 if($('#item_name').val().length > 0 && $('#quantity').val() != '' && $('#quantity').val() != 0) {
@@ -405,9 +434,14 @@
                     total_nuc += quantity * item_selected.nuc;
                     $('#tfoot_total_nuc').text(total_nuc.toFixed(2));
 
+                    // sum of grand total
+                    shipping_fee = Number($('#shipping_fee').val());
+                    grandtotal_amount = total_amount + shipping_fee;
+
                     // temporary 
                     $('#hidden_total_amount').val(total_amount.toFixed(2));
                     $('#hidden_total_nuc').val(total_nuc.toFixed(2));
+                    $('#hidden_grandtotal_amount').val(grandtotal_amount.toFixed(2));
 
                     // populate the details table
                     var row = '<tr>' + 

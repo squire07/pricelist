@@ -52,6 +52,9 @@
                     </div>
                 </div>
             </div>
+            <div class="card-footer">
+                <a href="{{ url('sales-invoice-assignment') }}" class="btn btn-lg btn-info float-left" style="margin-top: 8px"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+            </div>
         </div>
         <div class="card">
             <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">

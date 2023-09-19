@@ -6,10 +6,12 @@ use Carbon\Carbon;
 use Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
-use Auth;
-use App\Models\Sales;
+use App\Models\Branch;
 use App\Models\History;
-
+use App\Models\Sales;
+use App\Models\User;
+use Auth;
+use Session;
 class Helper {
 
     // create uuid - non repeating
@@ -86,5 +88,47 @@ class Helper {
         $history->save();
 
         return true;
+    }
+
+
+    // should I store this in cache/session or in login method to prevent querying multiple times on every page loads?
+    public static function get_user_role_name() {
+        $user = User::with('role')->whereId(Auth::user()->id)->firstOrFail();
+
+        // store in session to prevent repeated query on page refresh and/or page transition
+        Session::put('role_name', $user->role->name);
+
+        return $user->role->name;
+    }
+
+    public static function get_user_branch_name() {
+        // there are users who have multiple branches
+        $user = User::with('branch')->whereId(Auth::user()->id)->firstOrFail();
+
+        $branch_name = '';
+
+        if(!empty($user->branch_id)) {
+            $explode = explode(',', $user->branch_id);
+
+            if(count($explode) > 1) {
+                for($i = 0; $i < count($explode); $i++) {
+                    // add separator in between branch names, if loop reaches the last, do not add a separator
+                    $separator = $i != count($explode) - 1 ? ' / ' : '';
+
+                    // get the branch name only, not as collection
+                    $branches = Branch::whereId($explode[$i])->value('name'); 
+
+                    // append if multiple
+                    $branch_name .= $branches . $separator;
+                }
+            } else {
+                $branch_name = $user->branch->name;
+            }
+        }
+
+        // store in session to prevent repeated query on page refresh and/or page transition
+        Session::put('branch_name', $branch_name);
+
+        return $branch_name; // this can be single or multiple with '/' as separator
     }
 }

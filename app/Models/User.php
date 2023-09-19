@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -42,4 +43,32 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // relationship
+    public function branch()
+    {
+        return $this->hasOne('App\Models\Branch', 'id', 'branch_id');
+    }
+
+    public function company()
+    {
+        return $this->hasOne('App\Models\Company', 'id', 'company_id');
+    }
+
+    public function role()
+    {
+        return $this->hasOne('App\Models\Role', 'id', 'role_id');
+    }
+
+
+    // getter and setter
+    public function getCreatedAtAttribute($value)
+    {
+        return $value != null ? Carbon::parse($value)->format('m/d/Y h:i:s A') : '';
+    }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return $value != null ? Carbon::parse($value)->format('m/d/Y h:i:s A') : '';
+    }
 }

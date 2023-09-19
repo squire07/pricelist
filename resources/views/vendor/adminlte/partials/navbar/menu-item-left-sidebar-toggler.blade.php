@@ -13,3 +13,14 @@
         <span class="sr-only">{{ __('adminlte::adminlte.toggle_navigation') }}</span>
     </a>
 </li>
+<li class="nav-item">
+    <span class="nav-link text-bold">
+        @php
+            $role_name = Session::get('role_name') ?? Helper::get_user_role_name();
+        @endphp
+        {{ strtoupper($role_name) }}
+    </span>
+</li>
+<li class="nav-item">
+    <span class="nav-link">{{ Session::get('branch_name') ?? Helper::get_user_branch_name() }}</span>
+</li>

@@ -365,6 +365,10 @@ return [
                     'url'  => '/roles',
                 ],
                 [
+                    'text' => 'Sales Invoice Assignment',
+                    'url'  => '/sales-invoice-assignment',
+                ],
+                [
                     'text' => 'Transaction Types',
                     'url'  => '/transaction-type',
                 ],

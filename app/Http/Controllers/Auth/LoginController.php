@@ -5,6 +5,11 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Auth;
+use Hash;
+use Session;
+use Artisan;
 
 class LoginController extends Controller
 {
@@ -41,5 +46,14 @@ class LoginController extends Controller
     public function username()
     {
         return 'username';
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('web')->logout();
+        Session::flush();
+        Artisan::call('cache:clear');
+        Auth::logout();
+        return redirect('/');
     }
 }

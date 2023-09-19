@@ -17,7 +17,7 @@
         <div class="card">
             <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
                 
-                <form id="request_date" class="form-horizontal" action="{{ url('sales-invoice/all') }}" method="get">
+                <form id="request_date" class="form-horizontal" action="{{ url('reports/history') }}" method="get">
                     @csrf
                     <label for="daterange">Request Date</label>
                     <div class="row">
@@ -34,7 +34,7 @@
                                     <div class="input-group-append" onclick="document.getElementById('request_date').submit();">
                                         <span class="input-group-text"><i class="fas fa-search"></i></span>
                                     </div>
-                                    <div class="input-group-append" onclick="window.location.assign('{{ url('sales-invoice/all') }}')">
+                                    <div class="input-group-append" onclick="window.location.assign('{{ url('reports/history') }}')">
                                         <span class="input-group-text"><i class="fas fa-sync-alt"></i></span>
                                     </div>
                                 </div>

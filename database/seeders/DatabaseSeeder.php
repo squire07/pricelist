@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Aris Flores',
             'username' => 'aris',
             'email' => 'test1234@test.com',
+            'role_id' => 12,
             'password' => Hash::make('12345678'),
             'created_by' => 'System',
             'updated_by' => 'System'
@@ -35,6 +36,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'username' => 'test',
             'email' => 'test@test.com',
+            'role_id' => 12,
             'password' => Hash::make('12345678'),
             'created_by' => 'System',
             'updated_by' => 'System'

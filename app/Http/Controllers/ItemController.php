@@ -13,7 +13,7 @@ class ItemController extends Controller
     public function index()
     {
         $items = Item::all();
-        return view('item.item', compact('items'));
+        return view('item.index', compact('items'));
     }
 
     /**

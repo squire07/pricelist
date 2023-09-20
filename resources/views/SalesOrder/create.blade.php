@@ -355,7 +355,20 @@
  
         // set shipping fee to disable on focus out
         $("#shipping_fee").on('focusout', function () {
-        $("#shipping_fee").attr('readonly', true);
+            let inputValue = this.value;
+
+        // Convert the value to a number
+            inputValue = parseFloat(inputValue);
+
+            // Check if the input is a valid number
+            if (!isNaN(inputValue)) {
+                // Round the number to two decimal places
+                inputValue = inputValue.toFixed(2);
+                
+                // Update the input value with the formatted value
+                this.value = inputValue;
+            }
+            $(this).attr('readonly', true);
         });
  
         // set shipping fee input to two decimal places  

@@ -35,6 +35,16 @@ class Sales extends Model
         return number_format($value,2,'.',',');
     }
 
+    public function getGrandtotalAmountAttribute($value)
+    {
+        return number_format($value,2,'.',',');
+    }
+
+    public function getShippingFeeAttribute($value)
+    {
+        return number_format($value,2,'.',',');
+    }
+
     public function getSoNoAttribute($value)
     {
         return strtoupper($value);

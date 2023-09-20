@@ -12,6 +12,7 @@ use App\Models\History;
 use App\Models\Sales;
 use App\Models\SalesDetails;
 use App\Models\TransactionType;
+use App\Models\User;
 use Carbon\Carbon; 
 class SalesController extends Controller
 {
@@ -30,10 +31,16 @@ class SalesController extends Controller
             $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
         } 
 
+        // get current users branch ids 
+        $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
+
         $sales_orders = Sales::with('status','transaction_type')
                             ->whereBetween('created_at', [$from, $to])
                             ->whereStatusId(1)
                             ->whereDeleted(false)
+                            ->when(!empty($user_branch), function($query) use ($user_branch) {
+                                $query->whereIn('branch_id', explode(',',$user_branch));
+                            })
                             ->orderByDesc('id')
                             ->get();
 
@@ -142,8 +149,6 @@ class SalesController extends Controller
             }
 
             // save to history
-            // code goes here for HISTORY
-
             Helper::history($sales->id, $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Order', 'Create Sales Order', NULL);
         }
 

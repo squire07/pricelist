@@ -290,132 +290,132 @@ return [
     */
 
     'menu' => [
-        // Navbar items:
-        [
-            'type'         => 'navbar-search',
-            'text'         => 'search',
-            'topnav_right' => false,
-        ],
-        [
-            'type'         => 'fullscreen-widget',
-            'topnav_right' => true,
-        ],
+        // Navbar items:  Please refer to file -> resources\views\componens\left-custom-sidebar.blade.php
+        // [
+        //     'type'         => 'navbar-search',
+        //     'text'         => 'search',
+        //     'topnav_right' => false,
+        // ],
+        // [
+        //     'type'         => 'fullscreen-widget',
+        //     'topnav_right' => true,
+        // ],
 
         // Sidebar items:
-        [
-            'text' => 'blog',
-            'url'  => 'admin/blog',
-            'can'  => 'manage-blog',
-        ],
+        // [
+        //     'text' => 'blog',
+        //     'url'  => 'admin/blog',
+        //     'can'  => 'manage-blog',
+        // ],
 
-        [
-            'text' => 'Sales Order',
-            'url'  => '/sales-orders',
-            'icon' => 'fas fa-fw fa-shopping-cart',
-        ],
-        [
-            'text'    => 'Sales Invoice',
-            'icon' => 'fas fa-fw fa-file-invoice',
-            'submenu' => [
-                [
-                    'text' => 'For Invoice',
-                    'url'  => 'sales-invoice/for-invoice',
-                ],
+        // [
+        //     'text' => 'Sales Order',
+        //     'url'  => '/sales-orders',
+        //     'icon' => 'fas fa-fw fa-shopping-cart',
+        // ],
+        // [
+        //     'text'    => 'Sales Invoice',
+        //     'icon' => 'fas fa-fw fa-file-invoice',
+        //     'submenu' => [
+        //         [
+        //             'text' => 'For Invoice',
+        //             'url'  => 'sales-invoice/for-invoice',
+        //         ],
                 
-                [
-                    'text' => 'Released',
-                    'url'  => 'sales-invoice/released',
-                ],
-                [
-                    'text' => 'For Validation - In Progress',
-                    'url'  => 'sales-invoice/for-validation',
-                ],
-                [
-                    'text' => 'Cancelled',
-                    'url'  => 'sales-invoice/cancelled',
-                ],
-                [
-                    'text' => 'All',
-                    'url'  => 'sales-invoice/all',
-                ],
-            ],
-        ],
-        [
-            'text'    => 'Support Modules',
-            'icon'    => 'fas fa-fw fa-share',
-            'submenu' => [
-                [
-                    'text' => 'Branches',
-                    'url'  => '/branches',
-                ],
-                [
-                    'text' => 'Companies',
-                    'url'  => '/companies',
-                ],
-                [
-                    'text' => 'Distributors',
-                    'url'  => '/distributor',
-                ],
-                [
-                    'text' => 'Items',
-                    'url'  => '/item',
-                ],
-                [
-                    'text' => 'Roles',
-                    'url'  => '/roles',
-                ],
-                [
-                    'text' => 'Sales Invoice Assignment',
-                    'url'  => '/sales-invoice-assignment',
-                ],
-                [
-                    'text' => 'Transaction Types',
-                    'url'  => '/transaction-type',
-                ],
-                [
-                    'text' => 'Payment Types',
-                    'url'  => '/payment-types',
-                ],
-            ],
-        ],
-        [
-            'text'    => 'Reports',
-            'icon'    => 'fas fa-fw fa-share',
-            'submenu' => [
-                [
-                    'text' => 'Transaction Listing',
-                    'url'  => 'transactionlisting',
-                ],
+        //         [
+        //             'text' => 'Released',
+        //             'url'  => 'sales-invoice/released',
+        //         ],
+        //         [
+        //             'text' => 'For Validation - In Progress',
+        //             'url'  => 'sales-invoice/for-validation',
+        //         ],
+        //         [
+        //             'text' => 'Cancelled',
+        //             'url'  => 'sales-invoice/cancelled',
+        //         ],
+        //         [
+        //             'text' => 'All',
+        //             'url'  => 'sales-invoice/all',
+        //         ],
+        //     ],
+        // ],
+        // [
+        //     'text'    => 'Support Modules',
+        //     'icon'    => 'fas fa-fw fa-share',
+        //     'submenu' => [
+        //         [
+        //             'text' => 'Branches',
+        //             'url'  => '/branches',
+        //         ],
+        //         [
+        //             'text' => 'Companies',
+        //             'url'  => '/companies',
+        //         ],
+        //         [
+        //             'text' => 'Distributors',
+        //             'url'  => '/distributor',
+        //         ],
+        //         [
+        //             'text' => 'Items',
+        //             'url'  => '/item',
+        //         ],
+        //         [
+        //             'text' => 'Roles',
+        //             'url'  => '/roles',
+        //         ],
+        //         [
+        //             'text' => 'Sales Invoice Assignment',
+        //             'url'  => '/sales-invoice-assignment',
+        //         ],
+        //         [
+        //             'text' => 'Transaction Types',
+        //             'url'  => '/transaction-type',
+        //         ],
+        //         [
+        //             'text' => 'Payment Types',
+        //             'url'  => '/payment-types',
+        //         ],
+        //     ],
+        // ],
+        // [
+        //     'text'    => 'Reports',
+        //     'icon'    => 'fas fa-fw fa-share',
+        //     'submenu' => [
+        //         [
+        //             'text' => 'Transaction Listing',
+        //             'url'  => 'transactionlisting',
+        //         ],
                 
-                [
-                    'text' => 'Build Report',
-                    'url'  => 'buildreport',
-                ],
-                [
-                    'text' => 'Stock Card',
-                    'url'  => 'stockcard',
-                ],
-                [
-                    'text' => ' Logs',
-                    'url'  => 'logs',
-                ],
-                [
-                    'text' => ' For Testing',
-                    'url'  => 'testbuildreport',
-                ],
-            ],
-        ],
-        ['header' => 'account_settings'],
-        [
-            'text' => 'profile',
-            'url'  => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url'  => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
+        //         [
+        //             'text' => 'Build Report',
+        //             'url'  => 'buildreport',
+        //         ],
+        //         [
+        //             'text' => 'Stock Card',
+        //             'url'  => 'stockcard',
+        //         ],
+        //         [
+        //             'text' => ' Logs',
+        //             'url'  => 'logs',
+        //         ],
+        //         [
+        //             'text' => ' For Testing',
+        //             'url'  => 'testbuildreport',
+        //         ],
+        //     ],
+        // ],
+        // ['header' => 'account_settings'],
+        // [
+        //     'text' => 'profile',
+        //     'url'  => 'admin/settings',
+        //     'icon' => 'fas fa-fw fa-user',
+        // ],
+        // [
+        //     'text' => 'change_password',
+        //     'url'  => 'admin/settings',
+        //     'icon' => 'fas fa-fw fa-lock',
+        // ],
         
         // ['header' => 'labels'],
         // [

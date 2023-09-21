@@ -165,7 +165,8 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="ribbon-wrapper ribbon-lg">
-                                <div class="ribbon" id="ribbon_bg"><input type="text2" name="status" id="modal_show_status_id">
+                                <div class="ribbon" id="ribbon_bg">
+                                    <span id="modal_show_status_id"></span>
                                 </div>
                             </div>
                         </div>
@@ -278,15 +279,13 @@ input[type="text2"], textarea {
             $('#modal_show_name').text(name);
             $('#modal_show_code').text(code);
             $('#modal_show_remarks').text(remarks);
-            $('#modal_show_status_id').val(status_id);
+            $('#modal_show_status_id').text(status_id);
             $('#modal_show_updated_by').text(updated_by);
-            console.log(status_id);
-            if ($('#modal_show_statud_id').val('Active')) {
-                $('#modal_show_status_id').attr('style','background-color:green');
-                $('#ribbon_bg').attr('style','background-color:green');
-            } else if ($('#modal_show_statud_id').val('Inactive')) {
-                $('#modal_show_status_id').attr('style','background-color:red');
-                $('#ribbon_bg').attr('style','background-color:red');
+            // console.log(status_id);
+            if (status_id == 'Active') {
+                $('#ribbon_bg').addClass('bg-success').removeClass('bg-danger');
+            } else {
+                $('#ribbon_bg').addClass('bg-danger').removeClass('bg-success');
             }
         });
 </script>

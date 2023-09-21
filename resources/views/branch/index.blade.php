@@ -161,27 +161,38 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="ribbon-wrapper ribbon-lg">
+                                <div class="ribbon" id="ribbon_bg"><input type="text2" name="status" id="modal_show_status_id">
+                                </div>
+                            </div>
+                        </div>
+                    </div>            
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="col-12">
-                            <label for="name">Name</label>
-                            <input type="" class="form-control form-control-sm" name="name" id="modal_show_name" disabled>
+                            Name:
+                            <span id="modal_show_name" style="font-weight:bold"></span>
+                            {{-- <input type="" class="form-control form-control-sm" name="name" id="modal_show_name" disabled> --}}
                         </div>
                         <div class="col-12">
-                            <label for="code">Branch Code</label>
-                            <input type="text" class="form-control form-control-sm" maxlength="3" min="0" name="code" id="modal_show_code" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" disabled>
+                            Branch Code:
+                            <span id="modal_show_code"  style="font-weight:bold"></span>
+                        </div>
+                        {{-- <div class="col-12">
+                            Status:<input type="text2" class="form-control form-control-sm" name="status" id="modal_show_status_id">
+                        </div> --}}
+                        <div class="col-12">
+                            Remarks:
+                            <span id="modal_show_remarks" style="font-weight:bold"></span>
+                            {{-- <input type="" class="form-control form-control-sm" name="remarks" id="modal_show_remarks" disabled> --}}
                         </div>
                         <div class="col-12">
-                            <label for="status">Status</label>
-                            <input type="" class="form-control form-control-sm" name="status" id="modal_show_status_id" disabled>
-                        </div>
-                        <div class="col-12">
-                            <label for="remarks">Remarks</label>
-                            <input type="" class="form-control form-control-sm" name="remarks" id="modal_show_remarks" disabled>
-                        </div>
-                        <div class="col-12">
-                            <label for="updated_by">Updated By</label>
-                            <input type="" class="form-control form-control-sm" name="updated_by" id="modal_show_updated_by" disabled>
+                            Updated By:
+                            <span id="modal_show_updated_by" style="font-weight:bold"></span>
+                            {{-- <input type="" class="form-control form-control-sm" name="updated_by" id="modal_show_updated_by" disabled> --}}
                         </div>
                     </div>
                 </div>
@@ -191,7 +202,15 @@
             </div>
         </div>
     </div>
-
+<style>
+input[type="text2"], textarea {
+  color: #ffffff;
+  text-align: center;
+  border: none;
+  outline: none;
+  font-weight: bold;
+}
+</style>
 
 @endsection
 
@@ -256,11 +275,19 @@
             var updated_by = $(this).attr("data-branch-updated_by");
 
             // set multiple attributes
-            $('#modal_show_name').val(name);
-            $('#modal_show_code').val(code);
-            $('#modal_show_remarks').val(remarks);
+            $('#modal_show_name').text(name);
+            $('#modal_show_code').text(code);
+            $('#modal_show_remarks').text(remarks);
             $('#modal_show_status_id').val(status_id);
-            $('#modal_show_updated_by').val(updated_by);
+            $('#modal_show_updated_by').text(updated_by);
+            console.log(status_id);
+            if ($('#modal_show_statud_id').val('Active')) {
+                $('#modal_show_status_id').attr('style','background-color:green');
+                $('#ribbon_bg').attr('style','background-color:green');
+            } else if ($('#modal_show_statud_id').val('Inactive')) {
+                $('#modal_show_status_id').attr('style','background-color:red');
+                $('#ribbon_bg').attr('style','background-color:red');
+            }
         });
 </script>
 @endsection

@@ -41,11 +41,12 @@
                                         data-toggle="modal" 
                                         data-target="#modal-show" 
                                         data-uuid="{{ $payment->uuid }}" 
-                                        data-payment-company-id="{{ $payment->company->id }}" 
+                                        data-payment-company-id="{{ $payment->company->name }}" 
                                         data-payment-name="{{ $payment->name }}" 
                                         data-payment-code="{{ $payment->code }}"
                                         data-payment-status_id="{{ $payment->status->name }}"
-                                        data-payment-remarks="{{ $payment->remarks }}">
+                                        data-payment-remarks="{{ $payment->remarks }}"
+                                        data-payment-updated_by="{{ $payment->updated_by }}">
                                         <i class="far fa-eye"></i>&nbsp;Show
                                     </button>
                                     <button type="button" class="btn btn-sm btn-primary btn_edit" 
@@ -127,43 +128,53 @@
                 </div>
 
                 <form class="form-horizontal" action="" method="POST" id="form_modal_edit" autocomplete="off">
-                    @method('PATCH')
+                    @method('PUT')
                     @csrf
                     <div class="modal-body">
                         <div class="container-fluid">
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Company</label>
-                                    <select class="form-control form-control-sm" name="company_id" id="modal_edit_company_id" required>
-                                        <option value="" disabled>-- Select Company --</option>
-                                        @foreach($companies as $company)
-                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
-                                        @endforeach
-                                    </select>
+                                <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="form-group">
+                                                    Company
+                                                    <select class="form-control form-control-sm" name="company_id" id="modal_edit_company_id" style="font-weight:bold" required>
+                                                        <option value="" disabled>-- Select Company --</option>
+                                                        @foreach($companies as $company)
+                                                            <option value="{{ $company->id }}" style="font-weight:bold">{{ $company->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="form-group">
+                                                    Name
+                                                    <input type="text" class="form-control form-control-sm" maxlength="25" name="name" id="modal_edit_name" required pattern="[a-zA-Z0-9\s]+" style="font-weight:bold">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="form-group">
+                                                    Account Code
+                                                    <input type="text" class="form-control form-control-sm" maxlength="3" name="code" id="modal_edit_code" required pattern="[a-zA-Z0-9\s]+" style="font-weight:bold">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="form-group">
+                                                    Payment Status?<br>
+                                                    <input type="radio" id="modal_edit_status_id" name="status" value="6" checked="checked">
+                                                    <label for="">Enabled</label>&nbsp;&nbsp;
+                                                    <input type="radio" id="modal_edit_status_id" name="status" value="7" style="margin-top: 8px">
+                                                    <label for="">Disabled</label><br>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12">
+                                                <div class="form-group">
+                                                    Remarks
+                                                <input type="" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks" required oninput="this.value = this.value.toUpperCase()" pattern="[a-zA-Z0-9\s]+" style="font-weight:bold">
+                                                </div>
+                                            </div>
+                                        </div>
                                 </div>
-                            </div>
-                            <div class="col-12">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control form-control-sm" name="name" id="modal_edit_name" required pattern="[a-zA-Z0-9\s]+">
-                            </div>
-                            <div class="col-12">
-                                <label for="code">Account Number</label>
-                                <input type="number" class="form-control form-control-sm" maxlength="12" min="0" name="code" id="modal_edit_code" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" required>
-                            </div><br>
-                            <div class="col-12">
-                                <label for="">Disable Payment?</label><br>
-                                <input type="radio" id="modal_edit_status_id" name="status" value="7" checked="checked">
-                                <label for="">YES</label><br>
-                                <input type="radio" id="modal_edit_status_id" name="status" value="6">
-                                <label for="">NO</label><br>
-                            </p>
-                            </div>
-                            <div class="col-12">
-                                <label for="remarks">Remarks</label>
-                                <input type="" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks" required oninput="this.value = this.value.toUpperCase()">
-                            </div>
                         </div>
-                        
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
@@ -184,39 +195,41 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label>Company</label>
-                                <select class="form-control form-control-sm" name="company_id" id="modal_show_company_id" disabled>
-                                    <option value="" disabled>-- Select Company --</option>
-                                    @foreach($companies as $company)
-                                        <option value="{{ $company->id }}">{{ $company->name }}</option>
-                                    @endforeach
-                                </select>
+                <div class="card">
+                    <div class="card-body">
+                            <div class="row">
+                                <div class="ribbon-wrapper ribbon-lg">
+                                    <div class="ribbon" id="ribbon_bg">
+                                        <span id="modal_show_status_id"></span>
+                                    </div>
+                                </div>
+                            </div>         
+                        <div class="container-fluid">
+                            <div class="col-12">
+                            Company:
+                            <span id="modal_show_company_id" style="font-weight:bold"></span>
+                            </div>
+                            <div class="col-12">
+                                Name:
+                                <span id="modal_show_name" style="font-weight:bold"></span>
+                            </div>
+                            <div class="col-12">
+                                Branch Code:
+                                <span id="modal_show_code"  style="font-weight:bold"></span>
+                            </div>
+                            <div class="col-12">
+                                Remarks:
+                                <span id="modal_show_remarks" style="font-weight:bold"></span>
+                            </div>
+                            <div class="col-12">
+                                Updated By:
+                                <span id="modal_show_updated_by" style="font-weight:bold"></span>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <label for="name">Name</label>
-                            <input type="" class="form-control form-control-sm" name="name" id="modal_show_name" disabled>
-                        </div>
-                        <div class="col-12">
-                            <label for="code">Account Number</label>
-                            <input type="number" class="form-control form-control-sm" maxlength="12" min="0" name="code" id="modal_show_code" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" disabled>
-                        </div>
-                        <div class="col-12">
-                            <label for="status">Status</label>
-                            <input type="" class="form-control form-control-sm" name="status" id="modal_show_status_id" disabled>
-                        </div>
-                        <div class="col-12">
-                            <label for="remarks">Remarks</label>
-                            <input type="" class="form-control form-control-sm" name="remarks" id="modal_show_remarks" disabled>
-                        </div>
                     </div>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
+                        </div>
                 </div>
             </div>
         </div>
@@ -286,13 +299,21 @@
             var code = $(this).attr("data-payment-code");
             var remarks = $(this).attr("data-payment-remarks");
             var status_id = $(this).attr("data-payment-status_id");
+            var updated_by = $(this).attr("data-payment-updated_by");
 
             // set multiple attributes
-            $('#modal_show_company_id option[value=' + c_id + ']').attr('selected', 'selected');
-            $('#modal_show_name').val(name);
-            $('#modal_show_code').val(code);
-            $('#modal_show_remarks').val(remarks);
-            $('#modal_show_status_id').val(status_id);
+            $('#modal_show_company_id').text(c_id);
+            $('#modal_show_name').text(name);
+            $('#modal_show_code').text(code);
+            $('#modal_show_remarks').text(remarks);
+            $('#modal_show_status_id').text(status_id);
+            $('#modal_show_updated_by').text(updated_by);
+            console.log(c_id);
+            if (status_id == 'Enabled') {
+                $('#ribbon_bg').addClass('bg-success').removeClass('bg-danger');
+            } else {
+                $('#ribbon_bg').addClass('bg-danger').removeClass('bg-success');
+            }
         });
 </script>
 @endsection

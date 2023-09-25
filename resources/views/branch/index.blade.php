@@ -96,7 +96,6 @@
                         <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary btn-sm m-2"><i class="fas fa-save mr-2"></i>Save</button>
                     </div>
-
                 </form>
             </div>
         </div>
@@ -115,32 +114,42 @@
                 </div>
 
                 <form class="form-horizontal" action="" method="POST" id="form_modal_edit" autocomplete="off">
-                    @method('PATCH')
+                    @method('PUT')
                     @csrf
                     <div class="modal-body">
                         <div class="container-fluid">
-                            <div class="col-12">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control form-control-sm" maxlength="25" name="name" id="modal_edit_name" required pattern="[a-zA-Z0-9\s]+">
-                            </div>
-                            <div class="col-12">
-                                <label for="code">Branch Code</label>
-                                <input type="text" class="form-control form-control-sm" maxlength="3" name="code" id="modal_edit_code" required pattern="[a-zA-Z0-9\s]+">
-                            </div><br>
-                            <div class="col-12">
-                                <label for="">Disable Branch?</label><br>
-                                <input type="radio" id="modal_edit_status_id" name="status" value="9" checked="checked">
-                                <label for="">YES</label><br>
-                                <input type="radio" id="modal_edit_status_id" name="status" value="8">
-                                <label for="">NO</label><br>
-                            </p>
-                            </div>
-                            <div class="col-12">
-                                <label for="remarks">Remarks</label>
-                                <input type="" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks" required oninput="this.value = this.value.toUpperCase()" pattern="[a-zA-Z0-9\s]+">
-                            </div>
+                                <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
+                                        <div class="row">
+                                            <div class="col-md-5 col-sm-12">
+                                                <div class="form-group">
+                                                    Name
+                                                    <input type="text" class="form-control form-control-sm" maxlength="25" name="name" id="modal_edit_name" required pattern="[a-zA-Z0-9\s]+" style="font-weight:bold">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-sm-12">
+                                                <div class="form-group">
+                                                    Branch Code
+                                                    <input type="text" class="form-control form-control-sm" maxlength="3" name="code" id="modal_edit_code" required pattern="[a-zA-Z0-9\s]+" style="font-weight:bold">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-12">
+                                                <div class="form-group">
+                                                    Branch Status?<br>
+                                                    <input type="radio" id="modal_edit_status_id" name="status" value="8" checked="checked">
+                                                    <label for="">Active</label>&nbsp;
+                                                    <input type="radio" id="modal_edit_status_id" name="status" value="9" style="margin-top: 8px">
+                                                    <label for="">Inactive</label><br>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12">
+                                                <div class="form-group">
+                                                    Remarks
+                                                <input type="" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks" required oninput="this.value = this.value.toUpperCase()" pattern="[a-zA-Z0-9\s]+" style="font-weight:bold">
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
                         </div>
-                        
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
@@ -163,42 +172,35 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <div class="row">
-                            <div class="ribbon-wrapper ribbon-lg">
-                                <div class="ribbon" id="ribbon_bg">
-                                    <span id="modal_show_status_id"></span>
+                            <div class="row">
+                                <div class="ribbon-wrapper ribbon-lg">
+                                    <div class="ribbon" id="ribbon_bg">
+                                        <span id="modal_show_status_id"></span>
+                                    </div>
                                 </div>
+                            </div>         
+                        <div class="container-fluid">
+                            <div class="col-12">
+                                Name:
+                                <span id="modal_show_name" style="font-weight:bold"></span>
+                            </div>
+                            <div class="col-12">
+                                Branch Code:
+                                <span id="modal_show_code"  style="font-weight:bold"></span>
+                            </div>
+                            <div class="col-12">
+                                Remarks:
+                                <span id="modal_show_remarks" style="font-weight:bold"></span>
+                            </div>
+                            <div class="col-12">
+                                Updated By:
+                                <span id="modal_show_updated_by" style="font-weight:bold"></span>
                             </div>
                         </div>
-                    </div>            
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="col-12">
-                            Name:
-                            <span id="modal_show_name" style="font-weight:bold"></span>
-                            {{-- <input type="" class="form-control form-control-sm" name="name" id="modal_show_name" disabled> --}}
-                        </div>
-                        <div class="col-12">
-                            Branch Code:
-                            <span id="modal_show_code"  style="font-weight:bold"></span>
-                        </div>
-                        {{-- <div class="col-12">
-                            Status:<input type="text2" class="form-control form-control-sm" name="status" id="modal_show_status_id">
-                        </div> --}}
-                        <div class="col-12">
-                            Remarks:
-                            <span id="modal_show_remarks" style="font-weight:bold"></span>
-                            {{-- <input type="" class="form-control form-control-sm" name="remarks" id="modal_show_remarks" disabled> --}}
-                        </div>
-                        <div class="col-12">
-                            Updated By:
-                            <span id="modal_show_updated_by" style="font-weight:bold"></span>
-                            {{-- <input type="" class="form-control form-control-sm" name="updated_by" id="modal_show_updated_by" disabled> --}}
-                        </div>
                     </div>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
+                        </div>
                 </div>
             </div>
         </div>
@@ -266,7 +268,6 @@ input[type="text2"], textarea {
             $('#form_modal_edit').attr('action', action);
         });
 
-
         $('.btn_show').on('click', function() {
             var uuid = $(this).attr("data-uuid");
             var name = $(this).attr("data-branch-name");
@@ -281,7 +282,6 @@ input[type="text2"], textarea {
             $('#modal_show_remarks').text(remarks);
             $('#modal_show_status_id').text(status_id);
             $('#modal_show_updated_by').text(updated_by);
-            // console.log(status_id);
             if (status_id == 'Active') {
                 $('#ribbon_bg').addClass('bg-success').removeClass('bg-danger');
             } else {

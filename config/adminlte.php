@@ -646,6 +646,31 @@ return [
                 ],
             ],
         ],
+        'Icheck-bootstrap' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'vendor/icheck-bootstrap/icheck-bootstrap.min.css',
+                ],
+            ],
+        ],
+        'Bootstrap-switch' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'vendor/bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/bootstrap-switch/js/bootstrap-switch.min.js',
+                ],
+            ],
+        ],
     ],
 
     /*

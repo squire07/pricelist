@@ -129,3 +129,8 @@ input[type=number] {
     padding: 0 10px;
     margin-top: 0.31rem;
 }
+
+/* top left navbar UNO logo */
+.brand-link .brand-image {
+    margin-left: 0 !important;
+}

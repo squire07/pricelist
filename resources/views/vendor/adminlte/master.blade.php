@@ -75,8 +75,14 @@
 
 </head>
 
-<body class="@yield('classes_body')" @yield('body_data')>
+@php
+    $collapse = '';
+    if(Auth::check() && !in_array(Auth::user()->role_id, [11,12])) {
+        $collapse = 'sidebar-collapse';
+    }
+@endphp
 
+<body class="@yield('classes_body') {{ $collapse }}" @yield('body_data')>
     {{-- Body Content --}}
     @yield('body')
 

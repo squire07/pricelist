@@ -49,16 +49,6 @@
                                 </select>
                             </div>
                         </div>
-                        {{-- <div class="col-md-4 col-sm-12">
-                            <div class="form-group">
-                                <div class="checkbox"> 
-                                    <label class="checkbox-custom"> 
-                                    <input type="checkbox" name="clases" id="sf_checkbox" value="yes">
-                                    <i class="fa fa-fw fa-square-o"></i>With Shipping Fee?
-                                    </label> 
-                                </div>
-                            </div>
-                        </div> --}}
                     </div>
 
                     <div class="row">
@@ -111,20 +101,20 @@
                             <label for="nuc">NUC</label>
                             <input type="text" class="form-control form-control-sm" id="nuc" disabled>
                         </div>
+                        <div class="col-md-1 col-2">
+                            <input type="button" class="btn btn-primary btn-sm" id="add_item" value="Add Item" style="margin-top: 29px">
+                        </div>
+                        @if(Request::get('so') == 'delivery')
                         <div class="col-md-2 col-2">
                             <div class="checkbox"> 
                                 <label class="checkbox">
-                                <input type="checkbox" name="sf_checkbox" id="sf_checkbox" value="yes" disabled>  With Shipping Fee?
-                                <span class="required"></span>
-                                <input type="text" class="form-control form-control-sm text-right" id="shipping_fee" style="margin-top: 8px" name="shipping_fee" placeholder="0.00" maxlength="12" value="0.00" readonly>
+                                <input type="checkbox" name="sf_checkbox" id="sf_checkbox" data-toggle="modal" data-target="#modal-add-sf" style="margin-top: 35px" disabled/>&nbsp;&nbsp;Add Shipping Fee
                             </div>
                         </div>
+                        @endif
                         <div class="col-md-1 col-2 d-none">
                             <label for="rs_points">RS Points</label>
                             <input type="text" class="form-control form-control-sm" id="rs_points" disabled>
-                        </div>
-                        <div class="col-md-1 col-2">
-                            <input type="button" class="btn btn-primary btn-sm" id="add_item" value="Add Item" style="margin-top: 29px">
                         </div>
                     </div>
                 
@@ -138,17 +128,41 @@
                                         <th class="text-center">Item Name</th>
                                         <th class="text-center" style="width:125px">Quantity</th>
                                         <th class="text-center" style="width:135px">Amount</th>
-                                        <th class="text-center" style="width:155px">Subtotal</th>
                                         <th class="text-center" style="width:125px">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
                                 <tfoot>
                                     <tr>
-                                        <td class="text-right text-bold">Total</td>
+                                        <td class="text-right text-bold">Sub Total</td>
                                         <td class="text-right"></td>
+                                        <td class="text-right" id="tfoot_total_amount"></td>
+                                        <td>&nbsp;</td>
+                                    </tr>
+                                    @if(Request::get('so') == 'delivery')
+                                    <tr>
+                                        <td class="text-right text-bold">Shipping Fee</td>
                                         <td class="text-right"></td>
-                                        <td class="text-right text-bold" id="tfoot_total_amount"></td>
+                                        <td class="text-right" id="tfoot_sf_total_amount"></td>
+                                        <td>&nbsp;</td>
+                                    </tr>
+                                    @endif
+                                    <tr>
+                                        <td class="text-right text-bold">Vatable Sales</td>
+                                        <td class="text-right"></td>
+                                        <td class="text-right text-bold" id="tfoot_vatable_sales"></td>
+                                        <td>&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right text-bold">Vat Amount</td>
+                                        <td class="text-right"></td>
+                                        <td class="text-right text-bold" id="tfoot_vat_amount"></td>
+                                        <td>&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right text-bold">Grand Total</td>
+                                        <td class="text-right"></td>
+                                        <td class="text-right text-bold" id="tfoot_grand_total_amount"></td>
                                         <td>&nbsp;</td>
                                     </tr>
                                 </tfoot>
@@ -166,11 +180,55 @@
                     <input type="hidden" name="hidden_total_amount" id="hidden_total_amount">
                     <input type="hidden" name="hidden_total_nuc" id="hidden_total_nuc">
                     <input type="hidden" name="hidden_grandtotal_amount" id="hidden_grandtotal_amount">
-
-                </form>
+                    <input type="hidden" name="hidden_sf_amount" id="hidden_sf_amount">
             </div>    
         </div>
     </div>
+
+    <div class="modal fade" id="modal-add-sf">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Shipping Fee</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
+                                <div class="row">
+                                    <div class="col-md-7 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="item_name">Parcel Size and Region</label>
+                                            <select class="form-control form-control-sm select2 select2-primary" id="shipping_fee" name="shipping_fee" data-dropdown-css-class="select2-primary" style="width: 100%;">
+                                                <option value="" selected="true" disabled>-- Select Size and Region --</option>
+                                                @foreach($shipping_fees as $shipping_fee)
+                                                    <option value="{{ $shipping_fee->id }}">{{ $shipping_fee->parcel_size}} - {{ $shipping_fee->region}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 col-sm-12">    
+                                        <div class="form-group">
+                                            <label for="sf_amount">Shipping Fee Amount</label>
+                                            <input type="text" class="form-control form-control-sm" id="sf_amount" style="text-align:right;" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
+                        <input type="button" class="btn btn-primary btn-sm m-2" id="btn-add-sf" value="Save">
+                        {{-- <button type="" class="btn btn-primary btn-sm m-2" id="btn-add-sf" >Add</button> --}}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('adminlte_js')
@@ -241,6 +299,7 @@
                     headers: {
                         'Content-type': 'application/json',
                     }
+
                 })
                 .then(response => response.json())
                 .then((response) => {
@@ -346,39 +405,63 @@
             } 
         }); 
 
-        // set shipping fee to enable
-        $("#sf_checkbox").on('click', function () {
-        $("#shipping_fee").attr('readonly', false);
-        $('#shipping_fee').attr('readonly',!this.checked);
-        $('#shipping_fee').val('',!this.checked)
+            // uncheck sf_checkbox on modal close event
+            $("#modal-add-sf").on('hide.bs.modal', function() {
+            $('#sf_checkbox').prop('checked', false);
         });
- 
+
+
+            $('#shipping_fee').on('change', function() {
+                var sf_id = this.value;
+
+            // get the sessionStorage object
+            if(this.value !== '') {
+                fetch(window.location.origin + '/api/shippingfee/' + this.value, {
+                    method: 'get',
+                    headers: {
+                        'Content-type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then((response) => {
+                    obj = JSON.parse(JSON.stringify(response));
+                    if(obj[0].parcel_size != '') {
+                            $('#sf_amount').val(obj[0].parcel_rate);
+                        } else {
+                            $('#sf_amount').val('');
+                        }
+                }); 
+            };  
+        }); 
+
+
         // set shipping fee to disable on focus out
-        $("#shipping_fee").on('focusout', function () {
-            let inputValue = this.value;
+        // $("#shipping_fee").on('focusout', function () {
+        //     let inputValue = this.value;
 
-        // Convert the value to a number
-            inputValue = parseFloat(inputValue);
+        // // Convert the value to a number
+        //     inputValue = parseFloat(inputValue);
 
-            // Check if the input is a valid number
-            if (!isNaN(inputValue)) {
-                // Round the number to two decimal places
-                inputValue = inputValue.toFixed(2);
+        //     // Check if the input is a valid number
+        //     if (!isNaN(inputValue)) {
+        //         // Round the number to two decimal places
+        //         inputValue = inputValue.toFixed(2);
                 
-                // Update the input value with the formatted value
-                this.value = inputValue;
-            }
-            $(this).attr('readonly', true);
-        });
+        //         // Update the input value with the formatted value
+        //         this.value = inputValue;
+        //     }
+        //     // $(this).attr('readonly', true);
+        // });
  
-        // set shipping fee input to two decimal places  
-        $('#shipping_fee').on('input', function () {
-        this.value = this.value.match(/^\d+\.?\d{0,2}/);
-        });
+        // // set shipping fee input to two decimal places  
+        // $('#shipping_fee').on('input', function () {
+        // this.value = this.value.match(/^\d+\.?\d{0,2}/);
+        // });
         
         // initialize total amount nuc grandtotal and shipping fee
-        var grandtotal_amount = 0;
+        var grand_total_amount = 0;
         var shipping_fee = 0;
+        var sf_amount =0;
         var total_amount = 0;
         var total_nuc = 0;
 
@@ -447,15 +530,24 @@
                     // get the sessionStorage object from item selected
                     var item_selected = JSON.parse(sessionStorage.getItem('item_selected'));
 
+                    // shipping fee amount
+                    // sf_amount = Number($('#hidden_sf_amount'));
+                    // $('#tfoot_sf_total_amount').val(sf_amount);
+
                     // sum of amount
                     total_amount += quantity * item_selected.amount;
                     $('#tfoot_total_amount').text(total_amount.toFixed(2));
+
+                    // sum of grand total amount
+                    grand_total_amount += shipping_fee + total_amount;
+                    $('#tfoot_grand_total_amount').text(total_amount.toFixed(2));
+
                     // sum of nuc
                     total_nuc += quantity * item_selected.nuc;
                     $('#tfoot_total_nuc').text(total_nuc.toFixed(2));
 
                     // sum of grand total
-                    shipping_fee = Number($('#shipping_fee').val());
+                    shipping_fee = Number($('#sf_amount').val());
                     grandtotal_amount = total_amount + shipping_fee;
 
                     // temporary 
@@ -467,7 +559,7 @@
                     var row = '<tr>' + 
                                 '<td>' + item_selected.name + '</td>' +
                                 '<td class="text-center">' + quantity + '</td>' +
-                                '<td class="text-right">' + item_selected.amount + '</td>' +
+                                // '<td class="text-right">' + item_selected.amount + '</td>' +
                                 // '<td class="text-right">' + item_selected.nuc + ' (' + (item_selected.nuc * quantity).toFixed(2) + ')' +'</td>' +
                                 // '<td class="text-right">' + item_selected.rs_points + '</td>' +
                                 '<td class="text-right">' + (item_selected.amount * quantity).toFixed(2) + '</td>' +
@@ -510,6 +602,17 @@
                 }
             }
         }); 
+
+
+        // add shipping fee amount
+        $('#btn-add-sf').on('click', function() {
+            var shipping_amount = $('#sf_amount').val();
+            $('#tfoot_sf_total_amount').val(shipping_amount);
+            $('#modal-add-sf').modal('hide');
+            $('#sf_checkbox').prop('disabled', true);
+            $('#sf_checkbox').prop('checked', true);
+            console.log(shipping_amount); 
+        });
 
         // delete row
         $(document).on('click','.btn-delete-item', function() {

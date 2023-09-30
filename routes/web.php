@@ -20,6 +20,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalesInvoice\ForValidationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SalesInvoiceAssignmentController;
+use App\Http\Controllers\ShippingFeeController;
 use App\Http\Controllers\TransactionTypeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -77,6 +78,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('sales-invoice-assignment', SalesInvoiceAssignmentController::class);
     Route::resource('transaction-types', TransactionTypeController::class);
     Route::resource('users', UserController::class);
+    Route::resource('shipping-fee', ShippingFeeController::class);
 
 
     // REPORTS

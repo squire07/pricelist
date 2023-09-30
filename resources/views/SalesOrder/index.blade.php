@@ -9,7 +9,7 @@
                 <h1>Sales Orders</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <a href="{{ url('sales-orders/create') }}" target="_self" class="btn btn-primary"><i class="fas fa-cart-plus"></i> Create Sales Order</a>
+                <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#modal-so-option"><i class="fas fa-cart-plus"></i> Create Sales Order</a>
             </div>
         </div>
     </div>
@@ -77,6 +77,32 @@
                     </tbody>
                 </table>
             </div>    
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-so-option">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="card-body text-center">
+                        <h3>Select Delivery Option</h3>
+                        <div class="d-grid col-6 mx-auto">
+                            <a href="{{ url('sales-orders/create?so=branch-pickup') }}" class="btn btn-app" id="btn-pickup" style="min-width: 150px;"><i class="fas fa-shopping-bag"></i>Branch Pickup</a>
+
+                            <a href="{{ url('sales-orders/create?so=delivery') }}" class="btn btn-app" id="btn-shipping" style="min-width: 150px;"><i class="fas fa-shipping-fast"></i>Delivery</a>
+
+
+                            {{-- <button type="button" class="btn btn-app" id="btn-pickup" style="min-width: 150px;">
+                                <i class="fas fa-shopping-bag"></i>Branch Pickup
+                            </button>
+                            <button type="button" class="btn btn-app" id="btn-shipping" style="min-width: 150px;">
+                                <i class="fas fa-shipping-fast"></i>Delivery
+                            </button> --}}
+                        </div>
+                    </div>    
+                </div>
+
+            </div>
         </div>
     </div>
 @endsection

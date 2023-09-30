@@ -3,15 +3,16 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Hash;
 use Illuminate\Database\Seeder;
-use Database\Seeders\CompanySeeder;
-use Database\Seeders\DistributorSeeder;
 use Database\Seeders\ItemSeeder;
 use Database\Seeders\RoleSeeder;
-use Database\Seeders\StatusSeeder;
-use Database\Seeders\TransactionTypeSeeder;
 use Database\Seeders\UserSeeder;
-use Hash;
+use Database\Seeders\StatusSeeder;
+use Database\Seeders\CompanySeeder;
+use Database\Seeders\DistributorSeeder;
+use Database\Seeders\ShippingFeeSeeder;
+use Database\Seeders\TransactionTypeSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -50,6 +51,7 @@ class DatabaseSeeder extends Seeder
         $this->call(StatusSeeder::class);
         $this->call(TransactionTypeSeeder::class);
         $this->call(UserSeeder::class);
+        $this->call(ShippingFeeSeeder::class);
 
         // dummy data only
         $this->call(ItemSeeder::class);

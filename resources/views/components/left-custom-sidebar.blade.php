@@ -18,6 +18,7 @@
                         'items',
                         'roles',
                         'sales-invoice-assignment',
+                        'shipping-fee',
                         'transaction-types',
                         'payment-types',
                         'users'
@@ -117,6 +118,12 @@
                     <a href="{{ url('sales-invoice-assignment') }}" class="nav-link {{ $url_segment_1 == 'sales-invoice-assignment' ? 'active':'' }}" target="_self">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Sales Invoice Assignment</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url('shipping-fee') }}" class="nav-link {{ $url_segment_1 == 'shipping-fee' ? 'active':'' }}" target="_self">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Shipping Fee</p>
                     </a>
                 </li>
                 <li class="nav-item">

@@ -119,8 +119,6 @@
         // re-initialize the datatable
         $('#dt_sales_orders').DataTable({
             dom: 'Bfrtip',
-            // serverSide: true,
-            // processing: true,
             deferRender: true,
             paging: true,
             searching: true,
@@ -134,6 +132,14 @@
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
             },
+            initComplete: function () {
+                $("#dt_sales_orders").wrap("<div style='overflow:auto;width:100%;position:relative;'></div>");
+
+                var elements = document.getElementsByClassName('btn-secondary');
+                while(elements.length > 0){
+                    elements[0].classList.remove('btn-secondary');
+                }
+            }
         });
     });
 </script>

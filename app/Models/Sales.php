@@ -45,6 +45,16 @@ class Sales extends Model
         return number_format($value,2,'.',',');
     }
 
+    public function getVatableSalesAttribute($value)
+    {
+        return number_format($value,2,'.',',');
+    }
+
+    public function getVatAmountAttribute($value)
+    {
+        return number_format($value,2,'.',',');
+    }
+
     public function getSoNoAttribute($value)
     {
         return strtoupper($value);

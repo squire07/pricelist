@@ -11,15 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sales_details', function (Blueprint $table) {
+        Schema::create('permissions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sales_id')->constrained();
-            $table->string('item_name')->nullable();
-            $table->double('item_price')->nullable();
-            $table->double('item_nuc')->nullable();
-            $table->integer('quantity')->default(0)->nullable();
-            $table->double('amount')->default(0)->nullable();
-            $table->double('nuc')->default(0)->nullable();
+            $table->uuid('uuid');
+            $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
             $table->softDeletes();
             $table->string('created_by',55)->nullable();
@@ -33,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sales_details');
+        Schema::dropIfExists('permissions');
     }
 };

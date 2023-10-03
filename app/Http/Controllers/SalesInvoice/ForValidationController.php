@@ -98,7 +98,7 @@ class ForValidationController extends Controller
                 // pass the message to user if the update is successful
                 $message = $sales->so_no . ' successfully marked Cancelled';
             }
-            Helper::history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Cancel Sales Invoice - ', $sales->si_remarks);
+            Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Cancel Sales Invoice - ', $sales->si_remarks);
         }
 
         

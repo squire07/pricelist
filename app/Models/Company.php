@@ -35,4 +35,10 @@ class Company extends Model
     {
         return $this->hasOne('App\Models\Status', 'id', 'status_id');
     }
+
+    //relationships
+    public function branch()
+    {
+        return $this->belongsTo('App\Models\Branch', 'branch_id', 'id');
+    }
 }

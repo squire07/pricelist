@@ -6,7 +6,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Edit Sales Order</h1>
+                <h1>Create Sales Order</h1>
             </div>
         </div>
     </div>
@@ -16,39 +16,39 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                <form class="form-horizontal" id="form_sales_order" action="{{ route('sales-orders.update', $sales_order->uuid) }}" method="POST" autocomplete="off">
+                <form class="form-horizontal" id="form_sales_order" action="{{ url('sales-orders') }}" method="POST" autocomplete="off">
                     @csrf
-                    @method('PUT')
+
                     <div class="row">
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
-                                Sales Order Number: <b>{{ $sales_order->so_no }}</b>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 col-sm-12">
-                            <div class="form-group">
-                                <b>Transaction Type:</b>
-                                <select class="form-control form-control-sm select2 select2-primary" id="transaction_type" name="transaction_type_id" data-dropdown-css-class="select2-primary" style="width: 100%;" disabled>
-                                    <option value="">-- Select Transaction Type --</option>
+                                <label>Transaction Type</label>
+                                <select class="form-control form-control-sm select2 select2-primary" id="transaction_type" name="transaction_type_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                    <option value="" selected="true" disabled>-- Select Transaction Type --</option>
                                     @foreach($transaction_types as $transaction_type)
-                                        <option value="{{ $transaction_type->id }}" {{ $sales_order->transaction_type_id == $transaction_type->id ? 'selected' : '' }}>{{ $transaction_type->name }}</option>
+                                        <option value="{{ $transaction_type->id }}">{{ $transaction_type->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
-                                <b>Branch:</b>
-                                <select class="form-control form-control-sm select2 select2-primary" id="branch" name="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" disabled>
-                                    <option value="">-- Select Branch --</option>
-                                    @foreach($branches as $branch)
-                                        <option value="{{ $branch->id }}" {{ $sales_order->branch_id == $branch->id ? 'selected' : '' }}>{{ $branch->name }}</option>
-                                    @endforeach
+                                <label>Branch</label>
+                                <select class="form-control form-control-sm select2 select2-primary" id="branch_id" name="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required {{ count($branches) > 1 ? '':'readonly' }}>
+                                    
+                                    @if(count($branches) > 1)
+                                        <option value="" selected="true" disabled>-- Select Branch --</option>
+                                        @foreach($branches as $branch)
+                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                        @endforeach
+                                    @else
+                                        @foreach($branches as $branch)
+                                            <option value="{{ $branch->id }}" selected>{{ $branch->name }}</option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
-                        </div>   
+                        </div>
                     </div>
 
                     <div class="row">
@@ -57,7 +57,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text text-bold">BCID&nbsp;<span class="required"></span></span>
                                 </div>
-                                <input type="text" class="form-control form-control-sm" id="bcid" maxlength="12" name="bcid" value="{{ $sales_order->bcid }}" required disabled>
+                                <input type="number" class="form-control form-control-sm" id="bcid" min="0" maxlength="12" name="bcid" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" disabled>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12 mb-3">
@@ -65,7 +65,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text text-bold">Name&nbsp;<span class="required"></span></span>
                                 </div>
-                                <input type="text" class="form-control form-control-sm" id="distributor_name" name="distributor_name" value="{{ $sales_order->distributor_name }}" required disabled>
+                                <input type="text" class="form-control form-control-sm" id="distributor_name" name="distributor_name" readonly>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12 mb-3">
@@ -73,7 +73,12 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text text-bold">Group&nbsp;<span class="required"></span></span>
                                 </div>
-                                <input type="text" class="form-control form-control-sm" id="group_name" name="group_name" value="{{ $sales_order->group_name }}" disabled>
+                                <input type="text" class="form-control form-control-sm" id="group_name" name="group_name" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-12 mb-3">
+                            <div class="input-group input-group-sm">
+                                <input type="hidden" class="form-control form-control-sm" id="company" name="company" value="UNO International Corp.">
                             </div>
                         </div>
                     </div>
@@ -81,12 +86,12 @@
                     <div class="row">
                         <div class="col-md-4 col-4">
                             <label for="item_name">Item Name</label>
-                            <select class="form-control form-control-sm select2 select2-primary" id="item_name" data-dropdown-css-class="select2-primary" required>
+                            <select class="form-control form-control-sm select2 select2-primary" id="item_name" data-dropdown-css-class="select2-primary " disabled>
                             </select>
                         </div>
                         <div class="col-md-1 col-2">
                             <label for="quantity">Quantity</label>
-                            <input type="number" class="form-control form-control-sm" min="1" id="quantity" oninput="validity.valid||(value=value.replace(/\D+/g, ''))">
+                            <input type="number" class="form-control form-control-sm" min="1" id="quantity" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" disabled>
                         </div>
                         <div class="col-md-1 col-2">
                             <label for="amount">Amount</label>
@@ -103,6 +108,15 @@
                         <div class="col-md-1 col-2">
                             <input type="button" class="btn btn-primary btn-sm" id="add_item" value="Add Item" style="margin-top: 29px">
                         </div>
+
+                        {{-- <div class="col-md-2 col-2">
+                            <div class="checkbox"> 
+                                <label class="checkbox">
+                                <input type="checkbox" name="sf_checkbox" id="sf_checkbox_old" value="yes" disabled>  With Shipping Fee?
+                                <span class="required"></span>
+                                <input type="text" class="form-control form-control-sm text-right" id="shipping_fee" style="margin-top: 8px" name="shipping_fee" placeholder="0.00" maxlength="12" value="0.00" readonly>
+                            </div>
+                        </div> --}}
                     </div>
                 
 
@@ -112,54 +126,39 @@
                             <table class="table table-bordered table-hover" id="table_item_details">
                                 <thead>
                                     <tr>
+                                        <th class="text-center">Code</th>
                                         <th class="text-center">Item Name</th>
-                                        <th class="text-center" style="width:9%">Quantity</th>
-                                        <th class="text-center" style="width:12%">Price</th>
-                                        <th class="text-center" style="width:12%">Amount</th>
-                                        <th class="text-center" style="width:8%">Action</th>
+                                        <th class="text-center" style="width:85px;max-width:85px">Quantity</th>
+                                        <th class="text-center" style="width:85px;max-width:85px">Unit Price</th>
+                                        <th class="text-center" style="width:85px;max-width:85px">Amount</th>
+                                        <th class="text-center" style="width:35px;max-width:35px"></th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @foreach($sales_order->sales_details as $sd)
-                                    <tr>
-                                        <td>{{ $sd->item_name }}</td>
-                                        <td class="text-center">{{ $sd->quantity }}</td>
-                                        <td class="text-right">{{ $sd->item_price }}</td>
-                                        <td class="text-right">{{ $sd->amount }}</td>
-                                        <td class="text-center">
-                                            <a href="#" class="btn-delete-item" type="button" data-id="{{ $sd->id }}" data-quantity="{{ $sd->quantity }}" data-amount="{{ $sd->amount }}" data-nuc="{{ $sd->nuc }}"><i class="far fa-trash-alt"></i></a>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
+                                <tbody></tbody>
                                 <tfoot>
-                                    {{-- <tr>
-                                        <td class="text-right text-bold">Total</td>
-                                        <td class="text-right"></td>
-                                        <td class="text-right"></td>
-                                        <td class="text-right text-bold" id="tfoot_total_amount">{{ $sales_order->total_amount }}</td>
-                                        <td>&nbsp;</td>
-                                    </tr> --}}
-
                                     <tr>
-                                        <td class="text-right text-bold" colspan="3">Sub Total</td>
-                                        <td class="text-right" name="total_amount" id="tfoot_sub_total_amount">{{ $sales_order->total_amount }}</td>
+                                        <td colspan="2" class="text-right text-bold" style="border: none !important;">Sub Total</td>
+                                        <td colspan="3" class="text-right">
+                                            <input type="text" class="text-right custom-input-text" name="tfoot_total_amount" id="tfoot_total_amount" value="0.00" readonly>
+                                        </td>
+                                        <td style="border: none !important;">&nbsp;</td>
                                     </tr>
                                     <tr>
-                                        <td class="text-right text-bold" colspan="3">Shipping Fee</td>
-                                        <td class="text-right" name="shipping_fee" id="tfoot_shipping_fee">{{ $sales_order->shipping_fee }}</td>
+                                        <td colspan="2" class="text-right text-bold" style="border: none !important;">
+                                            <input type="checkbox" class="mr-1" name="sf_checkbox" id="sf_checkbox" value="yes" disabled>
+                                            Shipping Fee
+                                        </td>
+                                        <td colspan="3" class="text-right">
+                                            <input type="number" class="text-right custom-input-text" name="tfoot_shipping_fee" id="tfoot_shipping_fee" value="0.00" readonly>
+                                        </td>
+                                        <td style="border: none !important;">&nbsp;</td>
                                     </tr>
                                     <tr>
-                                        <td class="text-right text-bold" colspan="3">VATable Sales</td>
-                                        <td class="text-right" name="vatable_sales" id="tfoot_vatable_sales">{{ $sales_order->vatable_sales }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-right text-bold" colspan="3">VAT Amount</td>
-                                        <td class="text-right" name="vat_amount" id="tfoot_vat_amount">{{ $sales_order->vat_amount }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-right text-bold" colspan="3">Grand Total</td>
-                                        <td class="text-right text-bold" name="grandtotal_amount" id="tfoot_grandtotal_amount">{{ $sales_order->grandtotal_amount }}</td>
+                                        <td colspan="2" class="text-right text-bold" style="border: none !important;">Grand Total</td>
+                                        <td colspan="3" class="text-right">
+                                            <input type="text" class="text-right text-bold custom-input-text" name="tfoot_grandtotal_amount" id="tfoot_grandtotal_amount" value="0.00" readonly>
+                                        </td>
+                                        <td style="border: none !important;">&nbsp;</td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -168,20 +167,13 @@
 
                     <div class="row">
                         <div class="col-12 text-center">
-                            <a href="{{ url()->previous() }}" class="btn btn-lg btn-info float-left" style="margin-top: 8px"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-                            <button class="btn btn-primary btn-lg m-2 float-right" style="margin-top: 8px" id="btn_save_so"><i class="fas fa-save mr-2"></i>Update Sales Order</button>
+                            <button class="btn btn-primary btn-lg m-2" id="btn_save_so"><i class="fas fa-save mr-2"></i>Save Sales Order</button>
                         </div>
                     </div>
 
                     {{-- temporary --}}
-                    <input type="hidden" name="hidden_total_amount" id="hidden_total_amount" value="{{ $sales_order->total_amount }}">
-                    <input type="hidden" name="hidden_total_nuc" id="hidden_total_nuc" value="{{ $sales_order->total_nuc }}">
+                    <input type="hidden" name="hidden_total_nuc" id="hidden_total_nuc">
 
-                    {{-- this will handle the original item count from original data  --}}
-                    <input type="hidden" name="item_count" id="hidden_item_count" value="{{ count($sales_order->sales_details) }}">
-
-                    {{-- item(s) for deletion --}}
-                    <input type="hidden" name="deleted_item_id" id="deleted_item_id">
                 </form>
             </div>    
         </div>
@@ -195,32 +187,12 @@
     border: none;
     padding: 0;
     outline: none;
-    margin: 0;
-    width: 125px;
 } 
-
-.custom-input-text:read-only {
-    background: transparent;
-}
 
 .table-bordered {
     border: 0px solid #dee2e6;
 }
 
-tfoot tr td:first-child {
-    border: none !important;
-}
-
-/* Dynamic rows - tbody */
-/* Apply styles to even rows */
-tbody tr:nth-child(even) {
-  background-color: #ffffff;
-}
-
-/* Apply styles to odd rows */
-tbody tr:nth-child(odd) {
-  background-color: #f2f2f2;
-}
 </style>
 @endsection
 
@@ -239,38 +211,80 @@ tbody tr:nth-child(odd) {
             document.querySelector('.select2-search__field').focus();
         });
 
+
+
+
         // initialize item counter: this will trigger if there is/are items in the table; This will be used by btn-delete-item AND transaction_type change event 
-        var item_count = $('#hidden_item_count').val();
+        var item_count = 0;
 
-        // initialize id handler for deleted item(s)
-        let deleted_item_id = [];
+        // default state
+        var old_transaction_type = 0;
 
-        // fetch the item details by transaction type id using FETCH API
-        var transaction_type =  $('#transaction_type').val();
-        fetch(window.location.origin + '/api/item/transaction_type/' + transaction_type, {
-            method: 'get',
-            headers: {
-                'Content-type': 'application/json',
+        var change_count = 0;
+
+
+        // fetch the items details by transaction type id using FETCH API
+        $('#transaction_type').on('change', function(e) {
+
+            // count the change event
+            change_count++;
+
+            // get the current value of transaction type
+            var currently_selected = this.value;
+
+            if(change_count == 1) {
+                old_transaction_type = this.value
             }
-        })
-        .then(response => response.json())
-        .then((response) => {
-            obj = JSON.parse(JSON.stringify(response));
 
-            // make sure the select element is empty before populating with values
-            $('#item_name').empty();
-            // add blank as first value
-            $('#item_name').append($('<option></option>').val('').html('-- Select Item --'));
-            // add some values to item dropdown element
-            $.each(obj, function(key, data) {
-                $('#item_name').append($('<option></option>').val(data.id).html(data.name));
-            });
+            // check if there is/are item(s) in the details table
+            if(item_count > 0 && currently_selected != old_transaction_type) {
+                 // show notification
+                Swal.fire({
+                    title: 'Change Transaction Type?',
+                    text: 'Your current sales order will be deleted.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes',
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // just refresh the page and remove all existing data; no longer needed to remove all data from elements
+                        location.reload();
+                    } 
+                });
 
-            // clear the sessionStorage first before storing another obj
-            sessionStorage.clear();
+                $(this).select2('val', old_transaction_type);
+            }
 
-            // store the `obj` to sessionStorage
-            window.sessionStorage.setItem('item_object', JSON.stringify(obj));
+            if(this.value !== '') {
+                fetch(window.location.origin + '/api/item/transaction_type/' + this.value, {
+                    method: 'get',
+                    headers: {
+                        'Content-type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then((response) => {
+                    obj = JSON.parse(JSON.stringify(response));
+                    $('#bcid').attr('disabled', false);
+                    // make sure the select element is empty before populating with values
+                    $('#item_name').empty();
+                    // add blank as first value
+                    $('#item_name').append($('<option></option>').val('').html('-- Select Item --'));
+                    // add some values to item dropdown element
+                    $.each(obj, function(key, data) {
+                        $('#item_name').append($('<option></option>').val(data.id).html(data.name));
+                    });
+
+                    // clear the sessionStorage first before storing another obj
+                    sessionStorage.clear();
+
+                    // store the `obj` to sessionStorage
+                    window.sessionStorage.setItem('item_object', JSON.stringify(obj));
+                })
+            }
         });
 
         // fetch the distributor's name by bcid using FETCH API
@@ -297,12 +311,19 @@ tbody tr:nth-child(odd) {
                         });
                         // remove name field content
                         $('#distributor_name').val('');
+                        $('#group_name').val('');
 
                     } else {
                         if(obj[0].name != '') {
                             $('#distributor_name').val(obj[0].name);
+                            $('#group_name').val(obj[0].group);
+                            $('#bcid').attr('readonly','readonly');
+                            $('#item_name').attr('disabled', false);
+                            $('#quantity').attr('disabled', false);
+                            $('#sf_checkbox').attr('disabled', false);
                         } else {
                             $('#distributor_name').val('');
+                            $('#group_name').val('');
                         }
                     }
                 })
@@ -310,6 +331,7 @@ tbody tr:nth-child(odd) {
             } else {
                 // be sure to empty the name field
                 $('#distributor_name').val('');
+                $('#group_name').val('');
             }
         });
 
@@ -347,11 +369,72 @@ tbody tr:nth-child(odd) {
             } 
         }); 
 
+        // set shipping fee to enable
+        $("#sf_checkbox").on('click', function () {
+            
+            $("#shipping_fee").attr('readonly', false);
+            $('#shipping_fee').attr('readonly',!this.checked);
+            $('#shipping_fee').val('',!this.checked)
+
+            if(this.checked) {
+                // enable the shipping fee textbox, set the value to NULL and focus the cursor
+                $('#tfoot_shipping_fee').attr('readonly', false).val('').focus();
+                
 
 
-        // initialize total amount and nuc from original record and force the variable to be a NUMBER type
-        var total_amount = Number($('#hidden_total_amount').val());
-        var total_nuc = Number($('#hidden_total_nuc').val());
+
+            } else {
+                $('#tfoot_shipping_fee').val('0.00').attr('readonly', true);
+
+                // subtract 
+            }
+        });
+ 
+        // set shipping fee to disable on focus out
+        $("#tfoot_shipping_fee").on('focusout', function () {
+            let inputValue = this.value;
+
+            // Convert the value to a number
+            inputValue = parseFloat(inputValue);
+
+            var computed_value = 0;
+
+            // Check if the input is a valid number
+            if (!isNaN(inputValue)) {
+                // Round the number to two decimal places
+                inputValue = inputValue.toFixed(2);
+                
+                // Update the input value with the formatted value
+                this.value = inputValue;
+
+                // add the value to grandtotal_amount
+                var grandtotal_amount = $('#grandtotal_amount').val();
+
+                console.log(grandtotal_amount);
+
+                $(this).attr('readonly', true);
+            } else if (isNaN(inputValue)) {
+                // persist the focus
+                $(this).focus();
+            }
+            
+        });
+ 
+        // set shipping fee input to two decimal places  
+        $('#tfoot_shipping_fee').on('input', function () {
+            this.value = this.value.match(/^\d+\.?\d{0,2}/);
+        });
+
+        // prevent paste event in dynamic fields
+        $('#tfoot_shipping_fee').on('paste', function(e) {
+            e.preventDefault();
+        });
+        
+        // initialize total amount nuc grandtotal and shipping fee
+        var grandtotal_amount = 0;
+        var shipping_fee = 0;
+        var total_amount = 0;
+        var total_nuc = 0;
 
         // add item 
         $('#add_item').on('click', function() {
@@ -378,13 +461,29 @@ tbody tr:nth-child(odd) {
             if (!allAreFilled) {
                 
                 // set focus to specific field
-              if($.trim($("#item_name").val()) == "") {
-                    $('#item_name').focus();
-                    required_field('Item');
+                if($.trim($("#transaction_type").val()) == "") {
+                    $('#transaction_type').focus();
+                    required_field('Transaction Type');
+                } 
+                else if($.trim($("#branch_id").val()) == "") {
+                    $('#branch_id').focus();
+                    required_field('Branch');
+                } 
+                else if($.trim($("#bcid").val()) == "") {
+                    $('#bcid').focus();
+                    required_field('BCID');
                 }
-                else if($.trim($("#quantity").val()) == "") {
-                    $('#quantity').focus();
-                    required_field('Quantity');
+                else if($.trim($("#distributor_name").val()) == "") {
+                    $('#distributor_name').focus();
+                    required_field('Distributor name');
+                }
+                else if($.trim($("#group_name").val()) == "") {
+                    $('#group_name').focus();
+                    required_field('Group');
+                }
+                else if($.trim($("#company").val()) == "") {
+                    $('#company').focus();
+                    required_field('Company');
                 }
             } else {
                 // make sure that item and quantity are not empty
@@ -402,19 +501,27 @@ tbody tr:nth-child(odd) {
                     // get the sessionStorage object from item selected
                     var item_selected = JSON.parse(sessionStorage.getItem('item_selected'));
 
+                    // get shipping fee
+                    var shipping_fee = !isNaN($('#shipping_fee').val()) ? Number($('#shipping_fee').val()) : 0;
+
                     // sum of amount
                     total_amount += quantity * item_selected.amount;
-                    $('#tfoot_total_amount').text(total_amount.toFixed(2));
+                    $('#tfoot_total_amount').val(total_amount.toFixed(2));
+
                     // sum of nuc
                     total_nuc += quantity * item_selected.nuc;
-                    $('#tfoot_total_nuc').text(total_nuc.toFixed(2));
+                    $('#tfoot_total_nuc').val(total_nuc.toFixed(2));
+
+                    // sum of grand total
+                    grandtotal_amount = total_amount + shipping_fee;
+                    $('#tfoot_grandtotal_amount').val(grandtotal_amount.toFixed(2));
 
                     // temporary 
-                    $('#hidden_total_amount').val(total_amount.toFixed(2));
                     $('#hidden_total_nuc').val(total_nuc.toFixed(2));
 
                     // populate the details table
                     var row = '<tr>' + 
+                                '<td>' + item_selected.code + '</td>' +
                                 '<td>' + item_selected.name + '</td>' +
                                 '<td class="text-center">' + quantity + '</td>' +
                                 '<td class="text-right">' + item_selected.amount + '</td>' +
@@ -422,7 +529,7 @@ tbody tr:nth-child(odd) {
                                 // '<td class="text-right">' + item_selected.rs_points + '</td>' +
                                 '<td class="text-right">' + (item_selected.amount * quantity).toFixed(2) + '</td>' +
                                 '<td class="text-center"><a href="#" class="btn-delete-item" data-quantity="' + quantity + '" data-amount="' + quantity * item_selected.amount + '" data-nuc="' + quantity * item_selected.nuc + '"><i class="far fa-trash-alt"></i></a></td>' +
-
+                                
                                 // hidden elements
                                 '<input type="hidden" name="item_name[]" value="' + item_selected.name + '" required>' + 
                                 '<input type="hidden" name="quantity[]" value="' + quantity + '" required>' + 
@@ -461,17 +568,13 @@ tbody tr:nth-child(odd) {
             }
         }); 
 
-    
         // delete row
         $(document).on('click','.btn-delete-item', function() {
 
             // get the data to be subtracted
-            var quantity = Number($(this).attr("data-quantity"));
-            var amount = Number($(this).attr("data-amount"));
-            var nuc = Number($(this).attr("data-nuc"));
-
-            // item id
-            var item_id = Number($(this).attr("data-id"));
+            var quantity = $(this).attr("data-quantity");
+            var amount = $(this).attr("data-amount");
+            var nuc = $(this).attr("data-nuc");
 
             // show notification
             Swal.fire({
@@ -486,37 +589,19 @@ tbody tr:nth-child(odd) {
 
                     // subtract the amount and nuc
                     total_amount = total_amount - amount;
-                    if(total_amount > 0) {
-                        $('#tfoot_total_amount').text(total_amount.toFixed(2));
-                    } else {
-                        $('#tfoot_total_amount').text('0.00');
-                    }
+                    $('#tfoot_total_amount').val(total_amount.toFixed(2));
 
                     total_nuc = total_nuc - nuc;
-                    if(total_amount > 0) {
-                        $('#tfoot_total_nuc').text(total_nuc.toFixed(2));
-                    } else {
-                        $('#tfoot_total_nuc').text('0.00');
-                    }
+                    $('#tfoot_total_nuc').val(total_nuc.toFixed(2));
 
-                    // temporary 
-                    $('#hidden_total_amount').val(total_amount.toFixed(2));
-                    $('#hidden_total_nuc').val(total_nuc.toFixed(2));
+                    grandtotal_amount =  $('#tfoot_grandtotal_amount').val() - amount;
+                    $('#tfoot_grandtotal_amount').val(grandtotal_amount.toFixed(2));
 
                     // update the item count
                     item_count--;
 
                     // remove the row
                     this.closest('tr').remove();
-
-                    // check if `item_id` is a NUMBER. Add the item id in the deleted_item_id array;
-                    // reason: newly added item has no sales_details id
-                    if(!isNaN(item_id)) {
-                        deleted_item_id.push(item_id);
-
-                        // pass deleted_item_id new value to input type hidden
-                        $('#deleted_item_id').val(deleted_item_id); 
-                    }
 
                     // show confirmation
                     Swal.fire(
@@ -542,9 +627,35 @@ tbody tr:nth-child(odd) {
                     return; 
                 } 
             });
+
+            if (!allAreFilled) {
+                
+                // set focus to specific field
+                if($.trim($("#transaction_type").val()) == "") {
+                    $('#transaction_type').focus();
+                    required_field('Transaction Type');
+                } 
+                else if($.trim($("#branch_id").val()) == "") {
+                    $('#branch_id').focus();
+                    required_field('Branch');
+                } 
+                else if($.trim($("#bcid").val()) == "") {
+                    $('#bcid').focus();
+                    required_field('BCID');
+                }
+                else if($.trim($("#distributor_name").val()) == "") {
+                    $('#distributor_name').focus();
+                    required_field('Distributor name');
+                }
+                else if($.trim($("#group_name").val()) == "") {
+                    $('#group_name').focus();
+                    required_field('Group');
+                }
+            } 
+
             // lets check if there is/are actual item(s) in the details table before submitting
             // use `if else` statement to support older browser
-            if(item_count > 0) {
+            else if(item_count > 0) {
                 Swal.fire({
                     title: 'Are you sure you want to save this sales order?',
                     icon: 'warning',
@@ -572,26 +683,6 @@ tbody tr:nth-child(odd) {
                 title: field + ' is required',
                 icon: 'error',
             });
-        }
-
-        function calculateVAT(salesAmount) {
-            // Calculate VATable Sales
-            let vatable_sales = salesAmount / 1.12;
-
-            // Calculate VAT Amount
-            let vat_amount = vatable_sales * 0.12;
-
-            // Calculate the difference between salesAmount and the sum of vatable_sales and vat_amount
-            const difference = salesAmount - (vatable_sales + vat_amount);
-
-            // Round vat_amount to account for the difference
-            vat_amount += difference;
-
-            // Return an object with both results
-            return {
-                vatable_sales: parseFloat(vatable_sales.toFixed(2)),
-                vat_amount: parseFloat(vat_amount.toFixed(2))
-            };
         }
     });
 </script>

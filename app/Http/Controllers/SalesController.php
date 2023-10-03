@@ -11,6 +11,7 @@ use App\Models\Branch;
 use App\Models\History;
 use App\Models\Sales;
 use App\Models\SalesDetails;
+use App\Models\ShippingFee;
 use App\Models\TransactionType;
 use App\Models\User;
 use Carbon\Carbon; 
@@ -53,6 +54,8 @@ class SalesController extends Controller
     public function create()
     {
         $transaction_types = TransactionType::whereDeleted(false)->get(['id','name']);
+
+        $shipping_fees = ShippingFee::whereDeleted(false)->get();
  
         // users without branch id
         $branches = Branch::whereDeleted(false)->get(['id','name']);
@@ -66,7 +69,7 @@ class SalesController extends Controller
                             ->get(['id','name']);
         }
 
-        return view('SalesOrder.create', compact('transaction_types','branches'));
+        return view('SalesOrder.create', compact('transaction_types','branches','shipping_fees'));
     }
 
     /**
@@ -77,79 +80,71 @@ class SalesController extends Controller
         $sales = new Sales();
         $sales->uuid = Helper::uuid(new Sales);
         $sales->transaction_type_id = $request->transaction_type_id;
+        $sales->company_id = Helper::get_company_id_by_branch_id($request->branch_id);
         $sales->branch_id = $request->branch_id;
-        $sales->so_no = Helper::generate_so_no();
+        $sales->so_no = Helper::generate_so_no($request->branch_id);
         $sales->bcid = $request->bcid;
         $sales->distributor_name = $request->distributor_name;
-        $sales->group_name = $request->group_name;
-        $sales->company = $request->company;
-        $sales->shipping_fee = $request->shipping_fee;
-        $sales->grandtotal_amount = $request->hidden_grandtotal_amount;
-        $sales->total_amount = $request->hidden_total_amount; // must be refactored
-        $sales->total_nuc = $request->hidden_total_nuc; // must be refactored
+        $sales->shipping_fee = $request->shipping_fee ?? 0; // conditional
+        $sales->total_amount = $request->total_amount;
+        $sales->total_nuc = $this->compute_total_nuc($request->subtotal_nuc); // computation of total nuc is not included in the js
+        $sales->vatable_sales = $request->vatable_sales;
+        $sales->vat_amount = $request->vat_amount;
+        $sales->grandtotal_amount = $request->grandtotal_amount;
         $sales->status_id = 1; //set to default - 1 (Draft)
+        $sales->group_name = $request->group_name;
+        $sales->company = Helper::get_company_name_by_branch_id($request->branch_id);
         $sales->created_by = Auth::user()->name;
         $sales->updated_by = Auth::user()->name;
-        
+
         // if the parent information is saved, then, save the details information
         if($sales->save()) {
 
             // create a new array
             $item_details = [];
-
-            // convert the multiple array into one single array (flat array)
-            foreach($request->item_name as $key => $value) {
+            foreach ($request->item_name as $key => $value) {
                 $item_details[$key]['item_name'] = $value;
-
-                // instead of using multi nested foreach loop, lets break it down individually and just find the matching keys
-                foreach($request->quantity as $key_quantity => $value_quantity) {
-                    if($key == $key_quantity) {
-                        $item_details[$key]['quantity'] = $value_quantity;
-                    }
+            
+                if (isset($request->quantity[$key])) {
+                    $item_details[$key]['quantity'] = $request->quantity[$key];
                 }
-                foreach($request->amount as $key_amount => $value_amount) {
-                    if($key == $key_amount) {
-                        $item_details[$key]['amount'] = $value_amount;
-                    }
+            
+                if (isset($request->amount[$key])) {
+                    $item_details[$key]['amount'] = $request->amount[$key];
                 }
-                foreach($request->nuc as $key_nuc => $value_nuc) {
-                    if($key == $key_nuc) {
-                        $item_details[$key]['nuc'] = $value_nuc;
-                    }
+            
+                if (isset($request->nuc[$key])) {
+                    $item_details[$key]['nuc'] = $request->nuc[$key];
                 }
-                foreach($request->rs_points as $key_rs_points => $value_rs_points) {
-                    if($key == $key_rs_points) {
-                        $item_details[$key]['rs_points'] = $value_rs_points;
-                    }
+            
+                if (isset($request->rs_points[$key])) {
+                    $item_details[$key]['rs_points'] = $request->rs_points[$key];
                 }
-                foreach($request->subtotal_nuc as $key_subtotal_nuc => $value_subtotal_nuc) {
-                    if($key == $key_subtotal_nuc) {
-                        $item_details[$key]['subtotal_nuc'] = $value_subtotal_nuc;
-                    }
+            
+                if (isset($request->subtotal_nuc[$key])) {
+                    $item_details[$key]['subtotal_nuc'] = $request->subtotal_nuc[$key];
                 }
-                foreach($request->subtotal_amount as $key_subtotal_amount => $value_subtotal_amount) {
-                    if($key == $key_subtotal_amount) {
-                        $item_details[$key]['subtotal_amount'] = $value_subtotal_amount;
-                    }
+            
+                if (isset($request->subtotal_amount[$key])) {
+                    $item_details[$key]['subtotal_amount'] = $request->subtotal_amount[$key];
                 }
-            }
-
-            // save the flat array to sales details table
-            foreach($item_details as $item) {
+            
+                // Save each item's details to the sales details table
                 $details = new SalesDetails();
                 $details->sales_id = $sales->id;
-                $details->item_name = $item['item_name'];
-                $details->item_price = $item['amount'];
-                $details->quantity = $item['quantity'];
-                $details->amount = $item['subtotal_amount']; 
-                $details->nuc = $item['subtotal_nuc'];
+                $details->item_name = $value;
+                $details->item_price = $item_details[$key]['amount'] ?? null;
+                $details->item_nuc = $item_details[$key]['nuc'] ?? null;
+                $details->quantity = $item_details[$key]['quantity'] ?? null;
+                $details->amount = $item_details[$key]['subtotal_amount'] ?? null;
+                $details->nuc = $item_details[$key]['subtotal_nuc'] ?? null;
                 $details->created_by = Auth::user()->name;
                 $details->updated_by = Auth::user()->name;
                 $details->save();
             }
 
             // save to history
-            Helper::history($sales->id, $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Order', 'Create Sales Order', NULL);
+            Helper::transaction_history($sales->id, $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Order', 'Create Sales Order', NULL);
         }
 
         return redirect('sales-orders')->with('success','Sales Order Saved!');
@@ -208,7 +203,7 @@ class SalesController extends Controller
                 $message = $sales->so_no . ' successfully marked for invoicing';
             }
 
-            Helper::history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Order', 'Submitted For Invoicing', NULL);
+            Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Order', 'Submitted For Invoicing', NULL);
 
         } else {
             // other requests, status_id goes here. (from EDIT method)
@@ -296,7 +291,7 @@ class SalesController extends Controller
                 $message = $sales->so_no . ' successfully updated';
             }
 
-            Helper::history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Order', 'Update Sales Order', NULL);
+            Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Order', 'Update Sales Order', NULL);
 
         }
 
@@ -333,4 +328,11 @@ class SalesController extends Controller
         return DataTables::of($sales_orders)->toJson();
     }
 
+    private function compute_total_nuc($nuc) {
+        $total_nuc = 0;
+        foreach ($nuc as $item) {
+            $total_nuc += $item;
+        }
+        return $total_nuc;
+    }
 }

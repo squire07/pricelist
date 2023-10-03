@@ -127,7 +127,7 @@
     </div>
 
     <div class="modal fade" id="modal-submit-payment" data-backdrop='static'>
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Submit Payment</h4>
@@ -145,35 +145,23 @@
                     <div class="modal-body form-horizontal">
                         <div class="col-12">
                             <div class="form-group row">
-                                <label for="total_amount" class="col-sm-5 col-form-label">Total Amount:</label>
-                                <div class="col-sm-7">
+                                <label for="total_amount" class="col-sm-4 col-form-label">Total Amount:</label>
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4">
                                     <input type="number" class="form-control form-control-sm text-right" id="total_amount" style="font-size:25px;" value="{{ $sales_order->total_amount }}" disabled>
                                 </div>
                             </div>
                         </div>
-
-                        {{-- <div class="col-12">
-                            Cash Tendered:
-                            <input type="number" class="form-control form-control-sm text-right" id="cash_tendered" style="font-size:25px;" name="cash_tendered" maxlength="12" min="0" pattern="^\d+(?:\.\d{1,2})?$" required> --}}
-                            {{-- pattern="^\d+(?:\.\d{1,2})?$" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" required> --}}
-                        {{-- </div> --}}
 
                         {{-- dynamic cash tendered field --}}
                         <div id="cash_tendered_fields"></div>
 
                         <div class="col-12">
                             <div class="form-group row">
-                                <label for="cash_change" class="col-sm-5 col-form-label">Cash Change:</label>
-                                <div class="col-sm-7">
+                                <label for="cash_change" class="col-sm-4 col-form-label">Cash Change:</label>
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4">
                                     <input type="number" class="form-control form-control-sm text-right" id="cash_change" style="font-size:25px;" name="cash_change" value="0.00" disabled>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-group row">
-                                <label for="ref_number" class="col-sm-5 col-form-label">Reference Number:</label>
-                                <div class="col-sm-7">
-                                    <input type="text" class="form-control form-control-sm text-right" id="ref_number" style="font-size:25px;" name="ref_number" disabled>
                                 </div>
                             </div>
                         </div>
@@ -233,10 +221,13 @@ $(document).ready(function() {
         for(let i = 1; i <= count_payment_type.length; i++) {
             divs += "<div class='col-12'>" +
                         "<div class='form-group row'>" +
-                            "<label for='" + selected_payment_type_names[i - 1] + "' class='col-sm-5 col-form-label'>" + selected_payment_type_names[i - 1] + ":</label>" +
-                            "<div class='col-sm-7'>" +
-                                "<input type='text' class='form-control form-control-sm text-right input_amount_field' id='dynamic_amount_field_" + i + "' style='font-size:25px;' name='payments[]' placeholder='0.00' maxlength='12' required>" +
+                            "<label for='" + selected_payment_type_names[i - 1] + "' class='col-sm-4 col-form-label'>" + selected_payment_type_names[i - 1] + ":</label>" +
+                            "<div class='col-sm-4'>" +
+                                "<input type='text' class='form-control form-control-sm text-right' id='dynamic_reference_field_" + i + "' style='font-size:25px;' name='payment_references[]' placeholder='Reference No' required>" +
                             "</div>" +
+                            "<div class='col-sm-4'>" +
+                                "<input type='text' class='form-control form-control-sm text-right input_amount_field' id='dynamic_amount_field_" + i + "' style='font-size:25px;' name='payments[]' placeholder='0.00' maxlength='12' required>" +
+                            "</div>" +  
                         "</div>" +
                     "</div>";
         }
@@ -337,9 +328,25 @@ $(document).ready(function() {
     });
 
 
+    // let payment_type_ids = [];
+
+    // $('#payment_type').on('change', function() {
+    //     console.log(this.value);
+    // });
+
     // submit the final form with payment type details 
     $('#btn_modal_print_invoice').on('click', function() {
         // console.log('test')
+        // disable the button to prevent multiple submit
+        $(this).prop('disabled',true);
+
+        let payment_type_ids = $('#payment_type').select2("val");
+
+        console.log(payment_type_ids);
+
+
+        // submit the form
+        //$('#form_modal_submit_payment').submit();
     }); 
 
     

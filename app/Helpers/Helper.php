@@ -7,6 +7,7 @@ use Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use App\Models\Branch;
+use App\Models\Company;
 use App\Models\History;
 use App\Models\Sales;
 use App\Models\User;
@@ -27,9 +28,17 @@ class Helper {
     }
 
     // format: SO-20230804-001
-    public static function generate_so_no()
+    public static function generate_so_no($branch_id)
     {
-        $sales = Sales::latest()->first();
+        // get branch code by branch id
+        $branch_code = Branch::whereId($branch_id)->whereDeleted(false)->first()->code;
+
+        // get company code
+        $branch = Branch::with('company')->whereId($branch_id)->whereDeleted(false)->first();      
+        $company_code = $branch->company->code;
+
+        // search for so_no with same branch code, company code, current date and get the last record 
+        $sales = Sales::where('so_no', 'like', 'SO-' . Str::upper($branch_code) . '-' . Str::upper($company_code) . '-' . Carbon::now()->format('Ymd') . '-%')->latest()->first();
 
         // get the last 4 character of so number
         $last = isset($sales->so_no) ? substr($sales->so_no, strlen($sales->so_no)-4) : 0;
@@ -37,10 +46,11 @@ class Helper {
         $last_number = $last == 0 ? 1 : ltrim($last, 0) + 1;
 
         $check = isset($sales->so_no) && strpos($sales->so_no, Carbon::now()->format('Ymd')); // get current date in yyyymmdd format and compare with the last so_no
+
         if($check) { // true? increment by 1
-            return 'SO-' . Carbon::now()->format('Ymd') . '-' . substr(str_repeat(0, 4) . $last_number, - 4);
+            return 'SO-' . Str::upper($branch_code) . '-' . Str::upper($company_code) . '-' . Carbon::now()->format('Ymd') . '-' . substr(str_repeat(0, 4) . $last_number, - 4);
         } else { // false? start at 1 again with new date
-            return 'SO-' . Carbon::now()->format('Ymd') . '-' . substr(str_repeat(0, 4) . '1', - 4);
+            return 'SO-' . Str::upper($branch_code) . '-' . Str::upper($company_code) . '-' . Carbon::now()->format('Ymd') . '-' . substr(str_repeat(0, 4) . '1', - 4);
         }
     }
 
@@ -70,7 +80,7 @@ class Helper {
         }
     }
 
-    public static function history($record_id, $record_uuid, $transaction_type_id, $status_id, $so_no, $module, $event_name, $remarks) {
+    public static function transaction_history($record_id, $record_uuid, $transaction_type_id, $status_id, $so_no, $module, $event_name, $remarks) {
         $history = new History();
         $history->record_id = $record_id;
         $history->uuid = $record_uuid;
@@ -129,5 +139,14 @@ class Helper {
         Session::put('branch_name', $branch_name);
 
         return $branch_name; // this can be single or multiple with '/' as separator
+    }
+
+    public static function get_company_id_by_branch_id($branch_id) {
+        return Branch::whereId($branch_id)->whereDeleted(false)->first()->company_id;
+    }
+
+    public static function get_company_name_by_branch_id($branch_id) {
+        $branch = Branch::with('company')->whereId($branch_id)->whereDeleted(false)->first();
+        return $branch->company->name;
     }
 }

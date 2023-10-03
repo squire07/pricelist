@@ -78,7 +78,40 @@ class ForInvoicingController extends Controller
     public function edit(Sales $sales, $uuid)
     {
         $sales_order = Sales::with('sales_details','transaction_type','status')->whereUuid($uuid)->firstOrFail();
-        $payment_types = PaymentList::whereDeleted(false)->get(['id','name']);
+
+        /* Based on cashier's branch id
+        *  Branch id 1,7 = West Insula Local and Premier
+        *  Branch id 6 = Ecomm Local; 12 = Ecomm Premier
+        *  Branch id LO = Local - all branches except West Insula; PR = Premier - all branches except West Insula
+        *  Note: Only cashier, admin and super admin can get the payment list.
+        */
+
+        // check users branch id: null, single value, explode
+        $exploded = array_map('trim', explode(',', Auth::user()->branch_id));
+
+        $payment_types = PaymentList::where('deleted', false);
+            if(count($exploded) == 1) {
+                if(array_intersect([1, 7, 6, 12], $exploded)) { // 
+                    $payment_types->whereRaw('FIND_IN_SET(?, branch_id)', [$exploded]);
+                } else if(array_intersect([2,3,4,5], $exploded)) { // Local
+                    $payment_types->where('branch_id', 'LO');
+                } else if(array_intersect([8,9,10,11], $exploded)) { // Premier
+                    $payment_types->where('branch_id', 'PR');
+                } 
+            } else if(count($exploded) > 1) {
+                $payment_types->whereIn('branch_id', ['LO', 'PR']);
+            } else {
+                $payment_types->where('branch_id', 6);
+            }
+        $payment_types = $payment_types->get();
+
+        // finally, remove duplicate codes
+        
+
+       // dd($payment_types);
+
+
+
         return view('SalesInvoice.for_invoicing.edit', compact('sales_order','payment_types'));
     }
 
@@ -87,6 +120,8 @@ class ForInvoicingController extends Controller
      */
     public function update(Request $request, $uuid)
     {
+        dump($uuid);
+        dd($request);
         $uuid = $request->uuid ?? $uuid;
         
         $sales = Sales::whereUuid($uuid)->whereDeleted(false)->firstOrFail();  
@@ -101,7 +136,7 @@ class ForInvoicingController extends Controller
                 $message = $sales->so_no . ' successfully returned to Draft!';
             }
 
-            Helper::history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Return Sales Order to Draft', $sales->so_remarks);
+            Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Return Sales Order to Draft', $sales->so_remarks);
 
         }
         

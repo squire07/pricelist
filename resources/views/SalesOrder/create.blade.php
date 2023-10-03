@@ -598,21 +598,21 @@ tbody tr:nth-child(odd) {
                 if (result.isConfirmed) {
 
                     // subtract the amount to sub_total_amount, total_nuc and grand_total_amount
-                    sub_total_amount = sub_total_amount - amount;
+                    sub_total_amount = Number(sub_total_amount).toFixed(2) - Number(amount).toFixed(2);
                     if(!isNaN(sub_total_amount)) {
                         $('#tfoot_subtotal_amount').val(sub_total_amount.toFixed(2));
                     } else {
                         $('#tfoot_subtotal_amount').val("0.00");
                     }
 
-                    total_nuc = total_nuc - nuc;
+                    total_nuc = Number(total_nuc).toFixed(2) - Number(nuc).toFixed(2);
                     if(!isNaN(total_nuc)) {
                         $('#tfoot_total_nuc').val(total_nuc.toFixed(2));
                     } else {
                         $('#tfoot_total_nuc').val("0.00");
                     }
 
-                    grand_total_amount = current_grand_total_amount - amount;
+                    grand_total_amount = Number(current_grand_total_amount).toFixed(2) - Number(amount).toFixed(2);
                     $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
 
                     // get the computed tax values

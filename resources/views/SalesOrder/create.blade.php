@@ -110,6 +110,10 @@
                             <label for="rs_points">RS Points</label>
                             <input type="text" class="form-control form-control-sm" id="rs_points" disabled>
                         </div>
+                        <div class="col-md-1 col-2 d-none">
+                            <label for="rs_points">Item Code</label>
+                            <input type="text" class="form-control form-control-sm" id="item_code" disabled>
+                        </div>
                     </div>
                 
 
@@ -119,6 +123,7 @@
                             <table class="table table-bordered table-hover" id="table_item_details">
                                 <thead>
                                     <tr>
+                                        <th class="text-center" style="width:9%">Item Code</th>
                                         <th class="text-center">Item Name</th>
                                         <th class="text-center" style="width:9%">Quantity</th>
                                         <th class="text-center" style="width:12%">Price</th>
@@ -129,14 +134,14 @@
                                 <tbody></tbody>
                                 <tfoot>
                                     <tr>
-                                        <td class="text-right text-bold" colspan="3">Sub Total</td>
+                                        <td class="text-right text-bold" colspan="4">Sub Total</td>
                                         <td class="text-right text-bold">
                                             <input type="text" class="text-right custom-input-text" name="total_amount" id="tfoot_subtotal_amount" value="0.00" readonly>
                                         </td>
                                     </tr>
                                     @if(Request::get('so') == 'delivery')
                                         <tr>
-                                            <td class="text-right text-bold" colspan="3">
+                                            <td class="text-right text-bold" colspan="4">
                                                 <input type="checkbox" name="sf_checkbox" id="sf_checkbox" data-toggle="modal" disabled/>
                                                 <span class="ml-1">Shipping Fee</span>
                                             </td>
@@ -146,19 +151,19 @@
                                         </tr>
                                     @endif
                                     <tr>
-                                        <td class="text-right text-bold" colspan="3">VATable Sales</td>
+                                        <td class="text-right text-bold" colspan="4">VATable Sales</td>
                                         <td class="text-right text-bold">
                                             <input type="text" class="text-right custom-input-text" name="vatable_sales" id="tfoot_vatable_sales" value="0.00" readonly>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="text-right text-bold" colspan="3">VAT Amount</td>
+                                        <td class="text-right text-bold" colspan="4">VAT Amount</td>
                                         <td class="text-right text-bold">
                                             <input type="text" class="text-right custom-input-text" name="vat_amount" id="tfoot_vat_amount" value="0.00" readonly>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="text-right text-bold" colspan="3">Grand Total</td>
+                                        <td class="text-right text-bold" colspan="4">Grand Total</td>
                                         <td class="text-right text-bold">
                                             <input type="number" class="text-right custom-input-text text-bold" name="grandtotal_amount" id="tfoot_grand_total_amount" value="0.00" readonly>
                                         </td>
@@ -491,7 +496,8 @@ tbody tr:nth-child(odd) {
                     var quantity = $('#quantity').val();
 
                     // clear the item name, quantity and other fields after clicking the Add Item button
-                    $('#item_name').val(null).trigger('change'); // this is for select2 type dropdown only
+                    $('#item_name').val(null).trigger('change');
+                    $('#item_code').val('');
                     $('#quantity').val('');
                     $('#amount').val('');
                     $('#nuc').val('');
@@ -526,12 +532,14 @@ tbody tr:nth-child(odd) {
 
                     // populate the details table
                     var row = '<tr>' + 
-                                '<td>' + item_selected.name + '</td>' +
+                                '<td>' + item_selected.code + '</td>' +
+                                '<td class="text-center">' + item_selected.name + '</td>' +
                                 '<td class="text-center">' + quantity + '</td>' +
                                 '<td class="text-right">' + item_selected.amount + '</td>' +
                                 '<td class="text-right">' + (item_selected.amount * quantity).toFixed(2) + '</td>' +
                                 '<td class="text-center"><a href="#" class="btn-delete-item" data-quantity="' + quantity + '" data-amount="' + quantity * item_selected.amount + '" data-nuc="' + quantity * item_selected.nuc + '"><i class="far fa-trash-alt"></i></a></td>' +
                                 // hidden elements
+                                '<input type="hidden" name="item_code[]" value="' + item_selected.code + '" required>' + 
                                 '<input type="hidden" name="item_name[]" value="' + item_selected.name + '" required>' + 
                                 '<input type="hidden" name="quantity[]" value="' + quantity + '" required>' + 
                                 '<input type="hidden" name="amount[]" value="' + item_selected.amount + '" required>' + 

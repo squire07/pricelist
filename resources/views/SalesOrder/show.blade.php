@@ -40,6 +40,7 @@
                     <table class="table table-bordered table-hover table-striped" width="100%">
                         <thead>
                             <tr>
+                                <th class="text-center">Item Code</th>
                                 <th class="text-center">Item Name</th>
                                 <th class="text-center">Quantity</th>
                                 <th class="text-center">Price</th>
@@ -50,7 +51,8 @@
                         <tbody>
                             @foreach($sales_order->sales_details as $sd)
                                 <tr>
-                                    <td>{{ $sd->item_name }}</td>
+                                    <td>{{ $sd->item_code }}</td>
+                                    <td class="text-center">{{ $sd->item_name }}</td>
                                     <td class="text-center" style="width:9%">{{ $sd->quantity }}</td>
                                     <td class="text-right" style="width:12%">{{ $sd->item_price }}</td>
                                     <td class="text-right" style="width:15%">{{ $sd->amount }}</td>
@@ -59,23 +61,23 @@
                             @endforeach
                             <tfoot>
                                 <tr>
-                                    <td class="text-right text-bold" colspan="3">Sub Total</td>
+                                    <td class="text-right text-bold" colspan="4">Sub Total</td>
                                     <td class="text-right">{{ $sales_order->total_amount }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-right text-bold" colspan="3">Shipping Fee</td>
+                                    <td class="text-right text-bold" colspan="4">Shipping Fee</td>
                                     <td class="text-right">{{ $sales_order->shipping_fee }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-right text-bold" colspan="3">VATable Sales</td>
+                                    <td class="text-right text-bold" colspan="4">VATable Sales</td>
                                     <td class="text-right">{{ $sales_order->vatable_sales }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-right text-bold" colspan="3">VAT Amount</td>
+                                    <td class="text-right text-bold" colspan="4">VAT Amount</td>
                                     <td class="text-right">{{ $sales_order->vat_amount }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-right text-bold" colspan="3">Grand Total</td>
+                                    <td class="text-right text-bold" colspan="4">Grand Total</td>
                                     <td class="text-right text-bold">{{ $sales_order->grandtotal_amount }}</td>
                                     <td class="text-right text-bold">{{ $sales_order->total_nuc }}</td>
                                 </tr>

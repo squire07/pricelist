@@ -49,7 +49,7 @@
                 <table id="dt_sales_orders" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
                         <tr>
-                            <th class="text-center"></th>
+                            <th class="text-center" style="width:30px;"></th>
                             <th class="text-center">SO #</th>
                             <th class="text-center">Transaction Type</th>
                             <th class="text-center">BCID</th>
@@ -137,6 +137,9 @@
                     className: 'btn-default btn-sm',
                 },
             ],
+            columnDefs: [
+                { 'orderable': false, 'targets': 0 } // Disable sorting for the first column (index 0)
+            ]
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
             },

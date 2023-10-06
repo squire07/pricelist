@@ -23,6 +23,9 @@ return new class extends Migration
             $table->string('branch_id')->nullable();
             $table->string('company_id')->nullable();
             $table->rememberToken();
+            $table->tinyInteger('deleted')->default(false);
+            $table->tinyInteger('active')->default(true);
+            $table->tinyInteger('blocked')->default(false);
             $table->timestamps();
             $table->softDeletes();
             $table->string('created_by',55)->nullable();

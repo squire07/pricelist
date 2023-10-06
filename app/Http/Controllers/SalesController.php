@@ -93,7 +93,6 @@ class SalesController extends Controller
         $sales->grandtotal_amount = $request->grandtotal_amount;
         $sales->status_id = 1; //set to default - 1 (Draft)
         $sales->group_name = $request->group_name;
-        $sales->company = Helper::get_company_name_by_branch_id($request->branch_id);
         $sales->created_by = Auth::user()->name;
         $sales->updated_by = Auth::user()->name;
 
@@ -104,6 +103,10 @@ class SalesController extends Controller
             $item_details = [];
             foreach ($request->item_name as $key => $value) {
                 $item_details[$key]['item_name'] = $value;
+
+                if (isset($request->item_code[$key])) {
+                    $item_details[$key]['item_code'] = $request->item_code[$key];
+                }
             
                 if (isset($request->quantity[$key])) {
                     $item_details[$key]['quantity'] = $request->quantity[$key];
@@ -132,6 +135,7 @@ class SalesController extends Controller
                 // Save each item's details to the sales details table
                 $details = new SalesDetails();
                 $details->sales_id = $sales->id;
+                $details->item_code = $item_details[$key]['item_code'] ?? null;
                 $details->item_name = $value;
                 $details->item_price = $item_details[$key]['amount'] ?? null;
                 $details->item_nuc = $item_details[$key]['nuc'] ?? null;
@@ -181,8 +185,9 @@ class SalesController extends Controller
 
         $transaction_types = TransactionType::whereDeleted(false)->get();
         $branches = Branch::whereDeleted(false)->get(['id','name']);
+        $shipping_fees = ShippingFee::whereDeleted(false)->get();
 
-        return view('SalesOrder.edit', compact('sales_order','transaction_types','branches'));
+        return view('SalesOrder.edit', compact('sales_order','transaction_types','branches','shipping_fees'));
     }
 
     /**
@@ -214,8 +219,12 @@ class SalesController extends Controller
             $sales->distributor_name = $request->distributor_name ?? $sales->distributor_name;
             $sales->group_name = $request->group_name ?? $sales->group_name;
             // update total amount and total nuc points, else retain the original
-            $sales->total_amount = $request->hidden_total_amount ?? $sales->total_amount;
-            $sales->total_nuc = $request->hidden_total_nuc ?? $sales->total_nuc;
+            $sales->total_amount = $request->total_amount ?? $sales->total_amount;
+            $sales->total_nuc = $request->total_nuc ?? $sales->total_nuc;
+            $sales->shipping_fee = $request->shipping_fee ?? $sales->shipping_fee;
+            $sales->vatable_sales = $request->vatable_sales ?? $sales->vatable_sales;
+            $sales->vat_amount = $request->vat_amount ?? $sales->vat_amount;
+            $sales->grandtotal_amount = $request->grandtotal_amount ?? $sales->grandtotal_amount;
             if($sales->update()) {
 
                 // check if there is/are item(s) for deletion 
@@ -240,36 +249,32 @@ class SalesController extends Controller
                     foreach($request->item_name as $key => $value) {
                         $item_details[$key]['item_name'] = $value;
 
-                        // instead of using multi nested foreach loop, lets break it down individually and just find the matching keys
-                        foreach($request->quantity as $key_quantity => $value_quantity) {
-                            if($key == $key_quantity) {
-                                $item_details[$key]['quantity'] = $value_quantity;
-                            }
+                        if (isset($request->item_code[$key])) {
+                            $item_details[$key]['item_code'] = $request->item_code[$key];
                         }
-                        foreach($request->amount as $key_amount => $value_amount) {
-                            if($key == $key_amount) {
-                                $item_details[$key]['amount'] = $value_amount;
-                            }
+
+                        if (isset($request->quantity[$key])) {
+                            $item_details[$key]['quantity'] = $request->quantity[$key];
                         }
-                        foreach($request->nuc as $key_nuc => $value_nuc) {
-                            if($key == $key_nuc) {
-                                $item_details[$key]['nuc'] = $value_nuc;
-                            }
+                    
+                        if (isset($request->amount[$key])) {
+                            $item_details[$key]['amount'] = $request->amount[$key];
                         }
-                        foreach($request->rs_points as $key_rs_points => $value_rs_points) {
-                            if($key == $key_rs_points) {
-                                $item_details[$key]['rs_points'] = $value_rs_points;
-                            }
+                    
+                        if (isset($request->nuc[$key])) {
+                            $item_details[$key]['nuc'] = $request->nuc[$key];
                         }
-                        foreach($request->subtotal_nuc as $key_subtotal_nuc => $value_subtotal_nuc) {
-                            if($key == $key_subtotal_nuc) {
-                                $item_details[$key]['subtotal_nuc'] = $value_subtotal_nuc;
-                            }
+                    
+                        if (isset($request->rs_points[$key])) {
+                            $item_details[$key]['rs_points'] = $request->rs_points[$key];
                         }
-                        foreach($request->subtotal_amount as $key_subtotal_amount => $value_subtotal_amount) {
-                            if($key == $key_subtotal_amount) {
-                                $item_details[$key]['subtotal_amount'] = $value_subtotal_amount;
-                            }
+                    
+                        if (isset($request->subtotal_nuc[$key])) {
+                            $item_details[$key]['subtotal_nuc'] = $request->subtotal_nuc[$key];
+                        }
+                    
+                        if (isset($request->subtotal_amount[$key])) {
+                            $item_details[$key]['subtotal_amount'] = $request->subtotal_amount[$key];
                         }
                     }
 
@@ -277,11 +282,12 @@ class SalesController extends Controller
                     foreach($item_details as $item) {
                         $details = new SalesDetails();
                         $details->sales_id = $sales->id;
-                        $details->item_name = $item['item_name'];
-                        $details->item_price = $item['amount'];
-                        $details->quantity = $item['quantity'];
-                        $details->amount = $item['subtotal_amount']; 
-                        $details->nuc = $item['subtotal_nuc'];
+                        $details->item_code = $item['item_code'] ?? null;;
+                        $details->item_name = $item['item_name'] ?? null;;
+                        $details->item_price = $item['amount'] ?? null;;
+                        $details->quantity = $item['quantity'] ?? null;;
+                        $details->amount = $item['subtotal_amount'] ?? null;; 
+                        $details->nuc = $item['subtotal_nuc'] ?? null;;
                         $details->created_by = Auth::user()->name;
                         $details->updated_by = Auth::user()->name;
                         $details->save();

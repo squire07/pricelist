@@ -78,6 +78,10 @@
                     </div>
 
                     <div class="row">
+                        <div class="col-md-1 col-2 d-none">
+                            <label for="rs_points">Item Code</label>
+                            <input type="text" class="form-control form-control-sm" id="item_code" disabled>
+                        </div>
                         <div class="col-lg-4 col-md-4">
                             <label for="item_name">Item Name</label>
                             <select class="form-control form-control-sm select2 select2-primary" id="item_name" data-dropdown-css-class="select2-primary " disabled>
@@ -95,25 +99,14 @@
                             <label for="nuc">NUC</label>
                             <input type="text" class="form-control form-control-sm" id="nuc" disabled>
                         </div>
-                        <div class="col-xl-1 col-md-2">
-                            <input type="button" class="btn btn-primary btn-sm" id="add_item" value="Add Item" style="margin-top: 29px">
-                        </div>
-                        {{--  @if(Request::get('so') == 'delivery')
-                            <div class="col-md-2 col-2">
-                                <div class="checkbox"> 
-                                    <label class="checkbox">
-                                    <input type="checkbox" name="sf_checkbox" id="sf_checkbox" data-toggle="modal" data-target="#modal-add-sf" style="margin-top: 35px" disabled/>&nbsp;&nbsp;Add Shipping Fee
-                                </div>
-                            </div>
-                        @endif  --}}
                         <div class="col-md-1 col-2 d-none">
                             <label for="rs_points">RS Points</label>
                             <input type="text" class="form-control form-control-sm" id="rs_points" disabled>
                         </div>
-                        <div class="col-md-1 col-2 d-none">
-                            <label for="rs_points">Item Code</label>
-                            <input type="text" class="form-control form-control-sm" id="item_code" disabled>
+                        <div class="col-xl-1 col-md-2">
+                            <input type="button" class="btn btn-primary btn-sm" id="add_item" value="Add Item" style="margin-top: 29px">
                         </div>
+                        
                     </div>
                 
 

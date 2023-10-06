@@ -16,6 +16,8 @@ return new class extends Migration
             $table->uuid('uuid');
             $table->string('name', 125);
             $table->string('code', 12);
+            $table->tinyInteger('status_id')->default(8);
+            $table->string('remarks', 255)->nullable();
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
             $table->softDeletes();

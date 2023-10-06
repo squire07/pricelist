@@ -15,6 +15,11 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid');
             $table->string('name');
+            $table->string('code', 12);
+            $table->integer('company_id')->default(1);
+            $table->tinyInteger('status_id')->default(8);
+            $table->string('cost_center', 12)->nullable();
+            $table->string('remarks', 255)->nullable();
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
             $table->softDeletes();

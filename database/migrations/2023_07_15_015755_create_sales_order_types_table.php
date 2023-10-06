@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('sales_type_id', 100)->nullable();
             $table->string('sales_company', 100)->nullable();
             $table->string('sales_order_type', 100)->nullable();
+            $table->integer('income_account_id')->nullable();
+            $table->integer('expense_account_id')->nullable();
+            $table->tinyInteger('deleted')->default(false);
             $table->string('income_account', 100)->nullable();
             $table->string('expense_account', 100)->nullable();
             $table->timestamps();

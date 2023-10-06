@@ -79,20 +79,24 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4 col-4">
+                        <div class="col-md-1 col-2 d-none">
+                            <label for="rs_points">Item Code</label>
+                            <input type="text" class="form-control form-control-sm" id="item_code" disabled>
+                        </div>
+                        <div class="col-lg-4 col-md-4">
                             <label for="item_name">Item Name</label>
                             <select class="form-control form-control-sm select2 select2-primary" id="item_name" data-dropdown-css-class="select2-primary" required>
                             </select>
                         </div>
-                        <div class="col-md-1 col-2">
+                        <div class="col-xl-1 col-md-2">
                             <label for="quantity">Quantity</label>
                             <input type="number" class="form-control form-control-sm" min="1" id="quantity" oninput="validity.valid||(value=value.replace(/\D+/g, ''))">
                         </div>
-                        <div class="col-md-1 col-2">
+                        <div class="col-xl-1 col-md-2">
                             <label for="amount">Amount</label>
                             <input type="text" class="form-control form-control-sm" id="amount" disabled>
                         </div>
-                        <div class="col-md-1 col-2">
+                        <div class="col-xl-1 col-md-2">
                             <label for="nuc">NUC</label>
                             <input type="text" class="form-control form-control-sm" id="nuc" disabled>
                         </div>
@@ -100,7 +104,7 @@
                             <label for="rs_points">RS Points</label>
                             <input type="text" class="form-control form-control-sm" id="rs_points" disabled>
                         </div>
-                        <div class="col-md-1 col-2">
+                        <div class="col-xl-1 col-md-2">
                             <input type="button" class="btn btn-primary btn-sm" id="add_item" value="Add Item" style="margin-top: 29px">
                         </div>
                     </div>
@@ -112,6 +116,7 @@
                             <table class="table table-bordered table-hover" id="table_item_details">
                                 <thead>
                                     <tr>
+                                        <th class="text-center" style="width:9%">Item Code</th>
                                         <th class="text-center">Item Name</th>
                                         <th class="text-center" style="width:9%">Quantity</th>
                                         <th class="text-center" style="width:12%">Price</th>
@@ -122,6 +127,7 @@
                                 <tbody>
                                     @foreach($sales_order->sales_details as $sd)
                                     <tr>
+                                        <td>{{ $sd->item_code }}</td>
                                         <td>{{ $sd->item_name }}</td>
                                         <td class="text-center">{{ $sd->quantity }}</td>
                                         <td class="text-right">{{ $sd->item_price }}</td>
@@ -133,34 +139,42 @@
                                     @endforeach
                                 </tbody>
                                 <tfoot>
-                                    {{-- <tr>
-                                        <td class="text-right text-bold">Total</td>
-                                        <td class="text-right"></td>
-                                        <td class="text-right"></td>
-                                        <td class="text-right text-bold" id="tfoot_total_amount">{{ $sales_order->total_amount }}</td>
-                                        <td>&nbsp;</td>
-                                    </tr> --}}
-
                                     <tr>
                                         <td class="text-right text-bold" colspan="3">Sub Total</td>
-                                        <td class="text-right" name="total_amount" id="tfoot_sub_total_amount">{{ $sales_order->total_amount }}</td>
+                                        <td class="text-right text-bold">
+                                            <input type="text" class="text-right custom-input-text" name="total_amount" id="tfoot_subtotal_amount" value="{{ $sales_order->total_amount }}" readonly>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td class="text-right text-bold" colspan="3">Shipping Fee</td>
-                                        <td class="text-right" name="shipping_fee" id="tfoot_shipping_fee">{{ $sales_order->shipping_fee }}</td>
+                                        <td class="text-right text-bold" colspan="3">
+                                            <input type="checkbox" name="sf_checkbox" id="sf_checkbox" data-toggle="modal" {{  $sales_order->shipping_fee > 0 ? 'checked':'' }}/>
+                                            <span class="ml-1">Shipping Fee</span>
+                                        </td>
+                                        <td class="text-right text-bold">
+                                            <input type="text" class="text-right custom-input-text" name="shipping_fee" id="tfoot_sf_total_amount" value="{{ $sales_order->shipping_fee }}" readonly/>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="text-right text-bold" colspan="3">VATable Sales</td>
-                                        <td class="text-right" name="vatable_sales" id="tfoot_vatable_sales">{{ $sales_order->vatable_sales }}</td>
+                                        <td class="text-right text-bold">
+                                            <input type="text" class="text-right custom-input-text" name="vatable_sales" id="tfoot_vatable_sales" value="{{ $sales_order->vatable_sales }}" readonly>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="text-right text-bold" colspan="3">VAT Amount</td>
-                                        <td class="text-right" name="vat_amount" id="tfoot_vat_amount">{{ $sales_order->vat_amount }}</td>
+                                        <td class="text-right text-bold">
+                                            <input type="text" class="text-right custom-input-text" name="vat_amount" id="tfoot_vat_amount" value="{{ $sales_order->vat_amount }}" readonly>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="text-right text-bold" colspan="3">Grand Total</td>
-                                        <td class="text-right text-bold" name="grandtotal_amount" id="tfoot_grandtotal_amount">{{ $sales_order->grandtotal_amount }}</td>
+                                        <td class="text-right text-bold">
+                                            <input type="number" class="text-right custom-input-text text-bold" name="grandtotal_amount" id="tfoot_grand_total_amount" value="{{ $sales_order->grandtotal_amount }}" readonly>
+                                        </td>
                                     </tr>
+
+                                    {{-- temporary --}}
+                                    <input type="hidden" name="total_nuc" id="tfoot_total_nuc" value="{{ $sales_order->total_nuc }}">
                                 </tfoot>
                             </table>
                         </div>
@@ -173,10 +187,6 @@
                         </div>
                     </div>
 
-                    {{-- temporary --}}
-                    <input type="hidden" name="hidden_total_amount" id="hidden_total_amount" value="{{ $sales_order->total_amount }}">
-                    <input type="hidden" name="hidden_total_nuc" id="hidden_total_nuc" value="{{ $sales_order->total_nuc }}">
-
                     {{-- this will handle the original item count from original data  --}}
                     <input type="hidden" name="item_count" id="hidden_item_count" value="{{ count($sales_order->sales_details) }}">
 
@@ -186,6 +196,45 @@
             </div>    
         </div>
     </div>
+
+    <div class="modal fade" id="modal-add-sf">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Shipping Fee</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-7 col-sm-12">
+                            <div class="form-group">
+                                <label for="modal_select_sf">Parcel Size and Region</label>
+                                <select class="form-control form-control-sm select2 select2-primary" id="modal_select_sf" data-dropdown-css-class="select2-primary" style="width: 100%;">
+                                    <option value="" selected="true" disabled>-- Select Size and Region --</option>
+                                    @foreach($shipping_fees as $shipping_fee)
+                                        <option value="{{ $shipping_fee->id }}" data-parcel-rate="{{ $shipping_fee->parcel_rate }}">{{ $shipping_fee->parcel_size}} - {{ $shipping_fee->region}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-5 col-sm-12">    
+                            <div class="form-group">
+                                <label for="modal_sf_amount">Shipping Fee Amount</label>
+                                <input type="text" class="form-control form-control-sm" id="modal_sf_amount" style="text-align:right;" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
+                    <input type="button" class="btn btn-primary btn-sm m-2" id="btn-add-sf" value="Save">
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('adminlte_css')
@@ -245,6 +294,13 @@ tbody tr:nth-child(odd) {
         // initialize id handler for deleted item(s)
         let deleted_item_id = [];
 
+        
+        // initialize total amount nuc grandtotal and shipping fee
+        var sub_total_amount = $('#tfoot_subtotal_amount').val();
+        var total_nuc = $('#tfoot_total_nuc').val();
+        var shipping_fee = $('#tfoot_sf_total_amount').val();
+        var grand_total_amount = $('#tfoot_grand_total_amount').val();
+
         // fetch the item details by transaction type id using FETCH API
         var transaction_type =  $('#transaction_type').val();
         fetch(window.location.origin + '/api/item/transaction_type/' + transaction_type, {
@@ -273,45 +329,6 @@ tbody tr:nth-child(odd) {
             window.sessionStorage.setItem('item_object', JSON.stringify(obj));
         });
 
-        // fetch the distributor's name by bcid using FETCH API
-        $('#bcid').on('focusout', function() {
-            if(this.value !== "" || this.value.length !== 0) {
-
-                // add leading zero's to bcid
-                let bcid = $(this).val().toString().padStart(12, '0')
-
-                fetch(window.location.origin + '/api/distributor/' + bcid, {
-                    method: 'get',
-                    headers: {
-                        'Content-type': 'application/json',
-                    }
-                })
-                .then(response => response.json())
-                .then((response) => {
-                    obj = JSON.parse(JSON.stringify(response));
-                    if(obj[0] == undefined) {
-                        // show modal bcid not found
-                        Swal.fire({
-                            title: 'BCID not found!',
-                            icon: 'error',
-                        });
-                        // remove name field content
-                        $('#distributor_name').val('');
-
-                    } else {
-                        if(obj[0].name != '') {
-                            $('#distributor_name').val(obj[0].name);
-                        } else {
-                            $('#distributor_name').val('');
-                        }
-                    }
-                })
-                .catch(err => console.error(err));
-            } else {
-                // be sure to empty the name field
-                $('#distributor_name').val('');
-            }
-        });
 
         // item name dropdown
         $('#item_name').on('change', function() {
@@ -347,11 +364,6 @@ tbody tr:nth-child(odd) {
             } 
         }); 
 
-
-
-        // initialize total amount and nuc from original record and force the variable to be a NUMBER type
-        var total_amount = Number($('#hidden_total_amount').val());
-        var total_nuc = Number($('#hidden_total_nuc').val());
 
         // add item 
         $('#add_item').on('click', function() {
@@ -401,29 +413,37 @@ tbody tr:nth-child(odd) {
 
                     // get the sessionStorage object from item selected
                     var item_selected = JSON.parse(sessionStorage.getItem('item_selected'));
-
+      
                     // sum of amount
-                    total_amount += quantity * item_selected.amount;
-                    $('#tfoot_total_amount').text(total_amount.toFixed(2));
-                    // sum of nuc
-                    total_nuc += quantity * item_selected.nuc;
-                    $('#tfoot_total_nuc').text(total_nuc.toFixed(2));
+                    sub_total_amount = Number(sub_total_amount) + (Number(quantity) * Number(item_selected.amount).toFixed(2));
+                    $('#tfoot_subtotal_amount').val(Number(sub_total_amount).toFixed(2));
 
-                    // temporary 
-                    $('#hidden_total_amount').val(total_amount.toFixed(2));
-                    $('#hidden_total_nuc').val(total_nuc.toFixed(2));
+                    // sum of nuc
+                    total_nuc = Number(total_nuc) + (Number(quantity) * Number(item_selected.nuc).toFixed(2));
+                    $('#tfoot_total_nuc').val(Number(total_nuc).toFixed(2));
+
+                    current_shipping_fee = $('#tfoot_sf_total_amount').val();
+
+                    grand_total_amount = Number(current_shipping_fee) + Number(sub_total_amount);
+                    $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
+
+                    // get the computed tax values
+                    vat_result = calculateVAT(grand_total_amount.toFixed(2));
+                    $('#tfoot_vatable_sales').val(vat_result.vatable_sales.toFixed(2));
+                    $('#tfoot_vat_amount').val(vat_result.vat_amount.toFixed(2));
+
 
                     // populate the details table
                     var row = '<tr>' + 
+                                '<td>' + item_selected.code + '</td>' +
                                 '<td>' + item_selected.name + '</td>' +
                                 '<td class="text-center">' + quantity + '</td>' +
                                 '<td class="text-right">' + item_selected.amount + '</td>' +
-                                // '<td class="text-right">' + item_selected.nuc + ' (' + (item_selected.nuc * quantity).toFixed(2) + ')' +'</td>' +
-                                // '<td class="text-right">' + item_selected.rs_points + '</td>' +
                                 '<td class="text-right">' + (item_selected.amount * quantity).toFixed(2) + '</td>' +
                                 '<td class="text-center"><a href="#" class="btn-delete-item" data-quantity="' + quantity + '" data-amount="' + quantity * item_selected.amount + '" data-nuc="' + quantity * item_selected.nuc + '"><i class="far fa-trash-alt"></i></a></td>' +
 
                                 // hidden elements
+                                '<input type="hidden" name="item_code[]" value="' + item_selected.code + '" required>' + 
                                 '<input type="hidden" name="item_name[]" value="' + item_selected.name + '" required>' + 
                                 '<input type="hidden" name="quantity[]" value="' + quantity + '" required>' + 
                                 '<input type="hidden" name="amount[]" value="' + item_selected.amount + '" required>' + 
@@ -472,6 +492,15 @@ tbody tr:nth-child(odd) {
 
             // item id
             var item_id = Number($(this).attr("data-id"));
+            
+             // get the current sub total amount value
+             var current_sub_total_amount = $('#tfoot_subtotal_amount').val();
+
+            // get the current grand total amount value
+            var current_grand_total_amount = $('#tfoot_grand_total_amount').val();
+
+            // get the current shipping fee value
+            var current_shipping_fee = $('#tfoot_sf_total_amount').val();
 
             // show notification
             Swal.fire({
@@ -484,24 +513,28 @@ tbody tr:nth-child(odd) {
             }).then((result) => {
                 if (result.isConfirmed) {
 
-                    // subtract the amount and nuc
-                    total_amount = total_amount - amount;
-                    if(total_amount > 0) {
-                        $('#tfoot_total_amount').text(total_amount.toFixed(2));
+                    // subtract the amount to sub_total_amount, total_nuc and grand_total_amount
+                    sub_total_amount = Number(sub_total_amount).toFixed(2) - Number(amount).toFixed(2);
+                    if(!isNaN(sub_total_amount)) {
+                        $('#tfoot_subtotal_amount').val(sub_total_amount.toFixed(2));
                     } else {
-                        $('#tfoot_total_amount').text('0.00');
+                        $('#tfoot_subtotal_amount').val("0.00");
                     }
 
-                    total_nuc = total_nuc - nuc;
-                    if(total_amount > 0) {
-                        $('#tfoot_total_nuc').text(total_nuc.toFixed(2));
+                    total_nuc = Number(total_nuc).toFixed(2) - Number(nuc).toFixed(2);
+                    if(!isNaN(total_nuc)) {
+                        $('#tfoot_total_nuc').val(total_nuc.toFixed(2));
                     } else {
-                        $('#tfoot_total_nuc').text('0.00');
+                        $('#tfoot_total_nuc').val("0.00");
                     }
 
-                    // temporary 
-                    $('#hidden_total_amount').val(total_amount.toFixed(2));
-                    $('#hidden_total_nuc').val(total_nuc.toFixed(2));
+                    grand_total_amount = Number(current_grand_total_amount).toFixed(2) - Number(amount).toFixed(2);
+                    $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
+
+                    // get the computed tax values
+                    vat_result = calculateVAT(grand_total_amount.toFixed(2));
+                    $('#tfoot_vatable_sales').val(vat_result.vatable_sales.toFixed(2));
+                    $('#tfoot_vat_amount').val(vat_result.vat_amount.toFixed(2));
 
                     // update the item count
                     item_count--;
@@ -528,6 +561,71 @@ tbody tr:nth-child(odd) {
             });
             
         });
+
+
+
+
+
+        // =========== START OF SHIPPING FEE MODAL ===========
+
+        // open the modal shipping fee
+        $('#sf_checkbox').on('click', function() {
+            var current_shipping_fee = $('#tfoot_sf_total_amount').val();
+
+            if ($(this).prop('checked')) {
+                $("#modal-add-sf").modal('show');
+            } else {
+                // set the shipping value zero
+                const zero_value = 0;
+                $('#tfoot_sf_total_amount').val(zero_value.toFixed(2));
+
+                // update the grand total amount
+                var grand_total_amount = $('#tfoot_grand_total_amount').val();
+                grand_total_amount = Number(grand_total_amount) - Number(current_shipping_fee);
+
+                $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
+
+                // get the computed tax values
+                vat_result = calculateVAT(grand_total_amount.toFixed(2));
+                $('#tfoot_vatable_sales').val(vat_result.vatable_sales.toFixed(2));
+                $('#tfoot_vat_amount').val(vat_result.vat_amount.toFixed(2));
+            }
+        });
+
+        // uncheck sf_checkbox on modal close event
+        $("#modal-add-sf").on('hide.bs.modal', function() {
+            $('#sf_checkbox').prop('checked', false);
+        });
+
+        // this is the modal shipping fee dropdown / select option
+        $('#modal_select_sf').on('change', function() {
+            var selectedOption = $(this).find('option:selected');
+            var parcel_rate = selectedOption.data('parcel-rate');
+            $('#modal_sf_amount').val(parcel_rate);
+        });  
+        
+        // add shipping fee amount
+        $('#btn-add-sf').on('click', function() {
+            var shipping_amount = $('#modal_sf_amount').val();
+            $('#tfoot_sf_total_amount').val(shipping_amount);
+            $('#modal-add-sf').modal('hide');
+            // $('#sf_checkbox').prop('disabled', true);
+            $('#sf_checkbox').prop('checked', true);
+
+            // update the grand total amount
+            var current_grand_total_amount = $('#tfoot_grand_total_amount').val();
+            var grand_total_amount = Number(current_grand_total_amount) + Number(shipping_amount);
+            $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
+
+            // get the computed tax values
+            vat_result = calculateVAT(grand_total_amount.toFixed(2));
+            $('#tfoot_vatable_sales').val(vat_result.vatable_sales.toFixed(2));
+            $('#tfoot_vat_amount').val(vat_result.vat_amount.toFixed(2));
+        });
+
+        // =========== END OF SHIPPING FEE MODAL ===========
+
+
 
         $('#btn_save_so').on('click', function(e) {
             // prevent auto submit

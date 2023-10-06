@@ -58,7 +58,7 @@ class PaymentMethodController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PaymentMethod $paymentList)
+    public function show(PaymentMethod $paymentMethod)
     {
         //
     }
@@ -66,7 +66,7 @@ class PaymentMethodController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PaymentMethod $paymentList, string $uuid)
+    public function edit(PaymentMethod $paymentMethod, string $uuid)
     {
         //
     }

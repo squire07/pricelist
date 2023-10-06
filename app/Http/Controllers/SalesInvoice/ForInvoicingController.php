@@ -5,7 +5,7 @@ namespace App\Http\Controllers\SalesInvoice;
 use App\Models\Sales;
 use App\Helpers\Helper;
 use App\Models\History;
-use App\Models\PaymentList;
+use App\Models\PaymentMethod;
 use App\Models\SalesInvoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -89,7 +89,7 @@ class ForInvoicingController extends Controller
         // check users branch id: null, single value, explode
         $exploded = array_map('trim', explode(',', Auth::user()->branch_id));
 
-        $payment_types = PaymentList::where('deleted', false);
+        $payment_types = PaymentMethod::where('deleted', false);
             if(count($exploded) == 1) {
                 if(array_intersect([1, 7, 6, 12], $exploded)) { // 
                     $payment_types->whereRaw('FIND_IN_SET(?, branch_id)', [$exploded]);

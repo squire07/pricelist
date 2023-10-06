@@ -11,6 +11,6 @@ class SalesInvoice extends Model
 
     public function payment_type()
     {
-        return $this->hasOne('App\Models\PaymentList', 'id', 'payment_lists_id');
+        return $this->hasOne('App\Models\PaymentMethod', 'id', 'payment_lists_id');
     }
 }

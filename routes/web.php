@@ -15,7 +15,7 @@ use App\Http\Controllers\SalesInvoice\ReleasedController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\HistoryController;
-use App\Http\Controllers\PaymentListController;
+use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalesInvoice\ForValidationController;
 use App\Http\Controllers\UserController;
@@ -73,7 +73,7 @@ Route::middleware('auth')->group(function () {
     Route::get('distributor_list', [DistributorController::class, 'distributor_list'])->name('distributor_list');
     Route::resource('distributors', DistributorController::class)->only('index');
     Route::resource('items', ItemController::class);
-    Route::resource('payment-types', PaymentListController::class);
+    Route::resource('payment-methods', PaymentMethodController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('sales-invoice-assignment', SalesInvoiceAssignmentController::class);
     Route::resource('transaction-types', TransactionTypeController::class);

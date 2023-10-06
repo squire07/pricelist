@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payment_lists', function (Blueprint $table) {
+        Schema::create('payment_methods', function (Blueprint $table) {
                 $table->id();
                 $table->uuid('uuid');
                 $table->string('name');
                 $table->string('code', 12);
-                $table->string('branch_id', 12)->nullable();
+                $table->string('branch_id', 55)->nullable();
                 $table->tinyInteger('company_id');
+                $table->tinyInteger('is_cash')->default(0); // payment reference number is not required if cash is true (1)
                 $table->tinyInteger('status_id')->default(6);
                 $table->string('remarks', 255)->nullable();
                 $table->tinyInteger('deleted')->default(false);

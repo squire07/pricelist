@@ -133,9 +133,9 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ url('payment-types') }}" class="nav-link {{ $url_segment_1 == 'payment-types' ? 'active':'' }}" target="_self">
+                    <a href="{{ url('payment-methods') }}" class="nav-link {{ $url_segment_1 == 'payment-methods' ? 'active':'' }}" target="_self">
                         <i class="far fa-circle nav-icon"></i>
-                        <p>Payment Types</p>
+                        <p>Payment Methods</p>
                     </a>
                 </li>
                 <li class="nav-item">

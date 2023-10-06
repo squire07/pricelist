@@ -149,4 +149,16 @@ class Helper {
         $branch = Branch::with('company')->whereId($branch_id)->whereDeleted(false)->first();
         return $branch->company->name;
     }
+
+    public static function get_branch_name_by_id($id) {
+        $ids = explode(',', $id);
+        $branch_names = [];
+        foreach ($ids as $branch_id) {
+            $branch = Branch::whereId($branch_id)->whereDeleted(false)->first();
+            if ($branch) {
+                $branch_names[] = $branch->name;
+            }
+        }
+        return implode(',', $branch_names);
+    }
 }

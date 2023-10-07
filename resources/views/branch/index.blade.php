@@ -24,6 +24,7 @@
                         <tr>
                             <th class="text-center">Name</th>
                             <th class="text-center">Code</th>
+                            <th class="text-center">Cost Center</th>
                             <th class="text-center">Created By</th>
                             <th class="text-center">Status</th>
                             <th class="text-center">Action</th>
@@ -34,6 +35,7 @@
                             <tr>
                                 <td class="text-center">{{ $branch->name }}</td>
                                 <td class="text-center">{{ $branch->code }}</td>
+                                <td class="text-center">{{ $branch->cost_center }}</td>
                                 <td class="text-center">{{ $branch->created_by }}</td>
                                 <td class="text-center"><span class="badge {{ Helper::badge($branch->status_id) }}">{{ $branch->status->name }}</span></td>
                                 <td class="text-center">

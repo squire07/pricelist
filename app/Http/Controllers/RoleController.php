@@ -65,16 +65,35 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    // public function update(Request $request, $uuid)
+    // {
+    //     $role = role::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
+    //     $role->name = $request->name;
+    //     $role->updated_by = Auth::user()->name;
+    //     $role->update();
+
+    //     return redirect('roles')->with('success', 'Role has been updated!');
+    // }
+
     public function update(Request $request, $uuid)
     {
-        $role = role::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
-        $role->name = $request->name;
-        $role->updated_by = Auth::user()->name;
-        $role->update();
+        $role = Role::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
 
-        return redirect('roles')->with('success', 'Role has been updated!');
+        // check first if role name and code exist
+        $existName = Role::whereName($request->name)->whereDeleted(false)->first();
+
+        if(!$existName) {
+            $role->name = $request->name;     
+            $role->updated_by = Auth::user()->name;
+            $role->update();
+            $msg = 'Role has been updated!';
+            $msgType = 'success';
+        } else {
+            $msg = 'Role name already exist';
+            $msgType = 'error';
+        }
+        return redirect('roles')->with($msgType, $msg);
     }
-
     /**
      * Remove the specified resource from storage.
      */

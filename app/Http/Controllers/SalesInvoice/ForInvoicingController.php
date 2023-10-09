@@ -120,8 +120,7 @@ class ForInvoicingController extends Controller
      */
     public function update(Request $request, $uuid)
     {
-        dump($uuid);
-        dd($request);
+
         $uuid = $request->uuid ?? $uuid;
         
         $sales = Sales::whereUuid($uuid)->whereDeleted(false)->firstOrFail();  

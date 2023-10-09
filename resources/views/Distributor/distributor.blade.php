@@ -42,7 +42,6 @@
         });
 
         $('#dt_distributors').DataTable({
-            dom: 'Bftrip',
             serverSide: true,
             processing: true,
             deferRender: true,

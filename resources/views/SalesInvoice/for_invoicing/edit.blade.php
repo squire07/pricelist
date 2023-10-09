@@ -17,7 +17,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="ribbon-wrapper ribbon-lg">
-                    <div class="ribbon {{ Helper::badge($sales_order->status_id) }} text-bold" id="ribbon_bg">
+                    <div class="ribbon {{ Helper::badge($sales_order->status_id) }} text-md text-bold" id="ribbon_bg">
                         {{ $sales_order->status->name }}
                     </div>
                 </div>
@@ -40,89 +40,94 @@
                     <table class="table table-bordered table-hover table-striped" width="100%">
                         <thead>
                             <tr>
+                                <th class="text-center">Item Code</th>
                                 <th class="text-center">Item Name</th>
                                 <th class="text-center">Quantity</th>
-                                <th class="text-center">NUC</th>
+                                <th class="text-center">Price</th>
                                 <th class="text-center">Amount</th>
+                                <th class="text-center">NUC</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($sales_order->sales_details as $sd)
                                 <tr>
-                                    <td>{{ $sd->item_name }}</td>
-                                    <td class="text-center">{{ $sd->quantity }}</td>
-                                    <td class="text-right">{{ $sd->nuc }}</td>
-                                    <td class="text-right">{{ $sd->amount }}</td>
+                                    <td>{{ $sd->item_code }}</td>
+                                    <td class="text-center">{{ $sd->item_name }}</td>
+                                    <td class="text-center" style="width:9%">{{ $sd->quantity }}</td>
+                                    <td class="text-right" style="width:12%">{{ $sd->item_price }}</td>
+                                    <td class="text-right" style="width:15%">{{ $sd->amount }}</td>
+                                    <td class="text-right" style="width:8%">{{ $sd->nuc }}</td>
                                 </tr>
                             @endforeach
-                            <tfoot>
-                                <tr>
-                                    <td class="text-right"></td>
-                                    <td class="text-right text-bold">Subtotal</td>
-                                    <td class="text-right text-bold" id="tfoot_total_nuc">{{ $sales_order->total_nuc }}</td>
-                                    <td class="text-right text-bold" id="tfoot_total_amount">{{ $sales_order->total_amount }}</td>
-                                    
-                                </tr>
-                            </tfoot>
                         </tbody>
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
     
-    
-            <div class="row">
-                <div class="col-6">
-                    <p class="lead">Payment Methods:</p>
-                    <select class="select2" multiple="multiple" id="payment_type" name="payment_type_id[]" data-name="payment_type_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                        <option value="" disabled>-- Select Payment Type --</option>
-                        @foreach($payment_types as $payment_type)
-                            <option value="{{ $payment_type->id }}">{{ $payment_type->name }}</option>
-                        @endforeach
-                    </select>
-                    {{-- <div class="form-group">
-                        <p class="lead">Remarks:</p>
-                        <input type="text" class="form-control form-control-sm" id="remarks" name="remarks">
-                    </div> --}}
+        <div class="row">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Payment Method</h3>
+                    {{-- <p class="lead">Payment Methods:</p> --}}
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <select class="select2" multiple="multiple" id="payment_type" name="payment_type_id[]" data-name="payment_type_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                <option value="" disabled>-- Select Payment Type --</option>
+                                @foreach($payment_types as $payment_type)
+                                    <option value="{{ $payment_type->id }}">{{ $payment_type->name }}</option>
+                                @endforeach
+                            </select><br> 
+                                <a href="{{ url('sales-invoice/for-invoice') }}" class="btn btn-info"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+                            @if($sales_order->status_id == 4)
+                                <a href="invoice-print.html" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
+                            @endif
+                            @if($sales_order->status_id != 4)
+                            <button type="button" class="btn btn-success float-right" id="btn_submit_payment" data-toggle="modal" data-target="#modal-submit-payment"><i class="far fa-credit-card"></i> Submit Payment</button>
+                            @endif
+                        </div>
+                    </div> 
                 </div>
-    
-                <div class="col-6">
-                    <p class="lead">Amount Due:</p>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Amount Due</h3>
+                        {{-- <p class="lead">Amount Due:</p> --}}
+                    </div>
                     <div class="table-responsive">
                         <table class="table">
-                            <tr>
-                                <th style="width:50%">Subtotal:</th>
-                                <td class="text-right text-bold">{{ $sales_order->total_amount }}</td>
-                            </tr>
-                            <tr>
-                                <th style="width:50%">Shipping Fee:</th>
-                                <td class="text-right text-bold">{{ $sales_order->shipping_fee }}</td>
-                            </tr>
-                            <tr>
-                                <th>Tax (12%)</th>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <br>
-                                <th>Grand Total:</th>
-                                <td class="text-right text-bold">{{ $sales_order->grandtotal_amount }}</td>
-                            </tr>
+                            <tfoot>
+                                <tr>
+                                    <td class="text-right text-bold" colspan="4">Sub Total</td>
+                                    <td class="text-right">{{ $sales_order->total_amount }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-bold" colspan="4">Shipping Fee</td>
+                                    <td class="text-right">{{ $sales_order->shipping_fee }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-bold" colspan="4">VATable Sales</td>
+                                    <td class="text-right">{{ $sales_order->vatable_sales }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-bold" colspan="4">VAT Amount</td>
+                                    <td class="text-right">{{ $sales_order->vat_amount }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-bold" colspan="4">Grand Total</td>
+                                    <td class="text-right text-bold">{{ $sales_order->grandtotal_amount }}</td>
+                                    <td class="text-right text-bold" colspan="4">Total NUC</td>
+                                    <td class="text-right text-bold">{{ $sales_order->total_nuc }}</td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
-            </div>
-
-            <div class="row no-print">
-                <div class="col-12">
-                    <a href="{{ url('sales-invoice/for-invoice') }}" class="btn btn-info"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-
-                    @if($sales_order->status_id == 4)
-                        <a href="invoice-print.html" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
-                    @endif
-                    @if($sales_order->status_id != 4)
-                        <button type="button" class="btn btn-success float-right" id="btn_submit_payment" data-toggle="modal" data-target="#modal-submit-payment"><i class="far fa-credit-card"></i> Submit Payment</button>
-                    @endif
-                </div>
-            </div>
+            </div>     
         </div>
     </div>
 
@@ -178,6 +183,19 @@
     {{-- hidden element: this will be used by js fx for dynamic fields computation --}}
     <input type="hidden" id="count_payment_type" value="0">
 
+@endsection
+
+@section('adminlte_css')
+<style>
+.table-bordered {
+    border: 0px solid #dee2e6;
+}
+
+tfoot tr td {
+    border: none !important;
+}
+
+</style>
 @endsection
 
 @section('adminlte_js')

@@ -42,23 +42,26 @@ class GateMiddleware
         // after @ symbol or the method e.g. 1 = index, 2 = create (save), 3 = show (view), 4 = edit (update)
         $afterAt = $parts[1];
 
-        $method = match($afterAt){
-            'index' => 1,
-            'create' => 2,
-            'show' => 3,
-            'edit' => 4,
-        };
+        if(in_array($afterAt, ['index','create','show','edit'])) {
 
-        // get the id of the controller from Permission Modules table
-        $module_id = PermissionModule::whereController($afterLastBackslash)->pluck('id')->first();
+            $method = match($afterAt){
+                'index' => 1,
+                'create' => 2,
+                'show' => 3,
+                'edit' => 4,
+            };
 
-        // get the user's permission by auth id
-        $user_permission = UserPermission::whereId(Auth::user()->id)->pluck('user_permission')->first();
+            // get the id of the controller from Permission Modules table
+            $module_id = PermissionModule::whereController($afterLastBackslash)->pluck('id')->first();
 
-        $permissions = json_decode($user_permission, true);
-        if (isset($permissions[$module_id]) && isset($permissions[$module_id][$method]) && $permissions[$module_id][$method] == 0) {
-            // show unauthorize page
-            return abort(401, 'Unauthorized');
+            // get the user's permission by auth id
+            $user_permission = UserPermission::whereId(Auth::user()->id)->pluck('user_permission')->first();
+
+            $permissions = json_decode($user_permission, true);
+            if (isset($permissions[$module_id]) && isset($permissions[$module_id][$method]) && $permissions[$module_id][$method] == 0) {
+                // show unauthorize page
+                return abort(401, 'Unauthorized');
+            }
         }
 
         return $next($request);

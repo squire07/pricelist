@@ -22,8 +22,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SalesInvoiceAssignmentController;
 use App\Http\Controllers\ShippingFeeController;
 use App\Http\Controllers\TransactionTypeController;
+use App\Http\Controllers\UserPermissionController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\GateMiddleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +46,7 @@ Auth::routes();
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth'])->group(function () {
     
     Route::get('salesordertype_list', [SalesOrderTypeController::class, 'salesordertype_list'])->name('salesordertype_list');
    
@@ -78,6 +80,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('sales-invoice-assignment', SalesInvoiceAssignmentController::class);
     Route::resource('transaction-types', TransactionTypeController::class);
     Route::resource('users', UserController::class);
+    Route::resource('permissions', UserPermissionController::class)->only('edit','update');
     Route::resource('shipping-fee', ShippingFeeController::class);
 
 

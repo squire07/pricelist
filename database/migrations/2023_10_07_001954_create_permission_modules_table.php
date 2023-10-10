@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('permissions', function (Blueprint $table) {
+        Schema::create('permission_modules', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
+            $table->string('name');
+            $table->string('type');
+            $table->string('controller');
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
             $table->softDeletes();
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('permission_modules');
     }
 };

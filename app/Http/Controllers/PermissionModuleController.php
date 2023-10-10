@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Permission;
+use App\Models\PermissionModule;
+use App\Models\UserPermission;
 use Illuminate\Http\Request;
 
-class PermissionController extends Controller
+class PermissionModuleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        // sales order, sales invoice,
-        
-
-        // index (dashboard), create/save, view, edit/update
+        //
     }
 
     /**
@@ -37,7 +35,7 @@ class PermissionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Permission $permission)
+    public function show(PermissionModule $permissionModule)
     {
         //
     }
@@ -45,7 +43,7 @@ class PermissionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Permission $permission)
+    public function edit(PermissionModule $permissionModule)
     {
         //
     }
@@ -53,7 +51,7 @@ class PermissionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Permission $permission)
+    public function update(Request $request, PermissionModule $permissionModule)
     {
         //
     }
@@ -61,7 +59,7 @@ class PermissionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Permission $permission)
+    public function destroy(PermissionModule $permissionModule)
     {
         //
     }

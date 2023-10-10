@@ -60,6 +60,11 @@ class User extends Authenticatable
         return $this->hasOne('App\Models\Role', 'id', 'role_id');
     }
 
+    public function permission()
+    {
+        return $this->hasOne('App\Models\UserPermission', 'user_id', 'id');
+    }
+
 
     // getter and setter
     public function getCreatedAtAttribute($value)

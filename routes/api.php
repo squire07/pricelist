@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\DistributorController;
 use App\Http\Controllers\api\ItemController;
 use App\Http\Controllers\api\ShippingFeeController;
+use App\Http\Controllers\api\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,4 +26,6 @@ Route::get('distributor/{id}', [DistributorController::class, 'get_distributor_b
 Route::get('item/transaction_type/{id}', [ItemController::class, 'get_item_by_transaction_type']);
 Route::get('item/{id}', [ItemController::class, 'get_item_by_id']);
 Route::get('shippingfee/{id}', [ShippingFeeController::class, 'get_shippingfee_by_id']);
+
+Route::post('permission', [PermissionController::class, 'user_permission']);
 

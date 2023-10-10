@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Branch;
 use App\Models\Company;
 use App\Models\History;
+use App\Models\PermissionModule;
 use App\Models\Sales;
 use App\Models\User;
 use Auth;

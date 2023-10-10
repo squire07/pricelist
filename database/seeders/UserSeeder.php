@@ -6,7 +6,10 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Helpers\Helper;
 use App\Models\User;
+use App\Models\UserPermission;
+use App\Models\PermissionModule;
 use Hash;
 
 class UserSeeder extends Seeder
@@ -55,24 +58,27 @@ class UserSeeder extends Seeder
             31 => array('name' => 'Branch Manager West Local', 'username' => 'branchmanager_westlocal', 'role_id' => 6, 'branch_id' => 1, 'company_id' => 1),   
             32 => array('name' => 'Branch Manager West Premier', 'username' => 'branchmanager_westpremier', 'role_id' => 6, 'branch_id' => 7, 'company_id' => 2),
             33 => array('name' => 'Branch Manager West', 'username' => 'branchmanager_west', 'role_id' => 6, 'branch_id' => '1,7', 'company_id' => '1,2'),
-            31 => array('name' => 'Branch Manager Calamba Local', 'username' => 'branchmanager_calambalocal', 'role_id' => 6, 'branch_id' => 3, 'company_id' => 1),   
-            32 => array('name' => 'Branch Manager Calamba Premier', 'username' => 'branchmanager_calambapremier', 'role_id' => 6, 'branch_id' => 9, 'company_id' => 2),
-            33 => array('name' => 'Branch Manager Calamba', 'username' => 'branchmanager_calamba', 'role_id' => 6, 'branch_id' => '3,9', 'company_id' => '1,2'),
+            34 => array('name' => 'Branch Manager Calamba Local', 'username' => 'branchmanager_calambalocal', 'role_id' => 6, 'branch_id' => 3, 'company_id' => 1),   
+            35 => array('name' => 'Branch Manager Calamba Premier', 'username' => 'branchmanager_calambapremier', 'role_id' => 6, 'branch_id' => 9, 'company_id' => 2),
+            36 => array('name' => 'Branch Manager Calamba', 'username' => 'branchmanager_calamba', 'role_id' => 6, 'branch_id' => '3,9', 'company_id' => '1,2'),
 
-            34 => array('name' => 'Viewer', 'username' => 'viewer', 'role_id' => 7, 'branch_id' => NULL, 'company_id' => NULL),
-            35 => array('name' => 'Viewer Local', 'username' => 'viewerlocal', 'role_id' => 7, 'branch_id' => 1, 'company_id' => 1),
-            36 => array('name' => 'Viewer Premier', 'username' => 'viewerpremier', 'role_id' => 7, 'branch_id' => 7, 'company_id' => 2),
-            37 => array('name' => 'Accounting', 'username' => 'accounting', 'role_id' => 8, 'branch_id' => NULL, 'company_id' => NULL),
-            38 => array('name' => 'Treasury', 'username' => 'treasury', 'role_id' => 9, 'branch_id' => NULL, 'company_id' => NULL),
-            39 => array('name' => 'Manager Local', 'username' => 'managerlocal', 'role_id' => 10, 'branch_id' => 1, 'company_id' => 1),
-            40 => array('name' => 'Manager Premier', 'username' => 'managerpremier', 'role_id' => 10, 'branch_id' => 7, 'company_id' => 2),
-            41 => array('name' => 'Manager Ecomm', 'username' => 'managerecomm', 'role_id' => 10, 'branch_id' => NULL, 'company_id' => NULL),
-            42 => array('name' => 'Administrator', 'username' => 'administrator', 'role_id' => 11, 'branch_id' => NULL, 'company_id' => NULL),
-            43 => array('name' => 'Superadmin', 'username' => 'superadmin', 'role_id' => 12, 'branch_id' => NULL, 'company_id' => NULL),
+            37 => array('name' => 'Viewer', 'username' => 'viewer', 'role_id' => 7, 'branch_id' => NULL, 'company_id' => NULL),
+            38 => array('name' => 'Viewer Local', 'username' => 'viewerlocal', 'role_id' => 7, 'branch_id' => 1, 'company_id' => 1),
+            39 => array('name' => 'Viewer Premier', 'username' => 'viewerpremier', 'role_id' => 7, 'branch_id' => 7, 'company_id' => 2),
+            40 => array('name' => 'Accounting', 'username' => 'accounting', 'role_id' => 8, 'branch_id' => NULL, 'company_id' => NULL),
+            41 => array('name' => 'Treasury', 'username' => 'treasury', 'role_id' => 9, 'branch_id' => NULL, 'company_id' => NULL),
+            42 => array('name' => 'Manager Local', 'username' => 'managerlocal', 'role_id' => 10, 'branch_id' => 1, 'company_id' => 1),
+            43 => array('name' => 'Manager Premier', 'username' => 'managerpremier', 'role_id' => 10, 'branch_id' => 7, 'company_id' => 2),
+            44 => array('name' => 'Manager Ecomm', 'username' => 'managerecomm', 'role_id' => 10, 'branch_id' => NULL, 'company_id' => NULL),
+            45 => array('name' => 'Administrator', 'username' => 'administrator', 'role_id' => 11, 'branch_id' => NULL, 'company_id' => NULL),
+            46 => array('name' => 'Superadmin', 'username' => 'superadmin', 'role_id' => 12, 'branch_id' => NULL, 'company_id' => NULL),
+
+            47 => array('name' => 'Aris Flores', 'username' => 'aris', 'role_id' => 12, 'branch_id' => NULL, 'company_id' => NULL),
+            48 => array('name' => 'Test User', 'username' => 'test', 'role_id' => 12, 'branch_id' => NULL, 'company_id' => NULL),
         ];
 
         foreach($users as $key => $user) {
-            User::create([
+            $user = User::create([
                 'uuid' => Str::uuid(),
                 'name' => $user['name'],
                 'username' => $user['username'],
@@ -86,6 +92,27 @@ class UserSeeder extends Seeder
                 'created_by' => 'System',
                 'updated_by' => 'System'
             ]);
+
+            // create user permission
+            UserPermission::create([
+                'user_id' => $user->id,
+                'uuid' => $user->uuid,
+                'user_permission' => !in_array($user->role_id, [11,12]) ? $this->permissions(0) : $this->permissions(1),
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+                'created_by' => $user->created_by,
+                'updated_by' => $user->updated_by
+            ]);
         }
+    }
+
+    // $key = id of Permission Module;  1 = index, 2 = create (save), 3 = show (view), 4 = edit (update)
+    public function permissions($int) {
+        $modules = PermissionModule::whereDeleted(false)->get();
+        $permissions = [];
+        foreach ($modules as $key => $module) {
+            $permissions[$key + 1] = (strtolower($module->type) == 'module') ? array_fill(1, 4, $int) : [1 => $int];
+        }
+        return json_encode($permissions);
     }
 }

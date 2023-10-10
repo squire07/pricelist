@@ -30,10 +30,13 @@ class PermissionModuleSeeder extends Seeder
             12 => array('name' => 'Sales Invoice Assignment', 'type' => 'module', 'controller' => 'SalesInvoiceAssignmentController'),
             13 => array('name' => 'Transaction Types', 'type' => 'module', 'controller' => 'TransactionTypeController'),
             14 => array('name' => 'Payment Types', 'type' => 'module', 'controller' => 'PaymentMethodController'),
-            15 => array('name' => 'Build Report', 'type' => 'report', 'controller' => 'BuildReportController'),
-            16 => array('name' => 'Logs', 'type' => 'report', 'controller' => 'ActivityLogController'),
-            17 => array('name' => 'Stock Card', 'type' => 'report', 'controller' => 'StockCardController'),
-            18 => array('name' => 'Transaction Listing', 'type' => 'report', 'controller' => 'TransactionListingController'),
+            15 => array('name' => 'Users', 'type' => 'module', 'controller' => 'UserController'),
+            16 => array('name' => 'User Permission', 'type' => 'module', 'controller' => 'UserPermissionController'),
+            
+            17 => array('name' => 'Build Report', 'type' => 'report', 'controller' => 'BuildReportController'),
+            18 => array('name' => 'Logs', 'type' => 'report', 'controller' => 'ActivityLogController'),
+            19 => array('name' => 'Stock Card', 'type' => 'report', 'controller' => 'StockCardController'),
+            20 => array('name' => 'Transaction Listing', 'type' => 'report', 'controller' => 'TransactionListingController'),
         ];
 
         foreach($modules as $key => $module) {

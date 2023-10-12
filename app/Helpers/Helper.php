@@ -36,10 +36,9 @@ class Helper {
 
         // get company code
         $branch = Branch::with('company')->whereId($branch_id)->whereDeleted(false)->first();      
-        $company_code = $branch->company->code;
 
         // search for so_no with same branch code, company code, current date and get the last record 
-        $sales = Sales::where('so_no', 'like', 'SO-' . Str::upper($branch_code) . '-' . Str::upper($company_code) . '-' . Carbon::now()->format('Ymd') . '-%')->latest()->first();
+        $sales = Sales::where('so_no', 'like', 'SO-' . $branch->cost_center . '-' . Str::upper($company_code) . '-' . Carbon::now()->format('Ymd') . '-%')->latest()->first();
 
         // get the last 4 character of so number
         $last = isset($sales->so_no) ? substr($sales->so_no, strlen($sales->so_no)-4) : 0;
@@ -49,9 +48,9 @@ class Helper {
         $check = isset($sales->so_no) && strpos($sales->so_no, Carbon::now()->format('Ymd')); // get current date in yyyymmdd format and compare with the last so_no
 
         if($check) { // true? increment by 1
-            return 'SO-' . Str::upper($branch_code) . '-' . Str::upper($company_code) . '-' . Carbon::now()->format('Ymd') . '-' . substr(str_repeat(0, 4) . $last_number, - 4);
+            return 'SO-' . $branch->cost_center . '-' . Str::upper($company_code) . '-' . Carbon::now()->format('Ymd') . '-' . substr(str_repeat(0, 4) . $last_number, - 4);
         } else { // false? start at 1 again with new date
-            return 'SO-' . Str::upper($branch_code) . '-' . Str::upper($company_code) . '-' . Carbon::now()->format('Ymd') . '-' . substr(str_repeat(0, 4) . '1', - 4);
+            return 'SO-' . $branch->cost_center . '-' . Str::upper($company_code) . '-' . Carbon::now()->format('Ymd') . '-' . substr(str_repeat(0, 4) . '1', - 4);
         }
     }
 

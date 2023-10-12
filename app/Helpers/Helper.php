@@ -14,6 +14,7 @@ use App\Models\Sales;
 use App\Models\User;
 use Auth;
 use Session;
+use GuzzleHttp\Client;
 class Helper {
 
     // create uuid - non repeating
@@ -160,5 +161,22 @@ class Helper {
             }
         }
         return implode(',', $branch_names);
+    }
+
+    public static function get_erpnext_data($param) {
+        $client = new Client();
+
+        try {
+            $response = $client->get(env('ERPNEXT_URL') . $param, [
+                'headers' => [
+                    'Authorization' => 'Token ' . env('ERPNEXT_API_KEY') . ':' . env('ERPNEXT_API_SECRET'),
+                    'Accept' => 'application/json', 
+                ],
+            ]);
+
+            return json_decode($response->getBody(), true);
+        } catch (\Exception $e) {
+            return $e;
+        }
     }
 }

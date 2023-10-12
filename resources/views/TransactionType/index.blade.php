@@ -26,7 +26,7 @@
                             <th class="text-center">ID</th>
                             <th class="text-center">Name</th>
                             <th class="text-center">Is Active</th>
-                            <th class="text-center">Action</th>
+                            <th class="text-center">Updated At</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -41,7 +41,7 @@
                                         <span class="badge bg-danger">No</span>
                                     @endif
                                 </td>
-                                <td></td>
+                                <td class="text-center">{{ $transaction_type->updated_at }}</td>
                             </tr>
                         @endforeach
                     </tbody>

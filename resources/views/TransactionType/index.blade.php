@@ -20,17 +20,31 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                <table id="dt_sales_order_types" class="table table-bordered table-hover table-striped" width="100%">
+                <table id="dt_transaction_types" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
                         <tr>
-                            <th class="text-center">Sales Type ID</th>
-                            <th class="text-center">Company</th>
-                            <th class="text-center">Sales Order Type</th>
-                            <th class="text-center">Income Account</th>
-                            <th class="text-center">Expense Account</th>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">Name</th>
+                            <th class="text-center">Is Active</th>
+                            <th class="text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        @foreach($transaction_types as $transaction_type)
+                            <tr>
+                                <td class="text-center">{{ $transaction_type->id }}</td>
+                                <td>{{ $transaction_type->name }}</td>
+                                <td class="text-center">
+                                    @if($transaction_type->is_active == 1)
+                                        <span class="badge bg-success">Yes</span>
+                                    @else
+                                        <span class="badge bg-danger">No</span>
+                                    @endif
+                                </td>
+                                <td></td>
+                            </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             </div>    
         </div>
@@ -39,44 +53,34 @@
 
 @section('adminlte_js')
 <script>
-    $(document).ready(function() {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        $('#dt_sales_order_types').DataTable({
-            dom: "Bftrip",
-            serverSide: true,
-            processing: true,
+    $(document).ready(function() {     
+        $('#dt_transaction_types').DataTable({
+            dom: 'Bfrtip',
             deferRender: true,
             paging: true,
             searching: true,
-            ajax: $.fn.dataTable.pipeline({
-                url: "{{ route('salesordertype_list') }}",
-                pages: 20 // number of pages to fetch
-            }),
-            columns: [
-                {data: 'sales_type_id', class: 'text-center'},
-                {data: 'sales_company'},
-                {data: 'sales_order_type'},
-                // {data: 'income_account'},
+            lengthMenu: [[10, 25, 50, -1], ['10 rows', '25 rows', '50 rows', "Show All"]],  
+            buttons: [
                 {
-                    data: null,
-                    render: data => data.income_account_id + ' - ' + data.income_account
+                    extend: 'pageLength',
+                    className: 'btn-default btn-sm',
                 },
-                // {data: 'expense_account'},
-                {
-                    data: null,
-                    render: data => data.expense_account_id + ' - ' + data.expense_account
-                },
+            ],
+            columnDefs: [
+                { 'orderable': false, 'targets': 0 } // Disable sorting for the first column (index 0)
             ],
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
             },
+            initComplete: function () {
+                $("#dt_transaction_types").wrap("<div style='overflow:auto;width:100%;position:relative;'></div>");
 
-        });
+                var elements = document.getElementsByClassName('btn-secondary');
+                while(elements.length > 0){
+                    elements[0].classList.remove('btn-secondary');
+                }
+            }
+        });  
     });
 </script>
 @endsection

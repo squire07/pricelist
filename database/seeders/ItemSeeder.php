@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Item;
+use App\Models\TransactionType;
+use App\Helpers\Helper;
 
 class ItemSeeder extends Seeder
 {
@@ -15,59 +17,32 @@ class ItemSeeder extends Seeder
      */
     public function run(): void
     {
-        $items = [
-            1 => array('code' => 'PN1 - 1', 
-                        'transaction_type_id' => 1, 
-                        'name' => 'Some Product Name 1', 
-                        'description' => 'some description goes here', 
-                        'amount' => 11.99, 
-                        'nuc' => 11,
-                        'rs_points' => 11.11),
-            2 => array('code' => 'PN1 - 2', 
-                        'transaction_type_id' => 1, 
-                        'name' => 'Some Product Name 2', 
-                        'description' => 'some description goes here', 
-                        'amount' => 22.99, 
-                        'nuc' => 21,
-                        'rs_points' => 11.22),
-            3 => array('code' => 'PN1 - 3', 
-                        'transaction_type_id' => 1, 
-                        'name' => 'Some Product Name 3', 
-                        'description' => 'some description goes here', 
-                        'amount' => 33.99, 
-                        'nuc' => 31,
-                        'rs_points' => 11.33),
-            4 => array('code' => 'PN2 - 1', 
-                        'transaction_type_id' => 2, 
-                        'name' => 'Product 2 - 1', 
-                        'description' => 'some description goes here', 
-                        'amount' => 199.99, 
-                        'nuc' => 7,
-                        'rs_points' => 22.11),
-            5 => array('code' => 'PN2 - 2', 
-                        'transaction_type_id' => 2, 
-                        'name' => 'Product 2 - 2', 
-                        'description' => 'some description goes here', 
-                        'amount' => 299.99, 
-                        'nuc' => 5,
-                        'rs_points' => 22.22),
-        ];
+        $transaction_types = TransactionType::whereDeleted(false)->get();
 
-        foreach($items as $key => $item) {
-            Item::create([
-                'uuid' => Str::uuid(),
-                'code' => $item['code'],
-                'transaction_type_id' => $item['transaction_type_id'],
-                'name' => $item['name'],
-                'description' => $item['description'],
-                'amount' => $item['amount'],
-                'nuc' => $item['nuc'],
-                'rs_points' => $item['rs_points'],
-                'created_at' => Carbon::now()->toDateTimeString(),
-                'updated_at' => Carbon::now()->toDateTimeString(),
-                'created_by' => 'System',
-                'updated_by' => 'System'
-            ]);
+        foreach($transaction_types as $price_list) {
+
+            $param = '/api/resource/Item Price?filters=[["Item Price","price_list","in", ["' . $price_list->name .'"]]]&fields=["name","item_code","item_name","price_list","currency","price_list_rate","nuc"]&limit=1000';
+            $data = Helper::get_erpnext_data($param);
+
+            foreach($data['data'] as $key => $item) {
+                Item::create([
+                    'uuid' => Str::uuid(),
+                    'code' => $item['item_code'],
+                    'transaction_type_id' => $price_list->id,
+                    'name' => $item['item_name'],
+                    'description' => $price_list->name, // no defined item description in erpnext
+                    'amount' => isset($item['price_list_rate']) && !empty($item['price_list_rate']) ? $item['price_list_rate'] : 0,
+                    'nuc' => isset($item['nuc']) && !empty($item['nuc']) ? $item['nuc'] : 0,
+                    'rs_points' => 0, // no defined rs_points in erpnext
+                    'created_at' => Carbon::now()->toDateTimeString(),
+                    'updated_at' => Carbon::now()->toDateTimeString(),
+                    'created_by' => 'System',
+                    'updated_by' => 'System'
+                ]);
+            }
+
+            // prevent erpnext api limiter by blocking the request
+            sleep(5);
         }
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use Illuminate\Http\Request;
+use App\Helpers\Helper;
+use App\Models\TransactionType;
 
 class ItemController extends Controller
 {
@@ -12,7 +14,7 @@ class ItemController extends Controller
      */
     public function index()
     {
-        $items = Item::all();
+        $items = Item::whereDeleted(false)->get();
         return view('item.index', compact('items'));
     }
 

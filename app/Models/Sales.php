@@ -55,6 +55,11 @@ class Sales extends Model
         return number_format($value,2,'.',',');
     }
 
+    public function getQuantityAttribute($value)
+    {
+        return number_format($value,0,'.',',');
+    }
+
     public function getSoNoAttribute($value)
     {
         return strtoupper($value);

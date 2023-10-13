@@ -89,7 +89,7 @@
                         </div>
                         <div class="col-xl-1 col-md-2">
                             <label for="quantity">Quantity</label>
-                            <input type="number" class="form-control form-control-sm" min="1" id="quantity" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" disabled>
+                            <input type="number" class="form-control form-control-sm" min="1" max="999999" id="quantity" oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');" disabled>
                         </div>
                         <div class="col-xl-1 col-md-2">
                             <label for="amount">Amount</label>
@@ -168,8 +168,8 @@
 
                     <div class="row">
                         <div class="col-12 text-center">
-                            <a href="{{ url('sales-orders') }}" class="btn btn-default btn-lg m-2"><i class="far fa-times-circle mr-2"></i>Cancel</a>
-                            <button class="btn btn-primary btn-lg m-2" id="btn_save_so"><i class="fas fa-save mr-2"></i>Save Sales Order</button>
+                                <input type="button" value="Cancel" id="btn_cancel_so" class="btn btn-lg btn-danger">
+                            <button class="btn btn-primary btn-lg m-2 " id="btn_save_so"><i class="fas fa-save mr-2"></i>Save Sales Order</button>
                         </div>
                     </div>
             </div>    
@@ -599,21 +599,21 @@ tbody tr:nth-child(odd) {
                 if (result.isConfirmed) {
 
                     // subtract the amount to sub_total_amount, total_nuc and grand_total_amount
-                    sub_total_amount = Number(sub_total_amount).toFixed(2) - Number(amount).toFixed(2);
+                    sub_total_amount = parseFloat(sub_total_amount).toFixed(2).toLocaleString('en-US') - parseFloat(amount).toFixed(2);
                     if(!isNaN(sub_total_amount)) {
                         $('#tfoot_subtotal_amount').val(sub_total_amount.toFixed(2));
                     } else {
                         $('#tfoot_subtotal_amount').val("0.00");
                     }
 
-                    total_nuc = Number(total_nuc).toFixed(2) - Number(nuc).toFixed(2);
+                    total_nuc = parseFloat(total_nuc).toFixed(2) - parseFloat(nuc).toFixed(2);
                     if(!isNaN(total_nuc)) {
                         $('#tfoot_total_nuc').val(total_nuc.toFixed(2));
                     } else {
                         $('#tfoot_total_nuc').val("0.00");
                     }
 
-                    grand_total_amount = Number(current_grand_total_amount).toFixed(2) - Number(amount).toFixed(2);
+                    grand_total_amount = parseFloat(current_grand_total_amount).toFixed(2) - parseFloat(amount).toFixed(2);
                     $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
 
                     // get the computed tax values
@@ -638,6 +638,34 @@ tbody tr:nth-child(odd) {
             
         });
 
+        // prevent the user from using the "-" minus sign
+        // 109 is the minus key from number pad or num pad
+        // 189 is the minus key from alpha numeric keys
+            $('#quantity').on('keydown', function(e) {    
+            var charCode = e.which || e.keyCode;  
+            if (charCode == 109 || charCode == 189) {
+                e.preventDefault();
+            }
+            $('#quantity').bind('copy paste', function (e) {
+            e.preventDefault();
+            $('#quantity').attr('maxlength','6');
+            });
+        });
+        // set max length of quantity to 6 digits
+        $('input[type=number][max]:not([max="6"])').on('input', function(ev) {
+            var $this = $(this);
+            var maxlength = $this.attr('max').length;
+            var value = $this.val();
+            if (value && value.length >= maxlength) {
+            $this.val(value.substr(0, maxlength));
+            }
+        });
+
+        $('#tfoot_subtotal_amount').each(function(){ // To loop on each value
+            var amount = parseFloat($(this).html()); // Convert string into float number
+            var newamount = amount.toLocaleString('en-US'); // add comma
+            $(this).html(newamount); // replace old number with new number
+        });
 
 
         // =========== START OF SHIPPING FEE MODAL ===========
@@ -696,6 +724,26 @@ tbody tr:nth-child(odd) {
         });
 
         // =========== END OF SHIPPING FEE MODAL ===========
+
+
+        // Prevent from redirecting back to homepage when cancel button is clicked accidentally
+        $('#btn_cancel_so').on('click', function() {
+
+        // show the confirmation
+        Swal.fire({
+            title: 'Cancel Transaction?',
+                text: 'All unsaved progress will be lost.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = "/sales-orders";
+            }
+        });
+    });
 
 
 

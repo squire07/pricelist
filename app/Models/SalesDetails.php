@@ -24,6 +24,11 @@ class SalesDetails extends Model
         return number_format($value,2,'.',',');
     }
 
+    public function getQuantityAttribute($value)
+    {
+        return number_format($value,0,'.',',');
+    }
+
     public function transaction_type()
     {
         return $this->hasOne('App\Models\TransactionType', 'id', 'transaction_type');

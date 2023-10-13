@@ -90,7 +90,7 @@
                         </div>
                         <div class="col-xl-1 col-md-2">
                             <label for="quantity">Quantity</label>
-                            <input type="number" class="form-control form-control-sm" min="1" id="quantity" oninput="validity.valid||(value=value.replace(/\D+/g, ''))">
+                            <input type="number" class="form-control form-control-sm" min="1" max="999999" id="quantity" oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
                         </div>
                         <div class="col-xl-1 col-md-2">
                             <label for="amount">Amount</label>
@@ -140,13 +140,13 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td class="text-right text-bold" colspan="3">Sub Total</td>
+                                        <td class="text-right text-bold" colspan="4">Sub Total</td>
                                         <td class="text-right text-bold">
                                             <input type="text" class="text-right custom-input-text" name="total_amount" id="tfoot_subtotal_amount" value="{{ $sales_order->total_amount }}" readonly>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="text-right text-bold" colspan="3">
+                                        <td class="text-right text-bold" colspan="4">
                                             <input type="checkbox" name="sf_checkbox" id="sf_checkbox" data-toggle="modal" {{  $sales_order->shipping_fee > 0 ? 'checked':'' }}/>
                                             <span class="ml-1">Shipping Fee</span>
                                         </td>
@@ -155,21 +155,21 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="text-right text-bold" colspan="3">VATable Sales</td>
+                                        <td class="text-right text-bold" colspan="4">VATable Sales</td>
                                         <td class="text-right text-bold">
                                             <input type="text" class="text-right custom-input-text" name="vatable_sales" id="tfoot_vatable_sales" value="{{ $sales_order->vatable_sales }}" readonly>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="text-right text-bold" colspan="3">VAT Amount</td>
+                                        <td class="text-right text-bold" colspan="4">VAT Amount</td>
                                         <td class="text-right text-bold">
                                             <input type="text" class="text-right custom-input-text" name="vat_amount" id="tfoot_vat_amount" value="{{ $sales_order->vat_amount }}" readonly>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="text-right text-bold" colspan="3">Grand Total</td>
+                                        <td class="text-right text-bold" colspan="4">Grand Total</td>
                                         <td class="text-right text-bold">
-                                            <input type="number" class="text-right custom-input-text text-bold" name="grandtotal_amount" id="tfoot_grand_total_amount" value="{{ $sales_order->grandtotal_amount }}" readonly>
+                                            <input type="text" class="text-right custom-input-text text-bold" name="grandtotal_amount" id="tfoot_grand_total_amount" value="{{ $sales_order->grandtotal_amount }}" readonly>
                                         </td>
                                     </tr>
 
@@ -182,7 +182,7 @@
 
                     <div class="row">
                         <div class="col-12 text-center">
-                            <a href="{{ url()->previous() }}" class="btn btn-lg btn-info float-left" style="margin-top: 8px"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+                            <input type="button" value="Cancel" id="btn_cancel_so" class="btn btn-lg btn-danger float-left">
                             <button class="btn btn-primary btn-lg m-2 float-right" style="margin-top: 8px" id="btn_save_so"><i class="fas fa-save mr-2"></i>Update Sales Order</button>
                         </div>
                     </div>
@@ -390,7 +390,7 @@ tbody tr:nth-child(odd) {
             if (!allAreFilled) {
                 
                 // set focus to specific field
-              if($.trim($("#item_name").val()) == "") {
+            if($.trim($("#item_name").val()) == "") {
                     $('#item_name').focus();
                     required_field('Item');
                 }
@@ -413,18 +413,19 @@ tbody tr:nth-child(odd) {
 
                     // get the sessionStorage object from item selected
                     var item_selected = JSON.parse(sessionStorage.getItem('item_selected'));
-      
+
+
                     // sum of amount
-                    sub_total_amount = Number(sub_total_amount) + (Number(quantity) * Number(item_selected.amount).toFixed(2));
-                    $('#tfoot_subtotal_amount').val(Number(sub_total_amount).toFixed(2));
+                    sub_total_amount = parseFloat(sub_total_amount) + (parseFloat(quantity) * parseFloat(item_selected.amount).toFixed(2));
+                    $('#tfoot_subtotal_amount').val(parseFloat(sub_total_amount).toFixed(2));
 
                     // sum of nuc
-                    total_nuc = Number(total_nuc) + (Number(quantity) * Number(item_selected.nuc).toFixed(2));
-                    $('#tfoot_total_nuc').val(Number(total_nuc).toFixed(2));
+                    total_nuc = parseFloat(total_nuc) + (parseFloat(quantity) * parseFloat(item_selected.nuc).toFixed(2));
+                    $('#tfoot_total_nuc').val(parseFloat(total_nuc).toFixed(2));
 
                     current_shipping_fee = $('#tfoot_sf_total_amount').val();
 
-                    grand_total_amount = Number(current_shipping_fee) + Number(sub_total_amount);
+                    grand_total_amount = parseFloat(current_shipping_fee) + parseFloat(sub_total_amount);
                     $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
 
                     // get the computed tax values
@@ -432,13 +433,13 @@ tbody tr:nth-child(odd) {
                     $('#tfoot_vatable_sales').val(vat_result.vatable_sales.toFixed(2));
                     $('#tfoot_vat_amount').val(vat_result.vat_amount.toFixed(2));
 
-
                     // populate the details table
                     var row = '<tr>' + 
                                 '<td>' + item_selected.code + '</td>' +
                                 '<td>' + item_selected.name + '</td>' +
                                 '<td class="text-center">' + quantity + '</td>' +
                                 '<td class="text-right">' + item_selected.amount + '</td>' +
+                                // '<td class="text-right">' + item_selected.rs_points + '</td>' +
                                 '<td class="text-right">' + (item_selected.amount * quantity).toFixed(2) + '</td>' +
                                 '<td class="text-center"><a href="#" class="btn-delete-item" data-quantity="' + quantity + '" data-amount="' + quantity * item_selected.amount + '" data-nuc="' + quantity * item_selected.nuc + '"><i class="far fa-trash-alt"></i></a></td>' +
 
@@ -480,18 +481,17 @@ tbody tr:nth-child(odd) {
                 }
             }
         }); 
-
     
         // delete row
         $(document).on('click','.btn-delete-item', function() {
 
             // get the data to be subtracted
-            var quantity = Number($(this).attr("data-quantity"));
-            var amount = Number($(this).attr("data-amount"));
-            var nuc = Number($(this).attr("data-nuc"));
+            var quantity = parseFloat($(this).attr("data-quantity"));
+            var amount = parseFloat($(this).attr("data-amount"));
+            var nuc = parseFloat($(this).attr("data-nuc"));
 
             // item id
-            var item_id = Number($(this).attr("data-id"));
+            var item_id = parseFloat($(this).attr("data-id"));
             
              // get the current sub total amount value
              var current_sub_total_amount = $('#tfoot_subtotal_amount').val();
@@ -514,21 +514,21 @@ tbody tr:nth-child(odd) {
                 if (result.isConfirmed) {
 
                     // subtract the amount to sub_total_amount, total_nuc and grand_total_amount
-                    sub_total_amount = Number(sub_total_amount).toFixed(2) - Number(amount).toFixed(2);
+                    sub_total_amount = parseFloat(sub_total_amount).toFixed(2) - parseFloat(amount).toFixed(2);
                     if(!isNaN(sub_total_amount)) {
                         $('#tfoot_subtotal_amount').val(sub_total_amount.toFixed(2));
                     } else {
                         $('#tfoot_subtotal_amount').val("0.00");
                     }
 
-                    total_nuc = Number(total_nuc).toFixed(2) - Number(nuc).toFixed(2);
+                    total_nuc = parseFloat(total_nuc).toFixed(2) - parseFloat(nuc).toFixed(2);
                     if(!isNaN(total_nuc)) {
                         $('#tfoot_total_nuc').val(total_nuc.toFixed(2));
                     } else {
                         $('#tfoot_total_nuc').val("0.00");
                     }
 
-                    grand_total_amount = Number(current_grand_total_amount).toFixed(2) - Number(amount).toFixed(2);
+                    grand_total_amount = parseFloat(current_grand_total_amount).toFixed(2) - parseFloat(amount).toFixed(2);
                     $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
 
                     // get the computed tax values
@@ -562,6 +562,27 @@ tbody tr:nth-child(odd) {
             
         });
 
+        // prevent the user from using the "-" minus sign
+        // 109 is the minus key from number pad or num pad
+        // 189 is the minus key from alpha numeric keys
+        $('#quantity').on('keydown', function(e) {    
+            var charCode = e.which || e.keyCode;  
+            if (charCode == 109 || charCode == 189) {
+                e.preventDefault();
+            }
+            $('#quantity').bind('copy paste', function (e) {
+            e.preventDefault();
+            });
+        });
+        // set max length of quantity to 6 digits
+        $('input[type=number][max]:not([max="6"])').on('input', function(ev) {
+            var $this = $(this);
+            var maxlength = $this.attr('max').length;
+            var value = $this.val();
+            if (value && value.length >= maxlength) {
+            $this.val(value.substr(0, maxlength));
+            }
+        });
 
 
 
@@ -571,7 +592,6 @@ tbody tr:nth-child(odd) {
         // open the modal shipping fee
         $('#sf_checkbox').on('click', function() {
             var current_shipping_fee = $('#tfoot_sf_total_amount').val();
-
             if ($(this).prop('checked')) {
                 $("#modal-add-sf").modal('show');
             } else {
@@ -580,9 +600,8 @@ tbody tr:nth-child(odd) {
                 $('#tfoot_sf_total_amount').val(zero_value.toFixed(2));
 
                 // update the grand total amount
-                var grand_total_amount = $('#tfoot_grand_total_amount').val();
-                grand_total_amount = Number(grand_total_amount) - Number(current_shipping_fee);
-
+                var current_grand_total_amount = $('#tfoot_grand_total_amount').val();
+                var grand_total_amount = parseFloat(current_grand_total_amount) - parseFloat(current_shipping_fee);
                 $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
 
                 // get the computed tax values
@@ -614,7 +633,7 @@ tbody tr:nth-child(odd) {
 
             // update the grand total amount
             var current_grand_total_amount = $('#tfoot_grand_total_amount').val();
-            var grand_total_amount = Number(current_grand_total_amount) + Number(shipping_amount);
+            var grand_total_amount = parseFloat(current_grand_total_amount) + parseFloat(shipping_amount);
             $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
 
             // get the computed tax values
@@ -624,6 +643,25 @@ tbody tr:nth-child(odd) {
         });
 
         // =========== END OF SHIPPING FEE MODAL ===========
+
+        // Prevent from redirecting back to homepage when cancel button is clicked accidentally
+        $('#btn_cancel_so').on('click', function() {
+
+            // show the confirmation
+            Swal.fire({
+                title: 'Cancel Transaction?',
+                    text: 'All unsaved progress will be lost.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location = "/sales-orders";
+                }
+            });
+        });
 
 
 

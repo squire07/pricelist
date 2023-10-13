@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('item_name')->nullable();
             $table->double('item_price')->nullable();
             $table->double('item_nuc')->nullable();
-            $table->integer('quantity')->default(0)->nullable();
+            $table->integer('quantity')->unsigned()->default(0)->nullable();
             $table->double('amount')->default(0)->nullable();
             $table->double('nuc')->default(0)->nullable();
             $table->tinyInteger('deleted')->default(false);

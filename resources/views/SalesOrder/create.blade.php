@@ -512,9 +512,9 @@ tbody tr:nth-child(odd) {
                         // get the shipping fee
                         current_shipping_fee = $('#tfoot_sf_total_amount').val();
 
-                        grand_total_amount = Number(current_shipping_fee) + Number(sub_total_amount);
+                        grand_total_amount = parseFloat(current_shipping_fee) + parseFloat(sub_total_amount);
                     } else {
-                        grand_total_amount = Number(sub_total_amount);
+                        grand_total_amount = parseFloat(sub_total_amount);
                     }
                     $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
 
@@ -682,7 +682,7 @@ tbody tr:nth-child(odd) {
 
                 // update the grand total amount
                 var current_grand_total_amount = $('#tfoot_grand_total_amount').val();
-                var grand_total_amount = Number(current_grand_total_amount) - Number(current_shipping_fee);
+                var grand_total_amount = parseFloat(current_grand_total_amount) - parseFloat(current_shipping_fee);
                 $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
 
                 // get the computed tax values
@@ -714,7 +714,7 @@ tbody tr:nth-child(odd) {
       
             // update the grand total amount
             var current_grand_total_amount = $('#tfoot_grand_total_amount').val();
-            var grand_total_amount = Number(current_grand_total_amount) + Number(shipping_amount);
+            var grand_total_amount = parseFloat(current_grand_total_amount) + parseFloat(shipping_amount);
             $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
 
             // get the computed tax values

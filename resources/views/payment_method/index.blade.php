@@ -23,6 +23,7 @@
                     <thead>
                         <tr>
                             <th class="text-center">Name</th>
+                            <th class="text-center">Description</th>
                             <th class="text-center">Account Number</th>
                             <th class="text-center">Company</th>
                             <th class="text-center">Is Cash</th>
@@ -34,6 +35,7 @@
                         @foreach($payments as $payment)
                             <tr>
                                 <td class="text-center">{{ $payment->name }}</td>
+                                <td class="text-center">{{ $payment->description }}</td>
                                 <td class="text-center">{{ $payment->code }}</td>
                                 <td class="text-center">{{ $payment->company->name }}</td>
                                 <td class="text-center">{{ $payment->is_cash == 0 ? 'No' : 'Yes' }}</td>
@@ -45,6 +47,7 @@
                                         data-uuid="{{ $payment->uuid }}" 
                                         data-company-id="{{ $payment->company->name }}" 
                                         data-name="{{ $payment->name }}" 
+                                        data-description="{{ $payment->description }}" 
                                         data-code="{{ $payment->code }}"
                                         data-status-id="{{ $payment->status->name }}"
                                         data-is-cash="{{ $payment->is_cash }}"
@@ -59,6 +62,7 @@
                                         data-uuid="{{ $payment->uuid }}" 
                                         data-company-id="{{ $payment->company->id }}" 
                                         data-name="{{ $payment->name }}" 
+                                        data-description="{{ $payment->description }}" 
                                         data-code="{{ $payment->code }}"
                                         data-branch-id="{{ $payment->branch_id }}"
                                         data-is-cash="{{ $payment->is_cash }}"
@@ -108,10 +112,16 @@
                                 <input type="text" class="form-control form-control-sm" name="name" pattern="[a-zA-Z0-9\s]+" required>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <label for="name">Description</label>
+                                <input type="text" class="form-control form-control-sm" name="description" pattern="[a-zA-Z0-9\s]+" required>
+                            </div>
+                        </div>
                         <div class="row mt-3">
                             <div class="col-12">
                                 <label for="code">Account Number</label>
-                                <input type="number" class="form-control form-control-sm" name="code" maxlength="12" min="0" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" required>
+                                <input type="text" class="form-control form-control-sm" name="code" maxlength="12" min="0" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -166,10 +176,10 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="comapny_id">Company</label>
-                                    <select class="form-control form-control-sm" name="company_id" id="modal_edit_company_id" style="font-weight:bold" required>
+                                    <select class="form-control form-control-sm" name="company_id" id="modal_edit_company_id" required>
                                         <option value="" disabled>-- Select Company --</option>
                                         @foreach($companies as $company)
-                                            <option value="{{ $company->id }}" style="font-weight:bold">{{ $company->name }}</option>
+                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -177,13 +187,19 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Name</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="25" name="name" id="modal_edit_name" required>
+                                    <input type="text" class="form-control form-control-sm" name="name" id="modal_edit_name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="name">Description</label>
+                                    <input type="text" class="form-control form-control-sm" name="description" id="modal_edit_description" required>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="code">Account Code</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="10" name="code" id="modal_edit_code" required>
+                                    <input type="text" class="form-control form-control-sm" maxlength="10" name="code" id="modal_edit_code" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-12">
@@ -261,6 +277,10 @@
                                 <td><span id="modal_show_name" style="font-weight:bold"></span></td>
                             </tr>
                             <tr>
+                                <td width="25%">Description</td>
+                                <td><span id="modal_show_description" style="font-weight:bold"></span></td>
+                            </tr>
+                            <tr>
                                 <td width="25%">Account Number</td>
                                 <td><span id="modal_show_code" style="font-weight:bold"></span></td>
                             </tr>
@@ -335,6 +355,7 @@
         var uuid = $(this).attr("data-uuid");
         var c_id = $(this).attr("data-company-id");
         var name = $(this).attr("data-name");
+        var description = $(this).attr("data-description");
         var code = $(this).attr("data-code");
         var remarks = $(this).attr("data-remarks");
         var status_id = $(this).attr("data-status-id");
@@ -343,6 +364,7 @@
 
         $('#modal_edit_company_id option[value=' + c_id + ']').attr('selected', 'selected');
         $('#modal_edit_name').val(name); 
+        $('#modal_edit_description').val(description); 
         $('#modal_edit_code').val(code);
         $('#modal_show_remarks').val(remarks);
         $('#modal_show_status_id').val(status_id);
@@ -379,6 +401,7 @@
         var uuid = $(this).attr("data-uuid");
         var c_id = $(this).attr("data-company-id");
         var name = $(this).attr("data-name");
+        var description = $(this).attr("data-description");
         var code = $(this).attr("data-code");
         var remarks = $(this).attr("data-remarks");
         var status_id = $(this).attr("data-status-id");
@@ -391,6 +414,7 @@
         // set multiple attributes
         $('#modal_show_company_id').text(c_id);
         $('#modal_show_name').text(name);
+        $('#modal_show_description').text(description);
         $('#modal_show_code').text(code);
         $('#modal_show_remarks').text(remarks);
         $('#modal_show_status_id').text(status_id);

@@ -43,6 +43,7 @@ class PaymentMethodController extends Controller
             $payment_method->uuid = Str::uuid();
             $payment_method->company_id = $request->company_id;
             $payment_method->name = $request->name;
+            $payment_method->description = $request->description;
             $payment_method->code = $request->code;
             $payment_method->status_id = 6; // default to draft ?
             $payment_method->is_cash = $request->is_cash ?? 0;
@@ -79,6 +80,7 @@ class PaymentMethodController extends Controller
         $payment_method = PaymentMethod::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
         $payment_method->company_id = $request->company_id;
         $payment_method->name = $request->name;
+        $payment_method->description = $request->description;
         $payment_method->code = $request->code;
         $payment_method->status_id = $request->status ?? 6; // set default to enabled
         $payment_method->is_cash = $request->is_cash ?? $payment_method->is_cash;

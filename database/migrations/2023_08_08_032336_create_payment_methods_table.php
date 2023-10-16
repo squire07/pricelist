@@ -15,6 +15,7 @@ return new class extends Migration
                 $table->id();
                 $table->uuid('uuid');
                 $table->string('name');
+                $table->string('description')->nullable();
                 $table->string('code', 12);
                 $table->string('branch_id', 55)->nullable();
                 $table->tinyInteger('company_id');

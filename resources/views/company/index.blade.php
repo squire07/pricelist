@@ -115,41 +115,37 @@
                 </div>
 
                 <form class="form-horizontal" action="" method="POST" id="form_modal_edit" autocomplete="off">
-                    @method('PATCH')
+                    @method('PUT')
                     @csrf
                     <div class="modal-body">
-                        <div class="container-fluid">
-                                <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                                        <div class="row">
-                                            <div class="col-md-5 col-sm-12">
-                                                <div class="form-group">
-                                                    Name
-                                                    <input type="text" class="form-control form-control-sm" maxlength="25" name="name" id="modal_edit_name" required pattern="[a-zA-Z0-9\s]+" style="font-weight:bold">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3 col-sm-12">
-                                                <div class="form-group">
-                                                    Company Code
-                                                    <input type="text" class="form-control form-control-sm" maxlength="3" name="code" id="modal_edit_code" required pattern="[a-zA-Z0-9\s]+" style="font-weight:bold">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 col-sm-12">
-                                                <div class="form-group">
-                                                    Company Status?<br>
-                                                    <input type="radio" id="modal_edit_status_id" name="status" value="8" checked="checked" style="margin-top: 8px">
-                                                    <label>Active</label>&nbsp;
-                                                    <input type="radio" id="modal_edit_status_id" name="status" value="9">
-                                                    <label>Inactive<br>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12 col-sm-12">
-                                                <div class="form-group">
-                                                    Remarks
-                                                <input type="" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks" required oninput="this.value = this.value.toUpperCase()" pattern="[a-zA-Z0-9\s]+" style="font-weight:bold">
-                                                </div>
-                                            </div>
-                                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="name">Name</label>
+                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="25" name="name" id="modal_edit_name" required>
                                 </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="code">Company Code</label>
+                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="2" name="code" id="modal_edit_code" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    Company Status?<br>
+                                    <input type="radio" id="modal_edit_status_id" name="status" value="8" checked="checked" style="margin-top: 8px">
+                                    <label>Active</label>&nbsp;
+                                    <input type="radio" id="modal_edit_status_id" name="status" value="9">
+                                    <label>Inactive<br>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="remarks">Remarks</label>
+                                    <input type="" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -166,42 +162,42 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Company Details</h4>
+                    <h4 class="modal-title">Branch Details</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="card">
-                    <div class="card-body">
-                            <div class="row">
-                                <div class="ribbon-wrapper ribbon-lg">
-                                    <div class="ribbon" id="ribbon_bg">
-                                        <span id="modal_show_status_id"></span>
-                                    </div>
-                                </div>
-                            </div>         
-                        <div class="container-fluid">
-                            <div class="col-12">
-                                Name:
-                                <span id="modal_show_name" style="font-weight:bold"></span>
-                            </div>
-                            <div class="col-12">
-                                Company Code:
-                                <span id="modal_show_code"  style="font-weight:bold"></span>
-                            </div>
-                            <div class="col-12">
-                                Remarks:
-                                <span id="modal_show_remarks" style="font-weight:bold"></span>
-                            </div>
-                            <div class="col-12">
-                                Updated By:
-                                <span id="modal_show_updated_by" style="font-weight:bold"></span>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="ribbon-wrapper ribbon-lg">
+                            <div class="ribbon" id="ribbon_bg">
+                                <span id="modal_show_status_id"></span>
                             </div>
                         </div>
+                    </div>         
+                    <div class="row">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td width="25%">Name</td>
+                                <td><span id="modal_show_name" style="font-weight:bold"></span></td>
+                            </tr>
+                            <tr>
+                                <td width="25%">Company Code</td>
+                                <td><span id="modal_show_code" style="font-weight:bold"></span></td>
+                            </tr>
+                            <tr>
+                                <td width="25%">Remarks</td>
+                                <td><span id="modal_show_remarks" style="font-weight:bold"></span></td>
+                            </tr>
+                            <tr>
+                                <td width="25%">Updated By</td>
+                                <td><span id="modal_show_updated_by" style="font-weight:bold"></span></td>
+                            </tr>
+                        </table>
                     </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
-                        </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

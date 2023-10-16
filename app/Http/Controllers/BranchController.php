@@ -33,12 +33,15 @@ class BranchController extends Controller
      */
     public function store(Request $request)
     {
-        $exist = Branch::whereName($request->name)->whereCode($request->code)->whereDeleted(false)->first();
-        if(!$exist) {
+        $existName = Branch::whereName($request->name)->whereCode($request->code)->whereCostCenter($request->cost_center)->whereDeleted(false)->first();
+        $existNameCode = Branch::whereName($request->name)->whereCode($request->code)->whereDeleted(false)->first();
+        $existNameCodeCenter = Branch::whereName($request->name)->whereCode($request->code)->whereCostCenter($request->cost_center)->whereDeleted(false)->first();
+        if(!$existName || $existNameCode || $existNameCodeCenter) {
             $branch = new Branch();
             $branch->uuid = Str::uuid();
             $branch->name = $request->name;
             $branch->code = $request->code;
+            $branch->cost_center = $request->cost_center;
             $branch->status_id = 8; //set default status to Active
             $branch->created_by = Auth::user()->name;
             $branch->save();
@@ -74,10 +77,12 @@ class BranchController extends Controller
         // check first if branch name and code exist
         $existName = Branch::whereName($request->name)->whereDeleted(false)->first();
         $existNameCode = Branch::whereName($request->name)->whereCode($request->code)->whereDeleted(false)->first();
+        $existNameCodeCenter = Branch::whereName($request->name)->whereCode($request->code)->whereCostCenter($request->cost_center)->whereDeleted(false)->first();
 
-        if(!$existName || !$existNameCode) {
+        if(!$existName || !$existNameCode || !$existNameCodeCenter) {
             $branch->name = $request->name;     
             $branch->code = $request->code;
+            $branch->cost_center = $request->cost_center;
             $branch->status_id = $request->status;
             $branch->remarks = $request->remarks;
             $branch->updated_by = Auth::user()->name;

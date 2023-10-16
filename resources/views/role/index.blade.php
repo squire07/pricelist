@@ -108,17 +108,13 @@
                     @method('PUT')
                     @csrf
                     <div class="modal-body">
-                        <div class="container-fluid">
-                                <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                                        <div class="row">
-                                            <div class="col-md-12 col-sm-12">
-                                                <div class="form-group">
-                                                    Name
-                                                    <input type="text" class="form-control form-control-sm" maxlength="25" name="name" id="modal_edit_name" required pattern="[a-zA-Z0-9\s]+" style="font-weight:bold">
-                                                </div>
-                                            </div>
-                                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="name">Name</label>
+                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="25" name="name" id="modal_edit_name" required>
                                 </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -140,24 +136,22 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="card">
-                    <div class="card-body">
-                            <div class="row">
-                            </div>         
-                        <div class="container-fluid">
-                            <div class="col-12">
-                                Name:
-                                <span id="modal_show_name" style="font-weight:bold"></span>
-                            </div>
-                            <div class="col-12">
-                                Updated By:
-                                <span id="modal_show_updated_by" style="font-weight:bold"></span>
-                            </div>
-                        </div>
+                <div class="modal-body">      
+                    <div class="row">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td width="25%">Name</td>
+                                <td><span id="modal_show_name" style="font-weight:bold"></span></td>
+                            </tr>
+                            <tr>
+                                <td width="25%">Updated By</td>
+                                <td><span id="modal_show_updated_by" style="font-weight:bold"></span></td>
+                            </tr>
+                        </table>
                     </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
-                        </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

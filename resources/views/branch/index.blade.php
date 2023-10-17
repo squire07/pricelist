@@ -140,7 +140,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="code">Cost Center</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="3" name="code" id="modal_edit_code" required>
+                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="3" name="cost_center" id="modal_edit_cost_center" required>
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-12">

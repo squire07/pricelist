@@ -48,6 +48,27 @@ class LoginController extends Controller
         return 'username';
     }
 
+    protected function authenticated(Request $request, $user)
+    {
+        $redirect = [
+            1 => 'sales-orders',
+            2 => 'sales-invoice/for-invoice',
+            3 => 'sales-orders',
+            4 => 'sales-invoice/for-invoice',
+            5 => 'sales-invoice/all',
+            6 => 'sales-invoice/all',
+            7 => 'sales-invoice/all',
+            8 => 'sales-invoice/for-validation',
+            9 => 'sales-invoice/all',
+            10 => 'sales-invoice/all',
+            11 => 'sales-invoice/all',
+            12 => 'sales-invoice/all',
+        ];
+    
+        $page = $redirect[$user->role_id] ?? 'sales-orders';
+        return redirect('/' . $page);
+    }
+
     public function logout(Request $request)
     {
         Auth::guard('web')->logout();

@@ -20,8 +20,9 @@
                         'sales-invoice-assignment',
                         'shipping-fee',
                         'transaction-types',
-                        'payment-types',
-                        'users'
+                        'payment-methods',
+                        'users',
+                        'permissions'
                     ];
 @endphp
 
@@ -139,7 +140,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ url('users') }}" class="nav-link {{ $url_segment_1 == 'users' ? 'active':'' }}" target="_self">
+                    <a href="{{ url('users') }}" class="nav-link {{ in_array($url_segment_1, ['users','permissions']) ? 'active':'' }}" target="_self">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Users</p>
                     </a>

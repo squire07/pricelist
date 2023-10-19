@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Branch;
+use App\Models\Company;
+use App\Models\Role;
 use App\Models\User;
 
 class UserController extends Controller
@@ -13,7 +16,11 @@ class UserController extends Controller
     public function index()
     {
         $users = User::with(['role','branch','company'])->whereDeleted(false)->get();
-        return view('user.index', compact('users'));
+        
+        $branches = Branch::whereDeleted(false)->get();
+        $companies = Company::whereDeleted(false)->get();
+        $roles = Role::whereDeleted(false)->get();
+        return view('user.index', compact('users','branches','companies','roles'));
     }
 
     /**

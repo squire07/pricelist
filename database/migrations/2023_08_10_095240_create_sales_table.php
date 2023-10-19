@@ -30,8 +30,8 @@ return new class extends Migration
             $table->foreignId('status_id')->constrained();
             $table->tinyInteger('payment_method')->default(false);
             $table->string('group_name', 100)->nullable();
-            $table->string('so_remarks', 255)->nullable();
-            $table->string('si_remarks', 255)->nullable();
+            $table->longText('so_remarks')->nullable();
+            $table->longText('si_remarks')->nullable();
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
             $table->softDeletes();

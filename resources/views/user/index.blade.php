@@ -55,8 +55,20 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    <button class="btn btn-sm btn-primary"><i class="fas fa-pencil-alt"></i>&nbsp;Edit</button>
-
+                                <button type="button" class="btn btn-sm btn-primary btn_edit" 
+                                    data-toggle="modal" 
+                                    data-target="#modal-edit" 
+                                    data-id="{{ $user->id }}" 
+                                    data-uuid="{{ $user->uuid }}" 
+                                    data-user-name="{{ $user->name }}" 
+                                    data-user-username="{{ $user->username }}" 
+                                    data-user-email="{{ $user->email }}"
+                                    data-branch-id="{{ $user->branch_id }}" 
+                                    data-role-id="{{ $user->role_id }}"
+                                    data-company_id="{{ $user->company_id }}"
+                                    data-user-remarks="{{ $user->remarks }}">
+                                    <i class="fas fa-pencil-alt"></i>&nbsp;Edit
+                                </button>
                                     <a href="{{  url('permissions/' . $user->uuid . '/edit' ) }}" class="btn btn-sm btn-primary" target="_self"><i class="fas fa-tasks"></i></a>
                                 </td>
                             </tr>
@@ -67,27 +79,68 @@
         </div>
     </div>
 
-    {{-- <div class="modal fade" id="modal-add">
+    <div class="modal fade" id="modal-add">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Create New Company</h4>
+                    <h4 class="modal-title">Create New User</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
 
-                <form class="form-horizontal" action="{{ route('companies.store') }}" method="POST" id="form_modal_add" autocomplete="off">
+                <form class="form-horizontal" action="{{ route('users.store') }}" method="POST" id="form_modal_add" autocomplete="off">
                     @csrf
                     <div class="modal-body">
                         <div class="container-fluid">
                             <div class="col-12">
-                                <label for="name">Company Name</label>
-                                <input type="text" class="form-control form-control-sm" name="name" maxlength="25"  pattern="[a-zA-Z0-9\s]+" required>
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control form-control-sm" name="name" maxlength="25" required>
                             </div>
                             <div class="col-12">
-                                <label for="name">Company Code</label>
-                                <input type="text" class="form-control form-control-sm" name="code" maxlength="2"  pattern="[a-zA-Z0-9\s]+" required>
+                                <label for="name">Username</label>
+                                <input type="text" class="form-control form-control-sm" name="username" maxlength="25" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="name">Email</label>
+                                <input type="email" class="form-control form-control-sm" name="email" maxlength="25" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="name">Password</label>
+                                <input type="" class="form-control form-control-sm" name="password" minlength="8" maxlength="25" required>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Role</label>
+                                    <select class="select2" multiple="multiple" name="role_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                        <option value="" disabled>-- Select Role --</option>
+                                        @foreach($roles as $role)
+                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Branch</label>
+                                    <select class="select2" multiple="multiple" name="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                        <option value="" disabled>-- Select Branch --</option>
+                                        @foreach($branches as $branch)
+                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Company</label>
+                                    <select class="select2" multiple="multiple" name="company_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                        <option value="" disabled>-- Select Company --</option>
+                                        @foreach($companies as $company)
+                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -99,15 +152,15 @@
                 </form>
             </div>
         </div>
-    </div> --}}
+    </div>
 
 
     {{--  modal for create --}}
-    {{-- <div class="modal fade" id="modal-edit">
+    <div class="modal fade" id="modal-edit">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Edit Company</h4>
+                    <h4 class="modal-title">Edit User</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -119,36 +172,62 @@
                     <div class="modal-body">
                         <div class="container-fluid">
                             <div class="col-12">
-                                <label for="name">Company Name</label>
-                                <input type="text" class="form-control form-control-sm" maxlength="25" name="name" id="modal_edit_name" required pattern="[a-zA-Z0-9\s]+">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control form-control-sm" name="name" id="modal_edit_name" maxlength="25" required>
                             </div>
                             <div class="col-12">
-                                <label for="code">Company Code</label>
-                                <input type="text" class="form-control form-control-sm" maxlength="2" name="code" id="modal_edit_code" required pattern="[a-zA-Z0-9\s]+">
-                            </div><br>
-                            <div class="col-12">
-                                <label for="">Company Status?</label><br>
-                                <input type="radio" id="modal_edit_status_id" name="status" value="8" checked="checked">
-                                <label for="">Active</label><br>
-                                <input type="radio" id="modal_edit_status_id" name="status" value="9">
-                                <label for="">Inactive</label><br>
-                            </p>
+                                <label for="name">Username</label>
+                                <input type="text" class="form-control form-control-sm" name="username" id="modal_edit_username" maxlength="25" readonly>
                             </div>
                             <div class="col-12">
-                                <label for="remarks">Remarks</label>
-                                <input type="" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks" required oninput="this.value = this.value.toUpperCase()" pattern="[a-zA-Z0-9\s]+">
+                                <label for="name">Email</label>
+                                <input type="email" class="form-control form-control-sm" name="email" id="modal_edit_email" maxlength="255" required>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="comapny_id">Role</label>
+                                    <select class="form-control form-control-sm" name="role_id" id="modal_edit_role_id" required>
+                                        <option value="" disabled>-- Select Role --</option>
+                                        @foreach($roles as $role)
+                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Branch</label>
+                                    <select class="select2" multiple="multiple" name="branch_id" id="modal_edit_branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                        <option value="" disabled>-- Select Branch --</option>
+                                        @foreach($branches as $branch)
+                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Company</label>
+                                    <select class="select2" multiple="multiple" name="company_id" id="modal_edit_company_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                        <option value="" disabled>-- Select Company --</option>
+                                        @foreach($companies as $company)
+                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary btn-sm m-2" id="btn_modal_edit_submit"><i class="fas fa-save mr-2"></i>Update</button>
+                        <button type="submit" class="btn btn-primary btn-sm m-2"><i class="fas fa-save mr-2"></i>Save</button>
                     </div>
+
                 </form>
             </div>
         </div>
-    </div> --}}
+    </div>
+
 
     {{--  modal for show --}}
     {{-- <div class="modal fade" id="modal-show">
@@ -194,8 +273,17 @@
 @endsection
 
 @section('adminlte_js')
-<script>
-    $(document).ready(function() {
+    <script>
+        $(document).ready(function() {
+
+        //Initialize Select2 Elements
+        $('.select2').select2();
+
+        //Initialize Select2 Elements
+        $('.select2bs4').select2({
+        theme: 'bootstrap4'
+        });
+
         $('#dt_company').DataTable({
             dom: 'Bfrtip',
             autoWidth: true,
@@ -229,29 +317,36 @@
         // use class instead of id because the button are repeating. ID can be only used once
         $('.btn_edit').on('click', function() {
             var uuid = $(this).attr("data-uuid");
-            var name = $(this).attr("data-company-name");
-            var code = $(this).attr("data-company-code");
-            var remarks = $(this).attr("data-company-remarks");
-            var status_id = $(this).attr("data-company-status_id");
+            var name = $(this).attr("data-user-name");
+            var username = $(this).attr("data-user-username");
+            var email = $(this).attr("data-user-email");
+            var remarks = $(this).attr("data-user-remarks");
+            var r_id = $(this).attr("data-user-role_id");
+            var b_id = $(this).attr("data-user-branch_id");
+            var c_id = $(this).attr("data-user-company_id");
+
 
             $('#modal_edit_name').val(name); 
-            $('#modal_edit_code').val(code);
+            $('#modal_edit_username').val(username); 
+            $('#modal_edit_email').val(email);
             $('#modal_show_remarks').val(remarks);
-            $('#modal_show_status_id').val(status_id);
+            $('#modal_edit_role_id option[value=' + r_id + ']').attr('selected', 'selected');
+            $('#modal_edit_branch_id option[value=' + b_id + ']').attr('selected', 'selected');
+            $('#modal_edit_company_id option[value=' + c_id + ']').attr('selected', 'selected');
 
             // define the edit form action
-            let action = window.location.origin + "/companies/" + uuid;
+            let action = window.location.origin + "/users/" + uuid;
             $('#form_modal_edit').attr('action', action);
         });
 
 
         $('.btn_show').on('click', function() {
             var uuid = $(this).attr("data-uuid");
-            var name = $(this).attr("data-company-name");
-            var code = $(this).attr("data-company-code");
-            var remarks = $(this).attr("data-company-remarks");
-            var status_id = $(this).attr("data-company-status_id");
-            var updated_by = $(this).attr("data-company-updated_by");
+            var name = $(this).attr("data-user-name");
+            var code = $(this).attr("data-user-code");
+            var remarks = $(this).attr("data-user-remarks");
+            var status_id = $(this).attr("data-user-status_id");
+            var updated_by = $(this).attr("data-user-updated_by");
 
             // set multiple attributes
             $('#modal_show_name').val(name);
@@ -260,5 +355,5 @@
             $('#modal_show_status_id').val(status_id);
             $('#modal_show_updated_by').val(updated_by);
         });
-</script>
+    </script>
 @endsection

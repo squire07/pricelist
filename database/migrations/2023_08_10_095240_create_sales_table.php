@@ -28,7 +28,7 @@ return new class extends Migration
             $table->double('grandtotal_amount')->default(0);
             $table->double('total_nuc')->default(0);
             $table->foreignId('status_id')->constrained();
-            $table->tinyInteger('payment_method')->default(false);
+            $table->bigInteger('payment_id')->nullable(); // do not link or create relationship as this can be null at first;
             $table->string('group_name', 100)->nullable();
             $table->string('so_remarks', 255)->nullable();
             $table->string('si_remarks', 255)->nullable();

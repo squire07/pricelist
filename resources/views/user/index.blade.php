@@ -19,19 +19,19 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                <table id="dt_company" class="table table-bordered table-hover table-striped" width="100%">
+                <table id="dt_user" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
                         <tr>
                             <th class="text-center">ID</th>
-                            <th class="text-center">Name</th>
+                            <th class="text-center" style="min-width:125px;">Name</th>
                             <th class="text-center">Username</th>
                             <th class="text-center">Email</th>
-                            <th class="text-center">Role</th>
-                            <th class="text-center">Branch</th>
-                            <th class="text-center">Company</th>
+                            <th class="text-center" style="min-width:125px;">Role</th>
+                            <th class="text-center" style="min-width:125px;">Branch</th>
+                            <th class="text-center" style="min-width:230px;">Company</th>
                             <th class="text-center">Active</th>
                             <th class="text-center">Blocked</th>
-                            <th class="text-center">Action</th>
+                            <th class="text-center" style="min-width:130px">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -284,7 +284,7 @@
         theme: 'bootstrap4'
         });
 
-        $('#dt_company').DataTable({
+        $('#dt_user').DataTable({
             dom: 'Bfrtip',
             autoWidth: true,
             responsive: true,
@@ -304,7 +304,7 @@
                 }
             ],
             initComplete: function () {
-                $("#dt_company").wrap("<div style='overflow:auto;width:100%;position:relative;'></div>");
+                $("#dt_user").wrap("<div style='overflow:auto;width:100%;position:relative;'></div>");
 
                 var elements = document.getElementsByClassName('btn-secondary');
                 while(elements.length > 0){

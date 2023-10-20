@@ -17,8 +17,8 @@ class CompanySeeder extends Seeder
     {
         // company names 
         $companies = [
-            1 => array('name' => 'UNO International Corp', 'code' => 'LO'),
-            2 => array('name' => 'UNO Premier', 'code' => 'PR'), 
+            1 => array('name' => 'Unlimited Network of Opportunities Int\'l Corp', 'code' => 'LO'),
+            2 => array('name' => 'Uno Premier Philippines International Corporation', 'code' => 'PR'), 
             3 => array('name' => 'Onelifestyle', 'code' => 'OL'),
         ];
 

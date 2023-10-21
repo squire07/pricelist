@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Branch;
-use App\Models\Company;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Branch;
+use App\Models\Company;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -36,7 +38,26 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $existName = User::whereName($request->name)->whereDeleted(false)->first();
+        $existNameUsername = User::whereName($request->name)->whereUsername($request->username)->whereDeleted(false)->first();
+        $existNameUsernameEmail = User::whereName($request->name)->whereUsername($request->username)->whereEmail($request->email)->whereDeleted(false)->first();
+        if(!$existName || !$existNameUsername || !$existNameUsernameEmail) {
+            $user = new User();
+            $user->uuid = Str::uuid();
+            $user->name = $request->name;
+            $user->username = $request->username;
+            $user->email = $request->email;
+            $user->password = bcrypt('password');
+            $user->company_id = $request->company_id;
+            $user->branch_id = $request->branch_id;
+            $user->role_id = $request->role_id;
+            $user->active = 1; //set default status to Active
+            $user->created_by = Auth::user()->name;
+            $user->save();
+            return redirect()->back()->with('success', 'User has been created!');
+        } else {
+            return redirect()->back()->with('error', 'User already exists!');
+        }
     }
 
     /**
@@ -58,9 +79,26 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $uuid)
     {
-        //
+        $user = User::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
+
+        $existName = User::whereName($request->name)->whereDeleted(false)->first();
+        $existNameUsername = User::whereName($request->name)->whereUsername($request->username)->whereDeleted(false)->first();
+        $existNameUsernameEmail = User::whereName($request->name)->whereUsername($request->username)->whereEmail($request->email)->whereDeleted(false)->first();
+        if(!$existName || !$existNameUsername || !$existNameUsernameEmail) {
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->company_id = $request->company_id;
+            $user->branch_id = $request->branch_id;
+            $user->active = $request->active; 
+            $user->blocked = $request->blocked; 
+            $user->created_by = Auth::user()->name;
+            $user->save();
+            return redirect()->back()->with('success', 'User has been updated!');
+        } else {
+            return redirect()->back()->with('error', 'User already exists!');
+        }
     }
 
     /**

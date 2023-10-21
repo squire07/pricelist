@@ -107,15 +107,15 @@
                             </div>
                             <div class="col-12">
                                 <label for="name">Password</label>
-                                <input type="" class="form-control form-control-sm" name="password" minlength="8" maxlength="25" required>
+                                <input type="password" class="form-control form-control-sm" name="password" minlength="8" maxlength="25" required>
                             </div>
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label>Role</label>
-                                    <select class="select2" multiple="multiple" name="role_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                        <option value="" disabled>-- Select Role --</option>
-                                        @foreach($roles as $role)
-                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                    <label>Company</label>
+                                    <select class="select2" multiple="multiple" name="company_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                        <option value="" disabled>-- Select Company --</option>
+                                        @foreach($companies as $company)
+                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -133,11 +133,11 @@
                             </div>
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label>Company</label>
-                                    <select class="select2" multiple="multiple" name="company_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                        <option value="" disabled>-- Select Company --</option>
-                                        @foreach($companies as $company)
-                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                    <label for="comapny_id">Role</label>
+                                    <select class="form-control form-control-sm" name="role_id" id="modal_edit_role_id" required>
+                                        <option value="" disabled>-- Select Role --</option>
+                                        @foreach($roles as $role)
+                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -153,7 +153,6 @@
             </div>
         </div>
     </div>
-
 
     {{--  modal for create --}}
     <div class="modal fade" id="modal-edit">
@@ -183,11 +182,33 @@
                                 <label for="name">Email</label>
                                 <input type="email" class="form-control form-control-sm" name="email" id="modal_edit_email" maxlength="255" required>
                             </div>
+                            {{-- <div class="col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label for="status">Block User?</label>
+                                    <div class="col-12">
+                                        <input type="radio" name="blocked" value="1" checked>
+                                        <label for="" class="mr-4">Yes</label>
+                                        <input type="radio" name="active" value="1">
+                                        <label for="">No</label>
+                                    </div>
+                                </div>
+                            </div> --}}
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Company</label>
+                                    <select class="select2" multiple="multiple" name="company_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                        <option value="" disabled>-- Select Company --</option>
+                                        @foreach($companies as $company)
+                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                             <div class="col-12">
                                 <div class="form-group">
                                     <label for="comapny_id">Role</label>
                                     <select class="form-control form-control-sm" name="role_id" id="modal_edit_role_id" required>
-                                        <option value="" disabled>-- Select Role --</option>
+                                        <option value="" disabled selected>-- Select Role --</option>
                                         @foreach($roles as $role)
                                             <option value="{{ $role->id }}">{{ $role->name }}</option>
                                         @endforeach
@@ -201,17 +222,6 @@
                                         <option value="" disabled>-- Select Branch --</option>
                                         @foreach($branches as $branch)
                                             <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Company</label>
-                                    <select class="select2" multiple="multiple" name="company_id" id="modal_edit_company_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                        <option value="" disabled>-- Select Company --</option>
-                                        @foreach($companies as $company)
-                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>

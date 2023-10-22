@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
 use App\Models\SalesInvoiceAssignment;
 use App\Models\SalesInvoiceAssignmentDetail;
 use App\Models\User;
@@ -61,20 +62,32 @@ class SalesInvoiceAssignmentController extends Controller
             $prefix_value = 'A';
         } 
 
-        // check if the series exists in SalesInvoiceAssignmentDetail table
-        $exists = SalesInvoiceAssignmentDetail::where('series_number', $prefix_value . substr(str_repeat(0, 6).$request->series_from, - 6))
-                        ->orWhere('series_number', $prefix_value . substr(str_repeat(0, 6).$request->series_to, - 6))
-                        ->get();
+        $series_number = [
+            $prefix_value . substr(str_repeat(0, 6).$request->series_from, - 6), 
+            $prefix_value . substr(str_repeat(0, 6).$request->series_to, - 6)
+        ];
+
+        $cashier_branch_id = User::whereDeleted(false)->whereId($request->cashier_id)->first()->branch_id;
+
+        $branch_id = $request->cashier_branch_id ?? $cashier_branch_id;
+
+        // complex; We'll use query builder
+        $details = SalesInvoiceAssignment::select('sales_invoice_assignments.*')
+                    ->leftJoin('sales_invoice_assignment_details', 'sales_invoice_assignments.id', '=', 'sales_invoice_assignment_details.sales_invoice_assignment_id')
+                    ->where('sales_invoice_assignments.deleted', false)
+                    ->where('sales_invoice_assignments.branch_id', $branch_id)
+                    ->whereIn('sales_invoice_assignment_details.series_number', $series_number)
+                    ->get();
  
-        if($exists->isNotEmpty()) {
+        if($details->isNotEmpty()) {
             return redirect()->back()->with('error', 'The series number already exists!'); 
         } else {
             $booklet = new SalesInvoiceAssignment();
             $booklet->uuid = Str::uuid();
             $booklet->user_id = $request->cashier_id;
-            $booklet->branch_id = 1; // get the cashier's designated branch
-            $booklet->series_from = $request->series_from;
-            $booklet->series_to = $request->series_to;
+            $booklet->branch_id = $branch_id; // get the cashier's designated branch
+            $booklet->series_from = $request->series_from; // prefix (leading zero's) automatically added from model's setter
+            $booklet->series_to = $request->series_to; // prefix (leading zero's) automatically added from model's setter
             $booklet->prefixed = $prefixed;
             $booklet->prefix_value = $prefix_value;
             $booklet->count = ($request->series_to - $request->series_from) + 1; // ex: (0003200 - 0003101) = 99 + 1 => 100;
@@ -101,7 +114,20 @@ class SalesInvoiceAssignmentController extends Controller
      */
     public function show($uuid)
     {
-        $series = SalesInvoiceAssignment::with(['booklet_details','cashier'])->whereUuid($uuid)->firstOrFail();
+        $series = SalesInvoiceAssignment::with(['booklet_details','cashier'])
+                    ->whereDeleted(false)
+                    ->whereUuid($uuid)
+                    ->firstOrFail();
+
+        /* add cost center to object; 
+        * note: this is for presentation only in the details page
+        * e.g. Series Number Column: Format:  Cost Center - Series Number
+        *                                       001-000001
+        *                                or:    001-A000001
+        */    
+        $series->cost_center = Branch::whereDeleted(false)
+                                    ->whereId($series->branch_id)
+                                    ->first()->cost_center;
 
         $used_count = 0;
         // count the number of used series

@@ -30,7 +30,7 @@
                         <table class="table">
                             <tr>
                                 <th style="width:50%">Series Number:</th>
-                                <td>{{ $series->prefix_value . $series->series_from . ' - ' . $series->prefix_value . $series->series_to }}</td>
+                                <td>{{ $series->cost_center . '-' . $series->prefix_value . $series->series_from . ' - ' . $series->cost_center . '-' . $series->prefix_value . $series->series_to }}</td>
                             </tr>
                             <tr>
                                 <th>Branch:</th>
@@ -72,7 +72,7 @@
                         @foreach($series->booklet_details as $detail)
                             <tr>
                                 <td class="text-center">{{ $detail->id }}</td>
-                                <td class="text-center">{{ $detail->series_number }}</td>
+                                <td class="text-center">{{ $series->cost_center . '-' . $detail->series_number }}</td>
                                 <td class="text-center">
                                     @if($detail->used == 1)
                                         <i class="fas fa-check-circle" style="color:#28a745"></i>

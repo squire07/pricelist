@@ -145,10 +145,18 @@
                             <div class="form-group">
                                 <label for="cashier_id">Cashier</label>
                                 <select class="select2" id="cashier_id" name="cashier_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                    <option value="" disabled>-- Select Cashier --</option>
+                                    <option disabled selected>-- Select Cashier --</option>
                                     @foreach($cashiers as $cashier)
-                                        <option value="{{ $cashier->id }}">{{ $cashier->name . ' (' . $cashier->branch->name . ')'}}</option>
+                                        <option value="{{ $cashier->id }}" data-branch-id="{{ $cashier->branch_id }}">
+                                            {{ $cashier->name . ' (' . str_replace(',', ', ', Helper::get_branch_name_by_id($cashier->branch_id)) . ')'}}
+                                        </option>
                                     @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group d-none" id="div_cashier_branch_id">
+                                <label for="cashier_branch_id">Branch</label>
+                                <select class="select2" id="cashier_branch_id" name="cashier_branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
                                 </select>
                             </div>
 
@@ -175,9 +183,9 @@
                             <div class="row mt-4">
                                 <div class="col-6">
                                     <div class="form-group clearfix">
-                                        <div class="icheck-default d-inline">
+                                        <div class="d-inline">
                                             <input type="checkbox" id="checkbox_prefix" name="checkbox_prefix">
-                                            <label for="checkbox_prefix">add prefix "A"</label>
+                                            <label for="checkbox_prefix" class="ml-1">Add prefix "A"</label>
                                         </div>
                                     </div>
                                 </div>
@@ -305,6 +313,48 @@
                 }
             } else {
                 $('#btn-modal-save').prop('disabled',true);
+            }
+        });
+
+        $('#cashier_id').on('change', function() {
+            var selectedOption = $(this).find('option:selected');
+            var branch_id = selectedOption.data('branch-id');
+
+            // split if multiple
+            var multiple_ids = /,/.test(branch_id);
+
+            if(multiple_ids === true) {
+                // show the branch div
+                $('#div_cashier_branch_id').removeClass('d-none');
+
+                // fetch the data by using the cashier's id
+                fetch(window.location.origin + '/api/branches_by_cashiers_id/' + $('#cashier_id').val(), {
+                    method: 'get',
+                    headers: {
+                        'Content-type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then((response) => {
+                    obj = JSON.parse(JSON.stringify(response));
+
+                    // empty or remove first the content if there is/are
+                    $('#cashier_branch_id').empty();
+
+                    // append the cashier_branch_id
+                    for(let i=0; i<obj.length; i++) {
+                        // Create a new option element
+                        var new_option = new Option(obj[i].name, obj[i].id, false, false);
+
+                        // Append the new option to the select element
+                        $('#cashier_branch_id').append(new_option);
+                    }
+                    // update the option
+                    $('#cashier_branch_id').trigger('change');
+                })
+            } else {
+                // hide the branch div
+                $('#div_cashier_branch_id').addClass('d-none');
             }
         });
 

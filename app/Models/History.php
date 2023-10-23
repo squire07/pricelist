@@ -10,6 +10,7 @@ class History extends Model
 {
     use HasFactory;
 
+    // relationships
     public function status()
     {
         return $this->hasOne('App\Models\Status', 'id', 'status_id');
@@ -20,6 +21,7 @@ class History extends Model
         return $this->hasOne('App\Models\TransactionType', 'id', 'transaction_type_id');
     }
 
+    // getters and setters
     public function getCreatedAtAttribute($value)
     {
         return $value != null ? Carbon::parse($value)->format('m/d/Y h:i:s A') : '';

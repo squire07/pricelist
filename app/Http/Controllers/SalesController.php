@@ -87,7 +87,7 @@ class SalesController extends Controller
         $sales->distributor_name = $request->distributor_name;
         $sales->shipping_fee = $request->shipping_fee ?? 0; // conditional
         $sales->total_amount = $request->total_amount;
-        $sales->total_nuc = $this->compute_total_nuc($request->subtotal_nuc); // computation of total nuc is not included in the js
+        $sales->total_nuc = $this->compute_total_nuc(str_replace(',', '', $request->subtotal_nuc)); // computation of total nuc is not included in the js
         $sales->vatable_sales = $request->vatable_sales;
         $sales->vat_amount = $request->vat_amount;
         $sales->grandtotal_amount = $request->grandtotal_amount;
@@ -109,27 +109,27 @@ class SalesController extends Controller
                 }
             
                 if (isset($request->quantity[$key])) {
-                    $item_details[$key]['quantity'] = $request->quantity[$key];
+                    $item_details[$key]['quantity'] = str_replace(',', '', $request->quantity[$key]);
                 }
             
                 if (isset($request->amount[$key])) {
-                    $item_details[$key]['amount'] = $request->amount[$key];
+                    $item_details[$key]['amount'] = str_replace(',', '', $request->amount[$key]);
                 }
             
                 if (isset($request->nuc[$key])) {
-                    $item_details[$key]['nuc'] = $request->nuc[$key];
+                    $item_details[$key]['nuc'] = str_replace(',', '', $request->nuc[$key]);
                 }
             
                 if (isset($request->rs_points[$key])) {
-                    $item_details[$key]['rs_points'] = $request->rs_points[$key];
+                    $item_details[$key]['rs_points'] = str_replace(',', '', $request->rs_points[$key]);
                 }
             
                 if (isset($request->subtotal_nuc[$key])) {
-                    $item_details[$key]['subtotal_nuc'] = $request->subtotal_nuc[$key];
+                    $item_details[$key]['subtotal_nuc'] = str_replace(',', '', $request->subtotal_nuc[$key]);
                 }
             
                 if (isset($request->subtotal_amount[$key])) {
-                    $item_details[$key]['subtotal_amount'] = $request->subtotal_amount[$key];
+                    $item_details[$key]['subtotal_amount'] = str_replace(',', '', $request->subtotal_amount[$key]);
                 }
             
                 // Save each item's details to the sales details table
@@ -254,27 +254,27 @@ class SalesController extends Controller
                         }
 
                         if (isset($request->quantity[$key])) {
-                            $item_details[$key]['quantity'] = $request->quantity[$key];
+                            $item_details[$key]['quantity'] = str_replace(',', '', $request->quantity[$key]);
                         }
                     
                         if (isset($request->amount[$key])) {
-                            $item_details[$key]['amount'] = $request->amount[$key];
+                            $item_details[$key]['amount'] = str_replace(',', '', $request->amount[$key]);
                         }
                     
                         if (isset($request->nuc[$key])) {
-                            $item_details[$key]['nuc'] = $request->nuc[$key];
+                            $item_details[$key]['nuc'] = str_replace(',', '', $request->nuc[$key]);
                         }
                     
                         if (isset($request->rs_points[$key])) {
-                            $item_details[$key]['rs_points'] = $request->rs_points[$key];
+                            $item_details[$key]['rs_points'] = str_replace(',', '', $request->rs_points[$key]);
                         }
                     
                         if (isset($request->subtotal_nuc[$key])) {
-                            $item_details[$key]['subtotal_nuc'] = $request->subtotal_nuc[$key];
+                            $item_details[$key]['subtotal_nuc'] = str_replace(',', '', $request->subtotal_nuc[$key]);
                         }
                     
                         if (isset($request->subtotal_amount[$key])) {
-                            $item_details[$key]['subtotal_amount'] = $request->subtotal_amount[$key];
+                            $item_details[$key]['subtotal_amount'] = str_replace(',', '', $request->subtotal_amount[$key]);
                         }
                     }
 

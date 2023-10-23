@@ -10,6 +10,7 @@ class Sales extends Model
 {
     use HasFactory;
 
+    // relationships
     public function sales_details()
     {
         return $this->hasMany('App\Models\SalesDetails', 'sales_id', 'id');
@@ -25,6 +26,13 @@ class Sales extends Model
         return $this->hasOne('App\Models\TransactionType', 'id', 'transaction_type_id');
     }
 
+    public function payment()
+    {
+        return $this->hasOne('App\Models\Payment', 'sales_id', 'id');
+    }
+
+
+    // getter and setter
     public function getTotalAmountAttribute($value)
     {
         return number_format($value,2,'.',',');
@@ -75,4 +83,35 @@ class Sales extends Model
         return $value != null ? Carbon::parse($value)->format('m/d/Y h:i:s A') : '';
     }
 
+
+
+    public function setShippingFeeAttribute($value)
+    {
+        $this->attributes['shipping_fee'] = str_replace(',', '', $value);
+    }
+
+    public function setTotalAmountAttribute($value)
+    {
+        $this->attributes['total_amount'] = str_replace(',', '', $value);
+    }
+
+    public function setTotalNucAttribute($value)
+    {
+        $this->attributes['total_nuc'] = str_replace(',', '', $value);
+    }
+
+    public function setVatableSalesAttribute($value)
+    {
+        $this->attributes['vatable_sales'] = str_replace(',', '', $value);
+    }
+
+    public function setVatAmountAttribute($value)
+    {
+        $this->attributes['vat_amount'] = str_replace(',', '', $value);
+    }
+
+    public function setGrandtotalAmountAttribute($value)
+    {
+        $this->attributes['grandtotal_amount'] = str_replace(',', '', $value);
+    }
 }

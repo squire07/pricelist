@@ -75,11 +75,12 @@ Route::middleware(['auth','gate'])->group(function () {
     Route::resource('companies', CompanyController::class);
     Route::get('distributor_list', [DistributorController::class, 'distributor_list'])->name('distributor_list');
     Route::resource('distributors', DistributorController::class)->only('index');
+    Route::get('items/sync-item', [ItemController::class, 'sync_item']); // must be in api, use passport
     Route::resource('items', ItemController::class);
     Route::resource('payment-methods', PaymentMethodController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('sales-invoice-assignment', SalesInvoiceAssignmentController::class);
-    Route::get('transaction-types/sync-transaction-type', [TransactionTypeController::class, 'sync_transaction_type']); // api
+    Route::get('transaction-types/sync-transaction-type', [TransactionTypeController::class, 'sync_transaction_type']); // must be in api, use passport
     Route::resource('transaction-types', TransactionTypeController::class);
     Route::resource('users', UserController::class);
     Route::resource('permissions', UserPermissionController::class)->only('edit','update');

@@ -10,6 +10,15 @@ class Item extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [];
+
+
+    
     // relationships
     public function item()
     {

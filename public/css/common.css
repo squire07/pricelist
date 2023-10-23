@@ -134,3 +134,8 @@ input[type=number] {
 .brand-link .brand-image {
     margin-left: 0 !important;
 }
+
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}

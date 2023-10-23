@@ -32,7 +32,7 @@ class ForValidationController extends Controller
 
         $sales_orders = Sales::with('status','transaction_type')
                             ->whereBetween('created_at', [$from, $to])
-                            ->whereStatusId(4)
+                            ->whereStatusId(5)
                             ->whereDeleted(false)
                             ->orderByDesc('id')
                             ->get();
@@ -61,11 +61,17 @@ class ForValidationController extends Controller
      */
     public function show($uuid)
     {
-        $sales_order = Sales::whereUuid($uuid)
+        $sales_order = Sales::with('payment')->whereUuid($uuid)
+                        ->whereStatusId(5)
                         ->with('transaction_type')
                         ->with('sales_details', function($query) {
                             $query->where('deleted',0);
                         })->firstOrFail();
+
+        // convert the details from json_object to array object
+        if(isset($sales_order->payment->details)) {
+            $sales_order->payment->details = json_decode($sales_order->payment->details,true);
+        }
 
         $histories = History::whereUuid($sales_order->uuid)->whereDeleted(false)->get();
         
@@ -90,7 +96,7 @@ class ForValidationController extends Controller
         $sales = Sales::whereUuid($uuid)->whereDeleted(false)->firstOrFail();  
 
         // check if request contains status_id = 3
-        if(isset($request->status_id) && $request->status_id == 3) {
+        if(isset($request->status_id) && $request->status_id == 3) { // Cancel
             $sales->status_id = $request->status_id;
             $sales->si_remarks = $request->si_remarks;
             $sales->updated_by = Auth::user()->name; // updated_at will be automatically filled by laravel
@@ -98,7 +104,7 @@ class ForValidationController extends Controller
                 // pass the message to user if the update is successful
                 $message = $sales->so_no . ' successfully marked Cancelled';
             }
-            Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Cancel Sales Invoice - ', $sales->si_remarks);
+            Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Cancel Sales Invoice', $sales->si_remarks);
         }
 
         

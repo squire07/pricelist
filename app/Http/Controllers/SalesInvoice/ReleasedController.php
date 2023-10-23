@@ -60,10 +60,16 @@ class ReleasedController extends Controller
     public function show($uuid)
     {
         $sales_order = Sales::whereUuid($uuid)
+                        ->whereStatusId(4)
                         ->with('transaction_type')
                         ->with('sales_details', function($query) {
                             $query->where('deleted',0);
                         })->firstOrFail();
+
+        // convert the details from json_object to array object
+        if(isset($sales_order->payment->details)) {
+            $sales_order->payment->details = json_decode($sales_order->payment->details,true);
+        }
 
         $histories = History::whereUuid($sales_order->uuid)->whereDeleted(false)->get();
         
@@ -87,14 +93,16 @@ class ReleasedController extends Controller
         
         $sales = Sales::whereUuid($uuid)->whereDeleted(false)->firstOrFail();  
 
-        // check if request contains status_id = 3
-        if(isset($request->status_id) && $request->status_id == 3) {
-            $sales->status_id = $request->status_id;
-            $sales->updated_by = Auth::user()->name; // updated_at will be automatically filled by laravel
-            if($sales->update()) {
-                // pass the message to user if the update is successful
-                $message = $sales->so_no . ' successfully marked as Cancelled!';
-            }
+        // check if request contains status_id = 5
+        if(isset($request->status_id) && $request->status_id == 4) { // Released
+            $sales->status_id = 4; // mark as released
+            $sales->update();
+
+            // post to PRIME here
+
+
+
+            Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Released', $sales->si_remarks);
         }
 
         // redirect to index page with dynamic message coming from different statuses

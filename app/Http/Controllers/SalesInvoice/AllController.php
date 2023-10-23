@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SalesInvoice;
 
 use App\Models\Sales;
 use App\Models\History;
+use App\Models\Payment;
 use App\Models\SalesInvoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -58,12 +59,16 @@ class AllController extends Controller
      */
     public function show($uuid)
     {
-        $sales_order = Sales::whereUuid($uuid)
+        $sales_order = Sales::with('payment')->whereUuid($uuid)
                         ->with('transaction_type')
                         ->with('sales_details', function($query) {
                             $query->where('deleted',0);
                         })->firstOrFail();
-        
+
+        // convert the details from json_object to array object
+        if(isset($sales_order->payment->details)) {
+            $sales_order->payment->details = json_decode($sales_order->payment->details,true);
+        }
         $histories = History::whereUuid($sales_order->uuid)->whereDeleted(false)->get();
         
         return view('SalesInvoice.all.show', compact('sales_order','histories'));

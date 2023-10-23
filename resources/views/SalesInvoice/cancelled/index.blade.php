@@ -17,7 +17,7 @@
         <div class="card">
             <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
                 
-                <form id="request_date" class="form-horizontal" action="{{ url('sales-invoice/for-validation') }}" method="get">
+                <form id="request_date" class="form-horizontal" action="{{ url('sales-invoice/cancelled') }}" method="get">
                     @csrf
                     <label for="daterange">Request Date</label>
                     <div class="row">
@@ -34,7 +34,7 @@
                                     <div class="input-group-append" onclick="document.getElementById('request_date').submit();">
                                         <span class="input-group-text"><i class="fas fa-search"></i></span>
                                     </div>
-                                    <div class="input-group-append" onclick="window.location.assign('{{ url('sales-invoice/for-validation') }}')">
+                                    <div class="input-group-append" onclick="window.location.assign('{{ url('sales-invoice/cancelled') }}')">
                                         <span class="input-group-text"><i class="fas fa-sync-alt"></i></span>
                                     </div>
                                 </div>
@@ -60,7 +60,7 @@
                     <tbody>
                         @foreach($sales_orders as $sales_order)
                             <tr>
-                                <td class="text-center"><a href="{{ url('sales-invoice/for-validation/' . $sales_order->uuid ) }}" target="_self">{{ $sales_order->so_no }}</a></td>
+                                <td class="text-center"><a href="{{ url('sales-invoice/cancelled/' . $sales_order->uuid ) }}" target="_self">{{ $sales_order->so_no }}</a></td>
                                 <td class="text-center">{{ $sales_order->transaction_type->name }}</td>
                                 <td class="text-center">{{ $sales_order->bcid }}</td>
                                 <td class="text-center">{{ $sales_order->distributor_name }}</td>

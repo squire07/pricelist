@@ -58,12 +58,17 @@ class CancelledController extends Controller
      */
     public function show($uuid)
     {
-        $sales_order = Sales::whereUuid($uuid)
+        $sales_order = Sales::with('payment')->whereUuid($uuid)
+                        ->whereStatusId(3)
                         ->with('transaction_type')
                         ->with('sales_details', function($query) {
                             $query->where('deleted',0);
                         })->firstOrFail();
 
+        // convert the details from json_object to array object
+        if(isset($sales_order->payment->details)) {
+            $sales_order->payment->details = json_decode($sales_order->payment->details,true);
+        }
         $histories = History::whereUuid($sales_order->uuid)->whereDeleted(false)->get();
         
         return view('SalesInvoice.cancelled.show', compact('sales_order','histories'));

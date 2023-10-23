@@ -61,30 +61,30 @@
                                     <td class="text-right" style="width:8%">{{ $sd->nuc }}</td>
                                 </tr>
                             @endforeach
-                            <tfoot>
-                                <tr>
-                                    <td class="text-right text-bold" colspan="4">Sub Total</td>
-                                    <td class="text-right">{{ $sales_order->total_amount }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right text-bold" colspan="4">Shipping Fee</td>
-                                    <td class="text-right">{{ $sales_order->shipping_fee }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right text-bold" colspan="4">VATable Sales</td>
-                                    <td class="text-right">{{ $sales_order->vatable_sales }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right text-bold" colspan="4">VAT Amount</td>
-                                    <td class="text-right">{{ $sales_order->vat_amount }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right text-bold" colspan="4">Grand Total</td>
-                                    <td class="text-right text-bold">{{ $sales_order->grandtotal_amount }}</td>
-                                    <td class="text-right text-bold">{{ $sales_order->total_nuc }}</td>
-                                </tr>
-                            </tfoot>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td class="text-right text-bold" colspan="4">Sub Total</td>
+                                <td class="text-right">{{ $sales_order->total_amount }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right text-bold" colspan="4">Shipping Fee</td>
+                                <td class="text-right">{{ $sales_order->shipping_fee }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right text-bold" colspan="4">VATable Sales</td>
+                                <td class="text-right">{{ $sales_order->vatable_sales }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right text-bold" colspan="4">VAT Amount</td>
+                                <td class="text-right">{{ $sales_order->vat_amount }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right text-bold" colspan="4">Grand Total</td>
+                                <td class="text-right text-bold">{{ $sales_order->grandtotal_amount }}</td>
+                                <td class="text-right text-bold">{{ $sales_order->total_nuc }}</td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -95,6 +95,8 @@
             <button class="btn btn-lg btn-danger float-right" style="margin-top: 8px" id="btn-for-cancel" data-uuid="{{ $sales_order->uuid }}" data-so-no="{{ $sales_order->so_no }}"><i class="fas fa-ban"></i>&nbsp;Cancel Invoice</button>
         </div>
     </div>
+
+    @include('components.payment')
 
     @include('components.history')
 

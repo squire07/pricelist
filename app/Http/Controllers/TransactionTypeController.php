@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\TransactionType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -74,32 +75,17 @@ class TransactionTypeController extends Controller
         $param = '/api/resource/Price List?limit=500&filters=[["selling","=","1"]]';
         $data = Helper::get_erpnext_data($param);
 
-        foreach($data['data'] as $key => $price_lists){
-            // find the record by id
-            $transaction_type = TransactionType::whereId($key + 1)->first();
+        // to refactor soon
+        DB::table('transaction_types')->truncate();
 
-            if(is_null($transaction_type)) {
-                // create 
-                $transaction_type = new TransactionType();
-                $transaction_type->uuid = Str::uuid();
-                $transaction_type->name = $price_lists['name'];
-                $transaction_type->created_by = Auth::user()->name;
-                $transaction_type->updated_by = Auth::user()->name;
-                $transaction_type->save();
-            } else if($transaction_type->id == $key + 1) {
-                // update each
-                $transaction_type->name = $price_lists['name'];
-                $transaction_type->updated_by = Auth::user()->name;
-                $transaction_type->update();
-            } else {
-                // create if key is greater than what is on the table
-                $transaction_type = new TransactionType();
-                $transaction_type->uuid = Str::uuid();
-                $transaction_type->name = $price_lists['name'];
-                $transaction_type->created_by = Auth::user()->name;
-                $transaction_type->updated_by = Auth::user()->name;
-                $transaction_type->save();
-            }
+        foreach($data['data'] as $key => $price_lists){
+            // create 
+            $transaction_type = new TransactionType();
+            $transaction_type->uuid = Str::uuid();
+            $transaction_type->name = $price_lists['name'];
+            $transaction_type->created_by = Auth::user()->name;
+            $transaction_type->updated_by = Auth::user()->name;
+            $transaction_type->save();
         }
         return true;
     }

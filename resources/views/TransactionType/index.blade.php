@@ -51,7 +51,7 @@
                 </table>
             </div>   
             <div class="card-footer">
-                <button class="btn btn-sm btn-primary" id="btn-sync"><i class="fas fa-sync mr-1"></i>Sync</button>     
+                <button class="btn btn-sm btn-primary" id="btn-sync" {{ !in_array(Auth::user()->role_id, [11,12]) ? 'disabled' : '' }}><i class="fas fa-sync mr-1"></i>Sync</button>     
             </div> 
         </div>
     </div>
@@ -99,6 +99,7 @@
                 confirmButtonText: 'Yes, sync!',
                 showLoaderOnConfirm: true,
                 preConfirm: (login) => {
+                    Swal.getCancelButton().setAttribute('hidden', true);
                     return fetch(window.location.origin + '/transaction-types/sync-transaction-type')
                     .then(response => {
                         if (!response.ok) {

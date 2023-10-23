@@ -296,7 +296,7 @@ tbody tr:nth-child(odd) {
 
         
         // initialize total amount nuc grandtotal and shipping fee
-        var sub_total_amount = $('#tfoot_subtotal_amount').val();
+        var sub_total_amount = $('#tfoot_subtotal_amount').val(); 
         var total_nuc = $('#tfoot_total_nuc').val();
         var shipping_fee = $('#tfoot_sf_total_amount').val();
         var grand_total_amount = $('#tfoot_grand_total_amount').val();
@@ -390,7 +390,7 @@ tbody tr:nth-child(odd) {
             if (!allAreFilled) {
                 
                 // set focus to specific field
-            if($.trim($("#item_name").val()) == "") {
+                if($.trim($("#item_name").val()) == "") {
                     $('#item_name').focus();
                     required_field('Item');
                 }
@@ -416,43 +416,53 @@ tbody tr:nth-child(odd) {
 
 
                     // sum of amount
-                    sub_total_amount = parseFloat(sub_total_amount) + (parseFloat(quantity) * parseFloat(item_selected.amount).toFixed(2));
-                    $('#tfoot_subtotal_amount').val(parseFloat(sub_total_amount).toFixed(2));
+                    sub_total_amount = parseFloat(sub_total_amount.replace(/,/g, '')) + (parseFloat(quantity.replace(/,/g, '')) * parseFloat(item_selected.amount.replace(/,/g, '')));
+                    // format the sub_total_amount with comma again so that parseFloat(sub_total_amount.replace(/,/g, '')) will not result in an error
+                    sub_total_amount = sub_total_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    $('#tfoot_subtotal_amount').val(sub_total_amount);
+
 
                     // sum of nuc
-                    total_nuc = parseFloat(total_nuc) + (parseFloat(quantity) * parseFloat(item_selected.nuc).toFixed(2));
-                    $('#tfoot_total_nuc').val(parseFloat(total_nuc).toFixed(2));
+                    total_nuc = parseFloat(total_nuc.replace(/,/g, '')) + (parseFloat(quantity.replace(/,/g, '')) * parseFloat(item_selected.nuc.replace(/,/g, '')));
+                    // format the total_nuc with comma again so that parseFloat(total_nuc.replace(/,/g, '')) will not result in an error
+                    total_nuc = total_nuc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    $('#tfoot_total_nuc').val(total_nuc);
+
 
                     current_shipping_fee = $('#tfoot_sf_total_amount').val();
 
-                    grand_total_amount = parseFloat(current_shipping_fee) + parseFloat(sub_total_amount);
-                    $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
 
-                    // get the computed tax values
-                    vat_result = calculateVAT(grand_total_amount.toFixed(2));
-                    $('#tfoot_vatable_sales').val(vat_result.vatable_sales.toFixed(2));
-                    $('#tfoot_vat_amount').val(vat_result.vat_amount.toFixed(2));
+                    grand_total_amount = parseFloat(current_shipping_fee.replace(/,/g, '')) + parseFloat(sub_total_amount.replace(/,/g, ''));
+                    $('#tfoot_grand_total_amount').val(grand_total_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+
+
+                    // // get the computed tax values
+                    vat_result = calculateVAT(grand_total_amount);
+                    $('#tfoot_vatable_sales').val(vat_result.vatable_sales);
+                    $('#tfoot_vat_amount').val(vat_result.vat_amount);
 
                     // populate the details table
+                    let item_price = parseFloat(item_selected.amount.replace(/,/g, ''));
+
                     var row = '<tr>' + 
                                 '<td>' + item_selected.code + '</td>' +
                                 '<td>' + item_selected.name + '</td>' +
                                 '<td class="text-center">' + quantity + '</td>' +
-                                '<td class="text-right">' + item_selected.amount + '</td>' +
+                                '<td class="text-right">' + item_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
                                 // '<td class="text-right">' + item_selected.rs_points + '</td>' +
-                                '<td class="text-right">' + (item_selected.amount * quantity).toFixed(2) + '</td>' +
-                                '<td class="text-center"><a href="#" class="btn-delete-item" data-quantity="' + quantity + '" data-amount="' + quantity * item_selected.amount + '" data-nuc="' + quantity * item_selected.nuc + '"><i class="far fa-trash-alt"></i></a></td>' +
+                                '<td class="text-right">' + (item_price * quantity).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
+                                '<td class="text-center"><a href="#" class="btn-delete-item" data-quantity="' + quantity + '" data-amount="' + quantity * item_price + '" data-nuc="' + quantity * item_selected.nuc + '"><i class="far fa-trash-alt"></i></a></td>' +
 
                                 // hidden elements
                                 '<input type="hidden" name="item_code[]" value="' + item_selected.code + '" required>' + 
                                 '<input type="hidden" name="item_name[]" value="' + item_selected.name + '" required>' + 
                                 '<input type="hidden" name="quantity[]" value="' + quantity + '" required>' + 
-                                '<input type="hidden" name="amount[]" value="' + item_selected.amount + '" required>' + 
+                                '<input type="hidden" name="amount[]" value="' + item_price + '" required>' + 
                                 '<input type="hidden" name="nuc[]" value="' + item_selected.nuc + '" required>' + 
                                 '<input type="hidden" name="rs_points[]" value="' + item_selected.rs_points + '" required>' + 
                                 // hidden elements: computed
-                                '<input type="hidden" name="subtotal_nuc[]" value="' + (item_selected.nuc * quantity).toFixed(2) + '" required>' + 
-                                '<input type="hidden" name="subtotal_amount[]" value="' + (item_selected.amount * quantity).toFixed(2) + '" required>' + 
+                                '<input type="hidden" name="subtotal_nuc[]" value="' + item_selected.nuc * quantity + '" required>' + 
+                                '<input type="hidden" name="subtotal_amount[]" value="' + item_price * quantity + '" required>' + 
                                 '</tr>';
 
                     // increment the item counter
@@ -486,9 +496,16 @@ tbody tr:nth-child(odd) {
         $(document).on('click','.btn-delete-item', function() {
 
             // get the data to be subtracted
-            var quantity = parseFloat($(this).attr("data-quantity"));
-            var amount = parseFloat($(this).attr("data-amount"));
-            var nuc = parseFloat($(this).attr("data-nuc"));
+            var quantity = $(this).attr("data-quantity");
+            var amount = $(this).attr("data-amount");
+            var nuc = $(this).attr("data-nuc");
+
+            const commaRegex = /,/;
+
+            // cast first
+            quantity = commaRegex.test(quantity) ? parseFloat(quantity.replace(/,/g, '')) : quantity;
+            amount = commaRegex.test(amount) ? parseFloat(amount.replace(/,/g, '')) : amount;
+            nuc = commaRegex.test(nuc) ? parseFloat(nuc.replace(/,/g, '')) : nuc;
 
             // item id
             var item_id = parseFloat($(this).attr("data-id"));
@@ -513,28 +530,35 @@ tbody tr:nth-child(odd) {
             }).then((result) => {
                 if (result.isConfirmed) {
 
+                    // cast first 
+                    
+
                     // subtract the amount to sub_total_amount, total_nuc and grand_total_amount
-                    sub_total_amount = parseFloat(sub_total_amount).toFixed(2) - parseFloat(amount).toFixed(2);
+                    sub_total_amount = parseFloat(sub_total_amount.replace(/,/g, '')) - parseFloat(amount);
                     if(!isNaN(sub_total_amount)) {
-                        $('#tfoot_subtotal_amount').val(sub_total_amount.toFixed(2));
+                        sub_total_amount = sub_total_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        $('#tfoot_subtotal_amount').val(sub_total_amount);
                     } else {
                         $('#tfoot_subtotal_amount').val("0.00");
                     }
 
-                    total_nuc = parseFloat(total_nuc).toFixed(2) - parseFloat(nuc).toFixed(2);
+                    
+
+                    total_nuc = parseFloat(total_nuc.replace(/,/g, '')) - parseFloat(nuc);
                     if(!isNaN(total_nuc)) {
-                        $('#tfoot_total_nuc').val(total_nuc.toFixed(2));
+                        total_nuc = total_nuc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        $('#tfoot_total_nuc').val(total_nuc);
                     } else {
                         $('#tfoot_total_nuc').val("0.00");
                     }
 
-                    grand_total_amount = parseFloat(current_grand_total_amount).toFixed(2) - parseFloat(amount).toFixed(2);
-                    $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
+                    grand_total_amount = parseFloat(current_grand_total_amount.replace(/,/g, '')) - parseFloat(amount);
+                    $('#tfoot_grand_total_amount').val(grand_total_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 
                     // get the computed tax values
-                    vat_result = calculateVAT(grand_total_amount.toFixed(2));
-                    $('#tfoot_vatable_sales').val(vat_result.vatable_sales.toFixed(2));
-                    $('#tfoot_vat_amount').val(vat_result.vat_amount.toFixed(2));
+                    vat_result = calculateVAT(grand_total_amount);
+                    $('#tfoot_vatable_sales').val(vat_result.vatable_sales);
+                    $('#tfoot_vat_amount').val(vat_result.vat_amount);
 
                     // update the item count
                     item_count--;
@@ -597,17 +621,17 @@ tbody tr:nth-child(odd) {
             } else {
                 // set the shipping value zero
                 const zero_value = 0;
-                $('#tfoot_sf_total_amount').val(zero_value.toFixed(2));
+                $('#tfoot_sf_total_amount').val(zero_value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 
                 // update the grand total amount
                 var current_grand_total_amount = $('#tfoot_grand_total_amount').val();
-                var grand_total_amount = parseFloat(current_grand_total_amount) - parseFloat(current_shipping_fee);
-                $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
+                var grand_total_amount = parseFloat(current_grand_total_amount.replace(/,/g, '')) - parseFloat(current_shipping_fee.replace(/,/g, ''));
+                $('#tfoot_grand_total_amount').val(grand_total_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 
                 // get the computed tax values
-                vat_result = calculateVAT(grand_total_amount.toFixed(2));
-                $('#tfoot_vatable_sales').val(vat_result.vatable_sales.toFixed(2));
-                $('#tfoot_vat_amount').val(vat_result.vat_amount.toFixed(2));
+                vat_result = calculateVAT(grand_total_amount);
+                $('#tfoot_vatable_sales').val(vat_result.vatable_sales);
+                $('#tfoot_vat_amount').val(vat_result.vat_amount);
             }
         });
 
@@ -633,20 +657,19 @@ tbody tr:nth-child(odd) {
 
             // update the grand total amount
             var current_grand_total_amount = $('#tfoot_grand_total_amount').val();
-            var grand_total_amount = parseFloat(current_grand_total_amount) + parseFloat(shipping_amount);
-            $('#tfoot_grand_total_amount').val(grand_total_amount.toFixed(2));
+            var grand_total_amount = parseFloat(current_grand_total_amount.replace(/,/g, '')) + parseFloat(shipping_amount.replace(/,/g, ''));
+            $('#tfoot_grand_total_amount').val(grand_total_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 
             // get the computed tax values
-            vat_result = calculateVAT(grand_total_amount.toFixed(2));
-            $('#tfoot_vatable_sales').val(vat_result.vatable_sales.toFixed(2));
-            $('#tfoot_vat_amount').val(vat_result.vat_amount.toFixed(2));
+            vat_result = calculateVAT(grand_total_amount);
+            $('#tfoot_vatable_sales').val(vat_result.vatable_sales);
+            $('#tfoot_vat_amount').val(vat_result.vat_amount);
         });
 
         // =========== END OF SHIPPING FEE MODAL ===========
 
         // Prevent from redirecting back to homepage when cancel button is clicked accidentally
         $('#btn_cancel_so').on('click', function() {
-
             // show the confirmation
             Swal.fire({
                 title: 'Cancel Transaction?',
@@ -712,21 +735,21 @@ tbody tr:nth-child(odd) {
 
         function calculateVAT(salesAmount) {
             // Calculate VATable Sales
-            let vatable_sales = salesAmount / 1.12;
+            let vatable_sales = parseFloat(salesAmount) / 1.12; 
 
             // Calculate VAT Amount
-            let vat_amount = vatable_sales * 0.12;
+            let vat_amount = parseFloat(vatable_sales) * 0.12;
 
             // Calculate the difference between salesAmount and the sum of vatable_sales and vat_amount
-            const difference = salesAmount - (vatable_sales + vat_amount);
+            const difference = parseFloat(salesAmount) - (vatable_sales + vat_amount);
 
             // Round vat_amount to account for the difference
             vat_amount += difference;
 
             // Return an object with both results
             return {
-                vatable_sales: parseFloat(vatable_sales.toFixed(2)),
-                vat_amount: parseFloat(vat_amount.toFixed(2))
+                vatable_sales: vatable_sales.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                vat_amount: vat_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
             };
         }
     });

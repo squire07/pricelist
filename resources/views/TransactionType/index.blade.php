@@ -90,7 +90,7 @@
 
         $('#btn-sync').on('click', function() {
             Swal.fire({
-                title: 'Are you sure you want to sync from ERPNext?',
+                title: 'Are you sure you want to sync with ERPNext?',
                 text: "This may take some time!",
                 icon: 'warning',
                 showCancelButton: true,

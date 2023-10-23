@@ -57,6 +57,7 @@ Route::middleware(['auth','gate'])->group(function () {
     
     Route::group(['name' => 'sales-invoice', 'alias' => 'sales-invoice'], function() {
         Route::get('sales_invoice_list', [ForInvoicingController::class, 'sales_invoice_list'])->name('sales_invoice_list');
+        Route::get('sales-invoice/for-invoice/{uuid}/print', [ForInvoicingController::class, 'print']);
         Route::resource('sales-invoice/for-invoice', ForInvoicingController::class);
         Route::get('sales_invoice_released_list', [ReleasedController::class, 'sales_invoice_released_list'])->name('sales_invoice_released_list');
         Route::resource('sales-invoice/released', ReleasedController::class);
@@ -78,6 +79,7 @@ Route::middleware(['auth','gate'])->group(function () {
     Route::resource('payment-methods', PaymentMethodController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('sales-invoice-assignment', SalesInvoiceAssignmentController::class);
+    Route::get('transaction-types/sync-transaction-type', [TransactionTypeController::class, 'sync_transaction_type']); // api
     Route::resource('transaction-types', TransactionTypeController::class);
     Route::resource('users', UserController::class);
     Route::resource('permissions', UserPermissionController::class)->only('edit','update');

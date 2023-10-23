@@ -26,7 +26,8 @@
                             <th class="text-center">ID</th>
                             <th class="text-center">Name</th>
                             <th class="text-center">Is Active</th>
-                            <th class="text-center">Updated At</th>
+                            <th class="text-center">Last Sync At</th>
+                            <th class="text-center">Last Sync By</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,11 +43,16 @@
                                     @endif
                                 </td>
                                 <td class="text-center">{{ $transaction_type->updated_at }}</td>
+                                <td class="text-center">{{ $transaction_type->updated_by }}</td>
                             </tr>
                         @endforeach
                     </tbody>
+                    
                 </table>
-            </div>    
+            </div>   
+            <div class="card-footer">
+                <button class="btn btn-sm btn-primary" id="btn-sync"><i class="fas fa-sync mr-1"></i>Sync</button>     
+            </div> 
         </div>
     </div>
 @endsection
@@ -81,6 +87,43 @@
                 }
             }
         });  
+
+        $('#btn-sync').on('click', function() {
+            Swal.fire({
+                title: 'Are you sure you want to sync from ERPNext?',
+                text: "This may take some time!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, sync!',
+                showLoaderOnConfirm: true,
+                preConfirm: (login) => {
+                    return fetch(window.location.origin + '/transaction-types/sync-transaction-type')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(response.statusText)
+                        }
+                        return response.ok
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(
+                            `Request failed: ${error}`
+                        )
+                    })
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Sync complete!',
+                        icon: 'success',
+                    }).then(function() {
+                        location.reload();
+                    })
+                }
+            })
+        });
     });
 </script>
 @endsection

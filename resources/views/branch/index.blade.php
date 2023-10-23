@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal-add">
+    <div class="modal fade" id="modal-add" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -100,7 +100,7 @@
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="modal_add_close" >Close</button>
                         <button type="submit" class="btn btn-primary btn-sm m-2"><i class="fas fa-save mr-2"></i>Save</button>
                     </div>
                 </form>
@@ -161,7 +161,7 @@
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="modal_edit_close" >Close</button>
                         <button type="submit" class="btn btn-primary btn-sm m-2" id="btn_modal_edit_submit"><i class="fas fa-save mr-2"></i>Update</button>
                     </div>
                 </form>
@@ -307,5 +307,40 @@ input[type="text2"], textarea {
                 $('#ribbon_bg').addClass('bg-danger').removeClass('bg-success');
             }
         });
+
+        
+        // Prevent from redirecting back to homepage when cancel button is clicked accidentally
+        $('#modal-add , #modal-edit').on("hide.bs.modal", function (e) {
+
+            if (!$('#modal-add , #modal-edit').hasClass('programmatic')) {
+                e.preventDefault();
+                swal.fire({
+                    title: 'Are you sure?',
+                    text: "Please confirm that you want to cancel",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                }).then(function(result) {
+                    if (result.value) {
+                        $('#modal-add , #modal-edit').addClass('programmatic');
+                        $('#modal-add , #modal-edit').modal('hide');
+                        e.stopPropagation();
+
+                    } else {
+                        e.stopPropagation();
+
+                    }
+                });
+
+            }
+            return true;
+            });
+
+        $('#modal-add , #modal-edit').on('hidden.bs.modal', function () {
+        $('#modal-add , #modal-edit').removeClass('programmatic');
+    });
 </script>
 @endsection

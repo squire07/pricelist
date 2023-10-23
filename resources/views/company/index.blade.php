@@ -277,5 +277,39 @@
                 $('#ribbon_bg').addClass('bg-danger').removeClass('bg-success');
             }
         });
+
+                // Prevent from redirecting back to homepage when cancel button is clicked accidentally
+                $('#modal-add , #modal-edit').on("hide.bs.modal", function (e) {
+
+        if (!$('#modal-add , #modal-edit').hasClass('programmatic')) {
+            e.preventDefault();
+            swal.fire({
+                title: 'Are you sure?',
+                text: "Please confirm that you want to cancel",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+            }).then(function(result) {
+                if (result.value) {
+                    $('#modal-add , #modal-edit').addClass('programmatic');
+                    $('#modal-add , #modal-edit').modal('hide');
+                    e.stopPropagation();
+
+                } else {
+                    e.stopPropagation();
+
+                }
+            });
+
+            }
+            return true;
+            });
+
+            $('#modal-add , #modal-edit').on('hidden.bs.modal', function () {
+            $('#modal-add , #modal-edit').removeClass('programmatic');
+        });
 </script>
 @endsection

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\ShippingFee;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ShippingFeeController extends Controller
 {
@@ -29,7 +31,21 @@ class ShippingFeeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $existSizeRegionDimensionRate = ShippingFee::whereParcelSize($request->parcel_size)->whereDeleted(false)->first();
+        if(!$existSizeRegionDimensionRate) {
+            $shipping_fee = new ShippingFee();
+            $shipping_fee->uuid = Str::uuid();
+            $shipping_fee->parcel_size = $request->parcel_size;
+            $shipping_fee->region = $request->region;
+            $shipping_fee->dimension = $request->dimension;
+            $shipping_fee->parcel_rate = $request->parcel_rate;
+            $shipping_fee->created_by = Auth::user()->name;
+            $shipping_fee->save();
+            return redirect()->back()->with('success', 'Shipping Fee has been created!');
+        } else {
+            return redirect()->back()->with('error', 'Shipping Fee already exists!');
+        }
     }
 
     /**
@@ -51,9 +67,27 @@ class ShippingFeeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ShippingFee $shippingFee)
+    public function update(Request $request, $uuid)
     {
-        //
+        $shipping_fee = ShippingFee::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
+
+        $existSizeRegionDimensionRate = ShippingFee::whereParcelSize($request->parcel_size)->whereDeleted(false)->first();
+        if(!$existSizeRegionDimensionRate) {
+            $shipping_fee = new ShippingFee();
+            $shipping_fee->uuid = Str::uuid();
+            $shipping_fee->parcel_size = $request->parcel_size;
+            $shipping_fee->region = $request->region;
+            $shipping_fee->dimension = $request->dimension;
+            $shipping_fee->parcel_rate = $request->parcel_rate;
+            $shipping_fee->created_by = Auth::user()->name;
+            $shipping_fee->update();
+            $msg = 'Shipping Fee has been updated!';
+            $msgType = 'success';
+        } else {
+            $msg = 'Shipping Fee already exist';
+            $msgType = 'error';
+        }
+        return redirect('shipping-fee')->with($msgType, $msg);
     }
 
     /**

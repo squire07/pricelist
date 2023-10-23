@@ -70,7 +70,8 @@
                 </table>
             </div>    
             <div class="card-footer">
-                <a href="{{ url('users') }}" class="btn btn-sm btn-primary">Return to User's List</a>
+                <input type="button" value="Return to User's List" class="btn btn-sm btn-primary" id="btn-return-user">
+                {{-- <a href="{{ url('users') }}" class="btn btn-sm btn-primary" id="btn-return-user" >Return to User's List</a> --}}
             </div>
         </div>
     </div>
@@ -128,6 +129,25 @@
                 console.error('Error updating permission: ', error);
             });
         });
-    })
+    });
+
+        // Prevent from redirecting back to homepage when cancel button is clicked accidentally
+        $('#btn-return-user').on('click', function() {
+
+            // show the confirmation
+            Swal.fire({
+                title: 'Are you sure?',
+                    text: "Please confirm that you want to cancel",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location = "/users";
+                }
+            });
+        });
 </script>
 @endsection

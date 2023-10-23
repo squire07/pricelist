@@ -76,7 +76,9 @@ class TransactionTypeController extends Controller
         $data = Helper::get_erpnext_data($param);
 
         // to refactor soon
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('transaction_types')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         foreach($data['data'] as $key => $price_lists){
             // create 

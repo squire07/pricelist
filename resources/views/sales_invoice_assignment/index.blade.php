@@ -66,7 +66,7 @@
                                             <td class="text-center">{{ $series->created_at }}</td>
                                             <td class="text-center">{{ $series->created_by }}</td>
                                             <td class="text-center">
-                                                <a href="{{ url('sales-invoice-assignment/' . $series->uuid ) }}" class="btn btn-sm btn-primary"><i class="far fa-eye"></i>&nbsp;Show</a>
+                                                <a href="{{ url('sales-invoice-assignment/' . $series->uuid ) }}" class="btn btn-sm btn-default"><i class="far fa-eye"></i>&nbsp;Show</a>
                                             </td>
                                         </tr>
                                     @endif
@@ -114,7 +114,7 @@
                                             <td class="text-center">{{ $series->created_at }}</td>
                                             <td class="text-center">{{ $series->created_by }}</td>
                                             <td class="text-center">
-                                                <a href="{{ url('sales-invoice-assignment/' . $series->uuid ) }}" class="btn btn-sm btn-primary"><i class="far fa-eye"></i>&nbsp;Show</a>
+                                                <a href="{{ url('sales-invoice-assignment/' . $series->uuid ) }}" class="btn btn-sm btn-danger"><i class="far fa-eye"></i>&nbsp;Show</a>
                                             </td>
                                         </tr>
                                     @endif

@@ -69,7 +69,7 @@
                                     data-user-remarks="{{ $user->remarks }}">
                                     <i class="fas fa-pencil-alt"></i>&nbsp;Edit
                                 </button>
-                                    <a href="{{  url('permissions/' . $user->uuid . '/edit' ) }}" class="btn btn-sm btn-primary" target="_self"><i class="fas fa-tasks"></i></a>
+                                    <a href="{{  url('permissions/' . $user->uuid . '/edit' ) }}" class="btn btn-sm btn-success" target="_self"><i class="fas fa-tasks"></i></a>
                                 </td>
                             </tr>
                         @endforeach

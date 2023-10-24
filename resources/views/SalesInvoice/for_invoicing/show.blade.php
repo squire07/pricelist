@@ -89,7 +89,9 @@
         </div>
         <div class="card-footer text-center">
             <a href="{{ url('sales-invoice/for-invoice') }}" class="btn btn-lg btn-info float-left" style="margin-top: 8px"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-            <a href="{{ url('sales-invoice/for-invoice/' . $sales_order->uuid . '/edit' ) }}" class="btn btn-lg btn-success m-2 float-right"><i class="far fa-share-square"></i>&nbsp;Submit</a>
+            {{-- <a href="{{ url('sales-invoice/for-invoice/' . $sales_order->uuid . '/edit' ) }}" class="btn btn-lg btn-success m-2 float-right"><i class="far fa-share-square"></i>&nbsp;Submit</a> --}}
+
+            <button class="btn btn-lg btn-success float-right" style="margin-top: 8px; margin-left: 10px" id="btn-for-payment" data-uuid="{{ $sales_order->uuid }}" data-so-no="{{ $sales_order->so_no }}"><i class="far fa-share-square"></i>&nbsp;Submit</button>
 
             <button class="btn btn-lg btn-danger float-right" style="margin-top: 8px" id="btn-for-return" data-uuid="{{ $sales_order->uuid }}" data-so-no="{{ $sales_order->so_no }}"><i class="fas fa-undo-alt"></i>&nbsp;Return</button>
         </div>
@@ -104,6 +106,11 @@
             <input type="hidden" name="status_id" value="1">
             <input type="hidden" name="so_remarks" id="hidden_so_remarks">
         @csrf
+    </form>
+
+    {{-- hidden form to submit SI to Payment --}}
+    <form id="form_for_payment" method="">
+            <input type="hidden" name="uuid" id="hidden_uuid">
     </form>
 @endsection
 
@@ -169,6 +176,34 @@ $(document).ready(function() {
 
                 // finally, submit the form
                 $('#form_for_return').submit();
+            }
+        });
+    });
+
+    // Event for Submit to Payment
+    $('#btn-for-payment').on('click', function() {
+        var uuid = $(this).attr("data-uuid");
+        var so_no = $(this).attr("data-so-no");
+
+        // show the confirmation
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Submit ' + so_no + ' for Payment!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, submit!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // add uuid dynamically to hidden uuid field
+                $('#hidden_uuid').val(uuid);
+
+                // update the action of form_for_invoicing 
+                $('#form_for_payment').attr('action', window.location.origin + '/sales-invoice/for-invoice/' + uuid + '/edit');
+
+                // finally, submit the form
+                $('#form_for_payment').submit();
             }
         });
     });

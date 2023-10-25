@@ -20,7 +20,7 @@
                     <thead>
                         <tr>
                             <th class="text-center">BCID</th>
-                            <th class="text-center">Name</th>
+                            <th class="text-left">Name</th>
                             <th class="text-center">Group</th>
                             <th class="text-center">Subgroup</th>
                         </tr>
@@ -54,8 +54,8 @@
             columns: [
                 {data: 'bcid', class: 'text-center'},
                 {data: 'name'},
-                {data: 'group'},
-                {data: 'subgroup'},
+                {data: 'group', class: 'text-center'},
+                {data: 'subgroup', class: 'text-center'},
             ],
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."

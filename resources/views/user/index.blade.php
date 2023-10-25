@@ -23,9 +23,9 @@
                     <thead>
                         <tr>
                             <th class="text-center">ID</th>
-                            <th class="text-center" style="min-width:125px;">Name</th>
-                            <th class="text-center">Username</th>
-                            <th class="text-center">Email</th>
+                            <th class="text-left" style="min-width:125px;">Name</th>
+                            <th class="text-left">Username</th>
+                            <th class="text-left">Email</th>
                             <th class="text-center" style="min-width:125px;">Role</th>
                             <th class="text-center" style="min-width:125px;">Branch</th>
                             <th class="text-center" style="min-width:230px;">Company</th>
@@ -38,9 +38,9 @@
                         @foreach($users as $user)
                             <tr>
                                 <td class="text-center">{{ $user->id }}</td>
-                                <td>{{ $user->name }}</td>
-                                <td class="text-center">{{ $user->username }}</td>
-                                <td class="text-center">{{ $user->email }}</td>
+                                <td class="text-left">{{ $user->name }}</td>
+                                <td class="text-left">{{ $user->username }}</td>
+                                <td class="text-left">{{ $user->email }}</td>
                                 <td class="text-center">{{ $user->role->name ?? '' }}</td>
                                 <td class="text-center">{{ $user->branch->name ?? '' }}</td>
                                 <td class="text-center">{{ $user->company->name ?? '' }}</td>

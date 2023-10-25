@@ -23,7 +23,7 @@
                     <thead>
                         <tr>
                             <th class="text-center">ID</th>
-                            <th class="text-center">Name</th>
+                            <th class="text-left">Name</th>
                             <th class="text-center">Created By</th>
                             <th class="text-center">Action</th>
                         </tr>
@@ -32,7 +32,7 @@
                         @foreach($roles as $role)
                             <tr>
                                 <td class="text-center">{{ $role->id }}</td>
-                                <td class="text-center">{{ $role->name }}</td>
+                                <td class="text-left">{{ $role->name }}</td>
                                 <td class="text-center">{{ $role->created_by }}</td>
                                 <td class="text-center">
                                     <button type="button" class="btn btn-sm btn-default btn_show" 
@@ -265,6 +265,5 @@ input[type="text2"], textarea {
         $('#modal-add , #modal-edit').on('hidden.bs.modal', function () {
         $('#modal-add , #modal-edit').removeClass('programmatic');
     });
-
 </script>
 @endsection

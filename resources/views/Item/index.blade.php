@@ -21,7 +21,7 @@
                         <tr>
                             <th class="text-center">ID</th>
                             <th class="text-center">Code</th>
-                            <th class="text-center">Name</th>
+                            <th class="text-left">Name</th>
                             <th class="text-center">Type</th>
                             <th class="text-center">Amount</th>
                             <th class="text-center">NUC</th>
@@ -33,7 +33,7 @@
                         @foreach($items as $item)
                             <tr>
                                 <td class="text-center">{{ $item->id }}</td>
-                                <td>{{ $item->code }}</td>
+                                <td class="text-center">{{ $item->code }}</td>
                                 <td>{{ $item->name }}</td>
                                 <td class="text-center">{{ $item->description }}</td>
                                 <td class="text-right">{{ $item->amount }}</td>

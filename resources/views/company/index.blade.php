@@ -23,7 +23,7 @@
                     <thead>
                         <tr>
                             <th class="text-center">ID</th>
-                            <th class="text-center">Name</th>
+                            <th class="text-left">Name</th>
                             <th class="text-center">Code</th>
                             <th class="text-center">Created By</th>
                             <th class="text-center">Status</th>

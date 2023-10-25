@@ -53,7 +53,7 @@
                         <tbody>
                             @foreach($sales_order->sales_details as $sd)
                                 <tr>
-                                    <td>{{ $sd->item_code }}</td>
+                                    <td class="text-center">{{ $sd->item_code }}</td>
                                     <td class="text-center">{{ $sd->item_name }}</td>
                                     <td class="text-center" style="width:9%">{{ $sd->quantity }}</td>
                                     <td class="text-right" style="width:12%">{{ $sd->item_price }}</td>

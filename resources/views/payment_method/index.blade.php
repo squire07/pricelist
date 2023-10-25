@@ -22,8 +22,8 @@
                 <table id="dt_payment" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
                         <tr>
-                            <th class="text-center">Name</th>
-                            <th class="text-center">Description</th>
+                            <th class="text-left">Name</th>
+                            <th class="text-left">Description</th>
                             <th class="text-center">Account Number</th>
                             <th class="text-center">Company</th>
                             <th class="text-center">Is Cash</th>
@@ -34,8 +34,8 @@
                     <tbody>
                         @foreach($payments as $payment)
                             <tr>
-                                <td class="text-center">{{ $payment->name }}</td>
-                                <td class="text-center">{{ $payment->description }}</td>
+                                <td class="text-left">{{ $payment->name }}</td>
+                                <td class="text-left">{{ $payment->description }}</td>
                                 <td class="text-center">{{ $payment->code }}</td>
                                 <td class="text-center">{{ $payment->company->name }}</td>
                                 <td class="text-center">{{ $payment->is_cash == 0 ? 'No' : 'Yes' }}</td>

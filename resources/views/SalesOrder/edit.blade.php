@@ -740,6 +740,20 @@ tbody tr:nth-child(odd) {
                 vat_amount: vat_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
             };
         }
+
+        // Prevent user from using enter key
+        $("input:text").keypress(function(event) {
+            if (event.keyCode === 10 || event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
+
+        $('#btn_save_so, #add_item, #btn_cancel_so').keypress(function (event) {
+            if (event.keyCode === 10 || event.keyCode === 13) {
+                event.preventDefault();
+            }
+        });
     });
 </script>
 @endsection

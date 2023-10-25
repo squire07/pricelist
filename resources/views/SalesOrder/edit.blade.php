@@ -375,6 +375,7 @@ tbody tr:nth-child(odd) {
                 Swal.fire({
                     title: 'Invalid Quantity!',
                     icon: 'error',
+                    allowEnterKey: false
                 });
             }
 
@@ -475,18 +476,21 @@ tbody tr:nth-child(odd) {
                         title: 'Select an item',
                         text: 'Select an item.', 
                         icon: 'error',
+                        allowEnterKey: false
                     });
                 } else if($('#quantity').val() == '' || $('#quantity').val() == 0) {
                     Swal.fire({
                         title: 'Invalid quantity',
                         text: 'Add quantity.', 
                         icon: 'error',
+                        allowEnterKey: false
                     });
                 } else {
                     Swal.fire({
                         title: 'Please add an item',
                         text: 'Select an item and add quantity.', 
                         icon: 'error',
+                        allowEnterKey: false
                     });
                 }
             }
@@ -524,6 +528,7 @@ tbody tr:nth-child(odd) {
                 title: 'Are you sure you want to remove this item?',
                 icon: 'warning',
                 showCancelButton: true,
+                allowEnterKey: false,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, remove it!'
@@ -576,11 +581,12 @@ tbody tr:nth-child(odd) {
                     }
 
                     // show confirmation
-                    Swal.fire(
-                        'Removed!',
-                        'Item has been removed.',
-                        'success'
-                    )
+                    Swal.fire({
+                        title: 'Removed!',
+                        text: 'Item has been removed.',
+                        icon: 'success',
+                        allowEnterKey: false
+                    });
                 }
             });
             
@@ -664,6 +670,7 @@ tbody tr:nth-child(odd) {
                     text: 'All unsaved progress will be lost.',
                     icon: 'warning',
                     showCancelButton: true,
+                    allowEnterKey: false,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes'
@@ -696,6 +703,7 @@ tbody tr:nth-child(odd) {
                     title: 'Are you sure you want to save this sales order?',
                     icon: 'warning',
                     showCancelButton: true,
+                    allowEnterKey: false,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Yes, save!'
@@ -710,6 +718,7 @@ tbody tr:nth-child(odd) {
                     title: 'Please add an item',
                     text: 'Select an item and add quantity.', 
                     icon: 'error',
+                    allowEnterKey: false
                 });
             }
         });
@@ -718,6 +727,7 @@ tbody tr:nth-child(odd) {
             Swal.fire({
                 title: field + ' is required',
                 icon: 'error',
+                allowEnterKey: false
             });
         }
 

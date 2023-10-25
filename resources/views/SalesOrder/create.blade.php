@@ -313,6 +313,7 @@ tbody tr:nth-child(odd) {
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Yes',
+                    allowEnterKey: false,
                     allowOutsideClick: false
                 }).then((result) => {
                     if (result.isConfirmed) {
@@ -375,6 +376,7 @@ tbody tr:nth-child(odd) {
                         Swal.fire({
                             title: 'BCID not found!',
                             icon: 'error',
+                            allowEnterKey: false,
                         });
                         // remove name field content
                         $('#distributor_name').val('');
@@ -446,6 +448,7 @@ tbody tr:nth-child(odd) {
                 Swal.fire({
                     title: 'Invalid Quantity!',
                     icon: 'error',
+                    allowEnterKey: false,
                 });
             }
 
@@ -555,18 +558,21 @@ tbody tr:nth-child(odd) {
                     Swal.fire({
                         title: 'Select an item',
                         text: 'Select an item.', 
+                        allowEnterKey: false,
                         icon: 'error',
                     });
                 } else if($('#quantity').val() == '' || $('#quantity').val() == 0) {
                     Swal.fire({
                         title: 'Invalid quantity',
                         text: 'Add quantity.', 
+                        allowEnterKey: false,
                         icon: 'error',
                     });
                 } else {
                     Swal.fire({
                         title: 'Please add an item',
                         text: 'Select an item and add quantity.', 
+                        allowEnterKey: false,
                         icon: 'error',
                     });
                 }
@@ -595,6 +601,7 @@ tbody tr:nth-child(odd) {
                 title: 'Are you sure you want to remove this item?',
                 icon: 'warning',
                 showCancelButton: true,
+                allowEnterKey: false,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, remove it!'
@@ -635,7 +642,8 @@ tbody tr:nth-child(odd) {
                     Swal.fire({
                         title: 'Removed!',
                         text: 'Item has been removed.',
-                        icon: 'success'
+                        icon: 'success',
+                        allowEnterKey: false
                     });
                 }
             });
@@ -729,6 +737,7 @@ tbody tr:nth-child(odd) {
                 text: 'All unsaved progress will be lost.',
                 icon: 'warning',
                 showCancelButton: true,
+                allowEnterKey: false,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
             confirmButtonText: 'Yes'
@@ -790,6 +799,7 @@ tbody tr:nth-child(odd) {
                         title: 'Please add an item',
                         text: 'Select an item and add quantity.', 
                         icon: 'error',
+                        allowEnterKey: false,
                     });
                 }
                 else if(url_param == 'delivery' && $('#tfoot_sf_total_amount').val() == 0) {
@@ -804,6 +814,7 @@ tbody tr:nth-child(odd) {
                     title: 'Are you sure you want to save this sales order?',
                     icon: 'warning',
                     showCancelButton: true,
+                    allowEnterKey: false,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Yes, save!'
@@ -818,6 +829,7 @@ tbody tr:nth-child(odd) {
                     title: 'Please add an item',
                     text: 'Select an item and add quantity.', 
                     icon: 'error',
+                    allowEnterKey: false,
                 });
             }
         });
@@ -826,6 +838,7 @@ tbody tr:nth-child(odd) {
             Swal.fire({
                 title: field + ' is required',
                 icon: 'error',
+                allowEnterKey: false,
             });
         }
 
@@ -868,13 +881,6 @@ tbody tr:nth-child(odd) {
                 event.preventDefault();
             }
         });
-
-        $('form input').keydown(function (e) {
-            if (event.keyCode === 10 || e.keyCode == 13) {
-                e.preventDefault();
-            return false;
-    }
-});
     });
 </script>
 @endsection

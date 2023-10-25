@@ -133,6 +133,7 @@ $(document).ready(function() {
             text: 'Submit ' + so_no + ' for Invoicing!',
             icon: 'warning',
             showCancelButton: true,
+            allowEnterKey: false,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, submit!'

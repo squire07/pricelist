@@ -56,7 +56,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text text-bold">BCID&nbsp;<span class="required"></span></span>
                                 </div>
-                                <input type="number" class="form-control form-control-sm" id="bcid" min="0" maxlength="12" name="bcid" oninput="validity.valid||(value=value.replace(/\D+/g, ''))" disabled>
+                                <input type="text" class="form-control form-control-sm" id="bcid" min="0" maxlength="12" name="bcid" disabled>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12 mb-3">
@@ -89,7 +89,7 @@
                         </div>
                         <div class="col-xl-1 col-md-2">
                             <label for="quantity">Quantity</label>
-                            <input type="number" class="form-control form-control-sm" min="1" max="999999" id="quantity" oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');" disabled>
+                            <input type="text" class="form-control form-control-sm" maxlength="6" id="quantity" disabled>
                         </div>
                         <div class="col-xl-1 col-md-2">
                             <label for="amount">Amount</label>
@@ -642,28 +642,18 @@ tbody tr:nth-child(odd) {
             
         });
 
-        // prevent the user from using the "-" minus sign
-        // 109 is the minus key from number pad or num pad
-        // 189 is the minus key from alpha numeric keys
-        $('#quantity').on('keydown', function(e) {    
-            var charCode = e.which || e.keyCode;  
-            if (charCode == 109 || charCode == 189) {
-                e.preventDefault();
-            }
+
+        $('#quantity, #bcid').on('input', function(e) {    
+            const inputValue = e.target.value;
+            const numericValue = inputValue.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+            e.target.value = numericValue;
         });
+
         $('#quantity').bind('copy paste', function (e) {
             e.preventDefault();
             $('#quantity').attr('maxlength','6');
         });
-        // set max length of quantity to 6 digits
-        $('input[type=number][max]:not([max="6"])').on('input', function(ev) {
-            var $this = $(this);
-            var maxlength = $this.attr('max').length;
-            var value = $this.val();
-            if (value && value.length >= maxlength) {
-                $this.val(value.substr(0, maxlength));
-            }
-        });
+
 
         $('#tfoot_subtotal_amount').each(function(){ // To loop on each value
             var amount = parseFloat($(this).html()); // Convert string into float number

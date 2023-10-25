@@ -24,7 +24,7 @@
                     <thead>
                         <tr>
                             <th class="text-center">ID</th>
-                            <th class="text-center">Name</th>
+                            <th class="text-left">Name</th>
                             <th class="text-center">Is Active</th>
                             <th class="text-center">Last Sync At</th>
                             <th class="text-center">Last Sync By</th>

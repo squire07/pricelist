@@ -528,7 +528,7 @@ tbody tr:nth-child(odd) {
                     let item_price = parseFloat(item_selected.amount.replace(/,/g, ''));
 
                     var row = '<tr>' + 
-                                '<td>' + item_selected.code + '</td>' +
+                                '<td class="text-center">' + item_selected.code + '</td>' +
                                 '<td class="text-center">' + item_selected.name + '</td>' +
                                 '<td class="text-center">' + quantity + '</td>' +
                                 '<td class="text-right">' + item_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
@@ -868,6 +868,13 @@ tbody tr:nth-child(odd) {
                 event.preventDefault();
             }
         });
+
+        $('form input').keydown(function (e) {
+            if (event.keyCode === 10 || e.keyCode == 13) {
+                e.preventDefault();
+            return false;
+    }
+});
     });
 </script>
 @endsection

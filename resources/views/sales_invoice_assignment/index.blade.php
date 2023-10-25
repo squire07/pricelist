@@ -114,7 +114,7 @@
                                             <td class="text-center">{{ $series->created_at }}</td>
                                             <td class="text-center">{{ $series->created_by }}</td>
                                             <td class="text-center">
-                                                <a href="{{ url('sales-invoice-assignment/' . $series->uuid ) }}" class="btn btn-sm btn-danger"><i class="far fa-eye"></i>&nbsp;Show</a>
+                                                <a href="{{ url('sales-invoice-assignment/' . $series->uuid ) }}" class="btn btn-sm btn-default"><i class="far fa-eye"></i>&nbsp;Show</a>
                                             </td>
                                         </tr>
                                     @endif
@@ -243,7 +243,7 @@
             ],
             columnDefs: [ 
                 {
-                    targets: [5], // column index (start from 0)
+                    targets: [9], // column index (start from 0)
                     orderable: false, // set orderable false for selected columns
                 }
             ],
@@ -273,7 +273,7 @@
             ],
             columnDefs: [ 
                 {
-                    targets: [5], // column index (start from 0)
+                    targets: [9], // column index (start from 0)
                     orderable: false, // set orderable false for selected columns
                 }
             ],

@@ -14,4 +14,8 @@ class ShippingFee extends Model
         return number_format($value,2,'.',',');
     }
 
+    public function getDimensionAttribute($value)
+    {
+        return number_format($value,0,'.',',');
+    }
 }

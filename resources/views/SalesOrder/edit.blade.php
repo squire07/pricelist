@@ -127,8 +127,8 @@
                                 <tbody>
                                     @foreach($sales_order->sales_details as $sd)
                                     <tr>
-                                        <td>{{ $sd->item_code }}</td>
-                                        <td>{{ $sd->item_name }}</td>
+                                        <td class="text-center">{{ $sd->item_code }}</td>
+                                        <td class="text-center">{{ $sd->item_name }}</td>
                                         <td class="text-center">{{ $sd->quantity }}</td>
                                         <td class="text-right">{{ $sd->item_price }}</td>
                                         <td class="text-right">{{ $sd->amount }}</td>
@@ -445,8 +445,8 @@ tbody tr:nth-child(odd) {
                     let item_price = parseFloat(item_selected.amount.replace(/,/g, ''));
 
                     var row = '<tr>' + 
-                                '<td>' + item_selected.code + '</td>' +
-                                '<td>' + item_selected.name + '</td>' +
+                                '<td class="text-center">' + item_selected.code + '</td>' +
+                                '<td class="text-center">' + item_selected.name + '</td>' +
                                 '<td class="text-center">' + quantity + '</td>' +
                                 '<td class="text-right">' + item_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
                                 // '<td class="text-right">' + item_selected.rs_points + '</td>' +

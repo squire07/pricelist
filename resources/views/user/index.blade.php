@@ -133,7 +133,7 @@
                             </div>
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label for="comapny_id">Role</label>
+                                    <label for="role_id">Role</label>
                                     <select class="form-control form-control-sm" name="role_id" id="modal_edit_role_id" required>
                                         <option value="" disabled selected>-- Select Role --</option>
                                         @foreach($roles as $role)
@@ -309,7 +309,7 @@
             ],
             columnDefs: [ 
                 {
-                    targets: [5], // column index (start from 0)
+                    targets: [9], // column index (start from 0)
                     orderable: false, // set orderable false for selected columns
                 }
             ],

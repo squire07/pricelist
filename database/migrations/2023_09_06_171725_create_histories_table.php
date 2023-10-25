@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('si_no', 25)->nullable();
             $table->string('module');
             $table->string('event_name'); // create, update, view, cancel
-            $table->longText('remarks')->nullable();
+            $table->text('remarks')->nullable();
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
             $table->softDeletes();

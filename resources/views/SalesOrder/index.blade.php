@@ -131,6 +131,7 @@
             paging: true,
             searching: true,
             lengthMenu: [[10, 25, 50, -1], ['10 rows', '25 rows', '50 rows', "Show All"]],  
+            order: [[1, 'desc']],
             buttons: [
                 {
                     extend: 'pageLength',

@@ -19,8 +19,15 @@ class UserController extends Controller
     {
         $users = User::with(['role','branch','company'])->whereDeleted(false)->get();
         
-        $branches = Branch::whereDeleted(false)->get();
-        $companies = Company::whereDeleted(false)->get();
+        $companies = Company::whereDeleted(false)->whereIn('status_id', [8,1])->get(); // 1 does not exists in status table as active/enable
+
+        $company_ids = [];
+        foreach($companies as $company) {
+            $company_ids[] = $company->id;
+        }
+
+        $branches = Branch::whereDeleted(false)->whereIn('company_id', $company_ids)->get();
+
         $roles = Role::whereDeleted(false)->get();
         return view('user.index', compact('users','branches','companies','roles'));
     }

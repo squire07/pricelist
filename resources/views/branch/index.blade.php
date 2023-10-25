@@ -22,7 +22,7 @@
                 <table id="dt_branch" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
                         <tr>
-                            <th class="text-center">Name</th>
+                            <th class="text-left">Name</th>
                             <th class="text-center">Code</th>
                             <th class="text-center">Cost Center</th>
                             <th class="text-center">Created By</th>
@@ -33,7 +33,7 @@
                     <tbody>
                         @foreach($branches as $branch)
                             <tr>
-                                <td class="text-center">{{ $branch->name }}</td>
+                                <td class="text-left">{{ $branch->name }}</td>
                                 <td class="text-center">{{ $branch->code }}</td>
                                 <td class="text-center">{{ $branch->cost_center }}</td>
                                 <td class="text-center">{{ $branch->created_by }}</td>
@@ -95,7 +95,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="name">Cost Center</label>
-                                <input type="text" class="form-control form-control-sm" name="cost_center" maxlength="3"  pattern="[a-zA-Z0-9\s]+" required>
+                                <input type="text" class="form-control form-control-sm" name="cost_center" maxlength="3" id="modal_add_cost_center" required>
                             </div>
                         </div>
                     </div>
@@ -250,7 +250,7 @@ input[type="text2"], textarea {
             ],
             columnDefs: [ 
                 {
-                    targets: [4], // column index (start from 0)
+                    targets: [5], // column index (start from 0)
                     orderable: false, // set orderable false for selected columns
                 }
             ],
@@ -306,6 +306,17 @@ input[type="text2"], textarea {
             } else {
                 $('#ribbon_bg').addClass('bg-danger').removeClass('bg-success');
             }
+        });
+
+        // Prevent input of special characters from user
+        $('#modal_add_cost_center , #modal_edit_cost_center').on('input', function(e) {    
+            const inputValue = e.target.value;
+            const numericValue = inputValue.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+            e.target.value = numericValue;
+        });
+
+        $('#modal_add_cost_center , #modal_edit_cost_center').bind('copy paste', function (e) {
+            e.preventDefault();
         });
 
         

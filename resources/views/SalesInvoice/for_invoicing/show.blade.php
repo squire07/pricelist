@@ -134,8 +134,6 @@ $(document).ready(function() {
         var uuid = $(this).attr("data-uuid");
         var so_no = $(this).attr("data-so-no");
 
-        console.log('test');
-
         // show the confirmation
         Swal.fire({
             title: 'Return ' + so_no + ' to Draft Status!',

@@ -74,22 +74,22 @@
                     {{-- <p class="lead">Payment Methods:</p> --}}
                     </div>
                     <div class="card-body">
-                        <div>
-                            <select class="select2" multiple="multiple" id="payment_type" name="payment_type_id[]" data-name="payment_type_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                <option value="" disabled>-- Select Payment Type --</option>
-                                @foreach($payment_types as $payment_type)
-                                    <option value="{{ $payment_type->id }}">{{ $payment_type->name }}</option>
-                                @endforeach
-                            </select><br> 
-                                <a href="{{ url('sales-invoice/for-invoice') }}" class="btn btn-info"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-                            @if($sales_order->status_id == 4)
-                                <a href="invoice-print.html" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
-                            @endif
-                            @if($sales_order->status_id != 4)
-                            <button type="button" class="btn btn-success float-right" id="btn_submit_payment" data-toggle="modal" data-target="#modal-submit-payment"><i class="far fa-credit-card"></i> Submit Payment</button>
-                            @endif
-                        </div>
+                        <select class="select2" multiple="multiple" id="payment_type" name="payment_type_id[]" data-name="payment_type_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                            <option value="" disabled>-- Select Payment Type --</option>
+                            @foreach($payment_types as $payment_type)
+                                <option value="{{ $payment_type->id }}" data-is-cash={{ $payment_type->is_cash }}>{{ $payment_type->name }}</option>
+                            @endforeach
+                        </select>
                     </div> 
+                    <div class="card-footer">
+                        <a href="{{ url('sales-invoice/for-invoice') }}" class="btn btn-info"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+                        @if($sales_order->status_id == 4)
+                            <a href="#" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
+                        @endif
+                        @if($sales_order->status_id != 4)
+                            <button type="button" class="btn btn-success float-right" id="btn_submit_payment" data-toggle="modal" data-target="#modal-submit-payment"><i class="far fa-credit-card"></i> Submit Payment</button>
+                        @endif
+                    </div>
                 </div>
             </div>
             <div class="col-6">
@@ -98,32 +98,36 @@
                         <h3 class="card-title">Amount Due</h3>
                         {{-- <p class="lead">Amount Due:</p> --}}
                     </div>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <tfoot>
+                    <div class="card-body">
+                        <table class="table table-borderless" style="width:100%">
+                            <tbody style="width:inherit">
                                 <tr>
-                                    <td class="text-right text-bold" colspan="4">Sub Total</td>
-                                    <td class="text-right">{{ $sales_order->total_amount }}</td>
+                                    <td class="text-right text-bold" style="width:25%">Sub Total</td>
+                                    <td class="text-right" style="width:35%">{{ $sales_order->total_amount }}</td>
+                                    <td></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-right text-bold" colspan="4">Shipping Fee</td>
-                                    <td class="text-right">{{ $sales_order->shipping_fee }}</td>
+                                    <td class="text-right text-bold" style="width:25%">Shipping Fee</td>
+                                    <td class="text-right" style="width:35%">{{ $sales_order->shipping_fee }}</td>
+                                    <td></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-right text-bold" colspan="4">VATable Sales</td>
-                                    <td class="text-right">{{ $sales_order->vatable_sales }}</td>
+                                    <td class="text-right text-bold" style="width:25%">VATable Sales</td>
+                                    <td class="text-right" style="width:35%">{{ $sales_order->vatable_sales }}</td>
+                                    <td></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-right text-bold" colspan="4">VAT Amount</td>
-                                    <td class="text-right">{{ $sales_order->vat_amount }}</td>
+                                    <td class="text-right text-bold" style="width:25%">VAT Amount</td>
+                                    <td class="text-right" style="width:35%">{{ $sales_order->vat_amount }}</td>
+                                    <td></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-right text-bold" colspan="4">Grand Total</td>
-                                    <td class="text-right text-bold">{{ $sales_order->grandtotal_amount }}</td>
-                                    <td class="text-right text-bold" colspan="4">Total NUC</td>
-                                    <td class="text-right text-bold">{{ $sales_order->total_nuc }}</td>
+                                    <td class="text-right text-bold" style="width:25%">Grand Total</td>
+                                    <td class="text-right text-bold" style="width:25%">{{ $sales_order->grandtotal_amount }}</td>
+                                    <td class="text-right text-bold" style="width:25%">Total NUC</td>
+                                    <td class="text-right text-bold" style="width:15%">{{ $sales_order->total_nuc }}</td>
                                 </tr>
-                            </tfoot>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -144,6 +148,7 @@
                 <form class="form-horizontal" action="{{ route('for-invoice.update', $sales_order->uuid)}}" method="POST" id="form_modal_submit_payment" autocomplete="off">
                     @csrf
                     @method('PUT')
+                    <input type="hidden" name="status_id" value="5">
 
                     {{-- 3 fields:  payment_type_id, remarks, cash_tendered --}}
 
@@ -153,27 +158,42 @@
                                 <label for="total_amount" class="col-sm-4 col-form-label">Total Amount:</label>
                                 <div class="col-sm-4"></div>
                                 <div class="col-sm-4">
-                                    <input type="number" class="form-control form-control-sm text-right" id="total_amount" style="font-size:25px;" value="{{ $sales_order->total_amount }}" disabled>
+                                    <input type="text" class="form-control form-control-sm text-right" id="total_amount" value="{{ $sales_order->total_amount }}" readonly tabindex="-1">
                                 </div>
                             </div>
                         </div>
 
                         {{-- dynamic cash tendered field --}}
-                        <div id="cash_tendered_fields"></div>
+                        <div id="payment_info_fields"></div>
+                        {{-- hidden elements --}}
+                        <div id="payment_id_and_name_fields"></div>
+
+                        <div class="col-12">
+                            <div class="form-group row">
+                                <label for="balance" class="col-sm-4 col-form-label text-red">Balance:</label>
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control form-control-sm text-right" id="balance" name="balance" value="0.00" readonly tabindex="-1">
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="col-12">
                             <div class="form-group row">
                                 <label for="cash_change" class="col-sm-4 col-form-label">Cash Change:</label>
                                 <div class="col-sm-4"></div>
                                 <div class="col-sm-4">
-                                    <input type="number" class="form-control form-control-sm text-right" id="cash_change" style="font-size:25px;" name="cash_change" value="0.00" disabled>
+                                    <input type="text" class="form-control form-control-sm text-right" id="cash_change" name="cash_change" value="0.00" readonly tabindex="-1">
                                 </div>
+
+                                {{-- this will be used by blue event of input_reference_field --}}
+                                <span class="d-none" id="is-cash-sufficient">false</span>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success btn-sm m-2" id="btn_modal_print_invoice"><i class="fas fa-print mr-2"></i>Print Invoice</button>
+                        <button type="button" class="btn btn-success btn-sm m-2" id="btn_modal_print_invoice" data-uuid="{{ $sales_order->uuid }}"><i class="fas fa-print mr-2"></i>Print Invoice</button>
                     </div>
                 </form>
             </div>
@@ -212,8 +232,16 @@ $(document).ready(function() {
     $('#btn_submit_payment').prop('disabled', true);
     $('#btn_modal_print_invoice').prop('disabled', true);
 
+    // Initial calculation
+    updateCashChange();    
+
+
     $('#btn_submit_payment').on('click', function() {
 
+        // empty the dynamic div
+        $('#payment_info_fields').empty();
+        $('#payment_id_and_name_fields').empty();
+        
         // always reset to zero
         $("#cash_change").val('0.00');
 
@@ -227,39 +255,52 @@ $(document).ready(function() {
 
         // get the names of payment type
         var selected_payment_types = $("#payment_type :selected").select2(this.data);
-        
+        var is_cash = $('#payment_type option:selected').map(function() {
+                        return $(this).data("is-cash");
+                    }).get();
+
         // create selected_payment_type_names array
         var selected_payment_type_names = [];
+        var selected_is_cash = [];
         for (var i = 0; i <= selected_payment_types.length-1; i++) {
             selected_payment_type_names.push(selected_payment_types[i].text);
+            selected_is_cash.push(is_cash[i]);
+
+            // add to element
+            $('#hidden_payment_type_name').val(selected_payment_types[i].text);
         };
 
         let divs = '';
+        let els  = '';
         // render html inside cash_tendered_fields div
         for(let i = 1; i <= count_payment_type.length; i++) {
-            divs += "<div class='col-12'>" +
+                divs += "<div class='col-12'>" +
                         "<div class='form-group row'>" +
                             "<label for='" + selected_payment_type_names[i - 1] + "' class='col-sm-4 col-form-label'>" + selected_payment_type_names[i - 1] + ":</label>" +
+                            "<div class='col-sm-4'>";
+            if(selected_is_cash[i - 1] == 0) { 
+                divs +=         "<input type='text' class='form-control form-control-sm text-right input_reference_field' id='dynamic_reference_field_" + i + "' name='payment_references[]' placeholder='Reference No' required>";
+            } else {
+                divs +=         "<input type='hidden' name='payment_references[]'>";
+            }                           
+                divs +=     "</div>" +
                             "<div class='col-sm-4'>" +
-                                "<input type='text' class='form-control form-control-sm text-right' id='dynamic_reference_field_" + i + "' style='font-size:25px;' name='payment_references[]' placeholder='Reference No' required>" +
-                            "</div>" +
-                            "<div class='col-sm-4'>" +
-                                "<input type='text' class='form-control form-control-sm text-right input_amount_field' id='dynamic_amount_field_" + i + "' style='font-size:25px;' name='payments[]' placeholder='0.00' maxlength='12' required>" +
+                                "<input type='text' class='form-control form-control-sm text-right input_amount_field' id='dynamic_amount_field_" + i + "' name='payments[]' placeholder='0.00' maxlength='12' required>" +
                             "</div>" +  
                         "</div>" +
                     "</div>";
+
+                
+                // payment method ids - pass to hidden field
+                els += "<input type='hidden' name='hidden_payment_type_ids[]' value='" + count_payment_type[i - 1] + "'>";
+                // payment method names - pass to hidden field
+                els += "<input type='hidden' name='hidden_payment_type_name[]' value='" + selected_payment_type_names[i - 1] + "'>";
         }
-        $('#cash_tendered_fields').append(divs);
+
+        $('#payment_info_fields').append(divs);
+
+        $('#payment_id_and_name_fields').append(els);
     });
-
-    // $("#selected_payment_type_name").on('change', function() {
-    //     if($(this).val() != 'CASH') {
-    //         $('#ref_number').prop('disabled', true);
-    //     } else {
-    //         $('#ref_number').prop('disabled', false);
-    //     }
-    // });
-
 
     // if payment_type field is empty, then disable the submit payment button
     $("#payment_type").on('change', function() {
@@ -270,104 +311,152 @@ $(document).ready(function() {
         }
     });
 
-    // prevent the user from using the "-" minus sign
-    // 109 is the minus key from number pad or num pad
-    // 189 is the minus key from alpha numeric keys
-    $(document).on('keydown', '.input_amount_field', function(e) {    
-        var charCode = e.which || e.keyCode;  
-        if (charCode == 109 || charCode == 189) {
-            e.preventDefault();
-        } 
-    });
 
 
-    // for dynamic input amount field
-    $(document).on('keyup', '.input_amount_field', function(e) {
-        // lets assume that every keyup event, the `total` is always set to 0 so we can get the right summation
-        let total = 0;
-        
-        // lets count the `cash tendered` field that is/are not null or empty
-        let non_empty_fields = 0;
-        
-        for(let i = 1; i <= $('#count_payment_type').val(); i++) {
-            if($('#dynamic_amount_field_' + i).val() != '') {
-                total += Number($('#dynamic_amount_field_' + i).val());
 
-                // increment the non_empty_fields
-                non_empty_fields++;
-            }
-        }
+    
 
-        let cash_change = 0;
-        if (total > 0) {
-            cash_change = Number($("#total_amount").val()) - total;
 
-            // cash change cannot be more than 0 (positive value), the value must always be 0 or negative
-            if(cash_change >= 0) {
-                cash_change = 0;
-            }
-        } else {
-            cash_change = 0;
-        }
-        // cash_change = total.toFixed(2) - Number($("#total_amount").val());
-        $("#cash_change").val(cash_change.toFixed(2));
 
-        // enable, disable the print invoice button, if:
-        // 1. the `total cash tendered` is greater or equal with the total amount of sales invoice, and
-        // 2. the `count_payment_type` is equal to the count of non_empty_fields, in this way, we can prevent a NULL or empty dynamic field
-        if(total >= Number($("#total_amount").val()) && $('#count_payment_type').val() == non_empty_fields) {
-            $('#btn_modal_print_invoice').prop('disabled', false);
-        } else {
-            $('#btn_modal_print_invoice').prop('disabled', true);
-        }
-    });
-
-    // format the dynamic field to two decimal places when the dynamic field has lost it's focus
-    $(document).on('blur', '.input_amount_field', function() {
-        // Get the current value of the input
-        let inputValue = this.value;
-
-        // Convert the value to a number
-        inputValue = parseFloat(inputValue);
-
-        // Check if the input is a valid number
-        if (!isNaN(inputValue)) {
-            // Round the number to two decimal places
-            inputValue = inputValue.toFixed(2);
-            
-            // Update the input value with the formatted value
-            this.value = inputValue;
-        }
-    });
+    // ======================== START OF INPUT AMOUNT FIELD =============================
 
     // prevent paste event in dynamic fields
     $(document).on('paste', '.input_amount_field', function(e) {
         e.preventDefault();
     });
 
+    // only numbers and period 
+    $(document).on('input', '.input_amount_field', function() {
+        // Remove non-numeric and non-period characters
+        $(this).val($(this).val().replace(/[^0-9.]/g, ''));
 
-    // let payment_type_ids = [];
+        // Prevent multiple periods (decimal points)
+        if ($(this).val().split('.').length > 2) {
+            $(this).val($(this).val().replace(/\.+$/, ''));
+        }
+    });
 
-    // $('#payment_type').on('change', function() {
-    //     console.log(this.value);
-    // });
 
-    // submit the final form with payment type details 
+    // function --> updateCashChange
+    $(document).on('keyup', '.input_amount_field', updateCashChange);    
+
+
+    // format the dynamic field to two decimal places when the dynamic field has lost it's focus
+    $(document).on('blur', '.input_amount_field', function() {
+        let inputValue = this.value;
+        const commaRegex = /,/;
+        inputValue = commaRegex.test(inputValue) ? parseFloat(inputValue.replace(/,/g, '')) : parseFloat(inputValue);
+        if (!isNaN(inputValue)) {
+            this.value = inputValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+    });
+
+    // ======================== END OF INPUT AMOUNT FIELD =============================
+
+
+    $(document).on('blur', '.input_reference_field', function() { 
+        let all_fields_filled = true;
+        
+        // get the current value of is-cash-sufficient
+        let is_cash_sufficient = $('#is-cash-sufficient').text();
+        
+        // Select all input elements within the form that have the 'required' attribute
+        $("form input[required]").each(function() {
+            if ($(this).val() === '') {
+                all_fields_filled = false;
+                return false; // Break out of the loop
+            }
+        });
+
+
+        if (is_cash_sufficient === true && all_fields_filled) {
+            $('#btn_modal_print_invoice').prop('disabled', false);
+        } else {
+            $('#btn_modal_print_invoice').prop('disabled', true);
+        }
+    });
+
+
+    // Submit the final form with payment type details 
     $('#btn_modal_print_invoice').on('click', function() {
-        // console.log('test')
+        // get the data-uuid 
+        let uuid = $(this).data('uuid');
+
         // disable the button to prevent multiple submit
         $(this).prop('disabled',true);
+        
+        $('#form_modal_submit_payment').submit();
 
-        let payment_type_ids = $('#payment_type').select2("val");
-
-        console.log(payment_type_ids);
-
-
-        // submit the form
-        //$('#form_modal_submit_payment').submit();
+        // window.open(window.location.origin + '/sales-invoice/for-invoice/' + uuid + '/print' , '_blank');
+        
     }); 
 
-    
+
+
+
+
+
+    function formatInputValue(e) {
+        var inputElement = document.getElementById('total_amount');
+        var value = inputElement.value.replace(/,/g, ''); // Remove existing commas
+        var formattedValue = Number(value).toLocaleString('en-US'); // Add commas
+
+        return formattedValue;
+    }
+
+
+    function updateCashChange() {
+        let total_amount = parseFloat($("#total_amount").val().replace(/,/g, '')) || 0;
+        let total = 0;
+        let balance = 0;
+
+        $('.input_amount_field').each(function() {
+            let current_amount = $(this).val();
+            if (current_amount !== "") {
+                total += parseFloat(current_amount.replace(/,/g, ''));
+            }
+        });
+
+        balance = total_amount - total > 0 ? total_amount - total : 0;
+
+        let cash_change = 0;
+        if (total > 0) {
+            cash_change = total_amount - total;
+
+            if (cash_change >= 0) {
+                cash_change = 0;
+            } else {
+                cash_change = cash_change * -1;
+            }
+        }
+
+
+        let all_fields_filled = true;
+        // Select all input elements within the form that have the 'required' attribute
+        $("form input[required]").each(function() {
+            if ($(this).val() === '') {
+                all_fields_filled = false;
+                return false; // Break out of the loop
+            }
+        });
+
+
+        if (total >= total_amount && all_fields_filled) {
+            $('#btn_modal_print_invoice').prop('disabled', false);
+
+            // update is-cash-sufficient
+            $('#is-cash-sufficient').text('true');
+        } else {
+            $('#btn_modal_print_invoice').prop('disabled', true);
+
+            // update is-cash-sufficient
+            $('#is-cash-sufficient').text('false');
+        }
+
+        $('#balance').val(balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+
+        $("#cash_change").val(cash_change.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    }
 });
 </script>
 

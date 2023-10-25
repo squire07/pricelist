@@ -84,11 +84,18 @@
             </div>    
         </div>
     </div>
+
 @endsection
 
 @section('adminlte_js')
 <script>
     $(document).ready(function() {
+        @if(Session::has('uuid'))
+            let url = window.location.origin + '/sales-invoice/for-invoice/{{ Session::get("uuid") }}/print';
+            window.open(url, '_blank');
+            sessionStorage.removeItem('uuid');
+        @endif
+        
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

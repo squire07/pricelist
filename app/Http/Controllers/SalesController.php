@@ -8,6 +8,7 @@ use Yajra\DataTables\DataTables;
 use Auth;
 use App\Helpers\Helper;
 use App\Models\Branch;
+use App\Models\Company;
 use App\Models\History;
 use App\Models\Sales;
 use App\Models\SalesDetails;
@@ -56,9 +57,16 @@ class SalesController extends Controller
         $transaction_types = TransactionType::whereDeleted(false)->get(['id','name']);
 
         $shipping_fees = ShippingFee::whereDeleted(false)->get();
- 
+
+        $companies = Company::whereDeleted(false)->whereIn('status_id', [8,1])->get(); // 1 does not exists in status table as active/enable
+
+        $company_ids = [];
+        foreach($companies as $company) {
+            $company_ids[] = $company->id;
+        }
+
         // users without branch id
-        $branches = Branch::whereDeleted(false)->get(['id','name']);
+        $branches = Branch::whereDeleted(false)->whereIn('company_id', $company_ids)->get(['id','name']);   
 
         // users with branch id
         if(!empty(Auth::user()->branch_id)) {

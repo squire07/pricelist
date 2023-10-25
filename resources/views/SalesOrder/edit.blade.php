@@ -85,12 +85,12 @@
                         </div>
                         <div class="col-lg-4 col-md-4">
                             <label for="item_name">Item Name</label>
-                            <select class="form-control form-control-sm select2 select2-primary" id="item_name" data-dropdown-css-class="select2-primary" required>
+                            <select class="form-control form-control-sm select2 select2-primary" id="item_name" data-dropdown-css-class="select2-primary">
                             </select>
                         </div>
                         <div class="col-xl-1 col-md-2">
                             <label for="quantity">Quantity</label>
-                            <input type="number" class="form-control form-control-sm" min="1" max="999999" id="quantity" oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
+                            <input type="text" class="form-control form-control-sm" id="quantity" maxlength="6">
                         </div>
                         <div class="col-xl-1 col-md-2">
                             <label for="amount">Amount</label>
@@ -586,28 +586,16 @@ tbody tr:nth-child(odd) {
             
         });
 
-        // prevent the user from using the "-" minus sign
-        // 109 is the minus key from number pad or num pad
-        // 189 is the minus key from alpha numeric keys
-        $('#quantity').on('keydown', function(e) {    
-            var charCode = e.which || e.keyCode;  
-            if (charCode == 109 || charCode == 189) {
-                e.preventDefault();
-            }
-            $('#quantity').bind('copy paste', function (e) {
-            e.preventDefault();
-            });
-        });
-        // set max length of quantity to 6 digits
-        $('input[type=number][max]:not([max="6"])').on('input', function(ev) {
-            var $this = $(this);
-            var maxlength = $this.attr('max').length;
-            var value = $this.val();
-            if (value && value.length >= maxlength) {
-            $this.val(value.substr(0, maxlength));
-            }
+
+        $('#quantity').on('input', function(e) {    
+            const inputValue = e.target.value;
+            const numericValue = inputValue.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+            e.target.value = numericValue;
         });
 
+        $('#quantity').bind('copy paste', function (e) {
+            e.preventDefault();
+        });
 
 
 

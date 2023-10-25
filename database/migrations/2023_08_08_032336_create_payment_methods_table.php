@@ -21,7 +21,7 @@ return new class extends Migration
                 $table->tinyInteger('company_id');
                 $table->tinyInteger('is_cash')->default(0); // payment reference number is not required if cash is true (1)
                 $table->tinyInteger('status_id')->default(6);
-                $table->string('remarks', 255)->nullable();
+                $table->text('remarks')->nullable();
                 $table->tinyInteger('deleted')->default(false);
                 $table->timestamps();
                 $table->softDeletes();

@@ -42,11 +42,20 @@
         });
 
         $('#dt_distributors').DataTable({
+            dom: 'Bfrtip',
             serverSide: true,
             processing: true,
             deferRender: true,
             paging: true,
-            searching: true,
+            autoWidth: true,
+            responsive: true,
+            lengthMenu: [[10, 25, 50, -1], ['10 rows', '25 rows', '50 rows', "Show All"]],
+            buttons: [
+                {
+                    extend: 'pageLength',
+                    className: 'btn-default btn-sm',
+                },
+            ],
             ajax: $.fn.dataTable.pipeline({
                 url: "{{ route('distributor_list') }}",
                 pages: 20 // number of pages to fetch
@@ -57,7 +66,7 @@
                 {data: 'group', class: 'text-center'},
                 {data: 'subgroup', class: 'text-center'},
             ],
-            language: {
+                language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
             },
 

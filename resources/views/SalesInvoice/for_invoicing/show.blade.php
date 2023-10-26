@@ -194,12 +194,12 @@ $(document).ready(function() {
         });
     });
 
-        // Prevent user from using enter key
-        $("input:text").keypress(function(event) {
+    // Prevent user from using enter key
+    $("input:text").keypress(function(event) {
         if (event.keyCode === 10 || event.keyCode == 13) {
             event.preventDefault();
             return false;
-         }
+        }
     });
 });
 </script>

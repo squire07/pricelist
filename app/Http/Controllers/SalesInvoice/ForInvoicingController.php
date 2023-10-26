@@ -131,6 +131,9 @@ class ForInvoicingController extends Controller
 
             Helper::transaction_history($sales->id, $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Return Sales Order to Draft', $sales->so_remarks);
 
+            // redirect to index page with dynamic message coming from different statuses
+            return redirect('sales-invoice/for-invoice')->with(['success' => $message]);
+
         } else if(isset($request->status_id) && $request->status_id == 5) { // For Validation
             
 
@@ -167,10 +170,10 @@ class ForInvoicingController extends Controller
             }
 
             Helper::transaction_history($sales->id, $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Submit Payment', $sales->so_remarks);
+
+            // redirect to index page with dynamic message coming from different statuses
+            return redirect('sales-invoice/for-invoice')->with(['success' => $message, 'uuid' => $uuid]);
         }
-        
-        // redirect to index page with dynamic message coming from different statuses
-        return redirect('sales-invoice/for-invoice')->with(['success' => $message, 'uuid' => $uuid]);
     }
 
     /**

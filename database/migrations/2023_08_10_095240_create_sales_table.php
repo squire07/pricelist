@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('company_id')->default(1);
             $table->string('so_no', 25);
             $table->string('si_no', 25)->nullable();
+            $table->string('si_assignment_id', 25)->nullable();
             $table->integer('bcid');
             $table->string('distributor_name');
             $table->double('shipping_fee')->default(0);

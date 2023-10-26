@@ -89,9 +89,8 @@
         </div>
         <div class="card-footer text-center">
             <a href="{{ url('sales-invoice/for-invoice') }}" class="btn btn-lg btn-info float-left" style="margin-top: 8px"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-            {{-- <a href="{{ url('sales-invoice/for-invoice/' . $sales_order->uuid . '/edit' ) }}" class="btn btn-lg btn-success m-2 float-right"><i class="far fa-share-square"></i>&nbsp;Submit</a> --}}
 
-            <button class="btn btn-lg btn-success float-right" style="margin-top: 8px; margin-left: 10px" id="btn-for-payment" data-uuid="{{ $sales_order->uuid }}" data-so-no="{{ $sales_order->so_no }}"><i class="far fa-share-square"></i>&nbsp;Submit</button>
+            <button class="btn btn-lg btn-success float-right" style="margin-top: 8px; margin-left: 10px" id="btn-submit-payment" data-uuid="{{ $sales_order->uuid }}" data-so-no="{{ $sales_order->so_no }}"><i class="far fa-share-square"></i>&nbsp;Submit</button>
 
             <button class="btn btn-lg btn-danger float-right" style="margin-top: 8px" id="btn-for-return" data-uuid="{{ $sales_order->uuid }}" data-so-no="{{ $sales_order->so_no }}"><i class="fas fa-undo-alt"></i>&nbsp;Return</button>
         </div>
@@ -106,11 +105,6 @@
             <input type="hidden" name="status_id" value="1">
             <input type="hidden" name="so_remarks" id="hidden_so_remarks">
         @csrf
-    </form>
-
-    {{-- hidden form to submit SI to Payment --}}
-    <form id="form_for_payment" method="">
-            <input type="hidden" name="uuid" id="hidden_uuid">
     </form>
 @endsection
 
@@ -136,10 +130,11 @@ $(document).ready(function() {
 
         // show the confirmation
         Swal.fire({
-            title: 'Return ' + so_no + ' to Draft Status!',
+            title: 'Are you sure to return ' + so_no + 'to Draft?',
                 text: 'Remarks:',
                 icon: 'warning',
                 showCancelButton: true,
+                allowEnterKey: false,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 input: 'text',
@@ -169,7 +164,7 @@ $(document).ready(function() {
                 $('#hidden_uuid').val(uuid);
 
                 // update the action of form_for_invoicing 
-                $('#hidden_so_remarks').val(result.value);
+                $('#hidden_si_remarks').val(result.value);
                 $('#form_for_return').attr('action', window.location.origin + '/sales-invoice/for-invoice/' + uuid);
 
                 // finally, submit the form
@@ -178,32 +173,33 @@ $(document).ready(function() {
         });
     });
 
-    // Event for Submit to Payment
-    $('#btn-for-payment').on('click', function() {
-        var uuid = $(this).attr("data-uuid");
-        var so_no = $(this).attr("data-so-no");
+    //Event for Submit to Payment
+    $('#btn-submit-payment').on('click', function() {
 
+        var so_no = $(this).attr("data-so-no");
         // show the confirmation
         Swal.fire({
             title: 'Are you sure?',
             text: 'Submit ' + so_no + ' for Payment!',
             icon: 'warning',
             showCancelButton: true,
+            allowEnterKey: false,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, submit!'
         }).then((result) => {
             if (result.isConfirmed) {
-                // add uuid dynamically to hidden uuid field
-                $('#hidden_uuid').val(uuid);
-
-                // update the action of form_for_invoicing 
-                $('#form_for_payment').attr('action', window.location.origin + '/sales-invoice/for-invoice/' + uuid + '/edit');
-
-                // finally, submit the form
-                $('#form_for_payment').submit();
+                window.location = "{{ url('sales-invoice/for-invoice/' . $sales_order->uuid . '/edit' ) }}";
             }
         });
+    });
+
+        // Prevent user from using enter key
+        $("input:text").keypress(function(event) {
+        if (event.keyCode === 10 || event.keyCode == 13) {
+            event.preventDefault();
+            return false;
+         }
     });
 });
 </script>

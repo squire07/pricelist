@@ -130,7 +130,7 @@ $(document).ready(function() {
 
         // show the confirmation
         Swal.fire({
-            title: 'Are you sure to return ' + so_no + 'to Draft?',
+            title: 'Are you sure to return \n' + so_no + ' \nto Draft?',
                 text: 'Remarks:',
                 icon: 'warning',
                 showCancelButton: true,

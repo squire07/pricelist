@@ -21,18 +21,17 @@ class ForInvoicingController extends Controller
      */
     public function index(Request $request)
     {
-        // default to today's date
-        $from = Carbon::now()->format('Y-m-d') . ' 00:00:00';
-        $to = Carbon::now()->format('Y-m-d') . ' 23:59:59';
-
-        if($request->has('daterange')) {
-            $date = explode(' - ',$request->daterange);
-            $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
-            $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
-        } 
-
         $sales_orders = Sales::with('status','transaction_type')
-                            ->whereBetween('created_at', [$from, $to])
+                            ->where(function ($query) use ($request) {
+                                if ($request->has('daterange')) {
+                                    $date = explode(' - ', $request->daterange);
+                                    $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
+                                    $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
+                        
+                                    // Apply the whereBetween condition
+                                    $query->whereBetween('created_at', [$from, $to]);
+                                }
+                            })
                             ->whereStatusId(2)
                             ->whereDeleted(false)
                             ->orderByDesc('id')

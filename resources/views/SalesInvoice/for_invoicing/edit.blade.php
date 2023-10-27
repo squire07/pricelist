@@ -66,74 +66,86 @@
         </div>
     </div>
     
-        <div class="row">
-            <div class="col-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Payment Method</h3>
-                    {{-- <p class="lead">Payment Methods:</p> --}}
-                    </div>
-                    <div class="card-body">
-                        <select class="select2" multiple="multiple" id="payment_type" name="payment_type_id[]" data-name="payment_type_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                            <option value="" disabled>-- Select Payment Type --</option>
-                            @foreach($payment_types as $payment_type)
-                                <option value="{{ $payment_type->id }}" data-is-cash={{ $payment_type->is_cash }}>{{ $payment_type->name }}</option>
-                            @endforeach
-                        </select>
-                    </div> 
-                    <div class="card-footer">
-                        <a href="{{ url('sales-invoice/for-invoice') }}" class="btn btn-info"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-                        @if($sales_order->status_id == 4)
-                            <a href="#" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
-                        @endif
-                        @if($sales_order->status_id != 4)
-                            <button type="button" class="btn btn-success float-right" id="btn_submit_payment" data-toggle="modal" data-target="#modal-submit-payment"><i class="far fa-credit-card"></i> Submit Payment</button>
-                        @endif
-                    </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Payment Method</h3>
+                </div>
+                <div class="card-body">
+                    <select class="select2" multiple="multiple" id="payment_type" name="payment_type_id[]" data-name="payment_type_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                        <option value="" disabled>-- Select Payment Type --</option>
+                        @foreach($payment_types as $payment_type)
+                            <option value="{{ $payment_type->id }}" data-is-cash={{ $payment_type->is_cash }}>{{ $payment_type->name }}</option>
+                        @endforeach
+                    </select>
+                </div> 
+                <div class="card-footer">
+                    <a href="{{ url('sales-invoice/for-invoice') }}" class="btn btn-info"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+                    @if($sales_order->status_id == 4)
+                        <a href="#" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
+                    @endif
+                    @if($sales_order->status_id != 4)
+                        <button type="button" class="btn btn-success float-right" id="btn_submit_payment" data-toggle="modal" data-target="#modal-submit-payment"><i class="far fa-credit-card"></i> Submit Payment</button>
+                    @endif
                 </div>
             </div>
-            <div class="col-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Amount Due</h3>
-                        {{-- <p class="lead">Amount Due:</p> --}}
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-borderless" style="width:100%">
-                            <tbody style="width:inherit">
-                                <tr>
-                                    <td class="text-right text-bold" style="width:25%">Sub Total</td>
-                                    <td class="text-right" style="width:35%">{{ $sales_order->total_amount }}</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right text-bold" style="width:25%">Shipping Fee</td>
-                                    <td class="text-right" style="width:35%">{{ $sales_order->shipping_fee }}</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right text-bold" style="width:25%">VATable Sales</td>
-                                    <td class="text-right" style="width:35%">{{ $sales_order->vatable_sales }}</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right text-bold" style="width:25%">VAT Amount</td>
-                                    <td class="text-right" style="width:35%">{{ $sales_order->vat_amount }}</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right text-bold" style="width:25%">Grand Total</td>
-                                    <td class="text-right text-bold" style="width:25%">{{ $sales_order->grandtotal_amount }}</td>
-                                    <td class="text-right text-bold" style="width:25%">Total NUC</td>
-                                    <td class="text-right text-bold" style="width:15%">{{ $sales_order->total_nuc }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Amount Due</h3>
                 </div>
-            </div>     
+                <div class="card-body">
+                    <table class="table table-borderless" style="width:100%">
+                        <tbody style="width:inherit">
+                            <tr>
+                                <td class="text-right text-bold" style="width:25%">Sub Total</td>
+                                <td class="text-right" style="width:35%">{{ $sales_order->total_amount }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="text-right text-bold" style="width:25%">Shipping Fee</td>
+                                <td class="text-right" style="width:35%">{{ $sales_order->shipping_fee }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="text-right text-bold" style="width:25%">VATable Sales</td>
+                                <td class="text-right" style="width:35%">{{ $sales_order->vatable_sales }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="text-right text-bold" style="width:25%">VAT Amount</td>
+                                <td class="text-right" style="width:35%">{{ $sales_order->vat_amount }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="text-right text-bold" style="width:25%">Grand Total</td>
+                                <td class="text-right text-bold" style="width:25%">{{ $sales_order->grandtotal_amount }}</td>
+                                <td class="text-right text-bold" style="width:25%">Total NUC</td>
+                                <td class="text-right text-bold" style="width:15%">{{ $sales_order->total_nuc }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>     
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-danger d-none">
+                <h5><i class="icon fas fa-ban"></i> Alert!</h5>
+                You currently don't have an assigned invoice booklet. Please contact your head cashier or branch manager for assistance.
+            </div>
+
+            <div class="alert alert-warning d-none">
+                <h5><i class="icon fas fa-exclamation-triangle"></i> Warning!</h5>
+                The invoice booklet assigned to you is running low in stock. To replenish your supply, please make a request to your head cashier or branch manager.
+            </div>
         </div>
     </div>
+
 
     <div class="modal fade" id="modal-submit-payment" data-backdrop='static'>
         <div class="modal-dialog modal-lg">
@@ -153,6 +165,20 @@
                     {{-- 3 fields:  payment_type_id, remarks, cash_tendered --}}
 
                     <div class="modal-body form-horizontal">
+
+                        {{-- Show the next available invoice number --}}
+                        <div class="col-12">
+                            <input type="hidden" name="si_assignment_id" value="{{ !is_null($si_assignment) && isset($si_assignment->booklet_details[0]) ? $si_assignment->booklet_details[0]->id : null }}">
+                            <h2>
+                                <span>Invoice No:</span>
+                                <input type="text" id="si_assignment_no" class="custom-input-text"
+                                    data-id="{{ !is_null($si_assignment) && isset($si_assignment->booklet_details[0]) ? $si_assignment->booklet_details[0]->id : null }}" 
+                                    value="{{ !is_null($si_assignment) && isset($si_assignment->booklet_details[0]) ? $si_assignment->booklet_details[0]->series_number : null }}" 
+                                    readonly tabindex="-1">
+                            </h2>
+                        </div>
+
+
                         <div class="col-12">
                             <div class="form-group row">
                                 <label for="total_amount" class="col-sm-4 col-form-label">Total Amount:</label>
@@ -203,10 +229,25 @@
     {{-- hidden element: this will be used by js fx for dynamic fields computation --}}
     <input type="hidden" id="count_payment_type" value="0">
 
+    {{-- sales invoice assignment percentage remaining handler --}}
+    <input type="hidden" id="alert_type" value="{{ $alert_type }}">
+
 @endsection
 
 @section('adminlte_css')
 <style>
+.custom-input-text {
+    background: transparent;
+    border: none;
+    padding: 0;
+    outline: none;
+    margin: 0;
+    width: 125px;
+} 
+
+.custom-input-text:read-only {
+    background: transparent;
+}
 .table-bordered {
     border: 0px solid #dee2e6;
 }
@@ -235,9 +276,31 @@ $(document).ready(function() {
     // Initial calculation
     updateCashChange();    
 
+    // initialize: check if there is available si_assignment no
+    let next_si_assignment = $('#si_assignment_no').val();
+    let alert_type = $('#alert_type').val();
+
+    if(alert_type == 'warning') {
+        // show the warning
+        $('.alert-warning').removeClass('d-none');
+
+        // hide the danger
+        $('.alert-danger').addClass('d-none');
+        // enable the select payment method dropdown so that user will be able to update
+        $('#payment_type').prop('disabled', false);
+    } else if(alert_type == 'danger'){
+        // hide the warning
+        $('.alert-warning').addClass('d-none');
+
+        // show the danger
+        $('.alert-danger').removeClass('d-none');
+        // disable the select payment method dropdown so that user will not be able to update
+        $('#payment_type').prop('disabled', true);
+    }
+
+ 
 
     $('#btn_submit_payment').on('click', function() {
-
         // empty the dynamic div
         $('#payment_info_fields').empty();
         $('#payment_id_and_name_fields').empty();

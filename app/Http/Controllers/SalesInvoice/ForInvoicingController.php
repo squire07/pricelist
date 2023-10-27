@@ -8,6 +8,8 @@ use App\Models\History;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
 use App\Models\SalesInvoice;
+use App\Models\SalesInvoiceAssignment;
+use App\Models\SalesInvoiceAssignmentDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
@@ -106,7 +108,40 @@ class ForInvoicingController extends Controller
             }
         $payment_types = $payment_types->get();
 
-        return view('SalesInvoice.for_invoicing.edit', compact('sales_order','payment_types'));
+
+        // get the next available sales invoice assignment number by user's id and sales order branch id
+        $si_assignment = SalesInvoiceAssignment::whereDeleted(false)
+                        ->whereUserId(Auth::user()->id) //Auth::user()->id
+                        ->whereBranchId($sales_order->branch_id) //$sales_order->branch_id
+                        ->with('booklet_details', function($query) {
+                            $query->where('used',0)->first();
+                        })
+                        ->first();
+        
+        // needs to refactor this
+        if(!is_null($si_assignment)) {
+            $used = SalesInvoiceAssignmentDetail::whereDeleted(false)
+                        ->whereSalesInvoiceAssignmentId($si_assignment->id)
+                        ->whereUsed(0)
+                        ->get();
+        
+            // show the alert if remaining invoice is less than equal to 20%
+            $usedCount = count($used); // Get the count of $used
+            $totalCount = $si_assignment->count ?? 0; // Get the total count of invoices assigned
+            $percentage = ($totalCount > 0) ? ($usedCount / $totalCount) * 100 : 0; // Calculate percentage
+
+            if ($usedCount === 0) {
+                $alert_type = 'danger';
+            } else if ($percentage <= 20) {
+                $alert_type = 'warning';
+            } else {
+                $alert_type = null;
+            }
+        } else {
+            $alert_type = 'danger';
+        }
+
+        return view('SalesInvoice.for_invoicing.edit', compact('sales_order','payment_types','si_assignment','alert_type'));
     }
 
     /**
@@ -162,8 +197,17 @@ class ForInvoicingController extends Controller
             $sales->status_id = $request->status_id;
             $sales->payment_id = $payment->id; // now, lets create the relationship that is not defined in the create_sales_table migration;
             $sales->si_no = str_replace("SO", "SI", $sales->so_no);
+            $sales->si_assignment_id = $request->si_assignment_id;
+
 
             if($sales->update()) {
+                // update the sales invoice assignment details
+                $si_assignment = SalesInvoiceAssignmentDetail::whereId($request->si_assignment_id)->first();
+                $si_assignment->used = 1;
+                $si_assignment->so_no = $sales->so_no;
+                $si_assignment->si_no = $sales->si_no;
+                $si_assignment->update();
+
                 // pass the message to user if the update is successful
                 $message = $sales->so_no . ' payment submitted!';
             }

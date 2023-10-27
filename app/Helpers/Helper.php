@@ -11,6 +11,7 @@ use App\Models\Company;
 use App\Models\History;
 use App\Models\PermissionModule;
 use App\Models\Sales;
+use App\Models\SalesInvoiceAssignmentDetail;
 use App\Models\User;
 use Auth;
 use Session;
@@ -179,5 +180,10 @@ class Helper {
         } catch (\Exception $e) {
             return $e;
         }
+    }
+
+    public static function get_si_assignment_no($id) {
+        $si_assignment_detail = SalesInvoiceAssignmentDetail::whereId($id)->first();
+        return $si_assignment_detail->series_number;
     }
 }

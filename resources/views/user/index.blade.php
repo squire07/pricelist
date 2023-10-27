@@ -95,24 +95,29 @@
                         <div class="container-fluid">
                             <div class="col-12">
                                 <label for="name">Name</label>
-                                <input type="text" class="form-control form-control-sm" name="name" maxlength="25" required>
+                                <input type="text" class="form-control form-control-sm" name="name" maxlength="25" id="modal_add_name" required>
                             </div>
                             <div class="col-12">
                                 <label for="name">Username</label>
-                                <input type="text" class="form-control form-control-sm" name="username" maxlength="25" required>
+                                <input type="text" class="form-control form-control-sm" name="username" maxlength="25" id="modal_add_username" required>
                             </div>
                             <div class="col-12">
                                 <label for="name">Email</label>
-                                <input type="email" class="form-control form-control-sm" name="email" maxlength="25" required>
+                                <input type="email" class="form-control form-control-sm" name="email" maxlength="25" id="modal_add_email" required>
                             </div>
                             <div class="col-12">
-                                <label for="name">Password</label>
-                                <input type="password" class="form-control form-control-sm" name="password" minlength="8" maxlength="25" required>
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control form-control-sm" id="password" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="confirmpassword">Confirm Password</label>
+                                <input type="password" class="form-control form-control-sm" id="confirmpassword" required>
+                                <div class="form-text confirm-message"></div>
                             </div>
                             <div class="col-12">
                                 <div class="form-group">
                                     <label>Company</label>
-                                    <select class="select2" multiple="multiple" name="company_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                    <select class="select2" multiple="multiple" name="company_id" data-dropdown-css-class="select2-primary" style="width: 100%;" id="modal_add_company_id" required>
                                         <option value="" disabled>-- Select Company --</option>
                                         @foreach($companies as $company)
                                             <option value="{{ $company->id }}">{{ $company->name }}</option>
@@ -123,7 +128,7 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label>Branch</label>
-                                    <select class="select2" multiple="multiple" name="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                    <select class="select2" multiple="multiple" name="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" id="modal_add_branch_id" required>
                                         <option value="" disabled>-- Select Branch --</option>
                                         @foreach($branches as $branch)
                                             <option value="{{ $branch->id }}">{{ $branch->name }}</option>
@@ -134,7 +139,7 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label for="role_id">Role</label>
-                                    <select class="form-control form-control-sm" name="role_id" id="modal_edit_role_id" required>
+                                    <select class="form-control form-control-sm" name="role_id" id="modal_add_role_id" required>
                                         <option value="" disabled selected>-- Select Role --</option>
                                         @foreach($roles as $role)
                                             <option value="{{ $role->id }}">{{ $role->name }}</option>
@@ -145,7 +150,7 @@
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="modal_add_close">Close</button>
                         <button type="submit" class="btn btn-primary btn-sm m-2"><i class="fas fa-save mr-2"></i>Save</button>
                     </div>
 
@@ -197,7 +202,7 @@
                                 <div class="form-group">
                                     <label>Company</label>
                                     <select class="select2" multiple="multiple" name="company_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                        <option value="" disabled>-- Select Company --</option>
+                                        <option value="" disabled selected>-- Select Company --</option>
                                         @foreach($companies as $company)
                                             <option value="{{ $company->id }}">{{ $company->name }}</option>
                                         @endforeach
@@ -219,7 +224,7 @@
                                 <div class="form-group">
                                     <label>Branch</label>
                                     <select class="select2" multiple="multiple" name="branch_id" id="modal_edit_branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                        <option value="" disabled>-- Select Branch --</option>
+                                        <option value="" disabled selected>-- Select Branch --</option>
                                         @foreach($branches as $branch)
                                             <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                                         @endforeach
@@ -229,7 +234,7 @@
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="modal_edit_close" >Close</button>
                         <button type="submit" class="btn btn-primary btn-sm m-2"><i class="fas fa-save mr-2"></i>Save</button>
                     </div>
 
@@ -279,7 +284,14 @@
             </div>
         </div>
     </div> --}}
-
+    <style>
+        .success-message{
+            color:green
+        }
+        .error-message{
+            color:red;
+        }
+    </style>
 @endsection
 
 @section('adminlte_js')
@@ -322,7 +334,6 @@
                 }
             }
         });
-    });
 
         // use class instead of id because the button are repeating. ID can be only used once
         $('.btn_edit').on('click', function() {
@@ -376,6 +387,7 @@
                     text: "Please confirm that you want to cancel",
                     type: 'warning',
                     showCancelButton: true,
+                    allowEnterKey: false,
                     confirmButtonText: 'Yes',
                     cancelButtonText: 'No',
                     confirmButtonColor: '#3085d6',
@@ -385,7 +397,15 @@
                         $('#modal-add , #modal-edit').addClass('programmatic');
                         $('#modal-add , #modal-edit').modal('hide');
                         e.stopPropagation();
-
+                        $('#modal_add_name').val('');
+                        $('#modal_add_username').val('');
+                        $('#modal_add_email').val('');
+                        $('#password').val('');
+                        $('#confirmpassword').val('');
+                        $('.confirm-message').text('');
+                        $('#modal_add_role_id').val(''); 
+                        $('#modal_add_branch_id').val('');     
+                        $('#modal_add_company_id').val('');                     
                     } else {
                         e.stopPropagation();
 
@@ -394,10 +414,41 @@
 
             }
             return true;
-            });
+        });
 
         $('#modal-add , #modal-edit').on('hidden.bs.modal', function () {
         $('#modal-add , #modal-edit').removeClass('programmatic');
+
+        });
+
+        $('#password, #confirmpassword').on('keyup', function(){
+
+        $('.confirm-message').removeClass('success-message').removeClass('error-message');
+
+        let password=$('#password').val();
+        let confirm_password=$('#confirmpassword').val();
+
+        if(password===""){
+            $('.confirm-message').text("Password Field cannot be empty").addClass('error-message');
+        }
+        else if(confirm_password===""){
+            $('.confirm-message').text("Confirm Password Field cannot be empty").addClass('error-message');
+        }
+        else if(confirm_password===password)
+        {
+            $('.confirm-message').text('Password Match!').addClass('success-message');
+        }
+        else{
+            $('.confirm-message').text("Password Doesn't Match!").addClass('error-message');
+        }
     });
-    </script>
+        // Prevent user from using enter key
+            $("input:text, button").keypress(function(event) {
+            if (event.keyCode === 10 || event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
+});
+</script>
 @endsection

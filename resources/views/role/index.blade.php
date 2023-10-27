@@ -63,7 +63,7 @@
     </div>
 
 
-    <div class="modal fade" id="modal-add">
+    <div class="modal fade" id="modal-add" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -79,7 +79,7 @@
                         <div class="container-fluid">
                             <div class="col-12">
                                 <label for="name">Name</label>
-                                <input type="text" class="form-control form-control-sm" name="name" maxlength="25"  pattern="[a-zA-Z0-9\s]+" required>
+                                <input type="text" class="form-control form-control-sm" name="name" maxlength="25" id="modal_add_name" pattern="[a-zA-Z0-9\s]+" required>
                             </div>
                         </div>
                     </div>
@@ -94,7 +94,7 @@
 
 
     {{--  modal for create --}}
-    <div class="modal fade" id="modal-edit">
+    <div class="modal fade" id="modal-edit" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -127,7 +127,7 @@
     </div>
 
     {{--  modal for show --}}
-    <div class="modal fade" id="modal-show">
+    <div class="modal fade" id="modal-show" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -199,7 +199,6 @@ input[type="text2"], textarea {
                 }
             }
         });
-    });
 
         // use class instead of id because the button are repeating. ID can be only used once
         $('.btn_edit').on('click', function() {
@@ -242,6 +241,7 @@ input[type="text2"], textarea {
                     text: "Please confirm that you want to cancel",
                     type: 'warning',
                     showCancelButton: true,
+                    allowEnterKey: false,
                     confirmButtonText: 'Yes',
                     cancelButtonText: 'No',
                     confirmButtonColor: '#3085d6',
@@ -251,7 +251,7 @@ input[type="text2"], textarea {
                         $('#modal-add , #modal-edit').addClass('programmatic');
                         $('#modal-add , #modal-edit').modal('hide');
                         e.stopPropagation();
-
+                        $('#modal_add_name').val('');
                     } else {
                         e.stopPropagation();
 
@@ -264,6 +264,22 @@ input[type="text2"], textarea {
 
         $('#modal-add , #modal-edit').on('hidden.bs.modal', function () {
         $('#modal-add , #modal-edit').removeClass('programmatic');
+        });
+
+        // Prevent user from using enter key
+            $("input:text, button").keypress(function(event) {
+            if (event.keyCode === 10 || event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
+
+        $( '#modal-add, #modal-edit' ).on( 'keypress', function( e ) {
+        if( event.keyCode === 10 || e.keyCode === 13 ) {
+            e.preventDefault();
+            $( this ).trigger( 'submit' );
+        }
+        });
     });
 </script>
 @endsection

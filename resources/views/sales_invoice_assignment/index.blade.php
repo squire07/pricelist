@@ -128,7 +128,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal-add">
+    <div class="modal fade" id="modal-add" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -362,7 +362,7 @@
             $(this).prop('disabled',true);
             $('#form_modal_add').submit();
         });
-    });
+    
         // Prevent from redirecting back to homepage when cancel button is clicked accidentally
         $('#modal-add').on("hide.bs.modal", function (e) {
 
@@ -373,6 +373,7 @@
                     text: "Please confirm that you want to cancel",
                     type: 'warning',
                     showCancelButton: true,
+                    allowEnterKey: false,
                     confirmButtonText: 'Yes',
                     cancelButtonText: 'No',
                     confirmButtonColor: '#3085d6',
@@ -382,7 +383,7 @@
                         $('#modal-add').addClass('programmatic');
                         $('#modal-add').modal('hide');
                         e.stopPropagation();
-
+                        $('#cashier_id').val('');
                     } else {
                         e.stopPropagation();
 
@@ -392,9 +393,24 @@
             }
             return true;
         });
-
             $('#modal-add').on('hidden.bs.modal', function () {
             $('#modal-add').removeClass('programmatic');
+        });
+
+        // Prevent user from using enter key
+        $("input:text, button").keypress(function(event) {
+            if (event.keyCode === 10 || event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
+
+        $( '#modal-add, #modal-edit' ).on( 'keypress', function( e ) {
+        if( event.keyCode === 10 || e.keyCode === 13 ) {
+            e.preventDefault();
+            $( this ).trigger( 'submit' );
+        }
+        });
     });
 </script>
 @endsection

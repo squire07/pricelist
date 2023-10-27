@@ -35,6 +35,7 @@
                     <br>
                     Sales Invoice Number: <span class="text-bold">{{ $sales_order->si_no }}</span>
                     <br>
+                    Invoice Number: <span class="text-bold">{{ Helper::get_si_assignment_no($sales_order->si_assignment_id) }}</span>
                 </div>
             </div>
             <div class="row mt-4">

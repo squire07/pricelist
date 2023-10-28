@@ -65,8 +65,9 @@
                                     data-user-email="{{ $user->email }}"
                                     data-branch-id="{{ $user->branch_id }}" 
                                     data-role-id="{{ $user->role_id }}"
-                                    data-company_id="{{ $user->company_id }}"
-                                    data-user-remarks="{{ $user->remarks }}">
+                                    data-company-id="{{ $user->company_id }}"
+                                    data-user-active="{{ $user->active }}"
+                                    data-user-blocked="{{ $user->blocked }}">
                                     <i class="fas fa-pencil-alt"></i>&nbsp;Edit
                                 </button>
                                     <a href="{{  url('permissions/' . $user->uuid . '/edit' ) }}" class="btn btn-sm btn-success" target="_self"><i class="fas fa-tasks"></i></a>
@@ -79,7 +80,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal-add">
+    <div class="modal fade" id="modal-add" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -116,28 +117,6 @@
                             </div>
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label>Company</label>
-                                    <select class="select2" multiple="multiple" name="company_id" data-dropdown-css-class="select2-primary" style="width: 100%;" id="modal_add_company_id" required>
-                                        <option value="" disabled>-- Select Company --</option>
-                                        @foreach($companies as $company)
-                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Branch</label>
-                                    <select class="select2" multiple="multiple" name="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" id="modal_add_branch_id" required>
-                                        <option value="" disabled>-- Select Branch --</option>
-                                        @foreach($branches as $branch)
-                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
                                     <label for="role_id">Role</label>
                                     <select class="form-control form-control-sm" name="role_id" id="modal_add_role_id" required>
                                         <option value="" disabled selected>-- Select Role --</option>
@@ -145,6 +124,24 @@
                                             <option value="{{ $role->id }}">{{ $role->name }}</option>
                                         @endforeach
                                     </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="companies">Companies</label>
+                                    @foreach($companies as $company)
+                                        <br/>
+                                        <input type="checkbox" name="company_id[]" id="modal_add_company_{{ $company->id }}" value={{ $company->id }}><span class="ml-2">{{ $company->name }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="branches">Branches</label>
+                                    @foreach($branches as $branch)
+                                        <br/>
+                                        <input type="checkbox" name="branch_id[]" id="modal_add_branch_{{ $branch->id }}" value={{ $branch->id }}><span class="ml-2">{{ $branch->name }}</span>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
@@ -160,7 +157,7 @@
     </div>
 
     {{--  modal for create --}}
-    <div class="modal fade" id="modal-edit">
+    <div class="modal fade" id="modal-edit" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -187,27 +184,14 @@
                                 <label for="name">Email</label>
                                 <input type="email" class="form-control form-control-sm" name="email" id="modal_edit_email" maxlength="255" required>
                             </div>
-                            {{-- <div class="col-md-6 col-sm-12">
-                                <div class="form-group">
-                                    <label for="status">Block User?</label>
-                                    <div class="col-12">
-                                        <input type="radio" name="blocked" value="1" checked>
-                                        <label for="" class="mr-4">Yes</label>
-                                        <input type="radio" name="active" value="1">
-                                        <label for="">No</label>
-                                    </div>
-                                </div>
-                            </div> --}}
                             <div class="col-12">
-                                <div class="form-group">
-                                    <label>Company</label>
-                                    <select class="select2" multiple="multiple" name="company_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                        <option value="" disabled selected>-- Select Company --</option>
-                                        @foreach($companies as $company)
-                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control form-control-sm" id="password" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="confirmpassword">Confirm Password</label>
+                                <input type="password" class="form-control form-control-sm" id="confirmpassword" required>
+                                <div class="form-text confirm-message"></div>
                             </div>
                             <div class="col-12">
                                 <div class="form-group">
@@ -220,15 +204,44 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-12">
+                            <div class="col-md-6 col-sm-12">
                                 <div class="form-group">
-                                    <label>Branch</label>
-                                    <select class="select2" multiple="multiple" name="branch_id" id="modal_edit_branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                        <option value="" disabled selected>-- Select Branch --</option>
-                                        @foreach($branches as $branch)
-                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <label for="status">User Status</label>
+                                    <div class="col-12">
+                                        <input type="radio" name="active" value="1">
+                                        <label for="" class="mr-4">Active</label>
+                                        <input type="radio" name="active" value="0">
+                                        <label for="">Inactive</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label for="status">Block User?</label>
+                                    <div class="col-12">
+                                        <input type="radio" name="blocked" value="1">
+                                        <label for="" class="mr-4">Yes</label>
+                                        <input type="radio" name="blocked" value="0">
+                                        <label for="">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="companies">Companies</label>
+                                    @foreach($companies as $company)
+                                        <br/>
+                                        <input type="checkbox" name="company_id[]" id="modal_edit_company_{{ $company->id }}" value={{ $company->id }}><span class="ml-2">{{ $company->name }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="branches">Branches</label>
+                                    @foreach($branches as $branch)
+                                        <br/>
+                                        <input type="checkbox" name="branch_id[]" id="modal_edit_branch_{{ $branch->id }}" value={{ $branch->id }}><span class="ml-2">{{ $branch->name }}</span>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
@@ -337,28 +350,75 @@
 
         // use class instead of id because the button are repeating. ID can be only used once
         $('.btn_edit').on('click', function() {
-            var uuid = $(this).attr("data-uuid");
-            var name = $(this).attr("data-user-name");
-            var username = $(this).attr("data-user-username");
-            var email = $(this).attr("data-user-email");
-            var remarks = $(this).attr("data-user-remarks");
-            var r_id = $(this).attr("data-user-role_id");
-            var b_id = $(this).attr("data-user-branch_id");
-            var c_id = $(this).attr("data-user-company_id");
+        // remove all the marked check
+        $('input[type="checkbox"]').prop('checked', false);
+        $('input[type="radio"]').prop('checked', false);
 
+        var uuid = $(this).attr("data-user-uuid");
+        var company_id = $(this).attr("data-company-id");
+        var branch_id = $(this).attr("data-branch-id");
+        var r_id = $(this).attr("data-role-id");
+        var name = $(this).attr("data-user-name");
+        var username = $(this).attr("data-user-username");
+        var email = $(this).attr("data-user-email");
+        var active = $(this).attr("data-user-active");
+        var blocked = $(this).attr("data-user-blocked");
 
-            $('#modal_edit_name').val(name); 
-            $('#modal_edit_username').val(username); 
-            $('#modal_edit_email').val(email);
-            $('#modal_show_remarks').val(remarks);
-            $('#modal_edit_role_id option[value=' + r_id + ']').attr('selected', 'selected');
-            $('#modal_edit_branch_id option[value=' + b_id + ']').attr('selected', 'selected');
-            $('#modal_edit_company_id option[value=' + c_id + ']').attr('selected', 'selected');
+        $('#modal_edit_role_id option[value=' + r_id + ']').attr('selected', 'selected');
+        $('#modal_edit_name').val(name); 
+        $('#modal_edit_username').val(username); 
+        $('#modal_edit_email').val(email);
+        $('#modal_show_active').val(active);
+        $('#modal_show_blocked').val(blocked);
 
-            // define the edit form action
-            let action = window.location.origin + "/users/" + uuid;
-            $('#form_modal_edit').attr('action', action);
+        // add check to is_cash and status
+        if(active == 1) {
+            $('input[type="radio"][value="1"]').prop('checked', true);
+        } else if(active == 0) {
+            $('input[type="radio"][value="0"]').prop('checked', true);
+        } 
+
+        // add check to branch checkboxes
+        const array_branches = branch_id.split(",");
+        array_branches.forEach(function(element, index, array) {
+            $('#modal_edit_branch_' + element).prop('checked',true);
         });
+
+        // add check to company checkboxes
+        const array_companies = company_id.split(",");
+        array_companies.forEach(function(element, index, array) {
+            $('#modal_edit_company_' + element).prop('checked',true);
+        });
+
+        // define the edit form action
+        let action = window.location.origin + "/users/" + uuid;
+        $('#form_modal_edit').attr('action', action);
+    });
+
+       
+        // $('.btn_edit').on('click', function() {
+        //     var uuid = $(this).attr("data-uuid");
+        //     var name = $(this).attr("data-user-name");
+        //     var username = $(this).attr("data-user-username");
+        //     var email = $(this).attr("data-user-email");
+        //     var remarks = $(this).attr("data-user-remarks");
+        //     var r_id = $(this).attr("data-user-role_id");
+        //     var b_id = $(this).attr("data-user-branch_id");
+        //     var c_id = $(this).attr("data-user-company_id");
+
+
+        //     $('#modal_edit_name').val(name); 
+        //     $('#modal_edit_username').val(username); 
+        //     $('#modal_edit_email').val(email);
+        //     $('#modal_show_remarks').val(remarks);
+        //     $('#modal_edit_role_id option[value=' + r_id + ']').attr('selected', 'selected');
+        //     $('#modal_edit_branch_id option[value=' + b_id + ']').attr('selected', 'selected');
+        //     $('#modal_edit_company_id option[value=' + c_id + ']').attr('selected', 'selected');
+
+        //     // define the edit form action
+        //     let action = window.location.origin + "/users/" + uuid;
+        //     $('#form_modal_edit').attr('action', action);
+        // });
 
 
         $('.btn_show').on('click', function() {
@@ -388,6 +448,7 @@
                     type: 'warning',
                     showCancelButton: true,
                     allowEnterKey: false,
+                    allowOutsideClick: false,
                     confirmButtonText: 'Yes',
                     cancelButtonText: 'No',
                     confirmButtonColor: '#3085d6',
@@ -404,8 +465,7 @@
                         $('#confirmpassword').val('');
                         $('.confirm-message').text('');
                         $('#modal_add_role_id').val(''); 
-                        $('#modal_add_branch_id').val('');     
-                        $('#modal_add_company_id').val('');                     
+                        $('input[type="checkbox"]').prop('checked', false);                 
                     } else {
                         e.stopPropagation();
 
@@ -444,10 +504,17 @@
     });
         // Prevent user from using enter key
             $("input:text, button").keypress(function(event) {
-            if (event.keyCode === 10 || event.keyCode == 13) {
+            if (event.keyCode === 10 || event.keyCode == 13 || event.keyCode == "Escape") {
                 event.preventDefault();
                 return false;
             }
+        });
+
+        $( '#modal-add, #modal-edit' ).on( 'keypress', function( e ) {
+        if( event.keyCode === 10 || e.keyCode === 13 || event.keyCode == "Escape" ) {
+            e.preventDefault();
+            $( this ).trigger( 'submit' );
+        }
         });
 });
 </script>

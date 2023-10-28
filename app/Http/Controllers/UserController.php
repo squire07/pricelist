@@ -45,18 +45,19 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $existName = User::whereName($request->name)->whereDeleted(false)->first();
-        $existNameUsername = User::whereName($request->name)->whereUsername($request->username)->whereDeleted(false)->first();
-        $existNameUsernameEmail = User::whereName($request->name)->whereUsername($request->username)->whereEmail($request->email)->whereDeleted(false)->first();
-        if(!$existName || !$existNameUsername || !$existNameUsernameEmail) {
+        // $existName = User::whereName($request->name)->whereDeleted(false)->first();
+        // $existNameUsername = User::whereName($request->name)->whereUsername($request->username)->whereDeleted(false)->first();
+        // $existNameUsernameEmail = User::whereName($request->name)->whereUsername($request->username)->whereEmail($request->email)->whereDeleted(false)->first();
+        $exist = User::whereName($request->name)->orWhere('username',$request->username)->orWhere('email',$request->email)->whereDeleted(false)->first();
+        if(!$exist) {
             $user = new User();
             $user->uuid = Str::uuid();
             $user->name = $request->name;
             $user->username = $request->username;
             $user->email = $request->email;
             $user->password = bcrypt('password');
-            $user->company_id = $request->company_id;
-            $user->branch_id = $request->branch_id;
+            $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';
+            $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
             $user->role_id = $request->role_id;
             $user->active = 1; //set default status to Active
             $user->created_by = Auth::user()->name;
@@ -96,8 +97,8 @@ class UserController extends Controller
         if(!$existName || !$existNameUsername || !$existNameUsernameEmail) {
             $user->name = $request->name;
             $user->email = $request->email;
-            $user->company_id = $request->company_id;
-            $user->branch_id = $request->branch_id;
+            $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';
+            $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
             $user->active = $request->active; 
             $user->blocked = $request->blocked; 
             $user->created_by = Auth::user()->name;

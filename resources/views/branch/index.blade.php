@@ -22,9 +22,10 @@
                 <table id="dt_branch" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
                         <tr>
-                            <th class="text-left">Name</th>
+                            <th class="text-center">Name</th>
                             <th class="text-center">Code</th>
                             <th class="text-center">Cost Center</th>
+                            <th class="text-center">Cost Center Name</th>
                             <th class="text-center">Created By</th>
                             <th class="text-center">Status</th>
                             <th class="text-center">Action</th>
@@ -33,9 +34,10 @@
                     <tbody>
                         @foreach($branches as $branch)
                             <tr>
-                                <td class="text-left">{{ $branch->name }}</td>
+                                <td>{{ $branch->name }}</td>
                                 <td class="text-center">{{ $branch->code }}</td>
                                 <td class="text-center">{{ $branch->cost_center }}</td>
+                                <td>{{ $branch->cost_center_name }}</td>
                                 <td class="text-center">{{ $branch->created_by }}</td>
                                 <td class="text-center"><span class="badge {{ Helper::badge($branch->status_id) }}">{{ $branch->status->name }}</span></td>
                                 <td class="text-center">
@@ -46,6 +48,7 @@
                                         data-branch-name="{{ $branch->name }}" 
                                         data-branch-code="{{ $branch->code }}"
                                         data-branch-cost_center="{{ $branch->cost_center }}"
+                                        data-branch-cost_center-name="{{ $branch->cost_center_name }}"
                                         data-branch-status_id="{{ $branch->status->name}}"
                                         data-branch-remarks="{{ $branch->remarks }}"
                                         data-branch-updated_by="{{ $branch->updated_by }}">
@@ -58,6 +61,7 @@
                                         data-branch-name="{{ $branch->name }}" 
                                         data-branch-code="{{ $branch->code }}"
                                         data-branch-cost_center="{{ $branch->cost_center }}"
+                                        data-branch-cost_center_name="{{ $branch->cost_center_name }}"
                                         data-branch-status_id="{{ $branch->status->name}}"
                                         data-branch-remarks="{{ $branch->remarks }}">
                                         <i class="fas fa-pencil-alt"></i>&nbsp;Edit

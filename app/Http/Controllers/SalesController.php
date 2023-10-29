@@ -23,21 +23,20 @@ class SalesController extends Controller
      */
     public function index(Request $request)
     {
-        // default to today's date
-        $from = Carbon::now()->format('Y-m-d') . ' 00:00:00';
-        $to = Carbon::now()->format('Y-m-d') . ' 23:59:59';
-
-        if($request->has('daterange')) {
-            $date = explode(' - ',$request->daterange);
-            $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
-            $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
-        } 
-
         // get current users branch ids 
         $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
 
         $sales_orders = Sales::with('status','transaction_type')
-                            ->whereBetween('created_at', [$from, $to])
+                            ->where(function ($query) use ($request) {
+                                if ($request->has('daterange')) {
+                                    $date = explode(' - ', $request->daterange);
+                                    $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
+                                    $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
+                        
+                                    // Apply the whereBetween condition
+                                    $query->whereBetween('created_at', [$from, $to]);
+                                }
+                            })
                             ->whereStatusId(1)
                             ->whereDeleted(false)
                             ->when(!empty($user_branch), function($query) use ($user_branch) {
@@ -54,8 +53,28 @@ class SalesController extends Controller
      */
     public function create()
     {
-        $transaction_types = TransactionType::whereDeleted(false)->get(['id','name']);
+        $now = Carbon::now()->toDateString();
 
+        $transaction_types = TransactionType::where(function ($query) use ($now) {
+                                $query->where(function ($sub_query) {
+                                    // Include transaction types with no associated validity period
+                                    $sub_query->whereNotExists(function ($validity_sub_query) {
+                                        $validity_sub_query
+                                            ->from('transaction_type_validities')
+                                            ->whereRaw('transaction_type_validities.transaction_type_id = transaction_types.id');
+                                    });
+                                })->orWhere(function ($sub_query) use ($now) {
+                                    // Include transaction types with a valid period that includes the current date
+                                    $sub_query->whereExists(function ($validity_sub_query) use ($now) {
+                                        $validity_sub_query
+                                            ->from('transaction_type_validities')
+                                            ->whereRaw('transaction_type_validities.transaction_type_id = transaction_types.id')
+                                            ->where('transaction_type_validities.valid_from', '<=', $now)
+                                            ->where('transaction_type_validities.valid_to', '>=', $now);
+                                    });
+                                });
+                            })->get();
+ 
         $shipping_fees = ShippingFee::whereDeleted(false)->get();
 
         $companies = Company::whereDeleted(false)->whereIn('status_id', [8,1])->get(); // 1 does not exists in status table as active/enable

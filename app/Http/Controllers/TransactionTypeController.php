@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\TransactionType;
+use App\Models\TransactionTypeValidity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Helpers\Helper;
@@ -16,7 +17,7 @@ class TransactionTypeController extends Controller
      */
     public function index()
     {
-        $transaction_types = TransactionType::whereDeleted(false)->get();
+        $transaction_types = TransactionType::with('validity')->whereDeleted(false)->get();
         return view('TransactionType.index', compact('transaction_types'));
     }
 
@@ -57,7 +58,32 @@ class TransactionTypeController extends Controller
      */
     public function update(Request $request, TransactionType $transactionType)
     {
-        //
+        $transaction_type = TransactionType::with('validity')
+                                ->whereId($transactionType->id)
+                                ->firstOrFail();
+
+        $period = $request->validity_period ? explode(' - ', $request->validity_period) : null;
+
+        if($transaction_type->validity) {
+            // update the validity if exists
+            $validity = TransactionTypeValidity::whereDeleted(false)
+                            ->whereTransactionTypeId($transaction_type->id)
+                            ->first();
+            $validity->valid_from = $period[0] ?? null;
+            $validity->valid_to = $period[1] ?? null;
+            $validity->updated_by = Auth::user()->name;
+            $validity->save();
+        } elseif (!is_null($period)) {
+            // save the validity if not null
+            $validity = new TransactionTypeValidity;
+            $validity->transaction_type_id = $transaction_type->id;
+            $validity->valid_from = $period[0] ?? null;
+            $validity->valid_to = $period[1] ?? null;
+            $validity->created_by = Auth::user()->name;
+            $validity->save();
+        }
+
+        return redirect()->back()->with('success', 'Validity Period Updated!');
     }
 
     /**

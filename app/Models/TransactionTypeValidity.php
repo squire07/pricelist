@@ -6,17 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
-class TransactionType extends Model
+class TransactionTypeValidity extends Model
 {
     use HasFactory;
-
-    /**
-     * The attributes that aren't mass assignable.
-     *
-     * @var array
-     */
-    protected $guarded = [];
-    
 
     // getters and setters
     public function getCreatedAtAttribute($value)
@@ -29,19 +21,27 @@ class TransactionType extends Model
         return $value != null ? Carbon::parse($value)->format('m/d/Y h:i:s A') : '';
     }
 
+    // mutator
+    public function setValidFromAttribute($value)
+    {
+        $this->attributes['valid_from'] = Carbon::parse($value);
+    }
+
+    public function setValidToAttribute($value)
+    {
+        $this->attributes['valid_to'] = Carbon::parse($value);
+    }
+
+    public function getValidFromAttribute($value)
+    {
+        return Carbon::parse($value)->format('m/d/Y');
+    }
+
+    public function getValidToAttribute($value)
+    {
+        return Carbon::parse($value)->format('m/d/Y');
+    }
+
     // relationships
-    public function item()
-    {
-        return $this->belongsTo('App\Models\Item', 'transaction_type_id', 'id'); 
-    }
 
-    public function sales()
-    {
-        return $this->belongsTo('App\Models\Sales', 'transaction_type_id', 'id');
-    }
-
-    public function validity()
-    {
-        return $this->hasOne('App\Models\TransactionTypeValidity', 'transaction_type_id', 'id');
-    }
 }

@@ -24,8 +24,8 @@
                     <thead>
                         <tr>
                             <th class="text-center">ID</th>
-                            <th class="text-left">Name</th>
-                            <th class="text-center">Is Active</th>
+                            <th class="text-center">Name</th>
+                            <th class="text-center">Validity</th>
                             <th class="text-center">Last Sync At</th>
                             <th class="text-center">Last Sync By</th>
                         </tr>
@@ -35,11 +35,28 @@
                             <tr>
                                 <td class="text-center">{{ $transaction_type->id }}</td>
                                 <td>{{ $transaction_type->name }}</td>
-                                <td class="text-center">
+                                {{-- <td class="text-center">
                                     @if($transaction_type->is_active == 1)
                                         <span class="badge bg-success">Yes</span>
                                     @else
                                         <span class="badge bg-danger">No</span>
+                                    @endif
+                                </td> --}}
+                                <td class="text-center validity">
+                                    @if(isset($transaction_type->validity->valid_from) && isset($transaction_type->validity->valid_to))
+                                        {{ $transaction_type->validity->valid_from . ' - ' . $transaction_type->validity->valid_to }}
+
+                                        <button class="btn btn-sm calendar-icon" 
+                                            data-transaction-type-id="{{ $transaction_type->id }}"
+                                            data-validity="{{ $transaction_type->validity->valid_from . ' - ' . $transaction_type->validity->valid_to }}">
+                                            <i class="far fa-calendar-alt"></i>
+                                        </button>
+                                    @else 
+                                        <span class="text-bold">&#8734;</span>
+
+                                        <button class="btn btn-sm calendar-icon" data-transaction-type-id="{{ $transaction_type->id }}">
+                                            <i class="far fa-calendar-alt"></i>
+                                        </button>
                                     @endif
                                 </td>
                                 <td class="text-center">{{ $transaction_type->updated_at }}</td>
@@ -55,11 +72,64 @@
             </div> 
         </div>
     </div>
+
+    <div class="modal fade" id="modal-validity">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Validity Period</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <form action="" method="POST" id="modal_validity" autocomplete="off">
+                                @csrf
+                                @method('PATCH')
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                        </div>  
+                                        <input type="text" class="form-control float-right text-center" id="validity_period" name="validity_period" value="">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"style="display: flex; justify-content: space-between;">
+                    <button type="button" class="btn btn-default btn-sm" style="align-self: flex-start;" data-dismiss="modal">Close</button>
+                    <div style="display: flex; justify-content: flex-end;">
+                        <button class="btn btn-default btn-sm mr-2" id="btn-reset">Reset</button>
+                        <button class="btn btn-primary btn-sm" id="btn-update"><i class="far fa-save mr-1"></i>Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('adminlte_css')
+<style>
+.validity {
+    text-align: left;
+    position: relative;
+}
+.calendar-icon {
+    position: absolute;
+    right: 8px; /* Adjust this value to control the distance from the right side */
+    top: 50%;
+    transform: translateY(-50%);
+}
+</style>
 @endsection
 
 @section('adminlte_js')
 <script>
-    $(document).ready(function() {     
+    $(document).ready(function() {
         $('#dt_transaction_types').DataTable({
             dom: 'Bfrtip',
             deferRender: true,
@@ -125,6 +195,55 @@
                 }
             })
         });
+
+        
+        $(document).on('click', '.calendar-icon', function() {
+            var id = $(this).data('transaction-type-id');
+            var validity = $(this).data('validity');
+
+            if(validity !== undefined) {
+                var date_range_array = validity.split(' - ');
+                var start_date = date_range_array[0];
+                var end_date = date_range_array[1];
+
+                initialize_daterangepicker(start_date, end_date);
+            } else {
+                initialize_daterangepicker();
+            }
+
+            // set the textbox value
+            $('#validity_period').val(validity);
+            // define the edit form action
+            $('#modal_validity').attr('action', window.location.origin + "/transaction-types/" + id);
+            $('#modal-validity').modal('show');
+        });
+
+        $('#btn-update').on('click', function() {
+            $('#modal_validity').submit();
+        });
+
+        $('#btn-reset').on('click', function() {
+            $('#validity_period').val(''); // Clear the input field
+        });
+
+
+
+        function initialize_daterangepicker(valid_from, valid_to) {
+            $('#validity_period').daterangepicker({
+                autoUpdateInput: true,
+                minYear: 2023,
+                showDropdowns: false,
+                drops: 'down',
+                locale: {
+                    format: 'MM/DD/YYYY'
+                },
+                startDate: valid_from || moment(),  // Use the value from the textbox or a default value
+                endDate: valid_to || moment()
+            }).on("apply.daterangepicker", function (e, picker) {
+                var date_range = picker.startDate.format(picker.locale.format) + ' - ' + picker.endDate.format(picker.locale.format);
+                picker.element.val(date_range);
+            });
+        }
     });
 </script>
 @endsection

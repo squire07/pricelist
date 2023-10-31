@@ -38,11 +38,15 @@ class SalesInvoiceAssignmentController extends Controller
         $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
 
         // get all the cashiers
-        $cashiers = User::whereRoleId(2)
-                        ->whereDeleted(false)
+        $cashiers = User::whereDeleted(false)
+                        ->whereActive(true)
                         ->whereBlocked(false)
-                        ->when(!empty($user_branch), function($query) use ($user_branch) {
-                            $query->whereIn('branch_id', explode(',',$user_branch));
+                        ->whereRoleId(2)
+                        ->where(function ($query) use ($user_branch) {
+                            $query->whereIn('branch_id',  explode(',', $user_branch))
+                                ->orWhere(function ($query) use ($user_branch) {
+                                    $query->where('branch_id',  $user_branch);
+                                });
                         })
                         ->get();
 

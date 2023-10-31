@@ -34,8 +34,17 @@ class SalesInvoiceAssignmentController extends Controller
             $booklet['used'] = $used_count;
         }
 
+        // get current users branch ids 
+        $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
+
         // get all the cashiers
-        $cashiers = User::whereRoleId(2)->whereDeleted(false)->whereBlocked(false)->get();
+        $cashiers = User::whereRoleId(2)
+                        ->whereDeleted(false)
+                        ->whereBlocked(false)
+                        ->when(!empty($user_branch), function($query) use ($user_branch) {
+                            $query->whereIn('branch_id', explode(',',$user_branch));
+                        })
+                        ->get();
 
         return view('sales_invoice_assignment.index', compact('booklets','cashiers'));
     }

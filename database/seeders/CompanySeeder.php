@@ -8,6 +8,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Company;
 use App\Helpers\Helper;
+use Auth;
 
 class CompanySeeder extends Seeder
 {
@@ -33,8 +34,8 @@ class CompanySeeder extends Seeder
                 'code' => $company_codes[$key+1]['code'],
                 'created_at' => Carbon::now()->toDateTimeString(),
                 'updated_at' => Carbon::now()->toDateTimeString(),
-                'created_by' => 'System',
-                'updated_by' => 'System'
+                'created_by' => Auth::user()->name ?? 'System',
+                'updated_by' => Auth::user()->name ?? 'System'
             ]);
         }
     }

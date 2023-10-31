@@ -8,9 +8,9 @@
             <div class="col-sm-6">
                 <h1>Companies</h1>
             </div>
-            <div class="col-sm-6 text-right">
+            {{-- <div class="col-sm-6 text-right">
                 <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add">Add Company</button>
-            </div>
+            </div> --}}
         </div>
     </div>
 @stop
@@ -25,8 +25,9 @@
                             <th class="text-center">ID</th>
                             <th class="text-left">Name</th>
                             <th class="text-center">Code</th>
-                            <th class="text-center">Created By</th>
                             <th class="text-center">Status</th>
+                            <th class="text-center">Last Sync By</th>
+                            <th class="text-center">Last Sync At</th>
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -36,8 +37,9 @@
                                 <td class="text-center">{{ $company->id }}</td>
                                 <td>{{ $company->name }}</td>
                                 <td class="text-center">{{ $company->code }}</td>
-                                <td class="text-center">{{ $company->created_by }}</td>
                                 <td class="text-center"><span class="badge {{ Helper::badge($company->status_id) }}">{{ $company->status->name }}</span></td>
+                                <td class="text-center">{{ $company->updated_by }}</td>
+                                <td class="text-center">{{ $company->updated_at }}</td>
                                 <td class="text-center">
                                     <button type="button" class="btn btn-sm btn-default btn_show" 
                                     data-toggle="modal"
@@ -64,7 +66,10 @@
                         @endforeach
                     </tbody>
                 </table>
-            </div>    
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-sm btn-primary" id="btn-sync" {{ !in_array(Auth::user()->role_id, [11,12]) ? 'disabled' : '' }}><i class="fas fa-sync mr-1"></i>Sync</button>     
+            </div> 
         </div>
     </div>
 
@@ -122,7 +127,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Name</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="25" name="name" id="modal_edit_name" required>
+                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="25" name="name" id="modal_edit_name" disabled>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
@@ -324,10 +329,48 @@
         });
 
         $( '#modal-add, #modal-edit' ).on( 'keypress', function( e ) {
-        if( event.keyCode === 10 || e.keyCode === 13 || event.keyCode == "Escape" ) {
-            e.preventDefault();
-            $( this ).trigger( 'submit' );
-        }
+            if( event.keyCode === 10 || e.keyCode === 13 || event.keyCode == "Escape" ) {
+                e.preventDefault();
+                $( this ).trigger( 'submit' );
+            }
+        });
+
+        $('#btn-sync').on('click', function() {
+            Swal.fire({
+                title: 'Are you sure you want to sync with ERPNext?',
+                text: "This may take some time!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, sync!',
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    Swal.getCancelButton().setAttribute('hidden', true);
+                    return fetch(window.location.origin + '/companies/sync-company')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(response.statusText)
+                        }
+                        return response.ok
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(
+                            `Request failed: ${error}`
+                        )
+                    })
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Sync complete!',
+                        icon: 'success',
+                    }).then(function() {
+                        location.reload();
+                    })
+                }
+            })
         });
     });
 </script>

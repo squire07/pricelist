@@ -72,6 +72,7 @@ Route::middleware(['auth','gate'])->group(function () {
 
     // SUPPORT MODULES 
     Route::resource('branches', BranchController::class);
+    Route::get('companies/sync-company', [CompanyController::class, 'sync_company']); // must be in api, use passport
     Route::resource('companies', CompanyController::class);
     Route::get('distributor_list', [DistributorController::class, 'distributor_list'])->name('distributor_list');
     Route::resource('distributors', DistributorController::class)->only('index');

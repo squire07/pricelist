@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Auth;
+use Illuminate\Support\Facades\Artisan;
 
 class CompanyController extends Controller
 {
@@ -90,5 +92,16 @@ class CompanyController extends Controller
         $company->update();
 
         return redirect('companies')->with('success', $company->name . ' has been deleted!');
+    }
+
+    // this should be moved at api
+    public function sync_company()
+    {
+        // to refactor soon
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('companies')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        Artisan::call('db:seed', ['--class' => 'CompanySeeder',]);
+        return true;
     }
 }

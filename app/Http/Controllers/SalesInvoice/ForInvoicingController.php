@@ -40,6 +40,9 @@ class ForInvoicingController extends Controller
                             })
                             ->whereStatusId(2)
                             ->whereDeleted(false)
+                            ->when(!empty($user_branch), function($query) use ($user_branch) {
+                                $query->whereIn('branch_id', explode(',',$user_branch));
+                            })
                             ->orderByDesc('id')
                             ->get();
 

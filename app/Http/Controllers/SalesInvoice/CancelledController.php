@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SalesInvoice;
 use App\Models\Sales;
 use App\Models\History;
 use App\Models\SalesInvoice;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
@@ -17,6 +18,9 @@ class CancelledController extends Controller
      */
     public function index(Request $request)
     {
+        // get current users branch ids 
+        $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
+
         // default to today's date
         $from = Carbon::now()->format('Y-m-d') . ' 00:00:00';
         $to = Carbon::now()->format('Y-m-d') . ' 23:59:59';
@@ -31,6 +35,9 @@ class CancelledController extends Controller
                             ->whereBetween('created_at', [$from, $to])
                             ->whereStatusId(3)
                             ->whereDeleted(false)
+                            ->when(!empty($user_branch), function($query) use ($user_branch) {
+                                $query->whereIn('branch_id', explode(',',$user_branch));
+                            })
                             ->orderByDesc('id')
                             ->get();
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SalesInvoice;
 use App\Models\Sales;
 use App\Helpers\Helper;
 use App\Models\History;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
@@ -20,6 +21,9 @@ class ForValidationController extends Controller
      */
     public function index(Request $request)
     {
+        // get current users branch ids 
+        $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
+
         $sales_orders = Sales::with('status','transaction_type')
                             ->where(function ($query) use ($request) {
                                 if ($request->has('daterange')) {
@@ -33,6 +37,9 @@ class ForValidationController extends Controller
                             })
                             ->whereStatusId(5)
                             ->whereDeleted(false)
+                            ->when(!empty($user_branch), function($query) use ($user_branch) {
+                                $query->whereIn('branch_id', explode(',',$user_branch));
+                            })
                             ->orderByDesc('id')
                             ->get();
 

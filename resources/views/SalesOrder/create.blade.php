@@ -176,7 +176,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal-add-sf">
+    <div class="modal fade" id="modal-add-sf" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -201,14 +201,14 @@
                         <div class="col-md-5 col-sm-12">    
                             <div class="form-group">
                                 <label for="modal_sf_amount">Shipping Fee Amount</label>
-                                <input type="text" class="form-control form-control-sm" id="modal_sf_amount" style="text-align:right;" disabled>
+                                <input type="text" class="form-control form-control-sm" id="modal_sf_amount" style="text-align:right;" placeholder="0.00">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
-                    <input type="button" class="btn btn-primary btn-sm m-2" id="btn-add-sf" value="Save">
+                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="btn-sf-close">Close</button>
+                    <input type="button" class="btn btn-primary btn-sm m-2" id="btn-add-sf" value="Save" disabled>
                 </div>
             </div>
         </div>
@@ -261,6 +261,8 @@ tbody tr:nth-child(odd) {
         $('.select2').select2({
             theme: 'bootstrap4'
         });
+
+        $('#btn_add_sf').prop('disabled', true);
 
         // set the focus on search field after clicking the select2 dropdown
         $(document).on('select2:open', () => {
@@ -672,6 +674,15 @@ tbody tr:nth-child(odd) {
 
         // =========== START OF SHIPPING FEE MODAL ===========
 
+    // if sf_amount field is empty, then disable the save button
+        $("#modal_select_sf").on('change', function() {
+            if($(this).val() != '') {
+                $('#btn-add-sf').prop('disabled', false);
+            } else {
+                $('#btn-add-sf').prop('disabled', true);
+            }
+        });
+
         // open the modal shipping fee
         $('#sf_checkbox').on('click', function() {
             var current_shipping_fee = $('#tfoot_sf_total_amount').val();
@@ -881,6 +892,6 @@ tbody tr:nth-child(odd) {
                 event.preventDefault();
             }
         });
-    });
+});
 </script>
 @endsection

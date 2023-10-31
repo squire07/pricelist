@@ -197,7 +197,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal-add-sf">
+    <div class="modal fade" id="modal-add-sf" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -228,8 +228,8 @@
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
-                    <input type="button" class="btn btn-primary btn-sm m-2" id="btn-add-sf" value="Save">
+                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="btn_sf_close" >Close</button>
+                    <input type="button" class="btn btn-primary btn-sm m-2" id="btn-add-sf" value="Save" disabled>
                 </div>
             </div>
         </div>
@@ -607,6 +607,15 @@ tbody tr:nth-child(odd) {
 
         // =========== START OF SHIPPING FEE MODAL ===========
 
+        // if sf_amount field is empty, then disable the save button
+        $("#modal_select_sf").on('change', function() {
+            if($(this).val() != '') {
+                $('#btn-add-sf').prop('disabled', false);
+            } else {
+                $('#btn-add-sf').prop('disabled', true);
+            }
+        });
+
         // open the modal shipping fee
         $('#sf_checkbox').on('click', function() {
             var current_shipping_fee = $('#tfoot_sf_total_amount').val();
@@ -663,7 +672,7 @@ tbody tr:nth-child(odd) {
         // =========== END OF SHIPPING FEE MODAL ===========
 
         // Prevent from redirecting back to homepage when cancel button is clicked accidentally
-        $('#btn_cancel_so').on('click', function() {
+        $('#btn_cancel_so, #btn_sf_close').on('click', function() {
             // show the confirmation
             Swal.fire({
                 title: 'Cancel Transaction?',
@@ -759,11 +768,11 @@ tbody tr:nth-child(odd) {
             }
         });
 
-        $('#btn_save_so, #add_item, #btn_cancel_so').keypress(function (event) {
+        $('#btn_save_so, #add_item, #btn_cancel_so, #modal-add-sf').keypress(function (event) {
             if (event.keyCode === 10 || event.keyCode === 13) {
                 event.preventDefault();
             }
         });
-    });
+});
 </script>
 @endsection

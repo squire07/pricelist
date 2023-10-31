@@ -10,6 +10,7 @@ use App\Models\PaymentMethod;
 use App\Models\SalesInvoice;
 use App\Models\SalesInvoiceAssignment;
 use App\Models\SalesInvoiceAssignmentDetail;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
@@ -23,6 +24,9 @@ class ForInvoicingController extends Controller
      */
     public function index(Request $request)
     {
+        // get current users branch ids 
+        $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
+
         $sales_orders = Sales::with('status','transaction_type')
                             ->where(function ($query) use ($request) {
                                 if ($request->has('daterange')) {
@@ -36,6 +40,9 @@ class ForInvoicingController extends Controller
                             })
                             ->whereStatusId(2)
                             ->whereDeleted(false)
+                            ->when(!empty($user_branch), function($query) use ($user_branch) {
+                                $query->whereIn('branch_id', explode(',',$user_branch));
+                            })
                             ->orderByDesc('id')
                             ->get();
 
@@ -90,33 +97,27 @@ class ForInvoicingController extends Controller
         */
 
         // check users branch id: null, single value, explode
-        $exploded = array_map('trim', explode(',', Auth::user()->branch_id));
+        $exploded = Auth::user()->branch_id != null ? array_map('trim', explode(',', Auth::user()->branch_id)) : null;
 
-        $payment_types = PaymentMethod::whereDeleted(false)->whereStatusId(6);  // where `status id` should be boolean 1 - active/enabled  0 - inactive/disabled 
-            if(count($exploded) == 1) {
-                if(array_intersect([1, 7, 6, 12], $exploded)) { // 
-                    $payment_types->whereRaw('FIND_IN_SET(?, branch_id)', [$exploded]);
-                } else if(array_intersect([2,3,4,5], $exploded)) { // Local
-                    $payment_types->where('branch_id', 'LO');
-                } else if(array_intersect([8,9,10,11], $exploded)) { // Premier
-                    $payment_types->where('branch_id', 'PR');
-                } 
-            } else if(count($exploded) > 1) {
-                $payment_types->whereIn('branch_id', ['LO', 'PR']);
-            } else {
-                $payment_types->where('branch_id', 6);
-            }
-        $payment_types = $payment_types->get();
-
+        $payment_types = PaymentMethod::whereDeleted(false)
+                            ->where('status_id', 6)
+                            ->where(function ($query) use ($exploded) {
+                                if ($exploded) {
+                                    foreach ($exploded as $branch_id) {
+                                        $query->orWhereRaw('FIND_IN_SET(?, branch_id)', [$branch_id]);
+                                    }
+                                }
+                            })
+                            ->get();
 
         // get the next available sales invoice assignment number by user's id and sales order branch id
         $si_assignment = SalesInvoiceAssignment::whereDeleted(false)
-                        ->whereUserId(Auth::user()->id) //Auth::user()->id
-                        ->whereBranchId($sales_order->branch_id) //$sales_order->branch_id
-                        ->with('booklet_details', function($query) {
-                            $query->where('used',0)->first();
-                        })
-                        ->first();
+                            ->whereUserId(Auth::user()->id) //Auth::user()->id
+                            // ->whereBranchId($sales_order->branch_id) //$sales_order->branch_id
+                            ->with('booklet_details', function($query) {
+                                $query->where('used',0)->first();
+                            })
+                            ->first();
         
         // needs to refactor this
         if(!is_null($si_assignment)) {

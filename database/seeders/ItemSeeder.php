@@ -9,6 +9,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Item;
 use App\Models\TransactionType;
 use App\Helpers\Helper;
+use Auth;
 
 class ItemSeeder extends Seeder
 {
@@ -36,8 +37,8 @@ class ItemSeeder extends Seeder
                     'rs_points' => 0, // no defined rs_points in erpnext
                     'created_at' => Carbon::now()->toDateTimeString(),
                     'updated_at' => Carbon::now()->toDateTimeString(),
-                    'created_by' => 'System',
-                    'updated_by' => 'System'
+                    'created_by' => Auth::user()->name ?? 'System',
+                    'updated_by' => Auth::user()->name ?? 'System'
                 ]);
             }
 

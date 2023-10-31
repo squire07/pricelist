@@ -18,37 +18,37 @@ class BranchSeeder extends Seeder
         $branches = [
             1 => array(
                 'name' => 'West Insula Local', 
-                'code' => 'WES', 'company_id' => 1, 
+                'code' => 'WES', 'company_id' => 3, 
                 'cost_center' => '001',
                 'cost_center_name' => '001 - MAIN-WEST INSULA - UNO - LOCAL'
             ),
             2 => array(
                 'name' => 'Cebu Local', 
-                'code' => 'CEB', 'company_id' => 1, 
+                'code' => 'CEB', 'company_id' => 3, 
                 'cost_center' => '002',
                 'cost_center_name' => '002 - CEBU - LOCAL'
             ),
             3 => array(
                 'name' => 'Calamba Local', 
-                'code' => 'CAL', 'company_id' => 1, 
+                'code' => 'CAL', 'company_id' => 3, 
                 'cost_center' => '006',
                 'cost_center_name' => '006 - CALAMBA - LOCAL'
             ),
             4 => array(
                 'name' => 'Baguio Local', 
-                'code' => 'BAG', 'company_id' => 1, 
+                'code' => 'BAG', 'company_id' => 3, 
                 'cost_center' => '005',
                 'cost_center_name' => '005 - BAGUIO - LOCAL'
             ),
             5 => array(
                 'name' => 'Gensan Local', 
-                'code' => 'GEN', 'company_id' => 1, 
+                'code' => 'GEN', 'company_id' => 3, 
                 'cost_center' => '004',
                 'cost_center_name' => '004 - GENSAN - LOCAL'
             ),
             6 => array(
                 'name' => 'E-Commerce Local', 
-                'code' => 'ECO', 'company_id' => 1, 
+                'code' => 'ECO', 'company_id' => 3, 
                 'cost_center' => '008',
                 'cost_center_name' => '008 - E-COMMERCE - LOCAL'
             ),

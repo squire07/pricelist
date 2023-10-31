@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Company;
+use App\Helpers\Helper;
 
 class CompanySeeder extends Seeder
 {
@@ -16,17 +17,20 @@ class CompanySeeder extends Seeder
     public function run(): void
     {
         // company names 
-        $companies = [
-            1 => array('name' => 'Unlimited Network of Opportunities Int\'l Corp', 'code' => 'LO'),
-            2 => array('name' => 'Uno Premier Philippines International Corporation', 'code' => 'PR'), 
-            3 => array('name' => 'Onelifestyle', 'code' => 'OL'),
+        $company_codes = [
+            1 => array('id' => 1, 'code' => 'HW'),
+            2 => array('id' => 2, 'code' => 'PR'), 
+            3 => array('id' => 3, 'code' => 'LO'),
         ];
 
-        foreach($companies as $key => $company) {
+        $param = '/api/resource/Company';
+        $data = Helper::get_erpnext_data($param);
+
+        foreach($data['data'] as $key => $company) {
             Company::create([
                 'uuid' => Str::uuid(),
                 'name' => $company['name'],
-                'code' => $company['code'],
+                'code' => $company_codes[$key+1]['code'],
                 'created_at' => Carbon::now()->toDateTimeString(),
                 'updated_at' => Carbon::now()->toDateTimeString(),
                 'created_by' => 'System',

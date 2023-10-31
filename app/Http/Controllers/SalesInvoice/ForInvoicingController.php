@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers\SalesInvoice;
 
+use App\Models\User;
 use App\Models\Sales;
 use App\Helpers\Helper;
 use App\Models\History;
 use App\Models\Payment;
-use App\Models\PaymentMethod;
 use App\Models\SalesInvoice;
-use App\Models\SalesInvoiceAssignment;
-use App\Models\SalesInvoiceAssignmentDetail;
 use Illuminate\Http\Request;
+use App\Models\PaymentMethod;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\SalesInvoiceAssignment;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\SalesInvoiceAssignmentDetail;
 
 class ForInvoicingController extends Controller
 {
@@ -23,6 +24,9 @@ class ForInvoicingController extends Controller
      */
     public function index(Request $request)
     {
+        // get current users branch ids 
+        $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
+        
         $sales_orders = Sales::with('status','transaction_type')
                             ->where(function ($query) use ($request) {
                                 if ($request->has('daterange')) {

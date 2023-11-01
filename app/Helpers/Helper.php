@@ -162,7 +162,19 @@ class Helper {
                 $branch_names[] = $branch->name;
             }
         }
-        return implode(',', $branch_names);
+        return implode(',', $branch_names);  //do not add space between ','
+    }
+
+    public static function get_company_names_by_id($ids) {
+        $ids = explode(',', $ids);
+        $company_names = [];
+        foreach ($ids as $company_id) {
+            $company = Company::whereId($company_id)->whereDeleted(false)->first();
+            if ($company) {
+                $company_names[] = $company->name;
+            }
+        }
+        return implode(',', $company_names); //do not add space between ','
     }
 
     public static function get_erpnext_data($param) {

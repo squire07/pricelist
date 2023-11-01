@@ -43,11 +43,10 @@
                                 <td class="text-left">{{ $user->email }}</td>
                                 <td class="text-center">{{ $user->role->name ?? '' }}</td>
                                 <td class="text-center">
-                                    {{ Helper::get_branch_name_by_id($user->branch_id) }}
-                                    
+                                    {{ !is_null($user->branch_id) ? str_replace(',', ', ', Helper::get_branch_name_by_id($user->branch_id)) : '' }}
                                 </td>
                                 <td class="text-center">
-                                    {{ $user->company->name ?? '' }}
+                                    {{ !is_null($user->company_id) ? str_replace(',', ', ', Helper::get_company_names_by_id($user->company_id)) : '' }}
                                 </td>
                                 <td class="text-center">
                                     @if($user->active == 1)

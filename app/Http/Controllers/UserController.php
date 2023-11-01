@@ -9,6 +9,7 @@ use App\Models\Company;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Hash;
 
 class UserController extends Controller
 {
@@ -55,7 +56,7 @@ class UserController extends Controller
             $user->name = $request->name;
             $user->username = $request->username;
             $user->email = $request->email;
-            $user->password = bcrypt('password');
+            $user->password = Hash::make($request->password);
             $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';
             $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
             $user->role_id = $request->role_id;

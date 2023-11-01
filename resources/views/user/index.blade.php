@@ -42,8 +42,13 @@
                                 <td class="text-left">{{ $user->username }}</td>
                                 <td class="text-left">{{ $user->email }}</td>
                                 <td class="text-center">{{ $user->role->name ?? '' }}</td>
-                                <td class="text-center">{{ $user->branch->name ?? '' }}</td>
-                                <td class="text-center">{{ $user->company->name ?? '' }}</td>
+                                <td class="text-center">
+                                    {{ Helper::get_branch_name_by_id($user->branch_id) }}
+                                    
+                                </td>
+                                <td class="text-center">
+                                    {{ $user->company->name ?? '' }}
+                                </td>
                                 <td class="text-center">
                                     @if($user->active == 1)
                                         <i class="fas fa-check-circle" style="color:#28a745"></i>
@@ -108,7 +113,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control form-control-sm" id="password" required>
+                                <input type="password" class="form-control form-control-sm" name="password" id="password" required>
                             </div>
                             <div class="col-12">
                                 <label for="confirmpassword">Confirm Password</label>
@@ -186,7 +191,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control form-control-sm" id="password" required>
+                                <input type="password" class="form-control form-control-sm" name="password" id="password" required>
                             </div>
                             <div class="col-12">
                                 <label for="confirmpassword">Confirm Password</label>

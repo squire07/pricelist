@@ -23,9 +23,9 @@
                     <thead>
                         <tr>
                             <th class="text-center">ID</th>
-                            <th class="text-left" style="min-width:125px;">Name</th>
-                            <th class="text-left">Username</th>
-                            <th class="text-left">Email</th>
+                            <th class="text-center" style="min-width:125px;">Name</th>
+                            <th class="text-center">Username</th>
+                            <th class="text-center">Email</th>
                             <th class="text-center" style="min-width:125px;">Role</th>
                             <th class="text-center" style="min-width:125px;">Branch</th>
                             <th class="text-center" style="min-width:230px;">Company</th>
@@ -255,56 +255,17 @@
             </div>
         </div>
     </div>
+@endsection
 
-
-    {{--  modal for show --}}
-    {{-- <div class="modal fade" id="modal-show">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Company Details</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="col-12">
-                            <label for="name">Company Name</label>
-                            <input type="" class="form-control form-control-sm" name="name" id="modal_show_name" disabled>
-                        </div>
-                        <div class="col-12">
-                            <label for="code">Company Code</label>
-                            <input type="text" class="form-control form-control-sm" name="code" id="modal_show_code" disabled>
-                        </div>
-                        <div class="col-12">
-                            <label for="status">Status</label>
-                            <input type="" class="form-control form-control-sm" name="status" id="modal_show_status_id" disabled>
-                        </div>
-                        <div class="col-12">
-                            <label for="remarks">Remarks</label>
-                            <input type="" class="form-control form-control-sm" name="remarks" id="modal_show_remarks" disabled>
-                        </div>
-                        <div class="col-12">
-                            <label for="updated_by">Updated By</label>
-                            <input type="" class="form-control form-control-sm" name="updated_by" id="modal_show_updated_by" disabled>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-    <style>
-        .success-message{
-            color:green
-        }
-        .error-message{
-            color:red;
-        }
-    </style>
+@section('adminlte_css')    
+<style>
+    .success-message{
+        color:green
+    }
+    .error-message{
+        color:red;
+    }
+</style>
 @endsection
 
 @section('adminlte_js')
@@ -350,92 +311,52 @@
 
         // use class instead of id because the button are repeating. ID can be only used once
         $('.btn_edit').on('click', function() {
-        // remove all the marked check
-        $('input[type="checkbox"]').prop('checked', false);
-        $('input[type="radio"]').prop('checked', false);
+            // remove all the marked check
+            $('input[type="checkbox"]').prop('checked', false);
+            $('input[type="radio"]').prop('checked', false);
 
-        var uuid = $(this).attr("data-user-uuid");
-        var company_id = $(this).attr("data-company-id");
-        var branch_id = $(this).attr("data-branch-id");
-        var r_id = $(this).attr("data-role-id");
-        var name = $(this).attr("data-user-name");
-        var username = $(this).attr("data-user-username");
-        var email = $(this).attr("data-user-email");
-        var active = $(this).attr("data-user-active");
-        var blocked = $(this).attr("data-user-blocked");
-
-        $('#modal_edit_role_id option[value=' + r_id + ']').attr('selected', 'selected');
-        $('#modal_edit_name').val(name); 
-        $('#modal_edit_username').val(username); 
-        $('#modal_edit_email').val(email);
-        $('#modal_show_active').val(active);
-        $('#modal_show_blocked').val(blocked);
-
-        // add check to is_cash and status
-        if(active == 1) {
-            $('input[type="radio"][value="1"]').prop('checked', true);
-        } else if(active == 0) {
-            $('input[type="radio"][value="0"]').prop('checked', true);
-        } 
-
-        // add check to branch checkboxes
-        const array_branches = branch_id.split(",");
-        array_branches.forEach(function(element, index, array) {
-            $('#modal_edit_branch_' + element).prop('checked',true);
-        });
-
-        // add check to company checkboxes
-        const array_companies = company_id.split(",");
-        array_companies.forEach(function(element, index, array) {
-            $('#modal_edit_company_' + element).prop('checked',true);
-        });
-
-        // define the edit form action
-        let action = window.location.origin + "/users/" + uuid;
-        $('#form_modal_edit').attr('action', action);
-    });
-
-       
-        // $('.btn_edit').on('click', function() {
-        //     var uuid = $(this).attr("data-uuid");
-        //     var name = $(this).attr("data-user-name");
-        //     var username = $(this).attr("data-user-username");
-        //     var email = $(this).attr("data-user-email");
-        //     var remarks = $(this).attr("data-user-remarks");
-        //     var r_id = $(this).attr("data-user-role_id");
-        //     var b_id = $(this).attr("data-user-branch_id");
-        //     var c_id = $(this).attr("data-user-company_id");
-
-
-        //     $('#modal_edit_name').val(name); 
-        //     $('#modal_edit_username').val(username); 
-        //     $('#modal_edit_email').val(email);
-        //     $('#modal_show_remarks').val(remarks);
-        //     $('#modal_edit_role_id option[value=' + r_id + ']').attr('selected', 'selected');
-        //     $('#modal_edit_branch_id option[value=' + b_id + ']').attr('selected', 'selected');
-        //     $('#modal_edit_company_id option[value=' + c_id + ']').attr('selected', 'selected');
-
-        //     // define the edit form action
-        //     let action = window.location.origin + "/users/" + uuid;
-        //     $('#form_modal_edit').attr('action', action);
-        // });
-
-
-        $('.btn_show').on('click', function() {
-            var uuid = $(this).attr("data-uuid");
+            var uuid = $(this).attr("data-user-uuid");
+            var company_id = $(this).attr("data-company-id");
+            var branch_id = $(this).attr("data-branch-id");
+            var r_id = $(this).attr("data-role-id");
             var name = $(this).attr("data-user-name");
-            var code = $(this).attr("data-user-code");
-            var remarks = $(this).attr("data-user-remarks");
-            var status_id = $(this).attr("data-user-status_id");
-            var updated_by = $(this).attr("data-user-updated_by");
+            var username = $(this).attr("data-user-username");
+            var email = $(this).attr("data-user-email");
+            var active = $(this).attr("data-user-active");
+            var blocked = $(this).attr("data-user-blocked");
 
-            // set multiple attributes
-            $('#modal_show_name').val(name);
-            $('#modal_show_code').val(code);
-            $('#modal_show_remarks').val(remarks);
-            $('#modal_show_status_id').val(status_id);
-            $('#modal_show_updated_by').val(updated_by);
+            $('#modal_edit_role_id option[value=' + r_id + ']').attr('selected', 'selected');
+            $('#modal_edit_name').val(name); 
+            $('#modal_edit_username').val(username); 
+            $('#modal_edit_email').val(email);
+            $('#modal_show_active').val(active);
+            $('#modal_show_blocked').val(blocked);
+
+            // add check to is_cash and status
+            if(active == 1) {
+                $('input[type="radio"][value="1"]').prop('checked', true);
+            } else if(active == 0) {
+                $('input[type="radio"][value="0"]').prop('checked', true);
+            } 
+
+            // add check to branch checkboxes
+            const array_branches = branch_id.split(",");
+            array_branches.forEach(function(element, index, array) {
+                $('#modal_edit_branch_' + element).prop('checked',true);
+            });
+
+            // add check to company checkboxes
+            const array_companies = company_id.split(",");
+            array_companies.forEach(function(element, index, array) {
+                $('#modal_edit_company_' + element).prop('checked',true);
+            });
+
+            // define the edit form action
+            let action = window.location.origin + "/users/" + uuid;
+            $('#form_modal_edit').attr('action', action);
         });
+
+
 
         // Prevent from redirecting back to homepage when cancel button is clicked accidentally
         $('#modal-add , #modal-edit').on("hide.bs.modal", function (e) {
@@ -476,34 +397,35 @@
             return true;
         });
 
-        $('#modal-add , #modal-edit').on('hidden.bs.modal', function () {
-        $('#modal-add , #modal-edit').removeClass('programmatic');
-
+        $('#modal-add, #modal-edit').on('hidden.bs.modal', function () {
+            $('#modal-add, #modal-edit').removeClass('programmatic');
         });
 
         $('#password, #confirmpassword').on('keyup', function(){
 
-        $('.confirm-message').removeClass('success-message').removeClass('error-message');
+            $('.confirm-message').removeClass('success-message').removeClass('error-message');
 
-        let password=$('#password').val();
-        let confirm_password=$('#confirmpassword').val();
+            let password=$('#password').val();
+            let confirm_password=$('#confirmpassword').val();
 
-        if(password===""){
-            $('.confirm-message').text("Password Field cannot be empty").addClass('error-message');
-        }
-        else if(confirm_password===""){
-            $('.confirm-message').text("Confirm Password Field cannot be empty").addClass('error-message');
-        }
-        else if(confirm_password===password)
-        {
-            $('.confirm-message').text('Password Match!').addClass('success-message');
-        }
-        else{
-            $('.confirm-message').text("Password Doesn't Match!").addClass('error-message');
-        }
-    });
+            if(password===""){
+                $('.confirm-message').text("Password Field cannot be empty").addClass('error-message');
+            }
+            else if(confirm_password===""){
+                $('.confirm-message').text("Confirm Password Field cannot be empty").addClass('error-message');
+            }
+            else if(confirm_password===password)
+            {
+                $('.confirm-message').text('Password Match!').addClass('success-message');
+            }
+            else{
+                $('.confirm-message').text("Password Doesn't Match!").addClass('error-message');
+            }
+        });
+
         // Prevent user from using enter key
-            $("input:text, button").keypress(function(event) {
+            
+        $("input:text, button").keypress(function(event) {
             if (event.keyCode === 10 || event.keyCode == 13 || event.keyCode == "Escape") {
                 event.preventDefault();
                 return false;
@@ -511,10 +433,10 @@
         });
 
         $( '#modal-add, #modal-edit' ).on( 'keypress', function( e ) {
-        if( event.keyCode === 10 || e.keyCode === 13 || event.keyCode == "Escape" ) {
-            e.preventDefault();
-            $( this ).trigger( 'submit' );
-        }
+            if( event.keyCode === 10 || e.keyCode === 13 || event.keyCode == "Escape" ) {
+                e.preventDefault();
+                $( this ).trigger( 'submit' );
+            }
         });
 });
 </script>

@@ -245,7 +245,7 @@ input[type="text2"], textarea {
             responsive: true,
             order: [[ 0, "asc" ]],
             searching: true,
-            lengthMenu: [[10, 25, 50, -1], ['10 rows', '25 rows', '50 rows', "Show All"]],  
+            lengthMenu: [[25, 50, -1], ['10 rows', '25 rows', '50 rows', "Show All"]],  
             buttons: [
                 {
                     extend: 'pageLength',
@@ -269,7 +269,7 @@ input[type="text2"], textarea {
         });
 
         // use class instead of id because the button are repeating. ID can be only used once
-        $('.btn_edit').on('click', function() {
+        $(document).on('click', '.btn_edit', function() {
             var uuid = $(this).attr("data-uuid");
             var name = $(this).attr("data-branch-name");
             var code = $(this).attr("data-branch-code");
@@ -288,7 +288,7 @@ input[type="text2"], textarea {
             $('#form_modal_edit').attr('action', action);
         });
 
-        $('.btn_show').on('click', function() {
+        $(document).on('click', '.btn_show', function() {
             var uuid = $(this).attr("data-uuid");
             var name = $(this).attr("data-branch-name");
             var code = $(this).attr("data-branch-code");

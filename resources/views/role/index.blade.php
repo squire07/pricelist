@@ -201,7 +201,7 @@ input[type="text2"], textarea {
         });
 
         // use class instead of id because the button are repeating. ID can be only used once
-        $('.btn_edit').on('click', function() {
+        $(document).on('click', '.btn_edit', function() {
             var uuid = $(this).attr("data-uuid");
             var name = $(this).attr("data-role-name");
             var remarks = $(this).attr("data-branch-remarks");
@@ -214,7 +214,7 @@ input[type="text2"], textarea {
             $('#form_modal_edit').attr('action', action);
         });
 
-        $('.btn_show').on('click', function() {
+        $(document).on('click', '.btn_show', function() {
             var uuid = $(this).attr("data-uuid");
             var name = $(this).attr("data-role-name");
             var remarks = $(this).attr("data-role-remarks");

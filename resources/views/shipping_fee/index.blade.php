@@ -252,7 +252,7 @@ input[type="text2"], textarea {
         });
 
         // use class instead of id because the button are repeating. ID can be only used once
-        $('.btn_edit').on('click', function() {
+        $(document).on('click', '.btn_edit', function() {
             var uuid = $(this).attr("data-uuid");
             var parcel_size = $(this).attr("data-shipping_fee-parcel_size");
             var region = $(this).attr("data-shipping_fee-region");
@@ -269,7 +269,7 @@ input[type="text2"], textarea {
             $('#form_modal_edit').attr('action', action);
         });
 
-        $('.btn_show').on('click', function() {
+        $(document).on('click', '.btn_show', function() {
             var uuid = $(this).attr("data-uuid");
             var name = $(this).attr("data-branch-name");
             var code = $(this).attr("data-branch-code");

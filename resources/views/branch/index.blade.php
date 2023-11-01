@@ -245,7 +245,7 @@ input[type="text2"], textarea {
             responsive: true,
             order: [[ 0, "asc" ]],
             searching: true,
-            lengthMenu: [[25, 50, -1], ['10 rows', '25 rows', '50 rows', "Show All"]],  
+            lengthMenu: [[10, 25, 50, -1], ['10 rows', '25 rows', '50 rows', "Show All"]],  
             buttons: [
                 {
                     extend: 'pageLength',

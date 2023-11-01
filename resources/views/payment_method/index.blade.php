@@ -346,7 +346,7 @@
         });
 
     // use class instead of id because the button are repeating. ID can be only used once
-    $('.btn_edit').on('click', function() {
+    $(document).on('click', '.btn_edit', function() {
         // remove all the marked check
         $('input[type="checkbox"]').prop('checked', false);
         $('input[type="radio"]').prop('checked', false);
@@ -393,7 +393,7 @@
     });
 
 
-    $('.btn_show').on('click', function() {
+    $(document).on('click', '.btn_show', function() {
         // remove first the contents of the element before appending; see append() below
         $('#modal_show_branch_names').empty();
 
@@ -431,61 +431,6 @@
             $('#modal_show_branch_names').append('<span class="badge bg-info mx-2" style="font-size:85%">' + element + '</span>');
         });
     });
-        
-        // Prevent from redirecting back to homepage when cancel button is clicked accidentally
-        $('#modal-add , #modal-edit').on("hide.bs.modal", function (e) {
-
-            if (!$('#modal-add , #modal-edit').hasClass('programmatic')) {
-                e.preventDefault();
-                swal.fire({
-                    title: 'Are you sure?',
-                    text: "Please confirm that you want to cancel",
-                    type: 'warning',
-                    showCancelButton: true,
-                    allowEnterKey: false,
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'No',
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                }).then(function(result) {
-                    if (result.value) {
-                        $('#modal-add , #modal-edit').addClass('programmatic');
-                        $('#modal-add , #modal-edit').modal('hide');
-                        e.stopPropagation();
-                        $('#modal_add_name').val('');
-                        $('#modal_add_description').val('');
-                        $('#modal_add_code').val(''); 
-                        $('input[type="radio"]').prop('checked', false);
-                        $('input[type="checkbox"]').prop('checked', false);
-                        $('#modal_edit_remarks').val('');
-                    } else {
-                        e.stopPropagation();
-
-                    }
-                });
-
-            }
-            return true;
-        });
-
-        $('#modal-add , #modal-edit').on('hidden.bs.modal', function () {
-        $('#modal-add , #modal-edit').removeClass('programmatic');
-        });
-
-        // Prevent user from using enter key
-        $("input:text, button").keypress(function(event) {
-            if (event.keyCode === 10 || event.keyCode == 13) {
-                event.preventDefault();
-                return false;
-            }
-        });
-
-        $( '#modal-add, #modal-edit' ).on( 'keypress', function( e ) {
-        if( event.keyCode === 10 || e.keyCode === 13 ) {
-            e.preventDefault();
-            $( this ).trigger( 'submit' );
-        }
-        });
 });
 </script>
 @endsection

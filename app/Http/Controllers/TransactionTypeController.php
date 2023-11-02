@@ -62,23 +62,23 @@ class TransactionTypeController extends Controller
                                 ->whereId($transactionType->id)
                                 ->firstOrFail();
 
-        $period = $request->validity_period ? explode(' - ', $request->validity_period) : null;
+        $period = !is_null($request->validity_period) ? explode(' - ', $request->validity_period) : null;
 
         if($transaction_type->validity) {
             // update the validity if exists
             $validity = TransactionTypeValidity::whereDeleted(false)
                             ->whereTransactionTypeId($transaction_type->id)
                             ->first();
-            $validity->valid_from = $period[0] ?? null;
-            $validity->valid_to = $period[1] ?? null;
+            $validity->valid_from = !is_null($period) ? $period[0] : null;
+            $validity->valid_to = !is_null($period) ? $period[1] : null;
             $validity->updated_by = Auth::user()->name;
-            $validity->save();
+            $validity->update();
         } elseif (!is_null($period)) {
             // save the validity if not null
             $validity = new TransactionTypeValidity;
             $validity->transaction_type_id = $transaction_type->id;
-            $validity->valid_from = $period[0] ?? null;
-            $validity->valid_to = $period[1] ?? null;
+            $validity->valid_from = !is_null($period) ? $period[0] : null;
+            $validity->valid_to = !is_null($period) ? $period[1] : null;
             $validity->created_by = Auth::user()->name;
             $validity->save();
         }

@@ -24,22 +24,22 @@ class TransactionTypeValidity extends Model
     // mutator
     public function setValidFromAttribute($value)
     {
-        $this->attributes['valid_from'] = Carbon::parse($value);
+        $this->attributes['valid_from'] = !is_null($value) ? Carbon::parse($value) : null;
     }
 
     public function setValidToAttribute($value)
     {
-        $this->attributes['valid_to'] = Carbon::parse($value);
+        $this->attributes['valid_to'] = !is_null($value) ? Carbon::parse($value) : null;
     }
 
     public function getValidFromAttribute($value)
     {
-        return Carbon::parse($value)->format('m/d/Y');
+        return !is_null($value) ? Carbon::parse($value)->format('m/d/Y') : null;
     }
 
     public function getValidToAttribute($value)
     {
-        return Carbon::parse($value)->format('m/d/Y');
+        return !is_null($value) ? Carbon::parse($value)->format('m/d/Y') : null;
     }
 
     // relationships

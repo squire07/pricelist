@@ -72,6 +72,15 @@ class SalesController extends Controller
                                             ->where('transaction_type_validities.valid_from', '<=', $now)
                                             ->where('transaction_type_validities.valid_to', '>=', $now);
                                     });
+                                })->orWhere(function ($sub_query) use ($now) {
+                                    // Include transaction types with a valid period that includes the current date
+                                    $sub_query->whereExists(function ($validity_sub_query) use ($now) {
+                                        $validity_sub_query
+                                            ->from('transaction_type_validities')
+                                            ->whereRaw('transaction_type_validities.transaction_type_id = transaction_types.id')
+                                            ->where('transaction_type_validities.valid_from', null)
+                                            ->where('transaction_type_validities.valid_to', null);
+                                    });
                                 });
                             })->get();
  

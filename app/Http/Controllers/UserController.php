@@ -29,7 +29,7 @@ class UserController extends Controller
 
         $branches = Branch::whereDeleted(false)->whereIn('company_id', $company_ids)->get();
 
-        $roles = Role::whereDeleted(false)->get();
+        $roles = Role::whereDeleted(false)->whereNotIn('id', [12])->get();
         return view('user.index', compact('users','branches','companies','roles'));
     }
 

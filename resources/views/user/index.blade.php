@@ -108,7 +108,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="name">Email</label>
-                                <input type="email" class="form-control form-control-sm" name="email" maxlength="25" id="modal_add_email" required>
+                                <input type="email" class="form-control form-control-sm" name="email" maxlength="55" id="modal_add_email" required>
                             </div>
                             <div class="col-12">
                                 <label for="password">Password</label>
@@ -186,7 +186,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="name">Email</label>
-                                <input type="email" class="form-control form-control-sm" name="email" id="modal_edit_email" maxlength="255" required>
+                                <input type="email" class="form-control form-control-sm" name="email" id="modal_edit_email" maxlength="55" required>
                             </div>
                             <div class="col-12">
                                 <label for="password">Password</label>

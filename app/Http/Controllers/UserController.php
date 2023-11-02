@@ -46,26 +46,29 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        // $existName = User::whereName($request->name)->whereDeleted(false)->first();
-        // $existNameUsername = User::whereName($request->name)->whereUsername($request->username)->whereDeleted(false)->first();
-        // $existNameUsernameEmail = User::whereName($request->name)->whereUsername($request->username)->whereEmail($request->email)->whereDeleted(false)->first();
-        $exist = User::whereName($request->name)->orWhere('username',$request->username)->orWhere('email',$request->email)->whereDeleted(false)->first();
-        if(!$exist) {
-            $user = new User();
-            $user->uuid = Str::uuid();
-            $user->name = $request->name;
-            $user->username = $request->username;
-            $user->email = $request->email;
-            $user->password = Hash::make($request->password);
-            $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';
-            $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
-            $user->role_id = $request->role_id;
-            $user->active = 1; //set default status to Active
-            $user->created_by = Auth::user()->name;
-            $user->save();
+        if (User::where('username', $request->username)->where('email', $request->email)->exists()) {
+            return redirect()->back()->with('error', "User with username {$request->username} and email {$request->email} already exists!");
+        } else if (User::where('username', $request->username)->exists()) {
+            return redirect()->back()->with('error', "User with username {$request->username} already exists!");
+        } else if (User::where('email', $request->email)->exists()) {
+            return redirect()->back()->with('error', "User with email {$request->email} already exists!");
+        } 
+        
+        $user = new User();
+        $user->uuid = Str::uuid();
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';
+        $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
+        $user->role_id = $request->role_id;
+        $user->active = 1; //set default status to Active
+        $user->created_by = Auth::user()->name;
+        if($user->save()) {
             return redirect()->back()->with('success', 'User has been created!');
         } else {
-            return redirect()->back()->with('error', 'User already exists!');
+            return redirect()->back()->with('error', 'Failed to create user.');
         }
     }
 

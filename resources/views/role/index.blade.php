@@ -25,6 +25,9 @@
                             <th class="text-center">ID</th>
                             <th class="text-left">Name</th>
                             <th class="text-center">Created By</th>
+                            <th class="text-center">Created At</th>
+                            <th class="text-center">Updated By</th>
+                            <th class="text-center">Updated At</th>
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -34,6 +37,9 @@
                                 <td class="text-center">{{ $role->id }}</td>
                                 <td class="text-left">{{ $role->name }}</td>
                                 <td class="text-center">{{ $role->created_by }}</td>
+                                <td class="text-center">{{ $role->created_at }}</td>
+                                <td class="text-center">{{ $role->updated_by }}</td>
+                                <td class="text-center">{{ $role->updated_at }}</td>
                                 <td class="text-center">
                                     <button type="button" class="btn btn-sm btn-default btn_show" 
                                         data-toggle="modal"

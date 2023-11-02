@@ -37,18 +37,21 @@ class SalesInvoiceAssignmentController extends Controller
         // get current users branch ids 
         $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
 
-        // get all the cashiers
+        // Create a base query for cashiers
         $cashiers = User::whereDeleted(false)
-                        ->whereActive(true)
-                        ->whereBlocked(false)
-                        ->whereRoleId(2)
-                        ->where(function ($query) use ($user_branch) {
-                            $query->whereIn('branch_id',  explode(',', $user_branch))
-                                ->orWhere(function ($query) use ($user_branch) {
-                                    $query->where('branch_id',  $user_branch);
-                                });
-                        })
-                        ->get();
+                            ->whereActive(true)
+                            ->whereBlocked(false)
+                            ->whereRoleId(2);
+
+        // If the user's role is not 12, filter by branch
+        if (Auth::user()->role_id != 12) {
+            $cashiers = $cashiers->where(function ($query) use ($user_branch) {
+                $query->whereIn('branch_id', explode(',', $user_branch))
+                    ->orWhere('branch_id', $user_branch);
+            })->get();
+        } else {
+            $cashiers = $cashiers->get();
+        }
 
         return view('sales_invoice_assignment.index', compact('booklets','cashiers'));
     }

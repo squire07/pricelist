@@ -93,23 +93,22 @@ class UserController extends Controller
      */
     public function update(Request $request, $uuid)
     {
-        $user = User::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
+        if (User::where('email', $request->email)->whereNot('uuid', $uuid)->exists()) {
+            return redirect()->back()->with('error', "User with email {$request->email} already exists!");
+        } 
 
-        $existName = User::whereName($request->name)->whereDeleted(false)->first();
-        $existNameUsername = User::whereName($request->name)->whereUsername($request->username)->whereDeleted(false)->first();
-        $existNameUsernameEmail = User::whereName($request->name)->whereUsername($request->username)->whereEmail($request->email)->whereDeleted(false)->first();
-        if(!$existName || !$existNameUsername || !$existNameUsernameEmail) {
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';
-            $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
-            $user->active = $request->active; 
-            $user->blocked = $request->blocked; 
-            $user->created_by = Auth::user()->name;
-            $user->save();
+        $user = User::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';
+        $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
+        $user->active = $request->active; 
+        $user->blocked = $request->blocked; 
+        $user->created_by = Auth::user()->name;
+        if($user->update()) {
             return redirect()->back()->with('success', 'User has been updated!');
         } else {
-            return redirect()->back()->with('error', 'User already exists!');
+            return redirect()->back()->with('error', 'Failed to update user.');
         }
     }
 

@@ -252,7 +252,7 @@
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="modal_edit_close" >Close</button>
-                        <button type="submit" class="btn btn-primary btn-sm m-2"><i class="fas fa-save mr-2"></i>Save</button>
+                        <button type="submit" class="btn btn-primary btn-sm m-2"><i class="fas fa-save mr-2"></i>Update</button>
                     </div>
 
                 </form>
@@ -319,7 +319,7 @@
             $('input[type="checkbox"]').prop('checked', false);
             $('input[type="radio"]').prop('checked', false);
 
-            var uuid = $(this).attr("data-user-uuid");
+            var uuid = $(this).attr("data-uuid");
             var company_id = $(this).attr("data-company-id");
             var branch_id = $(this).attr("data-branch-id");
             var r_id = $(this).attr("data-role-id");

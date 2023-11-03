@@ -146,9 +146,8 @@ $(document).ready(function() {
                     required: 'true',
                 },
                 inputValidator: (value) => {
-                var regex = /^[a-zA-Z0-9\s]*$/;
                 return new Promise((resolve) => {
-                    if (value.length >= 4 && regex.test(value) === true) {
+                    if (value.length >= 4) {
                         resolve();
                     } else if (value.length == 0) {
                         resolve('Please fill out this field!');

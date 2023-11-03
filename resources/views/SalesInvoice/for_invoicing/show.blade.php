@@ -135,6 +135,8 @@ $(document).ready(function() {
                 icon: 'warning',
                 showCancelButton: true,
                 allowEnterKey: false,
+                allowOutsideClick: false,
+                onOpen: () => Swal.getConfirmButton().focus(),
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 input: 'text',

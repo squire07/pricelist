@@ -163,7 +163,7 @@
     </div>
 
     {{--  modal for show --}}
-    <div class="modal fade" id="modal-show">
+    <div class="modal fade" id="modal-show" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">

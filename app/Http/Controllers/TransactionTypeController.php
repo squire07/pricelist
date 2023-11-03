@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Helpers\Helper;
 use Auth;
+use Illuminate\Support\Facades\Artisan;
 
 class TransactionTypeController extends Controller
 {
@@ -95,26 +96,13 @@ class TransactionTypeController extends Controller
     }
 
     // this should be moved at api
-    public function sync_transaction_type() {
-
-        // ERPNext 
-        $param = '/api/resource/Price List?limit=500&filters=[["selling","=","1"]]';
-        $data = Helper::get_erpnext_data($param);
-
+    public function sync_transaction_type() 
+    {
         // to refactor soon
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('transaction_types')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
-        foreach($data['data'] as $key => $price_lists){
-            // create 
-            $transaction_type = new TransactionType();
-            $transaction_type->uuid = Str::uuid();
-            $transaction_type->name = $price_lists['name'];
-            $transaction_type->created_by = Auth::user()->name;
-            $transaction_type->updated_by = Auth::user()->name;
-            $transaction_type->save();
-        }
+        Artisan::call('db:seed', ['--class' => 'TransactionTypeSeeder',]);
         return true;
     }
 }

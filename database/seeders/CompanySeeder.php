@@ -27,7 +27,7 @@ class CompanySeeder extends Seeder
         $param = '/api/resource/Company';
         $data = Helper::get_erpnext_data($param);
 
-        foreach($data['data'] as $key => $company) {
+        foreach($data['data']['data'] as $key => $company) {
             Company::create([
                 'uuid' => Str::uuid(),
                 'name' => $company['name'],

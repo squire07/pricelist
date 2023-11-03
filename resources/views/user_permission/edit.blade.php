@@ -136,13 +136,16 @@
 
             // show the confirmation
             Swal.fire({
-                title: 'Are you sure?',
-                    text: "Please confirm that you want to cancel",
+                title: 'Return to User List',
+                    text: "",
                     icon: 'warning',
+                    allowEnterKey: false,
                     showCancelButton: true,
+                    allowOutsideClick: false,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes'
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.location = "/users";

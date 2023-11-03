@@ -179,11 +179,10 @@
                             </table>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-12 text-center">
-                            <input type="button" value="Cancel" id="btn_cancel_so" class="btn btn-lg btn-danger float-left">
-                            <button class="btn btn-primary btn-lg m-2 float-right" style="margin-top: 8px" id="btn_save_so"><i class="fas fa-save mr-2"></i>Update Sales Order</button>
+                            <input type="button" value="Cancel" id="btn_cancel_so" class="btn btn-lg btn-danger">
+                            <button class="btn btn-primary btn-lg m-2 " id="btn_save_so"><i class="fas fa-save mr-2"></i>Save Sales Order</button>
                         </div>
                     </div>
 
@@ -375,7 +374,8 @@ tbody tr:nth-child(odd) {
                 Swal.fire({
                     title: 'Invalid Quantity!',
                     icon: 'error',
-                    allowEnterKey: false
+                    allowEnterKey: false,
+                    allowOutsideClick: false
                 });
             }
 
@@ -476,21 +476,24 @@ tbody tr:nth-child(odd) {
                         title: 'Select an item',
                         text: 'Select an item.', 
                         icon: 'error',
-                        allowEnterKey: false
+                        allowEnterKey: false,
+                        allowOutsideClick: false
                     });
                 } else if($('#quantity').val() == '' || $('#quantity').val() == 0) {
                     Swal.fire({
                         title: 'Invalid quantity',
                         text: 'Add quantity.', 
                         icon: 'error',
-                        allowEnterKey: false
+                        allowEnterKey: false,
+                        allowOutsideClick: false
                     });
                 } else {
                     Swal.fire({
                         title: 'Please add an item',
                         text: 'Select an item and add quantity.', 
                         icon: 'error',
-                        allowEnterKey: false
+                        allowEnterKey: false,
+                        allowOutsideClick: false
                     });
                 }
             }
@@ -529,6 +532,7 @@ tbody tr:nth-child(odd) {
                 icon: 'warning',
                 showCancelButton: true,
                 allowEnterKey: false,
+                allowOutsideClick: false,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, remove it!'
@@ -585,7 +589,8 @@ tbody tr:nth-child(odd) {
                         title: 'Removed!',
                         text: 'Item has been removed.',
                         icon: 'success',
-                        allowEnterKey: false
+                        allowEnterKey: false,
+                        allowOutsideClick: false
                     });
                 }
             });
@@ -680,6 +685,7 @@ tbody tr:nth-child(odd) {
                     icon: 'warning',
                     showCancelButton: true,
                     allowEnterKey: false,
+                    allowOutsideClick: false,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes'
@@ -713,6 +719,7 @@ tbody tr:nth-child(odd) {
                     icon: 'warning',
                     showCancelButton: true,
                     allowEnterKey: false,
+                    allowOutsideClick: false,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Yes, save!'
@@ -727,7 +734,8 @@ tbody tr:nth-child(odd) {
                     title: 'Please add an item',
                     text: 'Select an item and add quantity.', 
                     icon: 'error',
-                    allowEnterKey: false
+                    allowEnterKey: false,
+                    allowOutsideClick: false
                 });
             }
         });
@@ -736,7 +744,8 @@ tbody tr:nth-child(odd) {
             Swal.fire({
                 title: field + ' is required',
                 icon: 'error',
-                allowEnterKey: false
+                allowEnterKey: false,
+                allowOutsideClick: false
             });
         }
 

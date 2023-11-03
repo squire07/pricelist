@@ -93,7 +93,7 @@
         <div class="card-footer text-center">
             <a href="{{ url('sales-invoice/for-validation') }}" class="btn btn-lg btn-info float-left" style="margin-top: 8px"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
             <a href="{{ url('sales-invoice/for-invoice/' . $sales_order->uuid . '/edit' ) }}" class="btn btn-lg btn-success m-2 float-right"><i class="far fa-share-square"></i>&nbsp;Validate</a>
-            <button class="btn btn-lg btn-danger float-right" style="margin-top: 8px" id="btn-for-cancel" data-uuid="{{ $sales_order->uuid }}" data-so-no="{{ $sales_order->so_no }}"><i class="fas fa-ban"></i>&nbsp;Cancel Invoice</button>
+            <button class="btn btn-lg btn-danger float-right" style="margin-top: 8px" id="btn-for-cancel" data-uuid="{{ $sales_order->uuid }}" data-si-no="{{ $sales_order->si_no }}"><i class="fas fa-ban"></i>&nbsp;Cancel Invoice</button>
         </div>
     </div>
 
@@ -130,17 +130,20 @@ $(document).ready(function() {
     $('#btn-for-cancel').on('click', function() {
         var uuid = $(this).attr("data-uuid");
         var so_no = $(this).attr("data-so-no");
+        var si_no = $(this).attr("data-si-no");
 
         console.log('test');
 
         // show the confirmation
         Swal.fire({
-            title: 'Are you sure to cancel ' + so_no + ' ?',
+            title: 'Are you sure to cancel ' + si_no + ' ?',
                 text: 'Remarks:',
                 icon: 'warning',
                 showCancelButton: true,
+                allowOutsideClick: false,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
+                onOpen: () => Swal.getConfirmButton().focus(),
                 input: 'text',
                 inputName: '',
                 inputAttributes: {

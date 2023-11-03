@@ -14,7 +14,7 @@
                 @foreach($histories as $history)
                     <tr>
                         <td>{{ $history->event_name }}</td>
-                        <td>{{ $history->remarks }}</td>
+                        <td class="text-center">{{ $history->remarks }}</td>
                         <td class="text-center">{{ $history->created_by }}</td>
                         <td class="text-center">{{ $history->created_at }}</td>
                     </tr>

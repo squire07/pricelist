@@ -70,7 +70,6 @@ class CompanyController extends Controller
     public function update(Request $request, $uuid)
     {
         $company = Company::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
-        $company->name = $request->name;
         $company->code = $request->code;
         $company->status_id = $request->status;
         $company->remarks = $request->remarks;

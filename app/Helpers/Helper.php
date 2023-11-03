@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use App\Models\Branch;
 use App\Models\Company;
+use App\Models\Distributor;
 use App\Models\History;
 use App\Models\PermissionModule;
 use App\Models\Sales;
@@ -188,14 +189,25 @@ class Helper {
                 ],
             ]);
 
-            return json_decode($response->getBody(), true);
+            return [
+                'status_code' => $response->getStatusCode(),
+                'data' => json_decode($response->getBody(), true),
+            ];
         } catch (\Exception $e) {
-            return $e;
+            return [
+                'status_code' => 404,
+                'error' => $e->getMessage(),
+            ];
         }
     }
 
     public static function get_si_assignment_no($id) {
         $si_assignment_detail = SalesInvoiceAssignmentDetail::whereId($id)->first();
         return $si_assignment_detail->series_number;
+    }
+
+    public static function get_distributor_name_by_bcid($bcid) {
+        $distributor = Distributor::whereBcid($bcid)->first();
+        return $distributor->name;
     }
 }

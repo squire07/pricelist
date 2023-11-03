@@ -190,11 +190,11 @@
                             </div>
                             <div class="col-12">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control form-control-sm" name="password" id="password" required>
+                                <input type="password" class="form-control form-control-sm" name="password" id="password_edit">
                             </div>
                             <div class="col-12">
                                 <label for="confirmpassword">Confirm Password</label>
-                                <input type="password" class="form-control form-control-sm" id="confirmpassword" required>
+                                <input type="password" class="form-control form-control-sm" id="confirmpassword_edit">
                                 <div class="form-text confirm-message"></div>
                             </div>
                             <div class="col-12">
@@ -212,9 +212,9 @@
                                 <div class="form-group">
                                     <label for="status">User Status</label>
                                     <div class="col-12">
-                                        <input type="radio" name="active" value="1">
+                                        <input type="radio" name="active" value="1" id="status_1">
                                         <label for="" class="mr-4">Active</label>
-                                        <input type="radio" name="active" value="0">
+                                        <input type="radio" name="active" value="0" id="status_0">
                                         <label for="">Inactive</label>
                                     </div>
                                 </div>
@@ -223,9 +223,9 @@
                                 <div class="form-group">
                                     <label for="status">Block User?</label>
                                     <div class="col-12">
-                                        <input type="radio" name="blocked" value="1">
+                                        <input type="radio" name="blocked" value="1" id="blocked_1" required>
                                         <label for="" class="mr-4">Yes</label>
-                                        <input type="radio" name="blocked" value="0">
+                                        <input type="radio" name="blocked" value="0" id="blocked_0" required>
                                         <label for="">No</label>
                                     </div>
                                 </div>
@@ -314,10 +314,7 @@
         });
 
         // use class instead of id because the button are repeating. ID can be only used once
-        $('.btn_edit').on('click', function() {
-            // remove all the marked check
-            $('input[type="checkbox"]').prop('checked', false);
-            $('input[type="radio"]').prop('checked', false);
+        $(document).on('click', '.btn_edit', function() {
 
             var uuid = $(this).attr("data-uuid");
             var company_id = $(this).attr("data-company-id");
@@ -336,11 +333,18 @@
             $('#modal_show_active').val(active);
             $('#modal_show_blocked').val(blocked);
 
-            // add check to is_cash and status
+            // add check to active status
             if(active == 1) {
-                $('input[type="radio"][value="1"]').prop('checked', true);
+                $('#status_1[value="1"]').prop('checked', true);
             } else if(active == 0) {
-                $('input[type="radio"][value="0"]').prop('checked', true);
+                $('#status_0[value="0"]').prop('checked', true);
+            } 
+
+            // add check to blocked status
+            if(blocked == 1) {
+                $('#blocked_1[value="1"]').prop('checked', true);
+            } else if(blocked == 0) {
+                $('#blocked_0[value="0"]').prop('checked', true);
             } 
 
             // add check to branch checkboxes
@@ -405,6 +409,7 @@
             $('#modal-add, #modal-edit').removeClass('programmatic');
         });
 
+        //password and confirm password success and error
         $('#password, #confirmpassword').on('keyup', function(){
 
             $('.confirm-message').removeClass('success-message').removeClass('error-message');

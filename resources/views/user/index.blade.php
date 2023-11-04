@@ -141,10 +141,10 @@
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
-                                    <label for="branches">Branches</label>
+                                    <label for="branches">Branches</label>                                   
                                     @foreach($branches as $branch)
                                         <br/>
-                                        <input type="checkbox" name="branch_id[]" id="modal_add_branch_{{ $branch->id }}" value={{ $branch->id }}><span class="ml-2">{{ $branch->name }}</span>
+                                        <input type="checkbox" name="branch_id[]" class="{{ $branch->company_id == 3 ? 'branch-local' : 'branch-premier' }}" id="modal_add_branch_{{ $branch->id }}" value={{ $branch->id }} disabled><span class="ml-2">{{ $branch->name }}</span>
                                     @endforeach
                                 </div>
                             </div>
@@ -241,13 +241,22 @@
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
+                                    <label for="branches">Branches</label>                                   
+                                    @foreach($branches as $branch)
+                                        <br/>
+                                        <input type="checkbox" name="branch_id[]" class="{{ $branch->company_id == 3 ? 'branch-local' : 'branch-premier' }}" id="modal_edit_branch_{{ $branch->id }}" value={{ $branch->id }} disabled><span class="ml-2">{{ $branch->name }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
+                            {{-- <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
                                     <label for="branches">Branches</label>
                                     @foreach($branches as $branch)
                                         <br/>
                                         <input type="checkbox" name="branch_id[]" id="modal_edit_branch_{{ $branch->id }}" value={{ $branch->id }}><span class="ml-2">{{ $branch->name }}</span>
                                     @endforeach
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -392,9 +401,12 @@
                         $('#modal_add_email').val('');
                         $('#password').val('');
                         $('#confirmpassword').val('');
+                        $('#password_edit').val('');
+                        $('#confirmpassword_edit').val('');
                         $('.confirm-message').text('');
                         $('#modal_add_role_id').val(''); 
-                        $('input[type="checkbox"]').prop('checked', false);                 
+                        $('input[type="checkbox"]').prop('checked', false);
+                        $('.branch-premier, .branch-local').prop('disabled', true);                    
                     } else {
                         e.stopPropagation();
 
@@ -409,7 +421,7 @@
             $('#modal-add, #modal-edit').removeClass('programmatic');
         });
 
-        //password and confirm password success and error
+        //password and confirm password success and error for create modal
         $('#password, #confirmpassword').on('keyup', function(){
 
             $('.confirm-message').removeClass('success-message').removeClass('error-message');
@@ -432,6 +444,30 @@
             }
         });
 
+        
+        //password and confirm password success and error for edit modal
+        $('#password_edit, #confirmpassword_edit').on('keyup', function(){
+
+            $('.confirm-message').removeClass('success-message').removeClass('error-message');
+
+            let password_edit=$('#password_edit').val();
+            let confirm_password_edit=$('#confirmpassword_edit').val();
+
+            if(password_edit === ""){
+                $('.confirm-message').text("Password Field cannot be empty").addClass('error-message');
+            }
+            else if(confirm_password_edit === ""){
+                $('.confirm-message').text("Confirm Password Field cannot be empty").addClass('error-message');
+            }
+            else if(confirm_password_edit === password_edit)
+            {
+                $('.confirm-message').text('Password Match!').addClass('success-message');
+            }
+            else{
+                $('.confirm-message').text("Password Doesn't Match!").addClass('error-message');
+            }
+        });
+
         // Prevent user from using enter key
             
         $("input:text, button").keypress(function(event) {
@@ -445,6 +481,24 @@
             if( event.keyCode === 10 || e.keyCode === 13 || event.keyCode == "Escape" ) {
                 e.preventDefault();
                 $( this ).trigger( 'submit' );
+            }
+        });
+
+        //enable branch when company is selected
+
+        $("input[type='checkbox'][value='2']").on('click', function(){
+        if ($(this).prop('checked')) {
+            $('.branch-premier').prop('disabled', false);
+            } else {
+            $('.branch-premier').prop('disabled', true);
+            }
+        });
+
+        $("input[type='checkbox'][value='3']").on('click', function(){
+        if ($(this).prop('checked')) {
+            $('.branch-local').prop('disabled', false);
+            } else {
+            $('.branch-local').prop('disabled', true);
             }
         });
 });

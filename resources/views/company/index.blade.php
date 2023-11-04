@@ -148,7 +148,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="remarks">Remarks</label>
-                                    <input type="" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks">
+                                    <input type="text" class="form-control form-control-sm text-bold" name="remarks" id="modal_edit_remarks">
                                 </div>
                             </div>
                         </div>
@@ -167,7 +167,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Branch Details</h4>
+                    <h4 class="modal-title">Company Details</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -252,8 +252,8 @@
 
             $('#modal_edit_name').val(name); 
             $('#modal_edit_code').val(code);
-            $('#modal_show_remarks').val(remarks);
-            $('#modal_show_status_id').val(status_id);
+            $('#modal_edit_remarks').val(remarks);
+            $('#modal_edit_status_id').val(status_id);
 
             // define the edit form action
             let action = window.location.origin + "/companies/" + uuid;

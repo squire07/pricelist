@@ -131,14 +131,14 @@ $(document).ready(function() {
         // show the confirmation
         Swal.fire({
             title: 'Are you sure to return \n' + so_no + ' \nto Draft?',
-                text: 'Remarks:',
+            text: 'Remarks:',
                 icon: 'warning',
                 showCancelButton: true,
                 allowEnterKey: false,
                 allowOutsideClick: false,
-                onOpen: () => Swal.getConfirmButton().focus(),
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
+                onOpen: () => Swal.getConfirmButton().focus(),
                 input: 'text',
                 inputName: '',
                 inputAttributes: {
@@ -165,7 +165,7 @@ $(document).ready(function() {
                 $('#hidden_uuid').val(uuid);
 
                 // update the action of form_for_invoicing 
-                $('#hidden_si_remarks').val(result.value);
+                $('#hidden_so_remarks').val(result.value);
                 $('#form_for_return').attr('action', window.location.origin + '/sales-invoice/for-invoice/' + uuid);
 
                 // finally, submit the form

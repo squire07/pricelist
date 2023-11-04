@@ -136,10 +136,11 @@ $(document).ready(function() {
 
         // show the confirmation
         Swal.fire({
-            title: 'Are you sure to cancel ' + si_no + ' ?',
+            title: 'Are you sure to cancel \n' + si_no + '?',
                 text: 'Remarks:',
                 icon: 'warning',
                 showCancelButton: true,
+                allowEnterKey: false,
                 allowOutsideClick: false,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',

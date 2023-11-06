@@ -58,10 +58,10 @@
                                             <td class="text-center">{{ $series->count }}</td>
                                             <td class="text-center">
                                                 <div class="progress progress-sm">
-                                                    <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ $series->used }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $series->used . '%'}}">
+                                                    <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ $series->percentage_used }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $series->percentage_used . '%' }}">
                                                     </div>
                                                 </div>
-                                                <span>{{ $series->used . '%' }}</span>
+                                                <span>{{ $series->percentage_used . '%' }}</span>
                                             </td>
                                             <td class="text-center">{{ $series->created_at }}</td>
                                             <td class="text-center">{{ $series->created_by }}</td>
@@ -106,10 +106,10 @@
                                             <td class="text-center">{{ $series->count }}</td>
                                             <td class="text-center">
                                                 <div class="progress progress-sm">
-                                                    <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ $series->used }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $series->used . '%'}}">
+                                                    <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ $series->percentage_used }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $series->percentage_used . '%' }}">
                                                     </div>
                                                 </div>
-                                                <span>{{ $series->used . '%' }}</span>
+                                                <span>{{ $series->percentage_used . '%' }}</span>
                                             </td>
                                             <td class="text-center">{{ $series->created_at }}</td>
                                             <td class="text-center">{{ $series->created_by }}</td>

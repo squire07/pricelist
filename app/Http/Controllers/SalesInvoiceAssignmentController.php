@@ -32,6 +32,8 @@ class SalesInvoiceAssignmentController extends Controller
             }            
             // add a new element (column) to collection `booklet`; NOT `booklets`
             $booklet['used'] = $used_count;
+
+            $booklet['percentage_used'] = $used_count == 0 ? 0 : round(($used_count / $booklet->count) * 100);
         }
 
         // get current users branch ids 

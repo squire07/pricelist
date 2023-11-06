@@ -248,15 +248,6 @@
                                     @endforeach
                                 </div>
                             </div>
-                            {{-- <div class="col-md-12 col-sm-12">
-                                <div class="form-group">
-                                    <label for="branches">Branches</label>
-                                    @foreach($branches as $branch)
-                                        <br/>
-                                        <input type="checkbox" name="branch_id[]" id="modal_edit_branch_{{ $branch->id }}" value={{ $branch->id }}><span class="ml-2">{{ $branch->name }}</span>
-                                    @endforeach
-                                </div>
-                            </div> --}}
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -354,6 +345,15 @@
                 $('#blocked_1[value="1"]').prop('checked', true);
             } else if(blocked == 0) {
                 $('#blocked_0[value="0"]').prop('checked', true);
+            } 
+
+            if(company_id == 2) {
+                $('.branch-premier').prop('disabled', false);
+            } else if(company_id == 3) {
+                $('.branch-local').prop('disabled', false);
+            } else {
+                $('.branch-local').prop('disabled', false);
+                $('.branch-premier').prop('disabled', false);
             } 
 
             // add check to branch checkboxes

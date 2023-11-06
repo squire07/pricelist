@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Sales;
 use App\Helpers\Helper;
 use App\Models\History;
+use App\Models\Payload;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
 use App\Models\SalesInvoice;
@@ -16,6 +17,7 @@ use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
+
 
 class ForInvoicingController extends Controller
 {
@@ -110,26 +112,39 @@ class ForInvoicingController extends Controller
                             })
                             ->get();
 
-        // get the next available sales invoice assignment number by user's id and sales order branch id
-        $si_assignment = SalesInvoiceAssignment::whereDeleted(false)
-                            ->whereUserId(Auth::user()->id) //Auth::user()->id
+        // get all the booklets assigned to Auth::user()->id 
+        $si_assignments = SalesInvoiceAssignment::with('booklet_details')
+                            ->whereDeleted(false)
+                            ->whereUserId(Auth::user()->id)
                             // ->whereBranchId($sales_order->branch_id) //$sales_order->branch_id
-                            ->with('booklet_details', function($query) {
-                                $query->where('used',0)->first();
-                            })
-                            ->first();
-        
+                            ->get();
+
+
+        // get the next available booklet
+        $available_booklet_id = null;
+        foreach($si_assignments as $booklet) {
+            foreach($booklet->booklet_details as $detail) {
+                if($detail->used == 0) {
+                    $available_booklet_id = $booklet->id;
+                    // stop the loop
+                    break;
+                } 
+            }
+        }
+
         // needs to refactor this
-        if(!is_null($si_assignment)) {
-            $used = SalesInvoiceAssignmentDetail::whereDeleted(false)
-                        ->whereSalesInvoiceAssignmentId($si_assignment->id)
+        if(!is_null($available_booklet_id)) {
+            $booklet = SalesInvoiceAssignment::whereId($available_booklet_id)
+                        ->first();
+            $booklet_details = SalesInvoiceAssignmentDetail::whereDeleted(false)
+                        ->whereSalesInvoiceAssignmentId($available_booklet_id)
                         ->whereUsed(0)
                         ->get();
         
             // show the alert if remaining invoice is less than equal to 20%
-            $usedCount = count($used); // Get the count of $used
-            $totalCount = $si_assignment->count ?? 0; // Get the total count of invoices assigned
-            $percentage = ($totalCount > 0) ? ($usedCount / $totalCount) * 100 : 0; // Calculate percentage
+            $usedCount = count($booklet_details); // Get the count of $used
+            $totalCount = $booklet->count ?? 0; // Get the total count of invoices assigned
+            $percentage = ($totalCount > 0) ? round(($usedCount / $totalCount) * 100) : 0; // Calculate percentage
 
             if ($usedCount === 0) {
                 $alert_type = 'danger';
@@ -142,7 +157,7 @@ class ForInvoicingController extends Controller
             $alert_type = 'danger';
         }
 
-        return view('SalesInvoice.for_invoicing.edit', compact('sales_order','payment_types','si_assignment','alert_type'));
+        return view('SalesInvoice.for_invoicing.edit', compact('sales_order','payment_types','booklet_details','alert_type'));
     }
 
     /**
@@ -211,6 +226,26 @@ class ForInvoicingController extends Controller
 
                 // pass the message to user if the update is successful
                 $message = $sales->so_no . ' payment submitted!';
+
+                // PAYLOAD
+                /* create the erpnext payload here
+                *  note: all payload will be submitted to erpnext after 'for validation'
+                */
+                $payload = new Payload();
+                $payload->uuid = $sales->uuid;
+                $payload->bcid = $sales->bcid;
+                $payload->distributor = json_encode(Helper::create_distributor_payload($sales->bcid)) ?? null;
+                $payload->so = json_encode(Helper::create_so_payload($sales->id));
+                $payload->si = null;
+                $payload->nuc_points = $sales->total_nuc;
+                $payload->created_by = Auth::user()->name;
+                $payload->save();
+
+                // post NUC points to prime
+
+
+
+
             }
 
             Helper::transaction_history($sales->id, $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Submit Payment', $sales->so_remarks);

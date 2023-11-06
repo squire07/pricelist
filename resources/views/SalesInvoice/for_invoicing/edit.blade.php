@@ -168,12 +168,16 @@
 
                         {{-- Show the next available invoice number --}}
                         <div class="col-12">
-                            <input type="hidden" name="si_assignment_id" value="{{ !is_null($si_assignment) && isset($si_assignment->booklet_details[0]) ? $si_assignment->booklet_details[0]->id : null }}">
+                            @php
+                                $first_booklet = !is_null($booklet_details) && isset($booklet_details[0]) ? $booklet_details[0] : null;
+                            @endphp
+                            
+                            <input type="hidden" name="si_assignment_id" value="{{ $first_booklet ? $first_booklet->id : null }}">
                             <h2>
                                 <span>Invoice No:</span>
                                 <input type="text" id="si_assignment_no" class="custom-input-text"
-                                    data-id="{{ !is_null($si_assignment) && isset($si_assignment->booklet_details[0]) ? $si_assignment->booklet_details[0]->id : null }}" 
-                                    value="{{ !is_null($si_assignment) && isset($si_assignment->booklet_details[0]) ? $si_assignment->booklet_details[0]->series_number : null }}" 
+                                    data-id="{{ $first_booklet ? $first_booklet->id : null }}" 
+                                    value="{{ $first_booklet ? $first_booklet->series_number : null }}" 
                                     readonly tabindex="-1">
                             </h2>
                         </div>

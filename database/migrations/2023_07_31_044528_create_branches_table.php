@@ -20,6 +20,7 @@ return new class extends Migration
             $table->tinyInteger('status_id')->default(8);
             $table->string('cost_center', 12)->nullable();
             $table->string('cost_center_name')->nullable();
+            $table->string('warehouse')->nullable();
             $table->text('remarks')->nullable();
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();

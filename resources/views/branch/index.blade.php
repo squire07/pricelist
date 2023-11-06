@@ -26,7 +26,7 @@
                             <th class="text-center">Code</th>
                             <th class="text-center">Cost Center</th>
                             <th class="text-center">Cost Center Name</th>
-                            <th class="text-center">Created By</th>
+                            <th class="text-center">Warehouse</th>
                             <th class="text-center">Status</th>
                             <th class="text-center">Action</th>
                         </tr>
@@ -38,7 +38,7 @@
                                 <td class="text-center">{{ $branch->code }}</td>
                                 <td class="text-center">{{ $branch->cost_center }}</td>
                                 <td>{{ $branch->cost_center_name }}</td>
-                                <td class="text-center">{{ $branch->created_by }}</td>
+                                <td>{{ $branch->warehouse }}</td>
                                 <td class="text-center"><span class="badge {{ Helper::badge($branch->status_id) }}">{{ $branch->status->name }}</span></td>
                                 <td class="text-center">
                                     <button type="button" class="btn btn-sm btn-default btn_show" 

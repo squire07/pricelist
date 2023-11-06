@@ -136,19 +136,21 @@
                                     <input type="text" class="form-control form-control-sm text-bold" maxlength="2" name="code" id="modal_edit_code" required>
                                 </div>
                             </div>
-                            <div class="col-md-4 col-sm-12">
+                            <div class="col-md-6 col-sm-12">
                                 <div class="form-group">
-                                    Company Status?<br>
-                                    <input type="radio" id="modal_edit_status_id" name="status" value="8" checked="checked" style="margin-top: 8px">
-                                    <label>Active</label>&nbsp;
-                                    <input type="radio" id="modal_edit_status_id" name="status" value="9">
-                                    <label>Inactive<br>
+                                    <label for="status">Company Status</label>
+                                    <div class="col-12">
+                                        <input type="radio" id="status_8" name="status" value="8">
+                                        <label for="" class="mr-4">Active</label>
+                                        <input type="radio" id="status_9" name="status" value="9">
+                                        <label for="">Inactive</label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="remarks">Remarks</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" name="remarks" id="modal_edit_remarks">
+                                    <input type="text" class="form-control form-control-sm text-bold" name="remarks" id="modal_edit_remarks" style="text-transform:uppercase" required>
                                 </div>
                             </div>
                         </div>
@@ -253,7 +255,13 @@
             $('#modal_edit_name').val(name); 
             $('#modal_edit_code').val(code);
             $('#modal_edit_remarks').val(remarks);
-            $('#modal_edit_status_id').val(status_id);
+            $('#modal_show_status_id').val(status_id);
+
+            if(status_id == 'Active') {
+                $('#status_8[value="8"]').prop('checked', true);
+            } else {
+                $('#status_9[value="9"]').prop('checked', true);
+            } 
 
             // define the edit form action
             let action = window.location.origin + "/companies/" + uuid;

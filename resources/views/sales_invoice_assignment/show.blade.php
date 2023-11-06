@@ -66,6 +66,7 @@
                             <th class="text-center">Used (?)</th>
                             <th class="text-center">SO No.</th>
                             <th class="text-center">SI No.</th>
+                            <th class="text-center">Status/Remarks</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,12 +75,15 @@
                                 <td class="text-center">{{ $detail->id }}</td>
                                 <td class="text-center">{{ $series->cost_center . '-' . $detail->series_number }}</td>
                                 <td class="text-center">
-                                    @if($detail->used == 1)
+                                    @if($detail->used == 1 && Helper::get_sales_status($detail->id) != 'Cancelled')
                                         <i class="fas fa-check-circle" style="color:#28a745"></i>
+                                    @elseif($detail->used == 1 && Helper::get_sales_status($detail->id) == 'Cancelled')
+                                        <i class="fas fa-exclamation-circle" style="color:#dc3545"></i>
                                     @endif
                                 </td>
                                 <td class="text-center">{{ $detail->so_no }}</td>
                                 <td class="text-center">{{ $detail->si_no }}</td>
+                                <td class="text-center text-red">{{ Helper::get_sales_status($detail->id) == 'Cancelled' ? 'Cancelled' : null }}</td>
                             </tr>
                         @endforeach
                     </tbody>

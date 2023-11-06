@@ -201,6 +201,31 @@ class Helper {
         }
     }
 
+    public static function post_erpnext_data($param, $post_data) {
+        $client = new Client();
+    
+        try {
+            $response = $client->post(env('ERPNEXT_URL') . $param, [
+                'headers' => [
+                    'Authorization' => 'Token ' . env('ERPNEXT_API_KEY') . ':' . env('ERPNEXT_API_SECRET'),
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json', // Set the content type to JSON
+                ],
+                'json' => $post_data, // Provide the data to be posted in JSON format
+            ]);
+    
+            return [
+                'status_code' => $response->getStatusCode(),
+                'data' => json_decode($response->getBody(), true),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status_code' => 404,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
     public static function get_si_assignment_no($id) {
         $si_assignment_detail = SalesInvoiceAssignmentDetail::whereId($id)->first();
         return $si_assignment_detail->series_number;
@@ -209,5 +234,10 @@ class Helper {
     public static function get_distributor_name_by_bcid($bcid) {
         $distributor = Distributor::whereBcid($bcid)->first();
         return $distributor->name;
+    }
+
+    public static function get_sales_status($si_assignment_id) {
+        $status = Sales::with('status')->whereSiAssignmentId($si_assignment_id)->first();
+        return $status->status->name ?? null;
     }
 }

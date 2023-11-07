@@ -51,11 +51,14 @@
                                 <td class="text-center">
                                     @if($user->active == 1)
                                         <i class="fas fa-check-circle" style="color:#28a745"></i>
+                                    @else
+                                        <i class="fas fa-times-circle" style="color:#dc3545"></i>
                                     @endif
                                 </td>
                                 <td class="text-center">
                                     @if($user->blocked == 1)
-                                        <i class="fas fa-times-circle" style="color:#dc3545"></i>
+                                        BLOCKED
+                                        {{-- <i class="fas fa-times-circle" style="color:#dc3545"></i> --}}
                                     @endif
                                 </td>
                                 <td class="text-center">

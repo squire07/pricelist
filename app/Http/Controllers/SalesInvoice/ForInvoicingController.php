@@ -132,6 +132,8 @@ class ForInvoicingController extends Controller
             }
         }
 
+        $booklet_details = null; // Initialize $booklet_details as null
+
         // needs to refactor this
         if(!is_null($available_booklet_id)) {
             $booklet = SalesInvoiceAssignment::whereId($available_booklet_id)

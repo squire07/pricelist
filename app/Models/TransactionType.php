@@ -44,4 +44,9 @@ class TransactionType extends Model
     {
         return $this->hasOne('App\Models\TransactionTypeValidity', 'transaction_type_id', 'id');
     }
+
+    public function accounts()
+    {
+        return $this->hasMany('App\Models\IncomeExpenseAccount', 'transaction_type_id', 'id');
+    }
 }

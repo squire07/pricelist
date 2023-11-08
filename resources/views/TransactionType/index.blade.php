@@ -3,9 +3,6 @@
 @section('title', 'Transaction Type')
 
 @section('content_header')
-    
-
-
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
@@ -29,6 +26,7 @@
                             <th class="text-center">Currency</th>
                             <th class="text-center">Last Sync At</th>
                             <th class="text-center">Last Sync By</th>
+                            <th class="text-center">Income/Expense</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,6 +54,11 @@
                                 <td class="text-center">{{ $transaction_type->currency }}</td>
                                 <td class="text-center">{{ $transaction_type->updated_at }}</td>
                                 <td class="text-center">{{ $transaction_type->updated_by }}</td>
+                                <td class="text-center">
+                                    <a href="{{ url('income-expense-accounts/' . $transaction_type->uuid) }}" class="btn btn-sm btn-default" target="_self">
+                                        <i class="fas fa-share-square mr-2"></i>Accounts
+                                    </a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

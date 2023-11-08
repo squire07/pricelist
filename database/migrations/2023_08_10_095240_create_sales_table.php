@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
-            $table->foreignId('transaction_type_id')->constrained();
-            $table->foreignId('branch_id')->constrained();
+            $table->foreignId('transaction_type_id');
+            $table->foreignId('branch_id');
             $table->integer('company_id')->default(1);
             $table->string('so_no', 25);
             $table->string('si_no', 25)->nullable();
@@ -28,7 +28,7 @@ return new class extends Migration
             $table->double('vat_amount')->default(0);
             $table->double('grandtotal_amount')->default(0);
             $table->double('total_nuc')->default(0);
-            $table->foreignId('status_id')->constrained();
+            $table->foreignId('status_id');
             $table->bigInteger('payment_id')->nullable(); // do not link or create relationship as this can be null at first;
             $table->string('group_name', 100)->nullable();
             $table->text('so_remarks')->nullable();

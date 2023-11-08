@@ -22,7 +22,8 @@
                         'transaction-types',
                         'payment-methods',
                         'users',
-                        'permissions'
+                        'permissions',
+                        'income-expense-accounts'
                     ];
 @endphp
 
@@ -128,7 +129,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{  url('transaction-types')  }}" class="nav-link {{ $url_segment_1 == 'transaction-types' ? 'active':'' }}" target="_self">
+                    <a href="{{  url('transaction-types')  }}" class="nav-link {{ $url_segment_1 == 'transaction-types' || $url_segment_1 == 'income-expense-accounts' ? 'active':'' }}" target="_self">
                         <i class="fas fa-receipt nav-icon"></i>
                         <p>Transaction Types</p>
                     </a>

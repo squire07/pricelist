@@ -31,6 +31,16 @@ class Sales extends Model
         return $this->hasOne('App\Models\Payment', 'sales_id', 'id');
     }
 
+    public function company()
+    {
+        return $this->hasOne('App\Models\Company', 'id', 'company_id');
+    }
+
+    public function branch()
+    {
+        return $this->hasOne('App\Models\Branch', 'id', 'branch_id');
+    }
+
 
     // getter and setter
     public function getTotalAmountAttribute($value)

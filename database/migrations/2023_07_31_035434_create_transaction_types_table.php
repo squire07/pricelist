@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid');
             $table->string('name');
+            $table->string('currency');
             $table->tinyInteger('is_active')->default(true);
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();

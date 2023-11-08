@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\TransactionType;
+use App\Models\TransactionTypeCurrency;
 use App\Helpers\Helper;
 
 class TransactionTypeSeeder extends Seeder
@@ -21,9 +22,10 @@ class TransactionTypeSeeder extends Seeder
         $data = Helper::get_erpnext_data($param);
 
         foreach($data['data']['data'] as $key => $price_lists){
-            TransactionType::create([
+            $transaction_type = TransactionType::create([
                 'uuid' => Str::uuid(),
                 'name' => $price_lists['name'],
+                'currency' => strpos($price_lists['name'], 'USD') !== false ? 'USD' : 'PHP',
                 'created_at' => Carbon::now()->toDateTimeString(),
                 'updated_at' => Carbon::now()->toDateTimeString(),
                 'created_by' => 'System',

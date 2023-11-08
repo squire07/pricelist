@@ -26,6 +26,7 @@
                             <th class="text-center">ID</th>
                             <th class="text-center">Name</th>
                             <th class="text-center">Validity</th>
+                            <th class="text-center">Currency</th>
                             <th class="text-center">Last Sync At</th>
                             <th class="text-center">Last Sync By</th>
                         </tr>
@@ -35,13 +36,6 @@
                             <tr>
                                 <td class="text-center">{{ $transaction_type->id }}</td>
                                 <td>{{ $transaction_type->name }}</td>
-                                {{-- <td class="text-center">
-                                    @if($transaction_type->is_active == 1)
-                                        <span class="badge bg-success">Yes</span>
-                                    @else
-                                        <span class="badge bg-danger">No</span>
-                                    @endif
-                                </td> --}}
                                 <td class="text-center validity">
                                     @if(isset($transaction_type->validity->valid_from) && isset($transaction_type->validity->valid_to))
                                         {{ $transaction_type->validity->valid_from . ' - ' . $transaction_type->validity->valid_to }}
@@ -59,6 +53,7 @@
                                         </button>
                                     @endif
                                 </td>
+                                <td class="text-center">{{ $transaction_type->currency }}</td>
                                 <td class="text-center">{{ $transaction_type->updated_at }}</td>
                                 <td class="text-center">{{ $transaction_type->updated_by }}</td>
                             </tr>

@@ -15,6 +15,7 @@ use App\Http\Controllers\SalesInvoice\ReleasedController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\IncomeExpenseAccountController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalesInvoice\ForValidationController;
@@ -83,6 +84,7 @@ Route::middleware(['auth','gate'])->group(function () {
     Route::resource('sales-invoice-assignment', SalesInvoiceAssignmentController::class);
     Route::get('transaction-types/sync-transaction-type', [TransactionTypeController::class, 'sync_transaction_type']); // must be in api, use passport
     Route::resource('transaction-types', TransactionTypeController::class);
+    Route::resource('income-expense-accounts', IncomeExpenseAccountController::class);
     Route::resource('users', UserController::class);
     Route::resource('permissions', UserPermissionController::class)->only('edit','update');
     Route::resource('shipping-fee', ShippingFeeController::class);
@@ -100,5 +102,5 @@ Route::middleware(['auth','gate'])->group(function () {
 
     Route::get('test-build-report', [TestBuildReportController::class, 'testbuildreport'])->name('testbuildreport');
     Route::resource('test-build-report', TestBuildReportController::class)->only('index');
- 
 });
+

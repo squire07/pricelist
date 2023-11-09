@@ -1,4 +1,33 @@
 /*
+* Datatable Expand Button - Details
+*/
+table.dataTable td.dt-control {
+    text-align: center;
+    cursor: pointer;
+}
+table.dataTable td.dt-control:before {
+    height: 1em;
+    width: 1em;
+    margin-top: -9px;
+    display: inline-block;
+    color: black;
+    /* border: 0.15em solid white;
+    border-radius: 1em;
+    box-shadow: 0 0 0.2em #444;
+    box-sizing: content-box; */
+    text-align: center;
+    text-indent: 0 !important;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1em;
+    content: "+";
+/* background-color: #31b131; */
+}
+table.dataTable tr.dt-hasChild td.dt-control:before {
+    content: "-";
+    /* background-color: #d33333; */
+}
+
+/*
 * Datatable Header - Scroll Icon 
 */
 table.dataTable thead > tr > th.sorting, table.dataTable thead > tr > th.sorting_asc, table.dataTable thead > tr > th.sorting_desc, table.dataTable thead > tr > th.sorting_asc_disabled, table.dataTable thead > tr > th.sorting_desc_disabled,
@@ -159,3 +188,7 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
     transition: margin-left .3s ease-in-out;
     margin-left: 250px;
 }
+
+
+
+

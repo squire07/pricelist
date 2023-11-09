@@ -20,6 +20,7 @@
                 <table id="dt_transaction_types" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
                         <tr>
+                            <th class="text-center"></th>
                             <th class="text-center">ID</th>
                             <th class="text-center">Name</th>
                             <th class="text-center">Validity</th>
@@ -32,6 +33,7 @@
                     <tbody>
                         @foreach($transaction_types as $transaction_type)
                             <tr>
+                                <td class="text-center dt-control"></td>
                                 <td class="text-center">{{ $transaction_type->id }}</td>
                                 <td>{{ $transaction_type->name }}</td>
                                 <td class="text-center validity">
@@ -59,6 +61,13 @@
                                         <i class="fas fa-share-square mr-2"></i>Accounts
                                     </a>
                                 </td>
+
+                                @foreach($transaction_type->accounts as $account)
+                                    <td class="d-none">{{ $account->company->name ?? null }}</td>
+                                    <td class="d-none">{{ $account->currency }}</td>
+                                    <td class="d-none">{{ $account->income_account }}</td>
+                                    <td class="d-none">{{ $account->expense_account }}</td>
+                                @endforeach
                             </tr>
                         @endforeach
                     </tbody>
@@ -128,7 +137,7 @@
 @section('adminlte_js')
 <script>
     $(document).ready(function() {
-        $('#dt_transaction_types').DataTable({
+        let table_transType = $('#dt_transaction_types').DataTable({
             dom: 'Bfrtip',
             deferRender: true,
             paging: true,
@@ -141,7 +150,7 @@
                 },
             ],
             columnDefs: [
-                { 'orderable': false, 'targets': 0 } // Disable sorting for the first column (index 0)
+                { 'orderable': false, 'targets': [0,7] } // Disable sorting for the first column (index 0)
             ],
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
@@ -242,6 +251,50 @@
                 picker.element.val(date_range);
             });
         }
+
+
+        function format_final(data) {
+            let tbody = '';
+            if(data.length > 8) {
+                for (let i = 8; i < data.length; i += 4) {
+                    tbody += '<tr>';
+                    for (let j = 0; j < 4 && i + j < data.length; j++) {
+                        // Add the text-center class for the second and third columns
+                        const className = j > 0 ? 'text-center' : '';
+                        tbody += `<td class="${className}">${data[i + j]}</td>`;
+                    }
+                    tbody += '</tr>';
+                }
+            } else {
+                tbody += '<tr><td class="text-center" colspan="4">No Income and Expense Account(s) Found</td></tr>';
+            }
+
+            return (
+                '<table cellpadding="5" cellspacing="0" border="0" style="width:100%;">' +
+                    '<thead>' +
+                        '<tr>' +
+                            '<th class="text-center">Company</th><th class="text-center">Currency</th><th class="text-center">Income Account</th><th class="text-center">Expense Account</th>' +
+                        '</tr>' +
+                    '</thead>' +
+                    '<tbody>' + tbody + '</tbody>' +
+                '</table>'
+            );
+        }
+
+        $('#dt_transaction_types tbody').on('click', 'td.dt-control', function () {
+            var tr = $(this).closest('tr');
+            var row = table_transType.row(tr);
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('td-shown');
+            } else {
+                // Open this row
+                row.child(format_final(row.data())).show();
+                tr.addClass('td-shown');
+            }
+        }); 
     });
 </script>
 @endsection

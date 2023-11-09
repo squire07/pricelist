@@ -21,7 +21,7 @@
                         <tr>
                             <th class="text-center">ID</th>
                             <th class="text-center">Code</th>
-                            <th class="text-left">Name</th>
+                            <th class="text-center">Name</th>
                             <th class="text-center">Type</th>
                             <th class="text-center">Amount</th>
                             <th class="text-center">NUC</th>

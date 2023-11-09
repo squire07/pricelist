@@ -35,7 +35,7 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">ID</th>
-                                    <th class="text-left">Cashier</th>
+                                    <th class="text-center">Cashier</th>
                                     <th class="text-center">Series From</th>
                                     <th class="text-center">Series To</th>
                                     <th class="text-center">Branch</th>

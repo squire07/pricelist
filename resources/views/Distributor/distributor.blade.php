@@ -20,7 +20,7 @@
                     <thead>
                         <tr>
                             <th class="text-center">BCID</th>
-                            <th class="text-left">Name</th>
+                            <th class="text-center">Name</th>
                             <th class="text-center">Group</th>
                             <th class="text-center">Subgroup</th>
                         </tr>

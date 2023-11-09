@@ -149,8 +149,9 @@
                     className: 'btn-default btn-sm',
                 },
             ],
+            order: [[1,'asc']],
             columnDefs: [
-                { 'orderable': false, 'targets': [0,7] } // Disable sorting for the first column (index 0)
+                { orderable: false, targets: [0,7] }, // Disable sorting for the first column (index 0)
             ],
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."

@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Hash;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Branch;
 use App\Models\Company;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\UserPermission;
+use App\Models\PermissionModule;
 use Illuminate\Support\Facades\Auth;
-use Hash;
 
 class UserController extends Controller
 {
@@ -66,10 +68,29 @@ class UserController extends Controller
         $user->active = 1; //set default status to Active
         $user->created_by = Auth::user()->name;
         if($user->save()) {
+        
+            // Save each item's details to the sales details table
+            $permissions = new UserPermission();
+            $permissions->user_id = $user->id;
+            $permissions->uuid = $user->uuid;
+            $permissions->user_permission = !in_array($user->role_id, [11,12]) ? $this->permissions(0) : $this->permissions(1);
+            $permissions->created_by = Auth::user()->name;
+            $permissions->updated_by = Auth::user()->name;
+            $permissions->save();
+        
             return redirect()->back()->with('success', 'User has been created!');
         } else {
             return redirect()->back()->with('error', 'Failed to create user.');
         }
+    }
+
+    public function permissions($int) {
+        $modules = PermissionModule::whereDeleted(false)->get();
+        $permissions = [];
+        foreach ($modules as $key => $module) {
+            $permissions[$key + 1] = (strtolower($module->type) == 'module') ? array_fill(1, 4, $int) : [1 => $int];
+        }
+        return json_encode($permissions);
     }
 
     /**
@@ -100,6 +121,7 @@ class UserController extends Controller
         $user = User::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->password = Hash::make($request->password);
         $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';
         $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
         $user->active = $request->active; 

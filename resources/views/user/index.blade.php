@@ -115,11 +115,11 @@
                             </div>
                             <div class="col-12">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control form-control-sm" name="password" id="password" required>
+                                <input type="password" class="form-control form-control-sm" name="password" id="password" maxlength="12" minlength="8" required>
                             </div>
                             <div class="col-12">
                                 <label for="confirmpassword">Confirm Password</label>
-                                <input type="password" class="form-control form-control-sm" id="confirmpassword" required>
+                                <input type="password" class="form-control form-control-sm" id="confirmpassword" maxlength="12" minlength="8" required>
                                 <div class="form-text confirm-message"></div>
                             </div>
                             <div class="col-12">
@@ -136,19 +136,21 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="companies">Companies</label>
-                                    @foreach($companies as $company)
-                                        <br/>
-                                        <input type="checkbox" name="company_id[]" id="modal_add_company_{{ $company->id }}" value={{ $company->id }}><span class="ml-2">{{ $company->name }}</span>
-                                    @endforeach
+                                    <select class="select2" multiple="multiple" id="modal_add_company" name="company_id[]" data-name="company_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                        @foreach($companies as $company)
+                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
-                                    <label for="branches">Branches</label>                                   
-                                    @foreach($branches as $branch)
-                                        <br/>
-                                        <input type="checkbox" name="branch_id[]" class="{{ $branch->company_id == 3 ? 'branch-local' : 'branch-premier' }}" id="modal_add_branch_{{ $branch->id }}" value={{ $branch->id }} disabled><span class="ml-2">{{ $branch->name }}</span>
-                                    @endforeach
+                                    <label for="companies">Branches</label>
+                                    <select class="select2" multiple="multiple" id="modal_add_branch" name="branch_id[]" data-name="branch_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                        @foreach($branches as $branch)
+                                            <option value="{{ $branch->id }}" class="{{ $branch->company_id == 3 ? 'branch-local' : 'branch-premier' }}">{{ $branch->name }}</option>
+                                        @endforeach
+                                    </select>                                 
                                 </div>
                             </div>
                         </div>
@@ -193,11 +195,11 @@
                             </div>
                             <div class="col-12">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control form-control-sm" name="password" id="password_edit">
+                                <input type="password" class="form-control form-control-sm" name="password" id="password_edit" maxlength="12" minlength="8">
                             </div>
                             <div class="col-12">
                                 <label for="confirmpassword">Confirm Password</label>
-                                <input type="password" class="form-control form-control-sm" id="confirmpassword_edit">
+                                <input type="password" class="form-control form-control-sm" id="confirmpassword_edit" maxlength="12" minlength="8">
                                 <div class="form-text confirm-message"></div>
                             </div>
                             <div class="col-12">
@@ -236,6 +238,26 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="companies">Companies</label>
+                                    <select class="select2" multiple="multiple" id="modal_edit_company_id" name="company_id[]" data-name="company_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                        @foreach($companies as $company)
+                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="companies">Branches</label>
+                                    <select class="select2" multiple="multiple" id="modal_edit_branch_id" name="branch_id[]" data-name="branch_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                        @foreach($branches as $branch)
+                                            <option value="{{ $branch->id }}" class="{{ $branch->company_id == 3 ? 'branch-local' : 'branch-premier' }}">{{ $branch->name }}</option>
+                                        @endforeach
+                                    </select>                                 
+                                </div>
+                            </div>
+                            {{-- <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="companies">Companies</label>
                                     @foreach($companies as $company)
                                         <br/>
                                         <input type="checkbox" name="company_id[]" id="modal_edit_company_{{ $company->id }}" value={{ $company->id }}><span class="ml-2">{{ $company->name }}</span>
@@ -247,10 +269,10 @@
                                     <label for="branches">Branches</label>                                   
                                     @foreach($branches as $branch)
                                         <br/>
-                                        <input type="checkbox" name="branch_id[]" class="{{ $branch->company_id == 3 ? 'branch-local' : 'branch-premier' }}" id="modal_edit_branch_{{ $branch->id }}" value={{ $branch->id }} disabled><span class="ml-2">{{ $branch->name }}</span>
+                                        <input type="checkbox" name="branch_id[]" class="{{ $branch->company_id == 3 ? 'branch-local' : 'branch-premier' }}" id="modal_edit_branch_{{ $branch->id }}" value={{ $branch->id }}><span class="ml-2">{{ $branch->name }}</span>
                                     @endforeach
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -350,26 +372,26 @@
                 $('#blocked_0[value="0"]').prop('checked', true);
             } 
 
-            if(company_id == 2) {
-                $('.branch-premier').prop('disabled', false);
-            } else if(company_id == 3) {
-                $('.branch-local').prop('disabled', false);
-            } else {
-                $('.branch-local').prop('disabled', false);
-                $('.branch-premier').prop('disabled', false);
-            } 
+            // if(company_id == 2) {
+            //     $('.branch-premier').prop('disabled', false);
+            // } else if(company_id == 3) {
+            //     $('.branch-local').prop('disabled', false);
+            // } else {
+            //     $('.branch-local').prop('disabled', false);
+            //     $('.branch-premier').prop('disabled', false);
+            // } 
 
             // add check to branch checkboxes
-            const array_branches = branch_id.split(",");
-            array_branches.forEach(function(element, index, array) {
-                $('#modal_edit_branch_' + element).prop('checked',true);
-            });
+            // const array_branches = branch_id.split(",");
+            // array_branches.forEach(function(element, index, array) {
+            //     $('#modal_edit_branch_' + element).prop('checked',true);
+            // });
 
-            // add check to company checkboxes
-            const array_companies = company_id.split(",");
-            array_companies.forEach(function(element, index, array) {
-                $('#modal_edit_company_' + element).prop('checked',true);
-            });
+            // // add check to company checkboxes
+            // const array_companies = company_id.split(",");
+            // array_companies.forEach(function(element, index, array) {
+            //     $('#modal_edit_company_' + element).prop('checked',true);
+            // });
 
             // define the edit form action
             let action = window.location.origin + "/users/" + uuid;
@@ -408,8 +430,10 @@
                         $('#confirmpassword_edit').val('');
                         $('.confirm-message').text('');
                         $('#modal_add_role_id').val(''); 
-                        $('input[type="checkbox"]').prop('checked', false);
-                        $('.branch-premier, .branch-local').prop('disabled', true);                    
+                        $('#modal_add_company').val(null).trigger('change');
+                        $('#modal_add_branch').val(null).trigger('change'); 
+                        $('#modal_edit_company_id').val(null).trigger('change'); 
+                        $('#modal_edit_branch_id').val(null).trigger('change');                     
                     } else {
                         e.stopPropagation();
 
@@ -433,10 +457,10 @@
             let confirm_password=$('#confirmpassword').val();
 
             if(password===""){
-                $('.confirm-message').text("Password Field cannot be empty").addClass('error-message');
+                $('.confirm-message').text("Password Field cant be empty and must be 8 characters").addClass('error-message');
             }
             else if(confirm_password===""){
-                $('.confirm-message').text("Confirm Password Field cannot be empty").addClass('error-message');
+                $('.confirm-message').text("Password Field cant be empty and must be 8 characters").addClass('error-message');
             }
             else if(confirm_password===password)
             {
@@ -457,10 +481,10 @@
             let confirm_password_edit=$('#confirmpassword_edit').val();
 
             if(password_edit === ""){
-                $('.confirm-message').text("Password Field cannot be empty").addClass('error-message');
+                $('.confirm-message').text("Password Field cant be empty and must be 8 characters").addClass('error-message');
             }
             else if(confirm_password_edit === ""){
-                $('.confirm-message').text("Confirm Password Field cannot be empty").addClass('error-message');
+                $('.confirm-message').text("Password Field cant be empty and must be 8 characters").addClass('error-message');
             }
             else if(confirm_password_edit === password_edit)
             {
@@ -473,8 +497,8 @@
 
         // Prevent user from using enter key
             
-        $("input:text, button").keypress(function(event) {
-            if (event.keyCode === 10 || event.keyCode == 13 || event.keyCode == "Escape") {
+        $("input:text, input:password, button").keypress(function(event) {
+            if (event.keyCode === 10 || event.keyCode == 13 || event.keyCode === 32 || event.keyCode == "Escape") {
                 event.preventDefault();
                 return false;
             }
@@ -489,21 +513,42 @@
 
         //enable branch when company is selected
 
-        $("input[type='checkbox'][value='2']").on('click', function(){
-        if ($(this).prop('checked')) {
-            $('.branch-premier').prop('disabled', false);
-            } else {
-            $('.branch-premier').prop('disabled', true);
-            }
-        });
+        // $("#company_name[][value='2']").on('change', function(){
+        // if ($(this).select2('selected')) {
+        //     $('.branch-premier').select2('disabled', false);
+        //     } else {
+        //     $('.branch-premier').select2('disabled', true);
+        //     }
+        // });
 
-        $("input[type='checkbox'][value='3']").on('click', function(){
-        if ($(this).prop('checked')) {
-            $('.branch-local').prop('disabled', false);
-            } else {
-            $('.branch-local').prop('disabled', true);
-            }
-        });
+        // $("select2[value='3']").on('change', function(){
+        // if ($(this).select2('selected')) {
+        //     $('.branch-local').select2('disabled', false);
+        //     } else {
+        //     $('.branch-local').select2('disabled', true);
+        //     }
+        // });
+
+        // $("#modal_add_company[value='2']").on('click', function(){
+        //     if ($(this).select2('company_name[]')) {
+        //     // $('.branch-premier').select2('disabled', false);
+        //     $('#modal_add_branch').hasClass('.branch-premier').select2('disabled', false)
+        //     } else {
+        //     // $('.branch-premier').select2('disabled', true);
+        //     $('#modal_add_branch').hasClass('.branch-premier').select2('disabled', true)
+        //     }
+        // });
+
+        // $("#modal_add_company[value='3']").on('click', function(){
+        //     if ($(this).select2('company_name[]')) {
+        //     // $('.branch-premier').select2('disabled', false);
+        //     $('#modal_add_branch').hasClass('.branch-local').select2('disabled', false)
+        //     } else {
+        //     // $('.branch-premier').select2('disabled', true);
+        //     $('#modal_add_branch').hasClass('.branch-local').select2('disabled', true)
+        //     }
+        // });
+        
 });
 </script>
 @endsection

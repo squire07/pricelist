@@ -73,8 +73,8 @@
                     <h3 class="card-title">Payment Method</h3>
                 </div>
                 <div class="card-body">
-                    <select class="select2" multiple="multiple" id="payment_type" name="payment_type_id[]" data-name="payment_type_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                        <option value="" disabled>-- Select Payment Type --</option>
+                    <select class="form-control select2" id="payment_type" name="payment_type_id[]" data-name="payment_type_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                        <option value="">-- Select Payment Type --</option>
                         @foreach($payment_types as $payment_type)
                             <option value="{{ $payment_type->id }}" data-is-cash={{ $payment_type->is_cash }}>{{ $payment_type->name }}</option>
                         @endforeach
@@ -188,7 +188,7 @@
                                 <label for="total_amount" class="col-sm-4 col-form-label">Total Amount:</label>
                                 <div class="col-sm-4"></div>
                                 <div class="col-sm-4">
-                                    <input type="text" class="form-control form-control-sm text-right" id="total_amount" value="{{ $sales_order->total_amount }}" readonly tabindex="-1">
+                                    <input type="text" class="form-control form-control-sm text-right" id="total_amount" value="{{ $sales_order->grandtotal_amount }}" readonly tabindex="-1">
                                 </div>
                             </div>
                         </div>

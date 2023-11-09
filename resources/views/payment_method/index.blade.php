@@ -22,8 +22,8 @@
                 <table id="dt_payment" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
                         <tr>
-                            <th class="text-left">Name</th>
-                            <th class="text-left">Description</th>
+                            <th class="text-center">Name</th>
+                            <th class="text-center">Description</th>
                             <th class="text-center">Account Number</th>
                             <th class="text-center">Company</th>
                             <th class="text-center">Is Cash</th>
@@ -433,9 +433,9 @@
     });
 
      // Prevent from redirecting back to homepage when cancel button is clicked accidentally
-     $('#modal-add, #modal-edit, #modal-show').on("hide.bs.modal", function (e) {
+     $('#modal-add, #modal-edit').on("hide.bs.modal", function (e) {
 
-        if (!$('#modal-add, #modal-edit, #modal-show').hasClass('programmatic')) {
+        if (!$('#modal-add, #modal-edit').hasClass('programmatic')) {
             e.preventDefault();
             swal.fire({
                 title: 'Are you sure?',
@@ -449,8 +449,8 @@
                 cancelButtonColor: '#d33',
             }).then(function(result) {
                 if (result.value) {
-                    $('#modal-add, #modal-edit, #modal-show').addClass('programmatic');
-                    $('#modal-add, #modal-edit, #modal-show').modal('hide');
+                    $('#modal-add, #modal-edit').addClass('programmatic');
+                    $('#modal-add, #modal-edit').modal('hide');
                     e.stopPropagation();
                     $('#modal_add_name').val('');
                     $('#modal_add_description').val(''); 
@@ -468,8 +468,8 @@
         return true;
         });
 
-        $('#modal-add, #modal-edit, #modal-show').on('hidden.bs.modal', function () {
-        $('#modal-add, #modal-edit, #modal-show').removeClass('programmatic');
+        $('#modal-add, #modal-edit').on('hidden.bs.modal', function () {
+        $('#modal-add, #modal-edit').removeClass('programmatic');
         });
 
     // Prevent user from using enter key

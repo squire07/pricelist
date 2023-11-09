@@ -431,6 +431,54 @@
             $('#modal_show_branch_names').append('<span class="badge bg-info mx-2" style="font-size:85%">' + element + '</span>');
         });
     });
+
+     // Prevent from redirecting back to homepage when cancel button is clicked accidentally
+     $('#modal-add, #modal-edit, #modal-show').on("hide.bs.modal", function (e) {
+
+        if (!$('#modal-add, #modal-edit, #modal-show').hasClass('programmatic')) {
+            e.preventDefault();
+            swal.fire({
+                title: 'Are you sure?',
+                text: "Please confirm that you want to cancel",
+                type: 'warning',
+                showCancelButton: true,
+                allowEnterKey: false,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+            }).then(function(result) {
+                if (result.value) {
+                    $('#modal-add, #modal-edit, #modal-show').addClass('programmatic');
+                    $('#modal-add, #modal-edit, #modal-show').modal('hide');
+                    e.stopPropagation();
+                    $('#modal_add_name').val('');
+                    $('#modal_add_description').val(''); 
+                    $('#modal_add_code').val('');
+                    $('#modal_edit_remarks').val('');
+                    $('input[type="checkbox"]').prop('checked', false);
+                    $('input[type="radio"]').prop('checked', false);  
+                } else {
+                    e.stopPropagation();
+
+                }
+            });
+
+        }
+        return true;
+        });
+
+        $('#modal-add, #modal-edit, #modal-show').on('hidden.bs.modal', function () {
+        $('#modal-add, #modal-edit, #modal-show').removeClass('programmatic');
+        });
+
+    // Prevent user from using enter key
+    $("input:text, button").keypress(function(event) {
+        if (event.keyCode === 10 || event.keyCode == 13) {
+            event.preventDefault();
+            return false;
+        }
+    });
 });
 </script>
 @endsection

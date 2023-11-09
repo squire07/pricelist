@@ -80,7 +80,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal-validity">
+    <div class="modal fade" id="modal-validity" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -201,6 +201,48 @@
                     })
                 }
             })
+        });
+
+        // Prevent from redirecting back to homepage when cancel button is clicked accidentally
+        $('#modal-validity').on("hide.bs.modal", function (e) {
+
+        if (!$('#modal-validity').hasClass('programmatic')) {
+            e.preventDefault();
+            swal.fire({
+                title: 'Are you sure?',
+                text: "Please confirm that you want to cancel",
+                type: 'warning',
+                showCancelButton: true,
+                allowEnterKey: false,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+            }).then(function(result) {
+                if (result.value) {
+                    $('#modal-validity').addClass('programmatic');
+                    $('#modal-validity').modal('hide');
+                    e.stopPropagation();
+                } else {
+                    e.stopPropagation();
+
+                }
+            });
+
+        }
+        return true;
+        });
+
+        $('#modal-validity').on('hidden.bs.modal', function () {
+        $('#modal-validity').removeClass('programmatic');
+        });
+
+        // Prevent user from using enter key
+        $("input:text, button").keypress(function(event) {
+            if (event.keyCode === 10 || event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
         });
 
         

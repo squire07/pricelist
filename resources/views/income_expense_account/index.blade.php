@@ -80,7 +80,6 @@
 
                 <form class="form-horizontal" action="{{ route('income-expense-accounts.store') }}" method="POST" id="form_modal_add" autocomplete="off">
                     @csrf
-                    <input type="hidden" name="uuid" value="{{ $accounts->uuid }}">
                     <input type="hidden" name="transaction_type_id" value="{{ $accounts->id }}">
                     <div class="modal-body">
                         <div class="col-12">

@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Models\IncomeExpenseAccount;
 use App\Models\TransactionType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Helpers\Helper;
 use Auth;
 
@@ -33,14 +34,14 @@ class IncomeExpenseAccountController extends Controller
     public function store(Request $request, IncomeExpenseAccount $incomeExpenseAccount)
     {
         $validatedData = request()->validate([
-            'uuid' => 'required|string',
             'transaction_type_id' => 'required|int',
             'company_id' => 'required|int',
             'currency' => 'required|string',
             'income_account' => 'required|string',
             'expense_account' => 'required|string',
-        ]);
+        ]); 
 
+        $validatedData['uuid'] = Str::uuid();
         $validatedData['created_by'] = Auth::user()->name;
         $validatedData['updated_by'] = Auth::user()->name;
 
@@ -63,6 +64,7 @@ class IncomeExpenseAccountController extends Controller
      */
     public function show($uuid)
     {
+        // Note: this is the index page of income and expense account page (sub of transaction types)
         $accounts = TransactionType::with('accounts')->whereUuid($uuid)->first();
         
         $companies = Company::whereDeleted(false)->whereIn('status_id', [8,1])->get(); // 1 does not exists as status. To refactor soon as Active 1 = true, 0 = false;

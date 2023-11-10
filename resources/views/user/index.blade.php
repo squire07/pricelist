@@ -495,17 +495,17 @@
             }
         });
 
-        // Prevent user from using enter key
+        // Prevent user from using enter key and spacebar
             
-        $("input:text, input:password, button").keypress(function(event) {
-            if (event.keyCode === 10 || event.keyCode == 13 || event.keyCode === 32 || event.keyCode == "Escape") {
+        $("#modal_add_username, #modal_edit_username, #password, #password_edit, #modal_add_email, #modal_edit_email").keypress(function(event) {
+            if (event.keyCode === 10 || event.keyCode === 13 || event.keyCode === 32 || event.keyCode == "Escape") {
                 event.preventDefault();
                 return false;
             }
         });
 
-        $( '#modal-add, #modal-edit' ).on( 'keypress', function( e ) {
-            if( event.keyCode === 10 || e.keyCode === 13 || event.keyCode == "Escape" ) {
+        $( '#modal-add, #modal-edit' ).on( 'keypress', function(e) {
+            if( e.keyCode === 10 || e.keyCode === 13 || e.keyCode == "Escape" ) {
                 e.preventDefault();
                 $( this ).trigger( 'submit' );
             }

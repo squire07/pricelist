@@ -55,7 +55,7 @@ class GateMiddleware
             $module_id = PermissionModule::whereController($afterLastBackslash)->pluck('id')->first();
 
             // get the user's permission by auth id
-            $user_permission = UserPermission::whereId(Auth::user()->id)->pluck('user_permission')->first();
+            $user_permission = UserPermission::whereUserId(Auth::user()->id)->pluck('user_permission')->first();
 
             $permissions = json_decode($user_permission, true);
             if (isset($permissions[$module_id]) && isset($permissions[$module_id][$method]) && $permissions[$module_id][$method] == 0) {

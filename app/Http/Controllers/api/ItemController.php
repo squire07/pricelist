@@ -13,7 +13,7 @@ class ItemController extends Controller
      */
     public function get_item_by_transaction_type($id)
     {
-        return Item::whereDeleted(false)->whereTransactionTypeId($id)->get();
+        return Item::whereDeleted(false)->whereTransactionTypeId($id)->orderBy('name')->get();
     }
 
     /**

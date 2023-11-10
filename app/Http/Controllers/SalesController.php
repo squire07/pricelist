@@ -82,7 +82,7 @@ class SalesController extends Controller
                                             ->where('transaction_type_validities.valid_to', null);
                                     });
                                 });
-                            })->get();
+                            })->orderBy('name')->get();
  
         $shipping_fees = ShippingFee::whereDeleted(false)->get();
 

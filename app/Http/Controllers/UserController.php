@@ -121,7 +121,11 @@ class UserController extends Controller
         $user = User::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->password = Hash::make($request->password);
+
+        if(isset($request->password)) {
+            $user->password = Hash::make($request->password); 
+        }
+
         $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';
         $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
         $user->active = $request->active; 

@@ -138,7 +138,9 @@
                                     <label for="companies">Companies</label>
                                     <select class="select2" multiple="multiple" id="modal_add_company" name="company_id[]" data-name="company_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
                                         @foreach($companies as $company)
-                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                            @if(in_array($company->status_id, [8,1]))
+                                                <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>

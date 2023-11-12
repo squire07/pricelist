@@ -29,7 +29,7 @@ class UserController extends Controller
             $company_ids[] = $company->id;
         }
 
-        $branches = Branch::whereDeleted(false)->whereIn('company_id', $company_ids)->get();
+        $branches = Branch::whereDeleted(false)->whereIn('company_id', $company_ids)->orderBy('company_id')->orderBy('name')->get();
 
         $roles = Role::whereDeleted(false)->whereNotIn('id', [12])->get();
         return view('user.index', compact('users','branches','companies','roles'));
@@ -122,7 +122,7 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
 
-        if(isset($request->password)) {
+        if ($request->filled('password')) {
             $user->password = Hash::make($request->password); 
         }
 

@@ -69,25 +69,20 @@ class ShippingFeeController extends Controller
      */
     public function update(Request $request, $uuid)
     {
-        $shipping_fee = ShippingFee::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
-
-        $existSizeRegionDimensionRate = ShippingFee::whereParcelSize($request->parcel_size)->whereDeleted(false)->first();
-        if(!$existSizeRegionDimensionRate) {
-            $shipping_fee = new ShippingFee();
-            $shipping_fee->uuid = Str::uuid();
-            $shipping_fee->parcel_size = $request->parcel_size;
-            $shipping_fee->region = $request->region;
-            $shipping_fee->dimension = $request->dimension;
-            $shipping_fee->parcel_rate = $request->parcel_rate;
-            $shipping_fee->created_by = Auth::user()->name;
-            $shipping_fee->update();
-            $msg = 'Shipping Fee has been updated!';
-            $msgType = 'success';
-        } else {
-            $msg = 'Shipping Fee already exist';
-            $msgType = 'error';
+        if (ShippingFee::where('parcel_size', $request->parcel_size)->whereNot('uuid', $uuid)->exists()) {
+            return redirect()->back()->with('error', "Parcel size {$request->parcel_size} already exists!");
         }
-        return redirect('shipping-fee')->with($msgType, $msg);
+        $shipping_fee = ShippingFee::whereUuid($uuid)->whereDeleted(false)->firstOrFail(); 
+        $shipping_fee->parcel_size = $request->parcel_size;
+        $shipping_fee->region = $request->region;
+        $shipping_fee->dimension = $request->dimension;
+        $shipping_fee->parcel_rate = $request->parcel_rate;
+        $shipping_fee->updated_by = Auth::user()->name;
+        if($shipping_fee->update()) {
+            return redirect()->back()->with('success', 'Shipping Fee has been updated!');
+        } else { 
+            return redirect()->back()->with('error', 'Failed to update shipping fee.');
+        }
     }
 
     /**

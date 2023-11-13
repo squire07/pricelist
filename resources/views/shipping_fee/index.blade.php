@@ -73,11 +73,11 @@
                         <div class="container-fluid">
                             <div class="col-12">
                                 <label for="name">Parcel Size</label>
-                                <input type="text" class="form-control form-control-sm" name="parcel_size" maxlength="25" id="modal_add_parcel_size" pattern="[a-zA-Z0-9\s]+" required>
+                                <input type="text" class="form-control form-control-sm" name="parcel_size" maxlength="25" minlength="3" id="modal_add_parcel_size" required>
                             </div>
                             <div class="col-12">
                                 <label for="name">Dimension</label>
-                                <input type="text" class="form-control form-control-sm" name="dimension" maxlength="25" id="modal_add_dimension" required>
+                                <input type="text" class="form-control form-control-sm" name="dimension" maxlength="25" minlength="3" id="modal_add_dimension" required>
                             </div>
                             <div class="col-12">
                                 <label for="name">Region</label>
@@ -91,7 +91,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="name">Parcel Rate</label>
-                                <input type="text" class="form-control form-control-sm" name="parcel_rate" maxlength="25" id="modal_add_parcel_rate" required>
+                                <input type="text" class="form-control form-control-sm" name="parcel_rate" maxlength="25" minlength="3" id="modal_add_parcel_rate" required>
                             </div>
                         </div>
                     </div>
@@ -124,7 +124,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Parcel Size</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="25" name="parcel_size" id="modal_edit_parcel_size" required>
+                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="25" minlength="3" name="parcel_size" id="modal_edit_parcel_size" required>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
@@ -148,7 +148,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="remarks">Parcel Rate</label>
-                                    <input type="text" class="form-control form-control-sm" name="parcel_rate" id="modal_edit_parcel_rate">
+                                    <input type="text" class="form-control form-control-sm" name="parcel_rate" minlength="3" id="modal_edit_parcel_rate">
                                 </div>
                             </div>
                         </div>
@@ -267,27 +267,6 @@ input[type="text2"], textarea {
             // define the edit form action
             let action = window.location.origin + "/shipping-fee/" + uuid;
             $('#form_modal_edit').attr('action', action);
-        });
-
-        $(document).on('click', '.btn_show', function() {
-            var uuid = $(this).attr("data-uuid");
-            var name = $(this).attr("data-branch-name");
-            var code = $(this).attr("data-branch-code");
-            var remarks = $(this).attr("data-branch-remarks");
-            var status_id = $(this).attr("data-branch-status_id");
-            var updated_by = $(this).attr("data-branch-updated_by");
-
-            // set multiple attributes
-            $('#modal_show_name').text(name);
-            $('#modal_show_code').text(code);
-            $('#modal_show_remarks').text(remarks);
-            $('#modal_show_status_id').text(status_id);
-            $('#modal_show_updated_by').text(updated_by);
-            if (status_id == 'Active') {
-                $('#ribbon_bg').addClass('bg-success').removeClass('bg-danger');
-            } else {
-                $('#ribbon_bg').addClass('bg-danger').removeClass('bg-success');
-            }
         });
 
         // Prevent from redirecting back to homepage when cancel button is clicked accidentally

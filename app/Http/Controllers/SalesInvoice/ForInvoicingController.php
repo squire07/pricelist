@@ -110,6 +110,7 @@ class ForInvoicingController extends Controller
                                     }
                                 }
                             })
+                            ->orderBy('name')
                             ->get();
 
         // get all the booklets assigned to Auth::user()->id 
@@ -229,6 +230,11 @@ class ForInvoicingController extends Controller
                 // pass the message to user if the update is successful
                 $message = $sales->so_no . ' payment submitted!';
 
+
+                // create the transaction history first before creating the payload
+                Helper::transaction_history($sales->id, $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Submit Payment', $sales->so_remarks);
+
+
                 // PAYLOAD
                 /* create the erpnext payload here
                 *  note: all payload will be submitted to erpnext after 'for validation'
@@ -238,7 +244,7 @@ class ForInvoicingController extends Controller
                 $payload->bcid = $sales->bcid;
                 $payload->distributor = json_encode(Helper::create_distributor_payload($sales->bcid)) ?? null;
                 $payload->so = json_encode(Helper::create_so_payload($sales->id));
-                $payload->si = null;
+                $payload->si = json_encode(Helper::create_si_payload($sales->id));;
                 $payload->nuc_points = $sales->total_nuc;
                 $payload->created_by = Auth::user()->name;
                 $payload->save();
@@ -249,8 +255,6 @@ class ForInvoicingController extends Controller
 
 
             }
-
-            Helper::transaction_history($sales->id, $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Submit Payment', $sales->so_remarks);
 
             // redirect to index page with dynamic message coming from different statuses
             return redirect('sales-invoice/for-invoice')->with(['success' => $message, 'uuid' => $uuid]);

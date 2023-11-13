@@ -91,9 +91,9 @@
             </div>
         </div>
         <div class="card-footer text-center">
-            <a href="{{ url('sales-invoice/for-validation') }}" class="btn btn-lg btn-info float-left" style="margin-top: 8px"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-            <a href="{{ url('sales-invoice/for-validation/' . $sales_order->uuid . '/edit' ) }}" class="btn btn-lg btn-success m-2 float-right"><i class="far fa-share-square"></i>&nbsp;Validate</a>
-            <button class="btn btn-lg btn-danger float-right" style="margin-top: 8px" id="btn-for-cancel" data-uuid="{{ $sales_order->uuid }}" data-si-no="{{ $sales_order->si_no }}"><i class="fas fa-ban"></i>&nbsp;Cancel Invoice</button>
+            <a href="{{ url('sales-invoice/for-validation') }}" class="btn btn-lg btn-info float-left"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+            <button class="btn btn-lg btn-success float-right" id="btn-validate" data-uuid="{{ $sales_order->uuid }}"><i class="far fa-share-square"></i>&nbsp;Validate</button>
+            <button class="btn btn-lg btn-danger float-right mx-2" id="btn-for-cancel" data-uuid="{{ $sales_order->uuid }}" data-si-no="{{ $sales_order->si_no }}"><i class="fas fa-ban"></i>&nbsp;Cancel Invoice</button>
         </div>
     </div>
 
@@ -104,9 +104,15 @@
     {{-- hidden form to return SO to Draft --}}
     <form id="form_for_cancel" method="POST">
         @method('PATCH')
-            <input type="hidden" name="uuid" id="hidden_uuid">
+            <input type="hidden" name="uuid" id="form_cancel_uuid">
             <input type="hidden" name="status_id" value="3">
-            <input type="hidden" name="si_remarks" id="hidden_si_remarks">
+            <input type="hidden" name="si_remarks" id="form_cancel_si_remarks">
+        @csrf
+    </form>
+    <form id="form_validate" method="POST">
+        @method('PATCH')
+            <input type="hidden" name="uuid" id="form_validate_uuid">
+            <input type="hidden" name="status_id" value="5">
         @csrf
     </form>
 @endsection
@@ -132,26 +138,24 @@ $(document).ready(function() {
         var so_no = $(this).attr("data-so-no");
         var si_no = $(this).attr("data-si-no");
 
-        console.log('test');
-
         // show the confirmation
         Swal.fire({
             title: 'Are you sure to cancel \n' + si_no + '?',
-                text: 'Remarks:',
-                icon: 'warning',
-                showCancelButton: true,
-                allowEnterKey: false,
-                allowOutsideClick: false,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                onOpen: () => Swal.getConfirmButton().focus(),
-                input: 'text',
-                inputName: '',
-                inputAttributes: {
-                    autocapitalize: 'on',
-                    required: 'true',
-                },
-                inputValidator: (value) => {
+            text: 'Remarks:',
+            icon: 'warning',
+            showCancelButton: true,
+            allowEnterKey: false,
+            allowOutsideClick: false,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            onOpen: () => Swal.getConfirmButton().focus(),
+            input: 'text',
+            inputName: '',
+            inputAttributes: {
+                autocapitalize: 'on',
+                required: 'true',
+            },
+            inputValidator: (value) => {
                 return new Promise((resolve) => {
                     if (value.length >= 4) {
                         resolve();
@@ -168,14 +172,42 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 // add uuid dynamically to hidden uuid field
-                $('#hidden_uuid').val(uuid);
+                $('#hidden_form_cancel_uuiduuid').val(uuid);
 
                 // update the action of form_for_invoicing 
-                $('#hidden_si_remarks').val(result.value);
+                $('#form_cancel_si_remarks').val(result.value);
                 $('#form_for_cancel').attr('action', window.location.origin + '/sales-invoice/for-validation/' + uuid);
 
                 // finally, submit the form
                 $('#form_for_cancel').submit();
+            }
+        });
+    });
+
+
+    $('#btn-validate').on('click', function() {
+        var uuid = $(this).attr("data-uuid");
+
+        // show the confirmation
+        Swal.fire({
+            title: 'Are you sure to validate this transaction?',
+            icon: 'warning',
+            showCancelButton: true,
+            allowEnterKey: false,
+            allowOutsideClick: false,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, validate!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // add uuid dynamically to hidden uuid field
+                $('#form_validate_uuid').val(uuid);
+
+                // update the action of form_for_invoicing 
+                $('#form_validate').attr('action', window.location.origin + '/sales-invoice/for-validation/' + uuid);
+
+                // finally, submit the form
+                $('#form_validate').submit();
             }
         });
     });

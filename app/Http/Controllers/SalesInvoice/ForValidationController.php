@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\SalesInvoice;
 
-use App\Models\Sales;
 use App\Helpers\Helper;
 use App\Models\History;
+use App\Models\Sales;
+use App\Models\SalesInvoiceForValidation;
+use App\Models\Payload;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
-use App\Models\SalesInvoiceForValidation;
-
+use GuzzleHttp\Client;
 
 class ForValidationController extends Controller
 {
@@ -108,14 +109,69 @@ class ForValidationController extends Controller
             $sales->updated_by = Auth::user()->name; // updated_at will be automatically filled by laravel
             if($sales->update()) {
                 // pass the message to user if the update is successful
-                $message = $sales->so_no . ' successfully marked Cancelled';
+                Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Cancel Sales Invoice', $sales->si_remarks);
+                return redirect('sales-invoice/for-validation')->with('success', $sales->so_no . ' successfully marked Cancelled');
+            } else {
+                return redirect('sales-invoice/for-validation')->with('error', 'Unable to mark this transaction as cancelled! Please contact your administrator.');
             }
-            Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Cancel Sales Invoice', $sales->si_remarks);
-        }
 
-        
-        // redirect to index page with dynamic message coming from different statuses
-        return redirect('sales-invoice/for-validation')->with('success', $message);
+        } else if(isset($request->status_id) && $request->status_id == 5) { // validate OR `for posting`
+
+            // 1) check distributor in erpnext if existing
+            $distributor_name = Helper::get_distributor_name_by_bcid($sales->bcid);
+            $distributor_param = '/api/resource/Customer'; // if POST, do not add '/' at the end 
+
+            $distributor_data = Helper::get_erpnext_data($distributor_param . '/' . $distributor_name);
+
+            // 2) get the payload
+            $payload = Payload::whereUuid($sales->uuid)->first();
+
+            // 3) post the customer if not existing in erpnext
+            if($distributor_data['status_code'] == 404) {
+                $post_customer = Helper::post_erpnext_data($distributor_param, $payload->distributor);
+                // update payload with response 
+                $payload->distributor_response = $post_customer->getStatusCode();         
+                $payload->update();
+            }
+
+
+            if(isset($post_customer) && $post_customer->getStatusCode() == 404) {
+                // !IMPORTANT: Posting SO and SI in ERPNext requires customer 
+                return redirect('sales-invoice/for-validation')->with('error', 'Could not add customer to ERPNext! Please contact your administrator.');
+            
+            } else {
+                // After posting a new customer (distributor), we need to post the SO and SI
+
+                // 3) Post the SO to erpnext
+                $so_param = '/api/resource/Sales Order'; // if POST, do not add '/' at the end 
+                // post the so payload to erpnext
+                $post_so = Helper::post_erpnext_data($so_param, $payload->so);
+
+                // update payload with response
+                $payload->so_response = $post_so->getStatusCode();
+                $payload->update();
+
+                // 4) Post the SI to erpnext
+                $si_param = '/api/resource/Sales Invoice'; // if POST, do not add '/' at the end 
+                // post the so payload to erpnext
+                $post_si = Helper::post_erpnext_data($si_param, $payload->si);
+                
+                // update payload with response
+                $payload->si_response = $post_si->getStatusCode();
+                $payload->update();
+
+                // mark as released
+                $sales->status_id = 4;
+
+                if($sales->update()) {
+                    if($post_so->getStatusCode() == 200) {
+                        return redirect('sales-invoice/for-validation')->with('success', 'Sales order was successfully recorded to ERPNext!');
+                    }
+                } else {
+                    return redirect('sales-invoice/for-validation')->with('error', 'Unable to add SO and SI at ERPNext! Please contact your administrator.');
+                }
+            }
+        } 
     }
 
     /**

@@ -10,6 +10,7 @@ use App\Models\Branch;
 use App\Models\Company;
 use App\Models\Distributor;
 use App\Models\History;
+use App\Models\IncomeExpenseAccount;
 use App\Models\PermissionModule;
 use App\Models\Sales;
 use App\Models\SalesInvoiceAssignmentDetail;
@@ -178,6 +179,38 @@ class Helper {
         return implode(',', $company_names); //do not add space between ','
     }
 
+    public static function get_si_assignment_no($id) {
+        $si_assignment_detail = SalesInvoiceAssignmentDetail::whereId($id)->first();
+        return $si_assignment_detail->series_number;
+    }
+
+    public static function get_distributor_name_by_bcid($bcid) {
+        $distributor = Distributor::whereBcid($bcid)->first();
+        return $distributor->name;
+    }
+
+    public static function get_sales_status($si_assignment_id) {
+        $status = Sales::with('status')->whereSiAssignmentId($si_assignment_id)->first();
+        return $status->status->name ?? null;
+    }
+
+    public static function get_redemptions_name_from_history($so_id) {
+        // get the redemptions name who finalized the sales order 
+        $status = History::whereRecordId($so_id)->whereStatusId(2)->first();
+        return $status->created_by;
+    }
+
+    public static function get_cashiers_name_from_history($si_id) {
+        // get the cashier name who finalized the sales order 
+        $status = History::whereRecordId($si_id)->whereStatusId(5)->first();
+        return $status->created_by;
+    }
+
+
+
+    /* 
+    *  ERPNext
+    */
     public static function get_erpnext_data($param) {
         $client = new Client();
 
@@ -209,35 +242,147 @@ class Helper {
                 'headers' => [
                     'Authorization' => 'Token ' . env('ERPNEXT_API_KEY') . ':' . env('ERPNEXT_API_SECRET'),
                     'Accept' => 'application/json',
-                    'Content-Type' => 'application/json', // Set the content type to JSON
+                    'Content-Type' => 'application/json'
                 ],
-                'json' => $post_data, // Provide the data to be posted in JSON format
+                'json' => json_decode($post_data, true)
             ]);
-    
-            return [
-                'status_code' => $response->getStatusCode(),
-                'data' => json_decode($response->getBody(), true),
-            ];
+
+            return $response;
+
         } catch (\Exception $e) {
-            return [
-                'status_code' => 404,
-                'error' => $e->getMessage(),
-            ];
+            // Handle exceptions, such as network errors or API errors
+            echo 'An error occurred: ' . $e->getMessage();
         }
     }
 
-    public static function get_si_assignment_no($id) {
-        $si_assignment_detail = SalesInvoiceAssignmentDetail::whereId($id)->first();
-        return $si_assignment_detail->series_number;
-    }
-
-    public static function get_distributor_name_by_bcid($bcid) {
+    public static function create_distributor_payload($bcid) {
         $distributor = Distributor::whereBcid($bcid)->first();
-        return $distributor->name;
+
+        if (!$distributor) {
+            // Handle the case where the distributor doesn't exist, e.g., by returning an error or throwing an exception.
+            return [
+                'error' => 'Distributor not found for BCID: ' . $bcid,
+            ];
+        }
+
+        return [
+            'customer_name' => $distributor->name,
+            'customer_type' => 'Company',
+            'customer_group' => 'All Customer Groups',
+            'territory' => 'All Territories'
+        ];
     }
 
-    public static function get_sales_status($si_assignment_id) {
-        $status = Sales::with('status')->whereSiAssignmentId($si_assignment_id)->first();
-        return $status->status->name ?? null;
+    public static function create_so_payload($id) {
+        $sales = Sales::with('sales_details', 'company', 'branch')->whereId($id)->first();
+
+        // warning: do not update/change the structure. This is erpnext's standard.
+        $payload = [
+            'doctype' => 'Sales Order',
+            'naming_series' => 'SAL-ORD-.YYYY.-',
+            'glv2_so_number' => $sales->so_no,
+            'company' => $sales->company->name,
+            'customer' => Helper::get_distributor_name_by_bcid($sales->bcid) ?? 'DISTRIBUTOR',
+            'distributor_name' => Helper::get_distributor_name_by_bcid($sales->bcid),
+            'transaction_date' => date("Y-m-d", strtotime($sales->created_at)),
+            'order_type' => 'Sales',
+            'redemption_name' => Helper::get_redemptions_name_from_history($sales->id),
+            'cost_center' => $sales->branch->cost_center_name,
+            'currency' => $sales->transaction_type->currency ?? 'PHP',
+            'selling_price_list' => $sales->transaction_type->name,
+            'set_warehouse' => $sales->branch->warehouse,
+            'delivery_date' => date("Y-m-d", strtotime($sales->created_at)),
+            'taxes_and_charges' => 'VAT Sales - LOCAL',
+            'taxes' => [
+                [
+                    'charge_type' => 'On Net Total',
+                    'account_head' => '2010120 - Due to BIR -  Value Added Tax - UNO', // need to be dynamic
+                    'description' => 'Due to BIR -  Value Added Tax',
+                    'included_in_print_rate' => 1,
+                    'cost_center' => $sales->branch->cost_center_name,
+                    'rate' => '12'
+                ]
+            ]
+        ];
+
+        // Use a foreach loop to add items to the 'items' array
+        foreach ($sales->sales_details as $detail) {
+            $payload['items'][] = [
+                'item_code' => $detail->item_code,
+                'item_name' => $detail->item_name,
+                'qty' => $detail->quantity,
+            ];
+        }
+
+        return $payload;
+    }
+
+    public static function create_si_payload($id) {
+        $sales = Sales::with('sales_details', 'company', 'branch')->whereId($id)->first();
+
+        if($sales->company_id == 3) {
+            $naming_series = 'LO-SI-V-.YYYY.-';
+            $taxes_and_charges = 'VAT Sales - LOCAL';
+            $debit_to = '1101001 - Accounts Receivable - Trade - UNO';
+            $account_head = '2010120 - Due to BIR -  Value Added Tax - UNO';
+
+        } else if ($sales->company_id == 2) {
+            $naming_series = 'PR-SI-V-.YYYY.-';
+            $taxes_and_charges = 'VAT Sales - PREMIER';
+            $debit_to = '1101001 - Accounts Receivable - Trade - PREMIER';
+            $account_head = '2010120 - Due to BIR -  Value Added Tax - PREMIER';
+        }
+
+        // get the income and expense accounts
+        $accounts = IncomeExpenseAccount::whereTransactionTypeId($sales->transaction_type_id)
+                        ->whereCompanyId($sales->company_id)
+                        ->first();
+
+
+        // warning: do not update/change the structure. This is erpnext's standard.
+        $payload = [
+            'doctype' => 'Sales Invoice',
+            'naming_series' => $naming_series,
+            'glv2_si_number' => $sales->si_no,
+            'invoice_number' => Helper::get_si_assignment_no($sales->si_assignment_id),
+            'company' => $sales->company->name,
+            'customer' => Helper::get_distributor_name_by_bcid($sales->bcid) ?? 'DISTRIBUTOR',
+            'distributor_name' => Helper::get_distributor_name_by_bcid($sales->bcid),
+            'transaction_date' => date("Y-m-d", strtotime($sales->created_at)),
+            'order_type' => 'Sales',
+            'cashier_name' => Helper::get_cashiers_name_from_history($sales->id),
+            'cost_center' => $sales->branch->cost_center_name,
+            'currency' => $sales->transaction_type->currency ?? 'PHP',
+            'selling_price_list' => $sales->transaction_type->name,
+            'set_warehouse' => $sales->branch->warehouse,
+            'delivery_date' => date("Y-m-d", strtotime($sales->created_at)),
+            'taxes_and_charges' => $taxes_and_charges,
+            'debit_to' => $debit_to,
+            'update_stock' => 1,
+            'taxes' => [
+                [
+                    'charge_type' => 'On Net Total',
+                    'account_head' => $account_head,
+                    'description' => 'Due to BIR -  Value Added Tax',
+                    'included_in_print_rate' => 1,
+                    'cost_center' => $sales->branch->cost_center_name,
+                    'rate' => '12'
+                ]
+            ]
+        ];
+
+        // Use a foreach loop to add items to the 'items' array
+        foreach ($sales->sales_details as $detail) {
+            $payload['items'][] = [
+                'item_code' => $detail->item_code,
+                'item_name' => $detail->item_name,
+                'qty' => $detail->quantity,
+                'income_account' => $accounts->income_account ?? null,
+                'expense_account' => $accounts->expense_account ?? null, 
+                'cost_center' => $sales->branch->cost_center_name,
+            ];
+        }
+
+        return $payload;
     }
 }

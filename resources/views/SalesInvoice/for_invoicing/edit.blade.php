@@ -73,7 +73,7 @@
                     <h3 class="card-title">Payment Method</h3>
                 </div>
                 <div class="card-body">
-                    <select class="form-control select2" id="payment_type" name="payment_type_id[]" data-name="payment_type_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                    <select class="form-control select2" multiple id="payment_type" name="payment_type_id[]" data-name="payment_type_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
                         <option value="">-- Select Payment Type --</option>
                         @foreach($payment_types as $payment_type)
                             <option value="{{ $payment_type->id }}" data-is-cash={{ $payment_type->is_cash }}>{{ $payment_type->name }}</option>
@@ -267,7 +267,9 @@ tfoot tr td {
 <script>
 $(document).ready(function() {
     //Initialize Select2 Elements
-    $('.select2').select2();
+    $('.select2').select2({
+        maximumSelectionLength: 1  // remove this to allow multiple; do not remove the `multiple` in payment_type option
+    });
 
     //Initialize Select2 Elements
     $('.select2bs4').select2({
@@ -317,8 +319,14 @@ $(document).ready(function() {
         // update the value of hidden field `count_payment_type` from zero to new value
         $('#count_payment_type').val(count_payment_type.length);
 
+        console.log(count_payment_type);
+        console.log(count_payment_type.length);
+
+
         // empty first
         $('#cash_tendered_fields').empty();
+
+        let total_amount = $('#total_amount').val();
 
         // get the names of payment type
         var selected_payment_types = $("#payment_type :selected").select2(this.data);
@@ -341,21 +349,45 @@ $(document).ready(function() {
         let els  = '';
         // render html inside cash_tendered_fields div
         for(let i = 1; i <= count_payment_type.length; i++) {
-                divs += "<div class='col-12'>" +
-                        "<div class='form-group row'>" +
-                            "<label for='" + selected_payment_type_names[i - 1] + "' class='col-sm-4 col-form-label'>" + selected_payment_type_names[i - 1] + ":</label>" +
-                            "<div class='col-sm-4'>";
-            if(selected_is_cash[i - 1] == 0) { 
-                divs +=         "<input type='text' class='form-control form-control-sm text-right input_reference_field' id='dynamic_reference_field_" + i + "' name='payment_references[]' placeholder='Reference No' required>";
-            } else {
-                divs +=         "<input type='hidden' name='payment_references[]'>";
-            }                           
-                divs +=     "</div>" +
-                            "<div class='col-sm-4'>" +
-                                "<input type='text' class='form-control form-control-sm text-right input_amount_field' id='dynamic_amount_field_" + i + "' name='payments[]' placeholder='0.00' maxlength='12' required>" +
-                            "</div>" +  
-                        "</div>" +
-                    "</div>";
+
+
+            // if(count_payment_type.length == 1) { 
+            //     // 1:1 Payment
+            //         divs += "<div class='col-12'>" +
+            //                     "<div class='form-group row'>" +
+            //                         "<label for='" + selected_payment_type_names[i - 1] + "' class='col-sm-4 col-form-label'>" + selected_payment_type_names[i - 1] + ":</label>" +
+            //                         "<div class='col-sm-4'>";
+            //     if(selected_is_cash[i - 1] == 0) { 
+            //         divs +=         "<input type='text' class='form-control form-control-sm text-right input_reference_field' id='dynamic_reference_field_" + i + "' name='payment_references[]' placeholder='Reference No' required autocomplete='off'>";
+            //     } else {
+            //         divs +=         "<input type='hidden' name='payment_references[]'>";
+            //     }                           
+            //         divs +=     "</div>" +
+            //                     "<div class='col-sm-4'>" +
+            //                         // lock the amount field if not cash and add the total amount (grand total)
+            //                         "<input type='text' class='form-control form-control-sm text-right input_amount_field' id='dynamic_amount_field_" + i + "' name='payments[]' placeholder='0.00' maxlength='12' value=" + total_amount + " required autocomplete='off'>" +
+            //                     "</div>" +  
+            //                 "</div>" +
+            //             "</div>";
+
+            // } else {
+                // Split Payment - for future use
+                    divs += "<div class='col-12'>" +
+                            "<div class='form-group row'>" +
+                                "<label for='" + selected_payment_type_names[i - 1] + "' class='col-sm-4 col-form-label'>" + selected_payment_type_names[i - 1] + ":</label>" +
+                                "<div class='col-sm-4'>";
+                if(selected_is_cash[i - 1] == 0) { 
+                    divs +=         "<input type='text' class='form-control form-control-sm text-right input_reference_field' id='dynamic_reference_field_" + i + "' name='payment_references[]' placeholder='Reference No' required autocomplete='off'>";
+                } else {
+                    divs +=         "<input type='hidden' name='payment_references[]'>";
+                }                           
+                    divs +=     "</div>" +
+                                "<div class='col-sm-4'>" +
+                                    "<input type='text' class='form-control form-control-sm text-right input_amount_field' id='dynamic_amount_field_" + i + "' name='payments[]' placeholder='0.00' maxlength='12' required autocomplete='off'>" +
+                                "</div>" +  
+                            "</div>" +
+                        "</div>";
+            // }
 
                 
                 // payment method ids - pass to hidden field

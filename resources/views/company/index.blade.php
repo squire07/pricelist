@@ -230,7 +230,7 @@
             ],
             columnDefs: [ 
                 {
-                    targets: [5], // column index (start from 0)
+                    targets: [6], // column index (start from 0)
                     orderable: false, // set orderable false for selected columns
                 }
             ],

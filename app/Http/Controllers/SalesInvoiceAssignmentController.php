@@ -16,47 +16,94 @@ class SalesInvoiceAssignmentController extends Controller
      * Display a listing of the resource.
      * This is supposedly available only for Head Cashier
      */
-    public function index()
-    {
-        $booklets = SalesInvoiceAssignment::with('booklet_details')->whereDeleted(false)->get();
 
-        // count the number of used series per booklet
-        foreach($booklets as $booklet) {
+     public function index()
+     {
+         // Get current user's branch ids
+         $userBranch = User::whereId(Auth::user()->id)->value('branch_id');
+     
+         // Create a base query for cashiers
+         $cashiersQuery = User::whereDeleted(false)
+             ->whereActive(true)
+             ->whereBlocked(false)
+             ->whereRoleId(2);
+     
+         // If the user's role is not 12, filter by branch
+         if (Auth::user()->role_id != 12) {
+             $cashiersQuery->where(function ($query) use ($userBranch) {
+                 $query->whereIn('branch_id', explode(',', $userBranch))
+                     ->orWhere('branch_id', $userBranch);
+             });
+         }
+     
+         // Get the cashiers
+         $cashiers = $cashiersQuery->get();
+     
+         // Get booklets for the filtered cashiers
+         $booklets = SalesInvoiceAssignment::with('booklet_details')
+             ->whereDeleted(false)
+             ->whereIn('branch_id', $cashiers->pluck('branch_id'))
+             ->get();
+     
+         // Iterate over booklets and add used and percentage_used information
+         foreach ($booklets as $booklet) {
+             $usedCount = 0;
+     
+             foreach ($booklet->booklet_details as $series) {
+                 if ($series->used == 1) {
+                     $usedCount++;
+                 }
+             }
+     
+             $booklet['used'] = $usedCount;
+             $booklet['percentage_used'] = $usedCount == 0 ? 0 : round(($usedCount / $booklet->count) * 100);
+         }
+     
+         return view('sales_invoice_assignment.index', compact('booklets', 'cashiers'));
+     }
+     
 
-            // reset the used counter per booklet
-            $used_count = 0;
-            foreach($booklet->booklet_details as $series) {
-                if($series->used == 1) {
-                    $used_count++;
-                }
-            }            
-            // add a new element (column) to collection `booklet`; NOT `booklets`
-            $booklet['used'] = $used_count;
+    // public function index()
+    // {
+    //     $booklets = SalesInvoiceAssignment::with('booklet_details')->whereDeleted(false)->get();
 
-            $booklet['percentage_used'] = $used_count == 0 ? 0 : round(($used_count / $booklet->count) * 100);
-        }
+    //     // count the number of used series per booklet
+    //     foreach($booklets as $booklet) {
 
-        // get current users branch ids 
-        $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
+    //         // reset the used counter per booklet
+    //         $used_count = 0;
+    //         foreach($booklet->booklet_details as $series) {
+    //             if($series->used == 1) {
+    //                 $used_count++;
+    //             }
+    //         }            
+    //         // add a new element (column) to collection `booklet`; NOT `booklets`
+    //         $booklet['used'] = $used_count;
 
-        // Create a base query for cashiers
-        $cashiers = User::whereDeleted(false)
-                            ->whereActive(true)
-                            ->whereBlocked(false)
-                            ->whereRoleId(2);
+    //         $booklet['percentage_used'] = $used_count == 0 ? 0 : round(($used_count / $booklet->count) * 100);
+    //     }
 
-        // If the user's role is not 12, filter by branch
-        if (Auth::user()->role_id != 12) {
-            $cashiers = $cashiers->where(function ($query) use ($user_branch) {
-                $query->whereIn('branch_id', explode(',', $user_branch))
-                    ->orWhere('branch_id', $user_branch);
-            })->get();
-        } else {
-            $cashiers = $cashiers->get();
-        }
+    //     // get current users branch ids 
+    //     $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
 
-        return view('sales_invoice_assignment.index', compact('booklets','cashiers'));
-    }
+    //     // Create a base query for cashiers
+    //     $cashiers = User::whereDeleted(false)
+    //                         ->whereActive(true)
+    //                         ->whereBlocked(false)
+    //                         ->whereRoleId(2);
+
+    //     // If the user's role is not 12, filter by branch
+    //     if (Auth::user()->role_id != 12) {
+    //         $cashiers = $cashiers->where(function ($query) use ($user_branch) {
+    //             $query->whereIn('branch_id', explode(',', $user_branch))
+    //                 ->orWhere('branch_id', $user_branch);
+    //         })->get();
+    //     } else {
+    //         $cashiers = $cashiers->get();
+    //     }
+
+    //     return view('sales_invoice_assignment.index', compact('booklets','cashiers'));
+    // }
 
     /**
      * Show the form for creating a new resource.

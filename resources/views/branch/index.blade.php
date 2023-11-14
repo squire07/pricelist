@@ -48,7 +48,8 @@
                                         data-branch-name="{{ $branch->name }}" 
                                         data-branch-code="{{ $branch->code }}"
                                         data-branch-cost_center="{{ $branch->cost_center }}"
-                                        data-branch-cost_center-name="{{ $branch->cost_center_name }}"
+                                        data-branch-cost_center_name="{{ $branch->cost_center_name }}"
+                                        data-branch-warehouse="{{ $branch->warehouse }}"
                                         data-branch-status_id="{{ $branch->status->name}}"
                                         data-branch-remarks="{{ $branch->remarks }}"
                                         data-branch-updated_by="{{ $branch->updated_by }}">
@@ -62,6 +63,7 @@
                                         data-branch-code="{{ $branch->code }}"
                                         data-branch-cost_center="{{ $branch->cost_center }}"
                                         data-branch-cost_center_name="{{ $branch->cost_center_name }}"
+                                        data-branch-warehouse="{{ $branch->warehouse }}"
                                         data-branch-status_id="{{ $branch->status->name}}"
                                         data-branch-remarks="{{ $branch->remarks }}">
                                         <i class="fas fa-pencil-alt"></i>&nbsp;Edit
@@ -100,6 +102,14 @@
                             <div class="col-12">
                                 <label for="name">Cost Center</label>
                                 <input type="text" class="form-control form-control-sm" name="cost_center" maxlength="3" id="modal_add_cost_center" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="name">Cost Center Name</label>
+                                <input type="text" class="form-control form-control-sm" name="cost_center_name" maxlength="50"  id="modal_add_cost_center_name" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="name">Warehouse</label>
+                                <input type="text" class="form-control form-control-sm" name="warehouse" maxlength="50"  id="modal_add_warehouse" required>
                             </div>
                         </div>
                     </div>
@@ -145,6 +155,18 @@
                                 <div class="form-group">
                                     <label for="code">Cost Center</label>
                                     <input type="text" class="form-control form-control-sm text-bold" maxlength="3" name="cost_center" id="modal_edit_cost_center" required>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="name">Cost Center Name</label>
+                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="50" name="cost_center_name" id="modal_edit_cost_center_name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="name">Warehouse</label>
+                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="50" name="warehouse" id="modal_edit_warehouse" required>
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-12">
@@ -207,6 +229,14 @@
                                 <td><span id="modal_show_cost_center" style="font-weight:bold"></span></td>
                             </tr>
                             <tr>
+                                <td width="25%">Cost Center Name</td>
+                                <td><span id="modal_show_cost_center_name" style="font-weight:bold"></span></td>
+                            </tr>
+                            <tr>
+                                <td width="25%">Warehouse</td>
+                                <td><span id="modal_show_warehouse" style="font-weight:bold"></span></td>
+                            </tr>
+                            <tr>
                                 <td width="25%">Remarks</td>
                                 <td><span id="modal_show_remarks" style="font-weight:bold"></span></td>
                             </tr>
@@ -254,7 +284,7 @@ input[type="text2"], textarea {
             ],
             columnDefs: [ 
                 {
-                    targets: [5], // column index (start from 0)
+                    targets: [6], // column index (start from 0)
                     orderable: false, // set orderable false for selected columns
                 }
             ],
@@ -274,12 +304,16 @@ input[type="text2"], textarea {
             var name = $(this).attr("data-branch-name");
             var code = $(this).attr("data-branch-code");
             var cost_center = $(this).attr("data-branch-cost_center");
+            var cost_center_name = $(this).attr("data-branch-cost_center_name");
+            var warehouse = $(this).attr("data-branch-warehouse");
             var remarks = $(this).attr("data-branch-remarks");
             var status_id = $(this).attr("data-branch-status_id");
 
             $('#modal_edit_name').val(name);
             $('#modal_edit_code').val(code);
             $('#modal_edit_cost_center').val(cost_center);
+            $('#modal_edit_cost_center_name').val(cost_center_name);
+            $('#modal_edit_warehouse').val(warehouse);
             $('#modal_show_remarks').val(remarks);
             $('#modal_show_status_id').val(status_id);
 
@@ -293,6 +327,8 @@ input[type="text2"], textarea {
             var name = $(this).attr("data-branch-name");
             var code = $(this).attr("data-branch-code");
             var cost_center = $(this).attr("data-branch-cost_center");
+            var cost_center_name = $(this).attr("data-branch-cost_center_name");
+            var warehouse = $(this).attr("data-branch-warehouse");
             var remarks = $(this).attr("data-branch-remarks");
             var status_id = $(this).attr("data-branch-status_id");
             var updated_by = $(this).attr("data-branch-updated_by");
@@ -301,6 +337,8 @@ input[type="text2"], textarea {
             $('#modal_show_name').text(name);
             $('#modal_show_code').text(code);
             $('#modal_show_cost_center').text(cost_center);
+            $('#modal_show_cost_center_name').val(cost_center_name);
+            $('#modal_show_warehouse').val(warehouse);
             $('#modal_show_remarks').text(remarks);
             $('#modal_show_status_id').text(status_id);
             $('#modal_show_updated_by').text(updated_by);

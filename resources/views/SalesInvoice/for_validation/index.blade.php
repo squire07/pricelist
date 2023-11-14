@@ -46,6 +46,7 @@
                 <table id="dt_sales_orders" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
                         <tr>
+                            <th class="text-center" style="width:30px;"></th>
                             <th class="text-center">SO #</th>
                             <th class="text-center">Transaction Type</th>
                             <th class="text-center">BCID</th>
@@ -60,6 +61,13 @@
                     <tbody>
                         @foreach($sales_orders as $sales_order)
                             <tr>
+                                <td class="text-center">
+                                    @if($sales_order->shipping_fee > 0)
+                                        <span class="badge badge-success">D</span>
+                                    @else
+                                        <span class="badge badge-primary">P</span>
+                                    @endif
+                                </td>
                                 <td class="text-center"><a href="{{ url('sales-invoice/for-validation/' . $sales_order->uuid ) }}" target="_self">{{ $sales_order->so_no }}</a></td>
                                 <td class="text-center">{{ $sales_order->transaction_type->name }}</td>
                                 <td class="text-center">{{ $sales_order->bcid }}</td>

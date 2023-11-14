@@ -20,9 +20,9 @@ return new class extends Migration
             $table->longText('si')->nullable();
             $table->string('nuc_points')->nullable();
             $table->string('distributor_response')->nullable();
-            $table->string('so_response')->nullable();
-            $table->string('si_response')->nullable();
-            $table->string('nuc_points_response')->nullable();
+            $table->longText('so_response')->nullable();
+            $table->longText('si_response')->nullable();
+            $table->text('nuc_points_response')->nullable();
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
             $table->softDeletes();

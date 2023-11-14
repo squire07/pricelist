@@ -21,37 +21,32 @@ class SalesController extends Controller
     /**
      * Display a listing of the resource.
      */
-
     public function index(Request $request)
     {
         // get current users branch ids 
         $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
-    
-        $sales_orders = Sales::with('status', 'transaction_type')
-            ->where(function ($query) use ($request) {
-                if ($request->has('daterange')) {
-                    $date = explode(' - ', $request->daterange);
-                    $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
-                    $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
-    
-                    // Apply the whereBetween condition
-                    $query->whereBetween('created_at', [$from, $to]);
-                } else {
-                    // If no date range is specified, filter for the current date
-                    $query->whereDate('created_at', now()->toDateString());
-                }
-            })
-            ->whereStatusId(1)
-            ->whereDeleted(false)
-            ->when(!empty($user_branch), function ($query) use ($user_branch) {
-                $query->whereIn('branch_id', explode(',', $user_branch));
-            })
-            ->orderByDesc('id')
-            ->get();
-    
+
+        $sales_orders = Sales::with('status','transaction_type')
+                            ->where(function ($query) use ($request) {
+                                if ($request->has('daterange')) {
+                                    $date = explode(' - ', $request->daterange);
+                                    $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
+                                    $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
+                        
+                                    // Apply the whereBetween condition
+                                    $query->whereBetween('created_at', [$from, $to]);
+                                }
+                            })
+                            ->whereStatusId(1)
+                            ->whereDeleted(false)
+                            ->when(!empty($user_branch), function($query) use ($user_branch) {
+                                $query->whereIn('branch_id', explode(',',$user_branch));
+                            })
+                            ->orderByDesc('id')
+                            ->get();
+
         return view('SalesOrder.index', compact('sales_orders'));
     }
-
 
     /**
      * Show the form for creating a new resource.

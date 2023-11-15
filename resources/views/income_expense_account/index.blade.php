@@ -254,7 +254,7 @@
             } else if ((event.keyCode >= 48 && event.keyCode <= 57) || // 0-9
                 (event.keyCode >= 65 && event.keyCode <= 90) || // A-Z
                 (event.keyCode >= 97 && event.keyCode <= 122) || // a-z
-                event.keyCode === 45) { 
+                event.keyCode === 45 || vent.keyCode === 32) { 
                 return true; // Allow the character
             } else {
                 return false; // Prevent the character

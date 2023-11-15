@@ -131,15 +131,12 @@
             paging: true,
             searching: true,
             lengthMenu: [[10, 25, 50, -1], ['10 rows', '25 rows', '50 rows', "Show All"]],  
-            order: [[1, 'desc']],
+            order: [[9, 'desc']],
             buttons: [
                 {
                     extend: 'pageLength',
                     className: 'btn-default btn-sm',
                 },
-            ],
-            columnDefs: [
-                { 'orderable': false, 'targets': 0 } // Disable sorting for the first column (index 0)
             ],
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."

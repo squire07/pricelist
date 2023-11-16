@@ -320,7 +320,7 @@
             dom: 'Bfrtip',
             autoWidth: true,
             responsive: true,
-            order: [[ 0, "asc" ]],
+            order: [[ 3, "asc" ]],
             searching: true,
             lengthMenu: [[10, 25, 50, -1], ['10 rows', '25 rows', '50 rows', "Show All"]],  
             buttons: [

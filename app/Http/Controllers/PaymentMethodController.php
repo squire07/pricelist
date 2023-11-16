@@ -19,8 +19,8 @@ class PaymentMethodController extends Controller
     public function index()
     {
         $payments = PaymentMethod::with('status')->whereDeleted(false)->get();
-        $companies = Company::whereDeleted(false)->get(['id','name']);
-        $branches = Branch::whereDeleted(false)->get(['id','name']);
+        $companies = Company::whereDeleted(false)->get();
+        $branches = Branch::whereDeleted(false)->get();
         return view('payment_method.index',compact('payments','companies','branches'));
     }
 

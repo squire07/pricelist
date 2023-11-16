@@ -17,8 +17,8 @@ return new class extends Migration
                 $table->string('name');
                 $table->string('description')->nullable();
                 $table->string('code', 12);
-                $table->string('branch_id', 55)->nullable();
                 $table->tinyInteger('company_id');
+                $table->string('branch_id', 55)->nullable();
                 $table->tinyInteger('is_cash')->default(0); // payment reference number is not required if cash is true (1)
                 $table->tinyInteger('status_id')->default(6);
                 $table->text('remarks')->nullable();

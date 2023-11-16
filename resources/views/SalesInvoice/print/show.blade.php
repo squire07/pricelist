@@ -64,7 +64,7 @@
                             <td class="text-right">0.00</td>
                         </tr>
                         <tr>
-                            <td style="padding-left: 50px;">CASH: {{ $sales_order->grandtotal_amount}}</td>
+                            <td style="padding-left: 50px;">{{ $sales_order->payment->payment_type }}: {{ $sales_order->amount_tendered}}</td>
                             <td>&nbsp;</td>
                             <td class="text-right text-bold d-print-none">Zero Rated Sales</td>
                             <td class="text-right">0.00</td>
@@ -74,7 +74,7 @@
                 <table style="width: 100%">
                         <tr>
                             <td style="width: 45%; padding-left: 50px;">{{ $sales_order->so_no }}</td>
-                            <td style="width: 20%; padding-left: 100px;">Total Qty: 100</td>
+                            <td style="width: 20%; padding-left: 100px;">Total Qty: {{ $sales_order->total_item_count }}</td>
                             <td class="text-right text-bold d-print-none">Add 12% VAT</td>
                             <td class="text-right">{{ $sales_order->vat_amount }}</td>
                         </tr>

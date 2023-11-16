@@ -244,7 +244,8 @@ class ForInvoicingController extends Controller
                 $payload->bcid = $sales->bcid;
                 $payload->distributor = json_encode(Helper::create_distributor_payload($sales->bcid)) ?? null;
                 $payload->so = json_encode(Helper::create_so_payload($sales->id));
-                $payload->si = json_encode(Helper::create_si_payload($sales->id));;
+                $payload->si = json_encode(Helper::create_si_payload($sales->id));
+                $payload->payment = json_encode(Helper::create_payment_payload($sales->id));
                 $payload->nuc_points = $sales->total_nuc;
                 $payload->created_by = Auth::user()->name;
                 $payload->save();
@@ -279,13 +280,17 @@ class ForInvoicingController extends Controller
     {
         //sleep(3); // allow x seconds interval before getting the sales details
 
-        $sales_order = Sales::whereUuid($uuid)
+        $sales_order = Sales::with('payment')
+                        ->whereUuid($uuid)
                         ->whereStatusId(5)
                         ->with('transaction_type')
                         ->with('sales_details', function($query) {
                             $query->where('deleted',0);
                         })->firstOrFail();
-        
+
+        $sales_order->total_item_count = $sales_order->sales_details->sum('quantity');
+        $sales_order->amount_tendered = number_format($sales_order->payment['total_amount'] + $sales_order->payment['change'], 2, '.', ',');
+
         return view('SalesInvoice.print.show', compact('sales_order'));
     }
 }

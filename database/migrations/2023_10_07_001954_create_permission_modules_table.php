@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('type');
             $table->string('controller');
+            $table->string('redirect')->nullable();
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
             $table->softDeletes();

@@ -172,9 +172,9 @@
                             <div class="col-md-4 col-sm-12">
                                 <div class="form-group">
                                     Branch Status?<br>
-                                    <input type="radio" id="modal_edit_status_id" name="status" value="8" checked="checked">
+                                    <input type="radio" id="status_8" name="status" value="8">
                                     <label for="">Active</label>&nbsp;
-                                    <input type="radio" id="modal_edit_status_id" name="status" value="9" style="margin-top: 8px">
+                                    <input type="radio" id="status_9" name="status" value="9" style="margin-top: 8px">
                                     <label for="">Inactive</label><br>
                                 </div>
                             </div>
@@ -315,7 +315,20 @@ input[type="text2"], textarea {
             $('#modal_edit_cost_center_name').val(cost_center_name);
             $('#modal_edit_warehouse').val(warehouse);
             $('#modal_show_remarks').val(remarks);
-            $('#modal_show_status_id').val(status_id);
+            // $('#modal_show_status_id').val(status_id);
+
+                    // add check to active status
+            // if(status_id == 8) {
+            //     $('#status_8[value="8"]').prop('checked', true);
+            // } else if(status_id == 9) {
+            //     $('#status_9[value="9"]').prop('checked', true);
+            // } 
+
+            if (status_id == 'Active') {
+                $('#status_8[value="8"]').prop('checked', true);
+            } else {
+                $('#status_9[value="9"]').prop('checked', true);
+            }
 
             // define the edit form action
             let action = window.location.origin + "/branches/" + uuid;
@@ -337,8 +350,8 @@ input[type="text2"], textarea {
             $('#modal_show_name').text(name);
             $('#modal_show_code').text(code);
             $('#modal_show_cost_center').text(cost_center);
-            $('#modal_show_cost_center_name').val(cost_center_name);
-            $('#modal_show_warehouse').val(warehouse);
+            $('#modal_show_cost_center_name').text(cost_center_name);
+            $('#modal_show_warehouse').text(warehouse);
             $('#modal_show_remarks').text(remarks);
             $('#modal_show_status_id').text(status_id);
             $('#modal_show_updated_by').text(updated_by);

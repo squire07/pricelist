@@ -103,6 +103,7 @@ class ForInvoicingController extends Controller
 
         $payment_types = PaymentMethod::whereDeleted(false)
                             ->where('status_id', 6)
+                            ->whereCompanyId($sales_order->company_id)
                             ->where(function ($query) use ($exploded) {
                                 if ($exploded) {
                                     foreach ($exploded as $branch_id) {
@@ -245,7 +246,7 @@ class ForInvoicingController extends Controller
                 $payload->distributor = json_encode(Helper::create_distributor_payload($sales->bcid)) ?? null;
                 $payload->so = json_encode(Helper::create_so_payload($sales->id));
                 $payload->si = json_encode(Helper::create_si_payload($sales->id));
-                //$payload->payment = json_encode(Helper::create_payment_payload($sales->id));
+                $payload->payment = json_encode(Helper::create_payment_payload($sales->id));
                 $payload->nuc_points = $sales->total_nuc;
                 $payload->created_by = Auth::user()->name;
                 $payload->save();

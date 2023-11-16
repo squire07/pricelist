@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Models\PermissionModule;
 use App\Models\User;
 use Auth;
 use Hash;
@@ -58,25 +59,46 @@ class LoginController extends Controller
         return 'username';
     }
 
-    protected function authenticated(Request $request, $user)
-    {
-        $redirect = [
-            1 => 'sales-orders',
-            2 => 'sales-invoice/for-invoice',
-            3 => 'sales-orders',
-            4 => 'sales-invoice/for-invoice',
-            5 => 'sales-invoice/all',
-            6 => 'sales-invoice/all',
-            7 => 'sales-invoice/all',
-            8 => 'sales-invoice/for-validation',
-            9 => 'sales-invoice/all',
-            10 => 'sales-invoice/all',
-            11 => 'sales-invoice/all',
-            12 => 'sales-invoice/all',
-        ];
+    // protected function authenticated(Request $request, $user)
+    // {
+    //     $redirect = [
+    //         1 => 'sales-orders',
+    //         2 => 'sales-invoice/for-invoice',
+    //         3 => 'sales-orders',
+    //         4 => 'sales-invoice/for-invoice',
+    //         5 => 'sales-invoice/all',
+    //         6 => 'sales-invoice/all',
+    //         7 => 'sales-invoice/all',
+    //         8 => 'sales-invoice/for-validation',
+    //         9 => 'sales-invoice/all',
+    //         10 => 'sales-invoice/all',
+    //         11 => 'sales-invoice/all',
+    //         12 => 'sales-invoice/all',
+    //     ];
     
-        $page = $redirect[$user->role_id] ?? 'sales-orders';
-        return redirect('/' . $page);
+    //     $page = $redirect[$user->role_id] ?? 'sales-orders';
+    //     return redirect('/' . $page);
+    // }
+
+    protected function authenticated(Request $request, $user) 
+    {
+        // get the first allowed module of user
+        $permissions = json_decode($user->permission->user_permission, true);
+
+        $module_id = null;
+
+        // find the first array key that contains sub array with "1":1  `index`:allowed
+        foreach ($permissions as $key => $sub_array) {
+            if (isset($sub_array["1"]) && $sub_array["1"] === 1) {
+                $module_id = $key;
+                break;
+            }
+        }
+
+        // find the module
+        $permission_module = PermissionModule::whereId($module_id)->first();
+        
+        return redirect('/' . $permission_module->redirect);
     }
 
     public function logout(Request $request)
@@ -97,7 +119,7 @@ class LoginController extends Controller
 
         $credentials = $request->only('username', 'password');
 
-        $user = User::whereUsername($request->username)->first();
+        $user = User::with('permission')->whereUsername($request->username)->first();
         if($user && $user->blocked == 1) {
             return redirect()->back()->with('error-login', "Your account has been blocked! Please contact your administrator.");
         } else if ($user && $user->active == 0) {
@@ -132,5 +154,4 @@ class LoginController extends Controller
     {
         return redirect()->back()->with('error-login', "Your account has been blocked! Please contact your administrator.");
     }
-
 }

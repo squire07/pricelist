@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
+use App\Models\Company;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -15,9 +16,10 @@ class BranchController extends Controller
      */
     public function index()
     {
+        $companies = Company::with('status')->whereDeleted(false)->get();
         $branches = Branch::with('status')->whereDeleted(false)->get();
         // dd($branches);
-        return view('branch.index',compact('branches'));
+        return view('branch.index',compact('branches','companies'));
     }
 
     /**
@@ -41,6 +43,7 @@ class BranchController extends Controller
             $branch->uuid = Str::uuid();
             $branch->name = $request->name;
             $branch->code = $request->code;
+            $branch->company_id = $request->company_id;
             $branch->cost_center = $request->cost_center;
             $branch->cost_center_name = $request->cost_center_name;
             $branch->warehouse = $request->warehouse;
@@ -82,6 +85,7 @@ class BranchController extends Controller
         $branch = Branch::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
             $branch->name = $request->name;     
             $branch->code = $request->code;
+            $branch->company_id = $request->company_id;
             $branch->cost_center = $request->cost_center;
             $branch->cost_center_name = $request->cost_center_name;
             $branch->warehouse = $request->warehouse;

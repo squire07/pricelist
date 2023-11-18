@@ -47,6 +47,7 @@
                                         data-uuid="{{ $branch->uuid }}"
                                         data-branch-name="{{ $branch->name }}" 
                                         data-branch-code="{{ $branch->code }}"
+                                        data-branch-company_id="{{ $branch->company->name }}"
                                         data-branch-cost_center="{{ $branch->cost_center }}"
                                         data-branch-cost_center_name="{{ $branch->cost_center_name }}"
                                         data-branch-warehouse="{{ $branch->warehouse }}"
@@ -61,6 +62,7 @@
                                         data-uuid="{{ $branch->uuid }}" 
                                         data-branch-name="{{ $branch->name }}" 
                                         data-branch-code="{{ $branch->code }}"
+                                        data-branch-company_id="{{ $branch->company_id }}"
                                         data-branch-cost_center="{{ $branch->cost_center }}"
                                         data-branch-cost_center_name="{{ $branch->cost_center_name }}"
                                         data-branch-warehouse="{{ $branch->warehouse }}"
@@ -90,6 +92,19 @@
                 <form class="form-horizontal" action="{{ route('branches.store') }}" method="POST" id="form_modal_add" autocomplete="off">
                     @csrf
                     <div class="modal-body">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Company</label>
+                                <select class="form-control form-control-sm" name="company_id" required>
+                                    <option value="" selected disabled>-- Select Company --</option>
+                                    @foreach($companies as $company)
+                                        @if(in_array($company->status_id, [8,1]))
+                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="container-fluid">
                             <div class="col-12">
                                 <label for="name">Branch Name</label>
@@ -139,6 +154,17 @@
                     @csrf
                     <div class="modal-body">
                         <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="comapny_id">Company</label>
+                                    <select class="form-control form-control-sm" name="company_id" id="modal_edit_company_id" required>
+                                        <option value="" disabled>-- Select Company --</option>
+                                        @foreach($companies as $company)
+                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Name</label>
@@ -216,6 +242,10 @@
                     </div>         
                     <div class="row">
                         <table class="table table-borderless">
+                            <tr>
+                                <td width="25%">Company</td>
+                                <td><span id="modal_show_company" style="font-weight:bold"></span></td>
+                            </tr>
                             <tr>
                                 <td width="25%">Name</td>
                                 <td><span id="modal_show_name" style="font-weight:bold"></span></td>
@@ -303,12 +333,14 @@ input[type="text2"], textarea {
             var uuid = $(this).attr("data-uuid");
             var name = $(this).attr("data-branch-name");
             var code = $(this).attr("data-branch-code");
+            var c_id = $(this).attr("data-branch-company_id");
             var cost_center = $(this).attr("data-branch-cost_center");
             var cost_center_name = $(this).attr("data-branch-cost_center_name");
             var warehouse = $(this).attr("data-branch-warehouse");
             var remarks = $(this).attr("data-branch-remarks");
             var status_id = $(this).attr("data-branch-status_id");
 
+            $('#modal_edit_company_id option[value=' + c_id + ']').attr('selected', 'selected');
             $('#modal_edit_name').val(name);
             $('#modal_edit_code').val(code);
             $('#modal_edit_cost_center').val(cost_center);
@@ -339,6 +371,7 @@ input[type="text2"], textarea {
             var uuid = $(this).attr("data-uuid");
             var name = $(this).attr("data-branch-name");
             var code = $(this).attr("data-branch-code");
+            var c_id = $(this).attr("data-branch-company_id");
             var cost_center = $(this).attr("data-branch-cost_center");
             var cost_center_name = $(this).attr("data-branch-cost_center_name");
             var warehouse = $(this).attr("data-branch-warehouse");
@@ -349,6 +382,7 @@ input[type="text2"], textarea {
             // set multiple attributes
             $('#modal_show_name').text(name);
             $('#modal_show_code').text(code);
+            $('#modal_show_company').text(c_id);
             $('#modal_show_cost_center').text(cost_center);
             $('#modal_show_cost_center_name').text(cost_center_name);
             $('#modal_show_warehouse').text(warehouse);

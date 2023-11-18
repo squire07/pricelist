@@ -150,7 +150,9 @@
                                     <label for="companies">Branches</label>
                                     <select class="select2" multiple="multiple" id="modal_add_branch_id" name="branch_id[]" data-name="branch_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required disabled>
                                         @foreach($branches as $branch)
-                                            <option value="{{ $branch->id }}" class="{{ $branch->company_id == 3 ? 'branch-local' : 'branch-premier' }}">{{ $branch->name }}</option>
+                                            @if(in_array($branch->status_id, [8,1]))
+                                                <option value="{{ $branch->id }}" class="{{ $branch->company_id == 3 ? 'branch-local' : 'branch-premier' }}">{{ $branch->name }}</option>
+                                            @endif
                                         @endforeach
                                     </select>                                 
                                 </div>
@@ -159,7 +161,7 @@
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="modal_add_close">Close</button>
-                        <button type="submit" class="btn btn-primary btn-sm m-2"><i class="fas fa-save mr-2"></i>Save</button>
+                        <button type="submit" class="btn btn-primary btn-sm m-2" id="modal-add-submit-button" ><i class="fas fa-save mr-2"></i>Save</button>
                     </div>
 
                 </form>
@@ -776,8 +778,35 @@ $(document).ready(function() {
                 $('#modal_add_branch_id').select2();
             }
         });
-    });    
+    });
 
-});
+    $('#modal-add').submit(function (e) {
+        // Get the selected values
+        var company_ids_arr = $('#modal_add_company_id').val();
+        var branch_ids_arr = $('#modal_add_branch_id').val();
+
+        // Check if there are two company IDs selected
+        if (company_ids_arr.length === 2) {
+
+            var isLocalBranch = $('#modal_add_branch_id option.branch-local');
+            var isPremierBranch = $('#modal_add_branch_id option.branch-premier');
+
+            // Check if the selected branch has the appropriate class based on the selected companies
+            if ((company_ids_arr.includes('2') && isPremierBranch) ||
+                (company_ids_arr.includes('3') && isLocalBranch)
+            ) {
+                // Display a message or perform some action to inform the user
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Invalid branch selection for the selected companies.',
+                    icon: 'error',
+                });
+                // Prevent the form submission
+                e.preventDefault();
+                return; // Stop further processing
+            }
+        }
+    });
+});    
 </script>
 @endsection

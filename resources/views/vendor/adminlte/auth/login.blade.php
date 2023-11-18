@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/icheck-bootstrap/icheck-bootstrap.min.css') }}">
 @stop
 
+
 @php( $login_url = View::getSection('login_url') ?? config('adminlte.login_url', 'login') )
 @php( $register_url = View::getSection('register_url') ?? config('adminlte.register_url', 'register') )
 @php( $password_reset_url = View::getSection('password_reset_url') ?? config('adminlte.password_reset_url', 'password/reset') )
@@ -27,7 +28,7 @@
         {{-- Username field --}}
         <div class="input-group mb-3">
             <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
-                   value="{{ old('username') }}" placeholder="{{ __('Username') }}" autofocus>
+                   value="{{ old('username') }}" placeholder="{{ __('Username') }}" autofocus id="input-username">
 
             <div class="input-group-append">
                 <div class="input-group-text">
@@ -41,11 +42,10 @@
                 </span>
             @enderror
         </div>
-
         {{-- Password field --}}
         <div class="input-group mb-3">
             <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                   placeholder="{{ __('adminlte::adminlte.password') }}">
+                   placeholder="{{ __('adminlte::adminlte.password') }}" maxlength="12" minlength="8" id="input-password">
 
             <div class="input-group-append">
                 <div class="input-group-text">
@@ -90,6 +90,19 @@
         </p>
     @stop
 @endif
+
+@section('adminlte_js')
+    <script>
+        $(document).ready(function(){
+            // Disable space bar on username and password inputs
+            $('#input-username, #input-password').on('keydown', function(e) {
+                if (e.keyCode === 32) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+@endsection
 
 {{-- @section('auth_footer')  --}}
         {{-- Password reset link --}}

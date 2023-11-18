@@ -23,7 +23,7 @@
             </tr>
         {{-- </tbody> --}}
     </table>
-        <div class="row" style="margin-top: 100px">
+        <div class="row" style="margin-top: 100px; line-height: 15px;">
             <div class="col-12">
                 <table style="width:100%">
                     <tbody>
@@ -39,16 +39,16 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div style="position: absolute; top: 250px; width: 100%">
+                <div style="position: absolute; top: 250px; width: 100%; margin-top: 70px; padding-right: 15px;">
                 <table style="width: 100%">
                         <tr>
                             <td class="text-right" style="width: 60%">&nbsp;</td>
-                            <td class="text-right text-bold" style="width: 20%">Sub Total</td>
-                            <td class="text-right" style="width: 20%">{{ $sales_order->total_amount }}</td>
+                            <td class="text-right text-bold" style="width: 30%; padding-right: 40px">Sub Total</td>
+                            <td class="text-right" style="width: 10%">{{ $sales_order->total_amount }}</td>
                         </tr>
                         <tr>
                             <td class="text-right">&nbsp;</td>
-                            <td class="text-right text-bold">Shipping Fee</td>
+                            <td class="text-right text-bold" style="width: 30%; padding-right: 40px">Shipping Fee</td>
                             <td class="text-right">{{ $sales_order->shipping_fee }}</td>
                         </tr>
                         <tr>

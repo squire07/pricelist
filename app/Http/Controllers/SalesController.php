@@ -94,7 +94,7 @@ class SalesController extends Controller
         }
 
         // users without branch id
-        $branches = Branch::whereDeleted(false)->whereIn('company_id', $company_ids)->orderBy('name')->get(['id','name']);   
+        $branches = Branch::whereDeleted(false)->whereIn('status_id',[8,1])->whereIn('company_id', $company_ids)->orderBy('name')->get(['id','name']);   
 
         // users with branch id
         if(!empty(Auth::user()->branch_id)) {

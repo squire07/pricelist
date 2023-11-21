@@ -35,10 +35,41 @@ class BranchController extends Controller
      */
     public function store(Request $request)
     {
-        $existName = Branch::whereName($request->name)->whereCode($request->code)->whereCostCenter($request->cost_center)->whereDeleted(false)->first();
-        $existNameCode = Branch::whereName($request->name)->whereCode($request->code)->whereDeleted(false)->first();
-        $existNameCodeCenter = Branch::whereName($request->name)->whereCode($request->code)->whereCostCenter($request->cost_center)->whereDeleted(false)->first();
-        if(!$existName || $existNameCode || $existNameCodeCenter) {
+        // Check for duplicate values in name
+        $duplicateNameCount = Branch::where('name', $request->name)->where('deleted', false)->count();
+
+        if ($duplicateNameCount > 0) {
+            return redirect()->back()->with('error', 'Duplicate value in Branch name!')->withInput($request->except('name'));
+        }
+
+        // Check for duplicate values in code
+        $duplicateCodeCount = Branch::where('code', $request->code)->where('deleted', false)->count();
+
+        if ($duplicateCodeCount >= 2) {
+            return redirect()->back()->with('error', 'Cannot create more than two branches with the same code!');
+        }
+
+        // Check if there are already two branches with the same cost_center
+        $duplicatesCostCenterCount = Branch::where('cost_center', $request->cost_center)->where('deleted', false)->count();
+
+        if ($duplicatesCostCenterCount >= 2) {
+            return redirect()->back()->with('error', 'Cannot create more than two branches with the same cost center!');
+        }
+
+        // Check for duplicate values in cost_center_name
+        $duplicateCostCenterNameCount = Branch::where('cost_center_name', $request->cost_center_name)->where('deleted', false)->count();
+
+        if ($duplicateCostCenterNameCount > 0) {
+            return redirect()->back()->with('error', 'Duplicate value in cost center name!')->withInput($request->except('cost_center_name'));
+        }
+
+        // Check for duplicate values in warehouse
+        $duplicateWarehouseCount = Branch::where('warehouse', $request->warehouse)->where('deleted', false)->count();
+
+        if ($duplicateWarehouseCount > 0) {
+            return redirect()->back()->with('error', 'Duplicate value in Warehouse!')->withInput($request->except('warehouse'));
+        }
+
             $branch = new Branch();
             $branch->uuid = Str::uuid();
             $branch->name = $request->name;
@@ -47,15 +78,12 @@ class BranchController extends Controller
             $branch->cost_center = $request->cost_center;
             $branch->cost_center_name = $request->cost_center_name;
             $branch->warehouse = $request->warehouse;
-            $branch->status_id = 8; //set default status to Active
+            $branch->status_id = 8; // Set default status to Active
             $branch->created_by = Auth::user()->name;
             $branch->save();
-            return redirect()->back()->with('success', 'Branch has been created!');
-        } else {
-            return redirect()->back()->with('error', 'Branch already exists!');
-        }
-    }
 
+        return redirect()->back()->with('success', 'Branch has been created!');
+    }
     /**
      * Display the specified resource.
      */
@@ -77,26 +105,44 @@ class BranchController extends Controller
      */
     public function update(Request $request, $uuid)
     {
+        $branch = Branch::where('uuid', $uuid)->firstOrFail();
 
-        if (Branch::where('cost_center_name', $request->cost_center_name)->whereNot('uuid', $uuid)->exists()) {
-            return redirect()->back()->with('error', "cost center name already exists!");
-        } 
-
-        $branch = Branch::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
-            $branch->name = $request->name;     
-            $branch->code = $request->code;
-            $branch->company_id = $request->company_id;
-            $branch->cost_center = $request->cost_center;
-            $branch->cost_center_name = $request->cost_center_name;
-            $branch->warehouse = $request->warehouse;
+        // Check if the status is the only field being updated
+        if ($request->filled('status') && count($request->all()) === 1) {
+            // Update only the status field
             $branch->status_id = $request->status;
             $branch->remarks = $request->remarks;
             $branch->updated_by = Auth::user()->name;
-            if($branch->update()) {
-                return redirect()->back()->with('success', 'Branch has been updated!');
-            } else {
-                return redirect()->back()->with('error', 'Failed to update branch.');
-            }
+            $branch->update();
+    
+            return redirect()->back()->with('success', 'Branch status has been updated!');
+        }
+    
+        // Check for duplicate values in name, cost_center_name, and warehouse
+        $duplicateValuesCount = Branch::where(function ($query) use ($request, $uuid) {
+            $query->where('name', $request->name)->orWhere('cost_center_name', $request->cost_center_name)->orWhere('warehouse', $request->warehouse);
+        })
+        ->where('deleted', false)
+        ->where('uuid', '<>', $uuid) // Exclude the current branch being updated
+        ->count();
+    
+        if ($duplicateValuesCount > 0) {
+            return redirect()->back()->with('error', 'Duplicate values in name, cost_center_name, or warehouse!');
+        }
+    
+            // Update other fields along with the status
+            $branch->name = $request->name;
+            $branch->code = $request->code;
+            $branch->company_id = $request->company_id;
+            $branch->status_id = $request->status;
+            $branch->cost_center = $request->cost_center;
+            $branch->cost_center_name = $request->cost_center_name;
+            $branch->warehouse = $request->warehouse;
+            $branch->remarks = $request->remarks;
+            $branch->updated_by = Auth::user()->name;
+            $branch->update();
+    
+        return redirect()->back()->with('success', 'Branch has been updated!');
     }
 
     /**

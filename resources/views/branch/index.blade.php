@@ -96,7 +96,7 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label>Company</label>
-                                    <select class="form-control form-control-sm" name="company_id" required>
+                                    <select class="form-control form-control-sm" name="company_id" id="modal_add_company_id" required>
                                         <option value="" selected disabled>-- Select Company --</option>
                                         @foreach($companies as $company)
                                             @if(in_array($company->status_id, [8,1]))
@@ -339,7 +339,6 @@ input[type="text2"], textarea {
             var warehouse = $(this).attr("data-branch-warehouse");
             var remarks = $(this).attr("data-branch-remarks");
             var status_id = $(this).attr("data-branch-status_id");
-            var isCompanyActive = (status_id == 8);
 
             $('#modal_edit_company_id option[value=' + c_id + ']').attr('selected', 'selected');
             $('#modal_edit_name').val(name);
@@ -348,14 +347,6 @@ input[type="text2"], textarea {
             $('#modal_edit_cost_center_name').val(cost_center_name);
             $('#modal_edit_warehouse').val(warehouse);
             $('#modal_show_remarks').val(remarks);
-            // $('#modal_show_status_id').val(status_id);
-
-                    // add check to active status
-            // if(status_id == 8) {
-            //     $('#status_8[value="8"]').prop('checked', true);
-            // } else if(status_id == 9) {
-            //     $('#status_9[value="9"]').prop('checked', true);
-            // } 
 
             if (status_id == 'Active') {
                 $('#status_8[value="8"]').prop('checked', true);
@@ -431,6 +422,7 @@ input[type="text2"], textarea {
                         e.stopPropagation();
                         $('#modal_add_name').val('');
                         $('#modal_add_code').val('');
+                        $('#modal_add_company_id').val(''); 
                         $('#modal_add_cost_center').val(''); 
                         $('#modal_edit_remarks').val('');  
                     } else {

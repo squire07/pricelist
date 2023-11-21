@@ -45,7 +45,7 @@
         {{-- Password field --}}
         <div class="input-group mb-3">
             <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                   placeholder="{{ __('adminlte::adminlte.password') }}" maxlength="12" minlength="8" id="input-password">
+                   placeholder="{{ __('adminlte::adminlte.password') }}" minlength="8" maxlength="12" id="input-password">
 
             <div class="input-group-append">
                 <div class="input-group-text">

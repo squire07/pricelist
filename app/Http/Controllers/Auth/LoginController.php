@@ -85,20 +85,64 @@ class LoginController extends Controller
         // get the first allowed module of user
         $permissions = json_decode($user->permission->user_permission, true);
 
-        $module_id = null;
 
-        // find the first array key that contains sub array with "1":1  `index`:allowed
-        foreach ($permissions as $key => $sub_array) {
-            if (isset($sub_array["1"]) && $sub_array["1"] === 1) {
-                $module_id = $key;
+        $has_value_one = false;
+        foreach ($permissions as $permission) {
+            if (in_array(1, $permission)) {
+                $has_value_one = true;
                 break;
             }
         }
 
-        // find the module
-        $permission_module = PermissionModule::whereId($module_id)->first();
-        
-        return redirect('/' . $permission_module->redirect);
+
+        $module_ids = [];
+
+        if ($has_value_one) {
+            foreach ($permissions as $key => $sub_array) {
+                if (isset($sub_array["1"]) && $sub_array["1"] === 1) {
+                    $module_ids[] = $key;
+                }
+            }
+
+            if(in_array($user->role_id, [1,3]) && in_array(1, $module_ids)) {
+                $redirect = 'sales-orders';
+            } else if(in_array($user->role_id, [2,4]) && in_array(2, $module_ids)) {
+                $redirect = 'sales-invoice/for-invoice';
+            } else if(in_array($user->role_id, [8]) && in_array(4, $module_ids)) {
+                $redirect = 'sales-invoice/for-validation';
+            } elseif (in_array($user->role_id, [5, 6, 7, 9, 10, 11, 12]) && in_array(6, $module_ids)) {
+                $redirect = 'sales-invoice/all';
+            } else {
+
+                // First rule: find the user's first allowed module
+                $module_id = null;
+
+                foreach ($permissions as $key => $sub_array) {
+                    if (isset($sub_array["1"]) && $sub_array["1"] === 1) {
+                        $module_id = $key;
+                        break;
+                    }
+                }
+
+                $permission_module = PermissionModule::find($module_id);
+                $redirect = $permission_module ? $permission_module->redirect : 'sales-orders'; // Fallback to default
+            }
+
+            /*
+            * For Main Navigation Use
+            * SESSION: get all the module id's that has "1":1  `index`:allowed  and store in session to be used by main navigation
+            */
+            Session::put('navigation_ids', $module_ids);
+            // END of Main Navigation Use
+
+            return redirect('/' . $redirect);
+        } else {
+            Auth::guard('web')->logout();
+            Session::flush();
+            Artisan::call('cache:clear');
+            Auth::logout();
+            return redirect('/login')->with('error-login', 'You currently do not have any accessible permission sets. Please contact your administrator.');
+        }
     }
 
     public function logout(Request $request)

@@ -92,20 +92,20 @@
                 <form class="form-horizontal" action="{{ route('branches.store') }}" method="POST" id="form_modal_add" autocomplete="off">
                     @csrf
                     <div class="modal-body">
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label>Company</label>
-                                <select class="form-control form-control-sm" name="company_id" required>
-                                    <option value="" selected disabled>-- Select Company --</option>
-                                    @foreach($companies as $company)
-                                        @if(in_array($company->status_id, [8,1]))
-                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
-                                        @endif
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
                         <div class="container-fluid">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Company</label>
+                                    <select class="form-control form-control-sm" name="company_id" required>
+                                        <option value="" selected disabled>-- Select Company --</option>
+                                        @foreach($companies as $company)
+                                            @if(in_array($company->status_id, [8,1]))
+                                                <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                             <div class="col-12">
                                 <label for="name">Branch Name</label>
                                 <input type="text" class="form-control form-control-sm" name="name" maxlength="25"  pattern="[a-zA-Z0-9\s]+" id="modal_add_name" required>
@@ -120,11 +120,11 @@
                             </div>
                             <div class="col-12">
                                 <label for="name">Cost Center Name</label>
-                                <input type="text" class="form-control form-control-sm" name="cost_center_name" maxlength="50"  id="modal_add_cost_center_name" required>
+                                <input type="text" class="form-control form-control-sm" name="cost_center_name" maxlength="50"  id="modal_add_cost_center_name" placeholder="IMPORTANT: Must be exactly same from ERPNext" required>
                             </div>
                             <div class="col-12">
                                 <label for="name">Warehouse</label>
-                                <input type="text" class="form-control form-control-sm" name="warehouse" maxlength="50"  id="modal_add_warehouse" required>
+                                <input type="text" class="form-control form-control-sm" name="warehouse" maxlength="50"  id="modal_add_warehouse" placeholder="IMPORTANT: Must be exactly same from ERPNext" required>
                             </div>
                         </div>
                     </div>
@@ -339,6 +339,7 @@ input[type="text2"], textarea {
             var warehouse = $(this).attr("data-branch-warehouse");
             var remarks = $(this).attr("data-branch-remarks");
             var status_id = $(this).attr("data-branch-status_id");
+            var isCompanyActive = (status_id == 8);
 
             $('#modal_edit_company_id option[value=' + c_id + ']').attr('selected', 'selected');
             $('#modal_edit_name').val(name);

@@ -780,33 +780,33 @@ $(document).ready(function() {
         });
     });
 
-    $('#modal-add').submit(function (e) {
-        // Get the selected values
-        var company_ids_arr = $('#modal_add_company_id').val();
-        var branch_ids_arr = $('#modal_add_branch_id').val();
+    // $('#modal-add').submit(function (e) {
+    //     // Get the selected values
+    //     var company_ids_arr = $('#modal_add_company_id').val();
+    //     var branch_ids_arr = $('#modal_add_branch_id').val();
 
-        // Check if there are two company IDs selected
-        if (company_ids_arr.length === 2) {
+    //     // Check if there are two company IDs selected
+    //     if (company_ids_arr.length === 2) {
 
-            var isLocalBranch = $('#modal_add_branch_id option.branch-local');
-            var isPremierBranch = $('#modal_add_branch_id option.branch-premier');
+    //         var isLocalBranch = $('#modal_add_branch_id option.branch-local');
+    //         var isPremierBranch = $('#modal_add_branch_id option.branch-premier');
 
-            // Check if the selected branch has the appropriate class based on the selected companies
-            if ((company_ids_arr.includes('2') && isPremierBranch) ||
-                (company_ids_arr.includes('3') && isLocalBranch)
-            ) {
-                // Display a message or perform some action to inform the user
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Invalid branch selection for the selected companies.',
-                    icon: 'error',
-                });
-                // Prevent the form submission
-                e.preventDefault();
-                return; // Stop further processing
-            }
-        }
-    });
+    //         // Check if the selected branch has the appropriate class based on the selected companies
+    //         if ((company_ids_arr.includes('2') && isPremierBranch) ||
+    //             (company_ids_arr.includes('3') && isLocalBranch)
+    //         ) {
+    //             // Display a message or perform some action to inform the user
+    //             Swal.fire({
+    //                 title: 'Error',
+    //                 text: 'Invalid branch selection for the selected companies.',
+    //                 icon: 'error',
+    //             });
+    //             // Prevent the form submission
+    //             e.preventDefault();
+    //             return; // Stop further processing
+    //         }
+    //     }
+    // });
 });    
 </script>
 @endsection

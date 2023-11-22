@@ -85,21 +85,19 @@ class LoginController extends Controller
         // get the first allowed module of user
         $permissions = json_decode($user->permission->user_permission, true);
 
-
         $has_value_one = false;
-        foreach ($permissions as $permission) {
-            if (in_array(1, $permission)) {
+        foreach ($permissions as $key => $permission) {
+            if ($permission[1] == 1) {
                 $has_value_one = true;
                 break;
             }
         }
 
-
         $module_ids = [];
 
         if ($has_value_one) {
             foreach ($permissions as $key => $sub_array) {
-                if (isset($sub_array["1"]) && $sub_array["1"] === 1) {
+                if (isset($sub_array['1']) && $sub_array['1'] === 1) {
                     $module_ids[] = $key;
                 }
             }

@@ -556,6 +556,41 @@ $(document).ready(function() {
 
         $("#cash_change").val(cash_change.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     }
+
+    // Prevent from redirecting back to homepage when cancel button is clicked accidentally
+    $('#modal-submit-payment').on("hide.bs.modal", function (e) {
+
+        if (!$('#modal-submit-payment').hasClass('programmatic')) {
+            e.preventDefault();
+            swal.fire({
+                title: 'Are you sure?',
+                text: "Please confirm that you want to cancel",
+                type: 'warning',
+                showCancelButton: true,
+                allowEnterKey: false,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+            }).then(function(result) {
+                if (result.value) {
+                    $('#modal-submit-payment').addClass('programmatic');
+                    $('#modal-submit-payment').modal('hide');
+                    e.stopPropagation();
+                } else {
+                    e.stopPropagation();
+
+                }
+            });
+
+        }
+        return true;
+        });
+
+        $('#modal-submit-payment').on('hidden.bs.modal', function () {
+        $('#modal-submit-payment').removeClass('programmatic');
+    });
+
 });
 </script>
 

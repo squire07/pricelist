@@ -186,13 +186,13 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Cost Center Name</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="50" name="cost_center_name" id="modal_edit_cost_center_name" required>
+                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="50" name="cost_center_name" id="modal_edit_cost_center_name" placeholder="IMPORTANT: Must be exactly same from ERPNext" required>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Warehouse</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="50" name="warehouse" id="modal_edit_warehouse" required>
+                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="50" name="warehouse" id="modal_edit_warehouse" placeholder="IMPORTANT: Must be exactly same from ERPNext" required>
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-12">
@@ -331,6 +331,26 @@ input[type="text2"], textarea {
         // use class instead of id because the button are repeating. ID can be only used once
         $(document).on('click', '.btn_edit', function() {
             var uuid = $(this).attr("data-uuid");
+            
+            var companySelect = $('#modal_edit_company_id');
+
+            // Clear existing options
+            companySelect.empty();
+
+            // Add a placeholder or default option if needed
+            companySelect.append('<option value="" disabled>-- Select Company --</option>');
+
+            // Iterate through companies and add all companies
+            @foreach($companies as $company)
+                var companyId = {{ $company->id }};
+                var companyName = "{{ $company->name }}";
+                var companyStatus = "{{ $company->status_id }}";
+                if (companyStatus == 8) {
+                    var option = $('<option value="' + companyId + '">' + companyName + '</option>');
+
+                    companySelect.append(option);
+                }
+            @endforeach
             var name = $(this).attr("data-branch-name");
             var code = $(this).attr("data-branch-code");
             var c_id = $(this).attr("data-branch-company_id");
@@ -358,6 +378,7 @@ input[type="text2"], textarea {
             let action = window.location.origin + "/branches/" + uuid;
             $('#form_modal_edit').attr('action', action);
         });
+        
 
         $(document).on('click', '.btn_show', function() {
             var uuid = $(this).attr("data-uuid");

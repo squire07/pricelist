@@ -223,7 +223,7 @@
                         </li>
                     @endif
                     @if(in_array(20, $navigation_ids))
-                        <li class="nav-item">
+                        <li class="nav-item" style="border-bottom: 1px solid #4f5962;">
                             <a href="{{ url('reports/transaction-listing') }}" class="nav-link {{ $url_segment_2 == 'transaction-listing' ? 'active':'' }}" target="_self">
                                 <i class="far fa-file-alt nav-icon"></i>
                                 <p>Transaction Listing</p>
@@ -234,20 +234,23 @@
             </li>
         @endif
 
-        {{-- <li class="nav-header">ACCOUNT SETTINGS</li>
-
-        <li class="nav-item">
-            <a href="#" class="nav-link" target="_self">
-                <i class="nav-icon fas fa-fw fa-user "></i>
-                <p>Profile</p>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link" target="_self">
-                <i class="nav-icon fas fa-fw fa-lock "></i>
-                <p>Change Password</p>
-            </a>
-        </li> --}}
+        {{-- TOOLs MENU: For System Admin use only --}}
+        @if(Auth::user()->role_id == 12)
+            <li class="nav-item {{ $url_segment_1 == 'tools' ? 'menu-open':'' }}">
+                <a href="#" class="nav-link {{ $url_segment_1 == 'tools' ? 'active':'' }}" target="_self">
+                    <i class="nav-icon fas fa-tools"></i>
+                    <p>Tools<i class="right fas fa-angle-left"></i></p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ url('tools/payload') }}" class="nav-link {{ $url_segment_2 == 'payload' ? 'active':'' }}" target="_self">
+                            <i class="fas fa-cloud-upload-alt nav-icon"></i>
+                            <p>Payload</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        @endif
         
     </ul>
 </nav>

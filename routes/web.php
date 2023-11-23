@@ -1,28 +1,29 @@
 <?php
 
+use App\Http\Controllers\BranchController;
 use App\Http\Controllers\BuildReportController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DistributorController;
+use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\IncomeExpenseAccountController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\PaymentMethodController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalesOrderTypeController;
-use App\Http\Controllers\StockCardController;
-use App\Http\Controllers\TestBuildReportController;
-use App\Http\Controllers\TransactionListingController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\SalesInvoice\AllController;
 use App\Http\Controllers\SalesInvoice\CancelledController;
 use App\Http\Controllers\SalesInvoice\ForInvoicingController;
-use App\Http\Controllers\SalesInvoice\ReleasedController;
-use App\Http\Controllers\BranchController;
-use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\HistoryController;
-use App\Http\Controllers\IncomeExpenseAccountController;
-use App\Http\Controllers\PaymentMethodController;
-use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalesInvoice\ForValidationController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\SalesInvoice\ReleasedController;
 use App\Http\Controllers\SalesInvoiceAssignmentController;
 use App\Http\Controllers\ShippingFeeController;
+use App\Http\Controllers\StockCardController;
+use App\Http\Controllers\Tools\PayloadController;
+use App\Http\Controllers\TestBuildReportController;
+use App\Http\Controllers\TransactionListingController;
 use App\Http\Controllers\TransactionTypeController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserPermissionController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -102,5 +103,12 @@ Route::middleware(['auth','gate'])->group(function () {
 
     Route::get('test-build-report', [TestBuildReportController::class, 'testbuildreport'])->name('testbuildreport');
     Route::resource('test-build-report', TestBuildReportController::class)->only('index');
+});
+
+// this is exclusive for super admim, no need for gate middleware
+Route::middleware(['auth','superadmin'])->group(function () {
+    Route::group(['prefix' => 'tools', 'name' => 'tools', 'alias' => 'tools'], function() {
+        Route::resource('payload', PayloadController::class)->only(['index', 'show']);
+    });
 });
 

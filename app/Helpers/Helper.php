@@ -11,6 +11,7 @@ use App\Models\Company;
 use App\Models\Distributor;
 use App\Models\History;
 use App\Models\IncomeExpenseAccount;
+use App\Models\PaymentMethod;
 use App\Models\PermissionModule;
 use App\Models\Sales;
 use App\Models\SalesInvoiceAssignmentDetail;
@@ -265,16 +266,24 @@ class Helper {
             ];
         }
 
-        return [
+        $payload = [
             'customer_name' => $distributor->name,
             'customer_type' => 'Company',
             'customer_group' => 'All Customer Groups',
             'territory' => 'All Territories'
         ];
+
+        return json_encode($payload);
     }
 
     public static function create_so_payload($id) {
         $sales = Sales::with('sales_details', 'company', 'branch')->whereId($id)->first();
+
+        if($sales->company_id == 3) {
+            $taxes_and_charges = 'VAT Sales - LOCAL';
+        } else if ($sales->company_id == 2) {
+            $taxes_and_charges = 'VAT Sales - PREMIER';
+        }
 
         // warning: do not update/change the structure. This is erpnext's standard.
         $payload = [
@@ -284,6 +293,7 @@ class Helper {
             'company' => $sales->company->name,
             'customer' => Helper::get_distributor_name_by_bcid($sales->bcid) ?? 'DISTRIBUTOR',
             'distributor_name' => Helper::get_distributor_name_by_bcid($sales->bcid),
+            'group_name' => $sales->group_name ?? null,
             'transaction_date' => date("Y-m-d", strtotime($sales->created_at)),
             'order_type' => 'Sales',
             'redemption_name' => Helper::get_redemptions_name_from_history($sales->id),
@@ -292,7 +302,8 @@ class Helper {
             'selling_price_list' => $sales->transaction_type->name,
             'set_warehouse' => $sales->branch->warehouse,
             'delivery_date' => date("Y-m-d", strtotime($sales->created_at)),
-            'taxes_and_charges' => 'VAT Sales - LOCAL',
+            'taxes_and_charges' => $taxes_and_charges,
+            'docstatus' => 1,
             'taxes' => [
                 [
                     'charge_type' => 'On Net Total',
@@ -300,7 +311,8 @@ class Helper {
                     'description' => 'Due to BIR -  Value Added Tax',
                     'included_in_print_rate' => 1,
                     'cost_center' => $sales->branch->cost_center_name,
-                    'rate' => '12'
+                    'rate' => '12',
+                    'docstatus' => 1
                 ]
             ]
         ];
@@ -311,10 +323,11 @@ class Helper {
                 'item_code' => $detail->item_code,
                 'item_name' => $detail->item_name,
                 'qty' => $detail->quantity,
+                'docstatus' => 1
             ];
         }
 
-        return $payload;
+        return json_encode($payload);
     }
 
     public static function create_si_payload($id) {
@@ -348,6 +361,7 @@ class Helper {
             'company' => $sales->company->name,
             'customer' => Helper::get_distributor_name_by_bcid($sales->bcid) ?? 'DISTRIBUTOR',
             'distributor_name' => Helper::get_distributor_name_by_bcid($sales->bcid),
+            'group_name' => $sales->group_name,
             'transaction_date' => date("Y-m-d", strtotime($sales->created_at)),
             'order_type' => 'Sales',
             'cashier_name' => Helper::get_cashiers_name_from_history($sales->id),
@@ -359,6 +373,7 @@ class Helper {
             'taxes_and_charges' => $taxes_and_charges,
             'debit_to' => $debit_to,
             'update_stock' => 1,
+            'docstatus' => 1,
             'taxes' => [
                 [
                     'charge_type' => 'On Net Total',
@@ -366,7 +381,8 @@ class Helper {
                     'description' => 'Due to BIR -  Value Added Tax',
                     'included_in_print_rate' => 1,
                     'cost_center' => $sales->branch->cost_center_name,
-                    'rate' => '12'
+                    'rate' => '12',
+                    'docstatus' => 1
                 ]
             ]
         ];
@@ -380,9 +396,89 @@ class Helper {
                 'income_account' => $accounts->income_account ?? null,
                 'expense_account' => $accounts->expense_account ?? null, 
                 'cost_center' => $sales->branch->cost_center_name,
+                'docstatus' => 1
             ];
         }
 
-        return $payload;
+        return json_encode($payload);
+    }
+
+
+    public static function create_payment_payload($id) {
+        $sales = Sales::with('sales_details', 'payment', 'company', 'branch')->whereId($id)->first();
+
+        $payment_entries = [];
+
+        // get the payment method from the payment details
+        if(isset($sales->payment) && !empty($sales->payment->details)) {
+            $payments = json_decode($sales->payment->details, true);
+
+            foreach($payments as $payment) {
+                // get the payment description from the payment methods table using the payment id
+                $payment_details = PaymentMethod::whereId($payment['id'])->first();
+
+                $naming_series = 'ACC-PAY-.YYYY.-';
+
+                $paid_from = $payment_details->description;  // e.g. '1101001 - Accounts Receivable - Trade - UNO'     or     '1101001 - Accounts Receivable - Trade - PREMIER'
+
+
+                // this code can be refactored into ternary type but let us keep this way for easy understanding
+                if($sales->company_id == 3) {
+                    $paid_to = '1010002 - Cash - Undeposited Collections - UNO';
+                } else if ($sales->company_id == 2) {
+                    $paid_to = '1010002 - Cash - Undeposited Collections - PREMIER';
+                }
+
+                // this is the amount per payment method
+                    if(count($payments) > 1) {
+                        if($payment['name'] == 'CASH' || $payment['name'] == 'cash') {
+                            $total_amount = str_replace(',', '', $payment['amount'] - $sales->payment->change); 
+                        } else {
+                            $total_amount = str_replace(',', '', $payment['amount']); 
+                        }
+                    } else {
+                        // get the grandtotal_amount only if there is only one payment method
+                        $total_amount = str_replace(',', '', $sales->grandtotal_amount); 
+                    }
+
+                // warning: do not update/change the structure. This is erpnext's standard.
+                $payload = [
+                    'doctype' => 'Payment Entry',
+                    'naming_series' => $naming_series,
+                    'party_type' => 'Customer',
+                    'party' => Helper::get_distributor_name_by_bcid($sales->bcid) ?? 'DISTRIBUTOR',
+                    'company' => $sales->company->name,
+                    'due_date' => date("Y-m-d", strtotime($sales->created_at)),
+                    'paid_amount' => floatval($total_amount), 
+                    'received_amount' => floatval($total_amount),
+                    'target_exchange_rate' => 1.0,
+                    'paid_to' => $paid_to,
+                    'paid_from' => $paid_from,
+                    'currency' => $sales->transaction_type->currency ?? 'PHP',
+                    'cost_center' => $sales->branch->cost_center_name,
+                    'status' => 'Submitted',
+                    'docstatus' => 1,
+                    'references' => [
+                        [
+                            'parentfield' => 'references',
+                            'parenttype' => 'Payment Entry',
+                            'docstatus' => 1,
+                            'reference_doctype' => 'Sales Invoice',
+                            'due_date' => date("Y-m-d", strtotime($sales->created_at)),
+                            'total_amount' => floatval($total_amount),
+                            'outstanding_amount' => floatval($total_amount),
+                            'allocated_amount' => floatval($total_amount),
+                            'exchange_rate' => 1.0,
+                            'exchange_gain_loss' => 0.0,
+                            'doctype' => 'Payment Entry Reference'
+                        ]
+                    ]
+                ];
+
+                $payment_entries[] = $payload;
+            }
+        }
+
+        return json_encode($payment_entries);
     }
 }

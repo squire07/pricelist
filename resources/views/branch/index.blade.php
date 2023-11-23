@@ -207,7 +207,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="remarks">Remarks</label>
-                                    <input type="" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks">
+                                    <input type="" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks" required>
                                 </div>
                             </div>
                         </div>
@@ -331,7 +331,7 @@ input[type="text2"], textarea {
         // use class instead of id because the button are repeating. ID can be only used once
         $(document).on('click', '.btn_edit', function() {
             var uuid = $(this).attr("data-uuid");
-            
+
             var companySelect = $('#modal_edit_company_id');
 
             // Clear existing options

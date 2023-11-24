@@ -325,6 +325,26 @@ $(document).ready(function() {
     $(document).on('click', '.btn_edit', function() {
 
         var uuid = $(this).attr("data-uuid");
+        var branchSelect = $('#modal_edit_branch_id');
+
+        // Clear existing options
+        branchSelect.empty();
+
+        // Add a placeholder or default option if needed
+        branchSelect.append('<option value="" disabled>-- Select branch --</option>');
+
+        // Iterate through companies and add all companies
+        @foreach($branches as $branch)
+            var branchId = {{ $branch->id }};
+            var branchName = "{{ $branch->name }}";
+            var branchStatus = "{{ $branch->status_id }}";
+            if (branchStatus == 8) {
+                var option = $('<option value="' + branchId + '">' + branchName + '</option>');
+
+                branchSelect.append(option);
+            }
+        @endforeach
+
         var company_id = $(this).attr("data-company-id");
         var branch_id = $(this).attr("data-branch-id");
         var r_id = $(this).attr("data-role-id");
@@ -780,33 +800,99 @@ $(document).ready(function() {
         });
     });
 
-    // $('#modal-add').submit(function (e) {
-    //     // Get the selected values
-    //     var company_ids_arr = $('#modal_add_company_id').val();
-    //     var branch_ids_arr = $('#modal_add_branch_id').val();
+    $('#modal-add').submit(function () {
+        // Get the selected values from both company and branch dropdowns
+        var selectedCompanies = $('#modal_add_company_id').val();
+        var selectedBranches = $('#modal_add_branch_id').val();
 
-    //     // Check if there are two company IDs selected
-    //     if (company_ids_arr.length === 2) {
+        // Check the conditions for validation
+        if (selectedCompanies.length === 2) {
+            // Two companies are selected
+            if (selectedBranches.length === 1) {
+                // Only one branch is selected
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    allowEnterKey: false,
+                    text: 'Please select two branches for the selected companies.'
+                });
+                // You can prevent further action, for example:
+                return false;
+            } else if (selectedBranches.length === 2) {
+                // Two branches are selected
+                // Now check if the branches have the corresponding class of the selected companies
+                var isValidSelection = true;
+                for (var i = 0; i < selectedCompanies.length; i++) {
+                    var companyId = selectedCompanies[i];
+                    var branchClass = companyId === '2' ? 'branch-premier' : 'branch-local';
+                    if (!selectedBranches.includes(branchClass)) {
+                        isValidSelection = false;
+                        break;
+                    }
+                }
 
-    //         var isLocalBranch = $('#modal_add_branch_id option.branch-local');
-    //         var isPremierBranch = $('#modal_add_branch_id option.branch-premier');
+                if (!isValidSelection) {
+                    Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    allowEnterKey: false,
+                    text: 'Please select branches corresponding to the selected companies.'
+                });
+                    // You can prevent further action, for example:
+                    return false;
+                }
+            }
+        }
+        // If the conditions are met, proceed with the desired action
+        // For example, submit a form or perform another action
+    });
 
-    //         // Check if the selected branch has the appropriate class based on the selected companies
-    //         if ((company_ids_arr.includes('2') && isPremierBranch) ||
-    //             (company_ids_arr.includes('3') && isLocalBranch)
-    //         ) {
-    //             // Display a message or perform some action to inform the user
-    //             Swal.fire({
-    //                 title: 'Error',
-    //                 text: 'Invalid branch selection for the selected companies.',
-    //                 icon: 'error',
-    //             });
-    //             // Prevent the form submission
-    //             e.preventDefault();
-    //             return; // Stop further processing
-    //         }
-    //     }
-    // });
+    $('#modal-edit').submit(function () {
+        // Get the selected values from both company and branch dropdowns
+        var selectedCompanies = $('#modal_edit_company_id').val();
+        var selectedBranches = $('#modal_edit_branch_id').val();
+
+        // Check the conditions for validation
+        if (selectedCompanies.length === 2) {
+            // Two companies are selected
+            if (selectedBranches.length === 1) {
+                // Only one branch is selected
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    allowEnterKey: false,
+                    text: 'Please select two branches for the selected companies.'
+                });
+                // You can prevent further action, for example:
+                return false;
+            } else if (selectedBranches.length === 2) {
+                // Two branches are selected
+                // Now check if the branches have the corresponding class of the selected companies
+                var isValidSelection = true;
+                for (var i = 0; i < selectedCompanies.length; i++) {
+                    var companyId = selectedCompanies[i];
+                    var branchClass = companyId === '2' ? 'branch-premier' : 'branch-local';
+                    if (!selectedBranches.includes(branchClass)) {
+                        isValidSelection = false;
+                        break;
+                    }
+                }
+
+                if (!isValidSelection) {
+                    Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    allowEnterKey: false,
+                    text: 'Please select branches corresponding to the selected companies.'
+                });
+                    // You can prevent further action, for example:
+                    return false;
+                }
+            }
+        }
+        // If the conditions are met, proceed with the desired action
+        // For example, submit a form or perform another action
+    });
 });    
 </script>
 @endsection

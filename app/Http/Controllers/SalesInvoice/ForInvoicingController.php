@@ -297,6 +297,5 @@ class ForInvoicingController extends Controller
         } else {
             return view('SalesInvoice.print.premier', compact('sales_order'));
         }
-        //return view('SalesInvoice.print.show', compact('sales_order'));
     }
 }

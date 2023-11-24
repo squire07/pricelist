@@ -92,6 +92,12 @@
         </div>
         <div class="card-footer text-center">
             <a href="{{ url('sales-invoice/for-validation') }}" class="btn btn-lg btn-info float-left"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+
+            {{-- Print Button for cashier and head cashier --}}
+            @if(in_array(Auth::user()->role_id, [2,4]))
+                <a href="{{ url('sales-invoice/for-validation/' . $sales_order->uuid . '/print') }}" class="btn btn-primary btn-lg float-left ml-2" target="_blank" rel="noopener noreferrer"><i class="fas fa-print mr-1"></i>Print</a>
+            @endif
+            
             <button class="btn btn-lg btn-success float-right" id="btn-validate" data-uuid="{{ $sales_order->uuid }}"><i class="far fa-share-square"></i>&nbsp;Validate</button>
             <button class="btn btn-lg btn-danger float-right mx-2" id="btn-for-cancel" data-uuid="{{ $sales_order->uuid }}" data-si-no="{{ $sales_order->si_no }}"><i class="fas fa-ban"></i>&nbsp;Cancel Invoice</button>
         </div>
@@ -197,16 +203,26 @@ $(document).ready(function() {
             allowOutsideClick: false,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, validate!'
+            confirmButtonText: 'Yes, validate!',
+            preConfirm: () => {
+                // Display "Please wait" modal
+                Swal.showLoading();
+
+                // Return a promise to wait for asynchronous actions
+                return new Promise((resolve) => {
+                    // Add uuid dynamically to hidden uuid field
+                    $('#form_validate_uuid').val(uuid);
+
+                    // Update the action of form_for_invoicing 
+                    $('#form_validate').attr('action', window.location.origin + '/sales-invoice/for-validation/' + uuid);
+
+                    // Resolve the promise to continue
+                    resolve();
+                });
+            },
         }).then((result) => {
             if (result.isConfirmed) {
-                // add uuid dynamically to hidden uuid field
-                $('#form_validate_uuid').val(uuid);
-
-                // update the action of form_for_invoicing 
-                $('#form_validate').attr('action', window.location.origin + '/sales-invoice/for-validation/' + uuid);
-
-                // finally, submit the form
+                // Submit the form
                 $('#form_validate').submit();
             }
         });

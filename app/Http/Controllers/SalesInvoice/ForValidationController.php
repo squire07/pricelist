@@ -140,33 +140,115 @@ class ForValidationController extends Controller
                 return redirect('sales-invoice/for-validation')->with('error', 'Could not add customer to ERPNext! Please contact your administrator.');
             
             } else {
-                // After posting a new customer (distributor), we need to post the SO and SI
+                // // After posting a new customer (distributor), we need to post the SO and SI
 
-                // 3) Post the SO to erpnext
-                $so_param = '/api/resource/Sales Order'; // if POST, do not add '/' at the end 
-                // post the so payload to erpnext
-                $post_so = Helper::post_erpnext_data($so_param, $payload->so);
+                // // 3) Post the SO to erpnext
+                // // do {
+                //     $so_param = '/api/resource/Sales Order'; // if POST, do not add '/' at the end 
+                //     // post the so payload to erpnext
+                //     $post_so = Helper::post_erpnext_data($so_param, $payload->so);
 
-                // update payload with response
-                $payload->so_response = $post_so->getStatusCode();
-                $payload->update();
+                //     dump($post_so);
 
-                // 4) Post the SI to erpnext
-                $si_param = '/api/resource/Sales Invoice'; // if POST, do not add '/' at the end 
-                // post the so payload to erpnext
-                $post_si = Helper::post_erpnext_data($si_param, $payload->si);
+                //     // update payload with response
+                //     $payload->so_response_status = $post_so->getStatusCode();
+                //     $payload->so_response_body = $post_so->getBody(); 
+                //     $payload->update();
+
+                // // } while ($payload->so_response_status !== 200);
+
+                //     /* 
+                //     *  IMPORTANT!
+                //     *  - lets link sales order and si using the sales order name from reponse
+                //     *  - update the sales invoice payload and add the sales order `name` which can be found at so_response body 
+                //     */
+
+                //     // 3.1) Get the sales order response body
+                //         $so_response_body = $payload->so_response;
+
+                //         // Define the regular expression pattern
+                //         $data = json_decode($payload->so_response_body, true);
+
+                //         // Use preg_match to find the match
+                //         $so_doc_name = $data['data']['name'] ?? null;
+
+                //     // 3.2) add the `so_doc_name` to `si payload`
+
+                //         // update the si payload with so_doc_name before posting to erpnext
+                //         $data = json_decode($payload->si, true);
+
+                //         // Add "sales_order" key to each item in the "items" array
+                //         foreach ($data['items'] as &$item) {
+                //             $item['sales_order'] = $so_doc_name; 
+                //         }
+                        
+                //         // Convert back to JSON
+                //         $payload->si = json_encode($data);
+                //         $payload->update();
+                        
+                    
+                // // 4) Post the SI to erpnext
+                // // do {
+                //     $si_param = '/api/resource/Sales Invoice'; // if POST, do not add '/' at the end 
+                //     // post the so payload to erpnext
+                //     $post_si = Helper::post_erpnext_data($si_param, $payload->si);
+                    
+                //     // // update payload with response
+                //     $payload->si_response_status = $post_si->getStatusCode();
+                //     $payload->si_response_body = $post_si->getBody();
+                //     $payload->update();
+                // // } while ($payload->si_response_status !== 200);
+
+                //     /*
+                //     *  Create Payment Entry
+                //     *  link the sales invoice with payment entry using sales invoice name
+                //     */
+
+                //     // 4.1) Get the sales income response body
+                //         $si_response_body = $payload->si_response;
+
+                //         // Define the regular expression pattern
+                //         $data = json_decode($payload->si_response_body, true);
+
+                //         // Use preg_match to find the match
+                //         $si_doc_name = $data['data']['name'] ?? null;
+
+                //     // 4.2) add the `si_doc_name` to `payment payload`
+
+                //         // update the payment payload with si_doc_name before posting to erpnext
+                //         // json is formatted to handle sub array 
+                //         $datas = json_decode($payload->payment, true);
+
+                //         foreach($datas as $data) {
+                //             // Add "sales_order" key to each item in the "items" array
+                //             foreach ($data['references'] as &$reference) {
+                //                 $reference['reference_name'] = $si_doc_name; 
+                //             }
+                //         }
+                        
+                //         // Convert back to JSON
+                //         $payload->payment = json_encode($datas);
+                //         $payload->update();
+
+
+                // // 5) Post the Payment Entry to erpnext
+                // $payment_param = '/api/resource/Payment Entry'; // if POST, do not add '/' at the end 
+                // // post the so payload to erpnext
+                // $post_payment = Helper::post_erpnext_data($payment_param, $payload->payment);
                 
-                // update payload with response
-                $payload->si_response = $post_si->getStatusCode();
-                $payload->update();
+                // // // update payload with response
+                // $payload->payment_response_status = $post_payment->getStatusCode();
+                // $payload->payment_response_body = $post_payment->getBody();
+                // $payload->update();
+
 
                 // mark as released
                 $sales->status_id = 4;
 
                 if($sales->update()) {
-                    if($post_so->getStatusCode() == 200) {
+                    //if($post_so->getStatusCode() == 200) {
                         return redirect('sales-invoice/for-validation')->with('success', 'Sales order was successfully recorded to ERPNext!');
-                    }
+                    //}
                 } else {
                     return redirect('sales-invoice/for-validation')->with('error', 'Unable to add SO and SI at ERPNext! Please contact your administrator.');
                 }
@@ -186,5 +268,27 @@ class ForValidationController extends Controller
     {
         $sales_invoice_for_validation = Sales::with('status','transaction_type')->whereIn('status_id', [4])->whereDeleted(false)->orderByDesc('id');
         return DataTables::of($sales_invoice_for_validation)->toJson(); 
+    }
+
+    public function print($uuid) 
+    {
+        //sleep(3); // allow x seconds interval before getting the sales details
+
+        $sales_order = Sales::with('payment')
+                        ->whereUuid($uuid)
+                        ->whereStatusId(5)
+                        ->with('transaction_type')
+                        ->with('sales_details', function($query) {
+                            $query->where('deleted',0);
+                        })->firstOrFail();
+
+        $sales_order->total_item_count = $sales_order->sales_details->sum('quantity');
+        $sales_order->amount_tendered = number_format($sales_order->payment['total_amount'] + $sales_order->payment['change'], 2, '.', ',');
+
+        if($sales_order->company_id == 3) {
+            return view('SalesInvoice.print.local', compact('sales_order'));
+        } else {
+            return view('SalesInvoice.print.premier', compact('sales_order'));
+        }
     }
 }

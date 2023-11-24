@@ -64,6 +64,7 @@ Route::middleware(['auth','gate'])->group(function () {
         Route::get('sales_invoice_released_list', [ReleasedController::class, 'sales_invoice_released_list'])->name('sales_invoice_released_list');
         Route::resource('sales-invoice/released', ReleasedController::class);
         Route::get('sales_invoice_for_validation_list', [ForValidationController::class, 'sales_invoice_for_validation_list'])->name('sales_invoice_for_validation_list');
+        Route::get('sales-invoice/for-validation/{uuid}/print', [ForInvoicingController::class, 'print']);
         Route::resource('sales-invoice/for-validation', ForValidationController::class);
         Route::get('sales_invoice_cancel_list', [CancelledController::class, 'sales_invoice_cancel_list'])->name('sales_invoice_cancel_list');
         Route::resource('sales-invoice/cancelled', CancelledController::class);
@@ -111,4 +112,3 @@ Route::middleware(['auth','superadmin'])->group(function () {
         Route::resource('payload', PayloadController::class)->only(['index', 'show']);
     });
 });
-

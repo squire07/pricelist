@@ -9,6 +9,12 @@ class Payload extends Model
 {
     use HasFactory;
 
+    // relationship
+    public function sales()
+    {
+        return $this->hasOne('App\Models\Sales', 'uuid', 'uuid');
+    }
+
 
     // getter
     public function getDistributorAttribute($value)

@@ -21,6 +21,8 @@
                         <tr>
                             <th class="text-center">UUID</th>
                             <th class="text-center">BCID</th>
+                            <th class="text-center">SO No</th>
+                            <th class="text-center">SI No</th>
                             <th class="text-center">Created At</th>
                         </tr>
                     </thead>
@@ -29,6 +31,8 @@
                             <tr>
                                 <td class="text-center"><a href="{{ url('tools/payload/' . $payload->uuid) }}" target="_self">{{ $payload->uuid }}</a></td>
                                 <td class="text-center">{{ $payload->bcid }}</td>
+                                <td class="text-center">{{ $payload->sales->so_no }}</td>
+                                <td class="text-center">{{ $payload->sales->si_no }}</td>
                                 <td class="text-center">{{ $payload->created_at }}</td>
                             </tr>
                         @endforeach
@@ -54,7 +58,7 @@
                     className: 'btn-default btn-sm',
                 },
             ],
-            order: [[2, 'desc']],
+            order: [[4, 'desc']],
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
             },

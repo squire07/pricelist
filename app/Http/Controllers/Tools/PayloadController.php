@@ -13,7 +13,7 @@ class PayloadController extends Controller
      */
     public function index()
     {
-        $payloads = Payload::all();
+        $payloads = Payload::with('sales')->get();
         return view('tools.payload.index', compact('payloads'));
     }
 
@@ -38,7 +38,7 @@ class PayloadController extends Controller
      */
     public function show(string $uuid)
     {
-        $payload = Payload::whereUuid($uuid)->firstOrFail();
+        $payload = Payload::with('sales')->whereUuid($uuid)->firstOrFail();
         return view('tools.payload.show', compact('payload'));
     }
 

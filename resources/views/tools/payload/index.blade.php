@@ -63,7 +63,7 @@
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
             },
             initComplete: function () {
-                $("#dt_items").wrap("<div style='overflow:auto;width:100%;position:relative;'></div>");
+                $("#dt_payload").wrap("<div style='overflow:auto;width:100%;position:relative;'></div>");
 
                 var elements = document.getElementsByClassName('btn-secondary');
                 while(elements.length > 0){

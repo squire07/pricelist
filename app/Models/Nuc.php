@@ -9,6 +9,12 @@ class Nuc extends Model
 {
     use HasFactory;
 
+    // relationship
+    public function sales()
+    {
+        return $this->hasOne('App\Models\Sales', 'uuid', 'uuid');
+    }
+
     // getter and setter
 
     public function setBcidAttribute($value)

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Sales;
 use App\Helpers\Helper;
 use App\Models\History;
+use App\Models\Nuc;
 use App\Models\Payload;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
@@ -251,11 +252,17 @@ class ForInvoicingController extends Controller
                 $payload->created_by = Auth::user()->name;
                 $payload->save();
 
-                // post NUC points to prime
-
-
-
-
+                /* 
+                *   post NUC points to prime - indirectly; let the system push the nuc points using scheduled job
+                *   save only the transaction with nuc points
+                */
+                if($sales->total_nuc > 0) {
+                    $nuc = new Nuc();
+                    $nuc->uuid = $sales->uuid;
+                    $nuc->bcid = $sales->bcid;
+                    $nuc->total_nuc = $sales->total_nuc;
+                    $nuc->save();
+                }
             }
 
             // redirect to index page with dynamic message coming from different statuses

@@ -37,51 +37,48 @@ class BranchController extends Controller
     {
         // Check for duplicate values in name
         $duplicateNameCount = Branch::where('name', $request->name)->where('deleted', false)->count();
-
+    
         if ($duplicateNameCount > 0) {
-            return redirect()->back()->with('error', 'Duplicate value in Branch name!')->withInput($request->except('name'));
+            return redirect()->back()->with('error', 'Duplicate Entry: Branch Name already exists')->withInput($request->except('name'));
         }
-
-        // Check for duplicate values in code
-        $duplicateCodeCount = Branch::where('code', $request->code)->where('deleted', false)->count();
-
-        if ($duplicateCodeCount >= 2) {
-            return redirect()->back()->with('error', 'Cannot create more than two branches with the same code!');
+    
+        // Check for duplicate values in code and cost_center linked to the company
+        $duplicateCodeCount = Branch::where('code', $request->code)
+            ->where('company_id', $request->company_id)
+            ->where('deleted', false)
+            ->count();
+    
+        if ($duplicateCodeCount > 0) {
+            return redirect()->back()->with('error', 'Duplicate Entry: Branch Code already exists for this company!')->withInput($request->except('code'));
         }
-
-        // Check if there are already two branches with the same cost_center
-        $duplicatesCostCenterCount = Branch::where('cost_center', $request->cost_center)->where('deleted', false)->count();
-
-        if ($duplicatesCostCenterCount >= 2) {
-            return redirect()->back()->with('error', 'Cannot create more than two branches with the same cost center!');
-        }
-
-        // Check for duplicate values in cost_center_name
-        $duplicateCostCenterNameCount = Branch::where('cost_center_name', $request->cost_center_name)->where('deleted', false)->count();
-
-        if ($duplicateCostCenterNameCount > 0) {
-            return redirect()->back()->with('error', 'Duplicate value in cost center name!')->withInput($request->except('cost_center_name'));
-        }
-
+    
+        $duplicatesCostCenterCount = Branch::where('cost_center', $request->cost_center)
+            ->where('company_id', $request->company_id)
+            ->where('deleted', false)
+            ->count();
+    
+        if ($duplicatesCostCenterCount > 0) {
+            return redirect()->back()->with('error', 'Duplicate Entry: Cost Center already exists for this company!')->withInput($request->except('cost_center'));
+        }   
         // Check for duplicate values in warehouse
         $duplicateWarehouseCount = Branch::where('warehouse', $request->warehouse)->where('deleted', false)->count();
-
+    
         if ($duplicateWarehouseCount > 0) {
-            return redirect()->back()->with('error', 'Duplicate value in Warehouse!')->withInput($request->except('warehouse'));
+            return redirect()->back()->with('error', 'Duplicate Entry: Warehouse already exists!')->withInput($request->except('warehouse'));
         }
-
-            $branch = new Branch();
-            $branch->uuid = Str::uuid();
-            $branch->name = $request->name;
-            $branch->code = $request->code;
-            $branch->company_id = $request->company_id;
-            $branch->cost_center = $request->cost_center;
-            $branch->cost_center_name = $request->cost_center_name;
-            $branch->warehouse = $request->warehouse;
-            $branch->status_id = 8; // Set default status to Active
-            $branch->created_by = Auth::user()->name;
-            $branch->save();
-
+    
+        $branch = new Branch();
+        $branch->uuid = Str::uuid();
+        $branch->name = $request->name;
+        $branch->code = $request->code;
+        $branch->company_id = $request->company_id;
+        $branch->cost_center = $request->cost_center;
+        $branch->cost_center_name = $request->cost_center_name;
+        $branch->warehouse = $request->warehouse;
+        $branch->status_id = 8; // Set default status to Active
+        $branch->created_by = Auth::user()->name;
+        $branch->save();
+    
         return redirect()->back()->with('success', 'Branch has been created!');
     }
     /**
@@ -129,7 +126,7 @@ class BranchController extends Controller
                     ->count();
     
                 if ($duplicateCount > 0) {
-                    return redirect()->back()->with('error', 'Duplicate value in ' . $field . '!')
+                    return redirect()->back()->with('error', 'Duplicate Entry: ' . $field . ' already exists!')
                         ->withInput($request->except($field));
                 }
     
@@ -145,7 +142,7 @@ class BranchController extends Controller
                 ->count();
     
             if ($duplicateWarehouseCount > 0) {
-                return redirect()->back()->with('error', 'Duplicate value in Warehouse!')
+                return redirect()->back()->with('error', 'Duplicate Entry: Warehouse already exists!')
                     ->withInput($request->except('warehouse'));
             }
     
@@ -167,13 +164,13 @@ class BranchController extends Controller
         if ($request->filled('code') && $duplicateCodeCount < 2) {
             $branch->code = $request->code;
         } elseif ($request->filled('code') && $duplicateCodeCount >= 2) {
-            return redirect()->back()->with('error', 'Cannot update code due to duplicate values!');
+            return redirect()->back()->with('error', 'Duplicate Entry: Code already exists');
         }
     
         if ($request->filled('cost_center') && $duplicateCostCenterCount < 2) {
             $branch->cost_center = $request->cost_center;
         } elseif ($request->filled('cost_center') && $duplicateCostCenterCount >= 2) {
-            return redirect()->back()->with('error', 'Cannot update cost_center due to duplicate values!');
+            return redirect()->back()->with('error', 'Duplicate Entry: Cost Center already exists');
         }
     
         // Update other fields along with the status

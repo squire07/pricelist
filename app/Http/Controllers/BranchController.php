@@ -104,73 +104,67 @@ class BranchController extends Controller
     {
         $branch = Branch::where('uuid', $uuid)->firstOrFail();
     
-        // Check if only the status is being updated
+        // Update fields if status is the only change
         if ($request->filled('status') && count($request->all()) === 1) {
-            // Update only the status field
             $branch->status_id = $request->status;
             $branch->remarks = $request->remarks;
-            $branch->updated_by = Auth::user()->name;
-            $branch->update();
+        } else {
+            // Check for duplicate values in specified fields
+            $duplicateFields = ['name', 'cost_center_name', 'warehouse'];
     
-            return redirect()->back()->with('success', 'Branch status has been updated!');
-        }
+            foreach ($duplicateFields as $field) {
+                if ($request->filled($field) && $branch->$field !== $request->$field) {
+                    $duplicateCount = Branch::where($field, $request->$field)
+                        ->where('company_id', $request->company_id)
+                        ->where('deleted', false)
+                        ->where('uuid', '<>', $uuid)
+                        ->count();
     
-        // Check for duplicate values in specified fields
-        $duplicateFields = ['name', 'cost_center_name', 'warehouse'];
+                    if ($duplicateCount > 0) {
+                        return redirect()->back()->with('error', 'Duplicate Entry: ' . $field . ' already exists for this company!')
+                            ->withInput($request->except($field));
+                    }
     
-        foreach ($duplicateFields as $field) {
-            if ($request->filled($field) && $branch->$field !== $request->$field) {
-                $duplicateCount = Branch::where($field, $request->$field)
+                    $branch->$field = $request->$field;
+                }
+            }
+    
+            // Check for duplicate values in warehouse if it is set and different from the current value
+            if ($request->filled('warehouse') && $branch->warehouse !== $request->warehouse) {
+                $duplicateWarehouseCount = Branch::where('warehouse', $request->warehouse)
+                    ->where('company_id', $request->company_id)
                     ->where('deleted', false)
                     ->where('uuid', '<>', $uuid)
                     ->count();
     
-                if ($duplicateCount > 0) {
-                    return redirect()->back()->with('error', 'Duplicate Entry: ' . $field . ' already exists!')
-                        ->withInput($request->except($field));
+                if ($duplicateWarehouseCount > 0) {
+                    return redirect()->back()->with('error', 'Duplicate Entry: Warehouse already exists for this company!')
+                        ->withInput($request->except('warehouse'));
                 }
     
-                $branch->$field = $request->$field;
+                $branch->warehouse = $request->warehouse;
             }
-        }
     
-        // Check for duplicate values in warehouse if it is set and different from the current value
-        if ($request->filled('warehouse') && $branch->warehouse !== $request->warehouse) {
-            $duplicateWarehouseCount = Branch::where('warehouse', $request->warehouse)
+            // Check for duplicate values in code and cost_center linked to the company_id
+            $duplicateCodeCount = Branch::where('code', $request->code)
+                ->where('company_id', $request->company_id)
                 ->where('deleted', false)
                 ->where('uuid', '<>', $uuid)
                 ->count();
     
-            if ($duplicateWarehouseCount > 0) {
-                return redirect()->back()->with('error', 'Duplicate Entry: Warehouse already exists!')
-                    ->withInput($request->except('warehouse'));
+            $duplicateCostCenterCount = Branch::where('cost_center', $request->cost_center)
+                ->where('company_id', $request->company_id)
+                ->where('deleted', false)
+                ->where('uuid', '<>', $uuid)
+                ->count();
+    
+            if ($duplicateCodeCount > 0) {
+                return redirect()->back()->with('error', 'Duplicate Entry: Code already exists for this company');
             }
     
-            $branch->warehouse = $request->warehouse;
-        }
-    
-        // Check for duplicate values in code and cost_center
-        $duplicateCodeCount = Branch::where('code', $request->code)
-            ->where('deleted', false)
-            ->where('uuid', '<>', $uuid)
-            ->count();
-    
-        $duplicateCostCenterCount = Branch::where('cost_center', $request->cost_center)
-            ->where('deleted', false)
-            ->where('uuid', '<>', $uuid)
-            ->count();
-    
-        // Check if there are less than 2 entries with the same value for code and cost_center
-        if ($request->filled('code') && $duplicateCodeCount < 2) {
-            $branch->code = $request->code;
-        } elseif ($request->filled('code') && $duplicateCodeCount >= 2) {
-            return redirect()->back()->with('error', 'Duplicate Entry: Code already exists');
-        }
-    
-        if ($request->filled('cost_center') && $duplicateCostCenterCount < 2) {
-            $branch->cost_center = $request->cost_center;
-        } elseif ($request->filled('cost_center') && $duplicateCostCenterCount >= 2) {
-            return redirect()->back()->with('error', 'Duplicate Entry: Cost Center already exists');
+            if ($duplicateCostCenterCount > 0) {
+                return redirect()->back()->with('error', 'Duplicate Entry: Cost Center already exists for this company');
+            }
         }
     
         // Update other fields along with the status

@@ -93,26 +93,13 @@
                 <form class="form-horizontal" action="{{ route('payment-methods.store') }}" method="POST" id="form_modal_add" autocomplete="off">
                     @csrf
                     <div class="modal-body">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Company</label>
-                                    <select class="form-control form-control-sm" name="company_id" required>
-                                        <option value="" disabled>-- Select Company --</option>
-                                        @foreach($companies as $company)
-                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
+                        <div class="row mt-3">
                             <div class="col-12">
                                 <label for="name">Name</label>
                                 <input type="text" class="form-control form-control-sm" name="name" pattern="[a-zA-Z0-9\s]+" id="modal_add_name" required>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mt-3">
                             <div class="col-12">
                                 <label for="name">Description</label>
                                 <input type="text" class="form-control form-control-sm" name="description" pattern="[a-zA-Z0-9\s]+" id="modal_add_description" required>
@@ -121,7 +108,22 @@
                         <div class="row mt-3">
                             <div class="col-12">
                                 <label for="code">Account Number</label>
-                                <input type="text" class="form-control form-control-sm" name="code" maxlength="12" min="0" oninput="this.value = this.value.replace(/[^0-9]/g, '');" id="modal_add_code" required>
+                                <input type="text" class="form-control form-control-sm" name="code" maxlength="12" minlength="7" oninput="this.value = this.value.replace(/[^0-9]/g, '');" id="modal_add_code" required>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Company</label>
+                                    <select class="form-control form-control-sm" name="company_id" required>
+                                        <option value="" disabled selected>-- Select Company --</option>
+                                        @foreach($companies as $company)
+                                            @if(in_array($company->status_id, [8,1]))
+                                                <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -135,7 +137,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-3">
+                        {{-- <div class="row mt-3">
                             <div class="col-12">
                                 <div class="form-group">
                                     <label for="branches">Branches</label>
@@ -145,7 +147,7 @@
                                     @endforeach
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="modal_add_close" >Close</button>
@@ -175,17 +177,6 @@
                         <div class="row">
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
-                                    <label for="comapny_id">Company</label>
-                                    <select class="form-control form-control-sm" name="company_id" id="modal_edit_company_id" required>
-                                        <option value="" disabled>-- Select Company --</option>
-                                        @foreach($companies as $company)
-                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-12 col-sm-12">
-                                <div class="form-group">
                                     <label for="name">Name</label>
                                     <input type="text" class="form-control form-control-sm" name="name" id="modal_edit_name" required>
                                 </div>
@@ -199,7 +190,18 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="code">Account Code</label>
-                                    <input type="text" class="form-control form-control-sm" maxlength="10" name="code" id="modal_edit_code" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+                                    <input type="text" class="form-control form-control-sm" maxlength="12" minlength="7" name="code" id="modal_edit_code" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="comapny_id">Company</label>
+                                    <select class="form-control form-control-sm" name="company_id" id="modal_edit_company_id" required>
+                                        <option value="" disabled>-- Select Company --</option>
+                                        @foreach($companies as $company)
+                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-12">
@@ -222,7 +224,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-sm-12">
+                            {{-- <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="branches">Branches</label>
                                     @foreach($branches as $branch)
@@ -230,7 +232,7 @@
                                         <input type="checkbox" name="branch_id[]" id="modal_edit_branch_{{ $branch->id }}" value={{ $branch->id }}><span class="ml-2">{{ $branch->name }}</span>
                                     @endforeach
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="remarks">Remarks</label>
@@ -350,8 +352,28 @@
         // remove all the marked check
         $('input[type="checkbox"]').prop('checked', false);
         $('input[type="radio"]').prop('checked', false);
-
         var uuid = $(this).attr("data-uuid");
+
+        var companySelect = $('#modal_edit_company_id');
+
+        // Clear existing options
+        companySelect.empty();
+
+        // Add a placeholder or default option if needed
+        companySelect.append('<option value="" disabled>-- Select Company --</option>');
+
+        // Iterate through companies and add all companies
+        @foreach($companies as $company)
+            var companyId = {{ $company->id }};
+            var companyName = "{{ $company->name }}";
+            var companyStatus = "{{ $company->status_id }}";
+
+            if (companyStatus == 8) {
+                var option = $('<option value="' + companyId + '">' + companyName + '</option>');
+
+                companySelect.append(option);
+            }
+        @endforeach
         var c_id = $(this).attr("data-company-id");
         var name = $(this).attr("data-name");
         var description = $(this).attr("data-description");

@@ -165,10 +165,15 @@ class BranchController extends Controller
             if ($duplicateCostCenterCount > 0) {
                 return redirect()->back()->with('error', 'Duplicate Entry: Cost Center already exists for this company');
             }
+            // Update code and cost_center fields
+            $branch->code = $request->code;
+            $branch->cost_center = $request->cost_center;
         }
-    
+        // Check if company_id is present in the request before updating
+        if ($request->has('company_id')) {
+            $branch->company_id = $request->company_id;
+        }
         // Update other fields along with the status
-        $branch->company_id = $request->company_id;
         $branch->status_id = $request->status;
         $branch->remarks = $request->remarks;
         $branch->updated_by = Auth::user()->name;

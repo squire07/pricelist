@@ -130,7 +130,7 @@
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="modal_add_close" >Close</button>
-                        <button type="submit" class="btn btn-primary btn-sm m-2"><i class="fas fa-save mr-2"></i>Save</button>
+                        <button type="submit" class="btn btn-primary btn-sm m-2" id="btn_modal_add_submit" ><i class="fas fa-save mr-2"></i>Save</button>
                     </div>
                 </form>
             </div>
@@ -157,7 +157,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="comapny_id">Company</label>
-                                    <select class="form-control form-control-sm" name="company_id" id="modal_edit_company_id" required>
+                                    <select class="form-control form-control-sm" name="company_id" id="modal_edit_company_id" disabled>
                                         <option value="" disabled>-- Select Company --</option>
                                         @foreach($companies as $company)
                                             <option value="{{ $company->id }}">{{ $company->name }}</option>
@@ -344,13 +344,10 @@ input[type="text2"], textarea {
             @foreach($companies as $company)
                 var companyId = {{ $company->id }};
                 var companyName = "{{ $company->name }}";
-                var companyStatus = "{{ $company->status_id }}";
-                if (companyStatus == 8) {
-                    var option = $('<option value="' + companyId + '">' + companyName + '</option>');
-
-                    companySelect.append(option);
-                }
+                var option = $('<option value="' + companyId + '">' + companyName + '</option>');
+                companySelect.append(option);
             @endforeach
+
             var name = $(this).attr("data-branch-name");
             var code = $(this).attr("data-branch-code");
             var c_id = $(this).attr("data-branch-company_id");
@@ -377,6 +374,14 @@ input[type="text2"], textarea {
             // define the edit form action
             let action = window.location.origin + "/branches/" + uuid;
             $('#form_modal_edit').attr('action', action);
+
+            // Add form submission prevention logic
+            $('#form_modal_edit').submit(function () {
+            // Disable the submit button to prevent multiple submissions
+            $('#btn_modal_edit_submit').prop('disabled', true);
+
+            return true; // Allow the form submission to proceed
+            });
         });
 
         $(document).on('click', '.btn_show', function() {
@@ -466,6 +471,14 @@ input[type="text2"], textarea {
                 event.preventDefault();
                 return false;
             }
+        });
+
+        // Add form submission prevention logic
+        $('#form_modal_add').submit(function () {
+        // Disable the submit button to prevent multiple submissions
+        $('#btn_modal_add_submit').prop('disabled', true);
+
+        return true; // Allow the form submission to proceed
         });
     });
 </script>

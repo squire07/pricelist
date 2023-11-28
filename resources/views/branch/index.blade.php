@@ -409,16 +409,16 @@ input[type="text2"], textarea {
         });
 
         // Prevent input of special characters from user
-        $('#modal_add_cost_center , #modal_edit_cost_center').on('input', function(e) {    
+        $('#modal_add_cost_center, #modal_edit_cost_center').on('input', function(e) {    
             const inputValue = e.target.value;
             const numericValue = inputValue.replace(/[^0-9]/g, ''); // Remove non-numeric characters
             e.target.value = numericValue;
         });
 
-        $('#modal_add_code , #modal_edit_code').on('input', function(e) {    
+        $('#modal_add_code, #modal_edit_code').on('input', function(e) {
             const inputValue = e.target.value;
-            const numericValue = inputValue.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-            e.target.value = numericValue;
+            const alphanumericValue = inputValue.replace(/[^a-zA-Z0-9]/g, ''); // Remove non-alphanumeric characters
+            e.target.value = alphanumericValue;
         });
 
         // Prevent from redirecting back to homepage when cancel button is clicked accidentally

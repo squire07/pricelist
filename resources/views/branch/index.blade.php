@@ -116,8 +116,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="name">Cost Center</label>
-                                <input type="text" class="form-control form-control-sm" name="cost_center" maxlength="3" id="modal_add_cost_center" required>
-                                {{-- <input type="text" class="form-control form-control-sm" name="code" maxlength="3" id="modal_add_cost_center" required> --}}
+                                <input type="text" class="form-control form-control-sm" name="cost_center" maxlength="3"  pattern="[a-zA-Z0-9\s]+" id="modal_add_cost_center" required>
                             </div>
                             <div class="col-12">
                                 <label for="name">Cost Center Name</label>
@@ -380,17 +379,6 @@ input[type="text2"], textarea {
             $('#form_modal_edit').attr('action', action);
         });
 
-        $("#modal_add_cost_center").on("input", function () {
-            setTimeout(function () {
-                // Remove non-numeric characters from the input
-                let numericValue = $("#modal_add_cost_center").val().replace(/\D/g, '');
-                // Limit the input to 3 characters
-                numericValue = numericValue.slice(0, 3);
-                // Update the input value
-                $("#modal_add_cost_center").val(numericValue);
-            }, 10);
-        });
-
         $(document).on('click', '.btn_show', function() {
             var uuid = $(this).attr("data-uuid");
             var name = $(this).attr("data-branch-name");
@@ -427,11 +415,12 @@ input[type="text2"], textarea {
             e.target.value = numericValue;
         });
 
-        $('#modal_add_cost_center , #modal_edit_cost_center').bind('copy paste', function (e) {
-            e.preventDefault();
+        $('#modal_add_code , #modal_edit_code').on('input', function(e) {    
+            const inputValue = e.target.value;
+            const numericValue = inputValue.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+            e.target.value = numericValue;
         });
 
-        
         // Prevent from redirecting back to homepage when cancel button is clicked accidentally
         $('#modal-add , #modal-edit').on("hide.bs.modal", function (e) {
 

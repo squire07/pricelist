@@ -26,6 +26,11 @@ class Sales extends Model
         return $this->hasOne('App\Models\TransactionType', 'id', 'transaction_type_id');
     }
 
+    public function income_expense_account()
+    {
+        return $this->hasOne('App\Models\IncomeExpenseAccount', 'transaction_type_id', 'transaction_type_id');
+    }
+
     public function payment()
     {
         return $this->hasOne('App\Models\Payment', 'sales_id', 'id');

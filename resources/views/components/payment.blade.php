@@ -12,14 +12,26 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($sales_order->payment->details as $payment)
+                {{--  @foreach($sales_order->payment->details as $payment)
                     <tr>
                         <td>{{ $payment['name'] }}</td>
                         <td class="text-center">{{ isset($payment['ref_no']) ? strtoupper($payment['ref_no']) : '' }}</td>
                         <td class="text-right">{{ $payment['amount'] }}</td>
                         <td class="text-center">{{ $sales_order->payment->created_at }}</td>
                     </tr>
-                @endforeach
+                @endforeach --}}
+                <tr>
+                    <td>{{ $sales_order->payment->details[0]['name'] }}</td>
+                    <td class="text-center">{{ isset($sales_order->payment->details[0]['ref_no']) ? strtoupper($sales_order->payment->details[0]['ref_no']) : '' }}</td>
+                    <td class="text-right">{{  $sales_order->grandtotal_amount }}</td>
+                    <td class="text-center">{{ $sales_order->payment->created_at }}</td>
+                </tr>
+                <tr>
+                    <td>Amount Tendered</td>
+                    <td></td>
+                    <td class="text-right">{{ $sales_order->payment->details[0]['amount'] }}</td>
+                    <td></td>
+                </tr>
                 <tr>
                     <td>Cash Change</td>
                     <td></td>

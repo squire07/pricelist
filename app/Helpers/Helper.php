@@ -331,18 +331,32 @@ class Helper {
     }
 
     public static function create_si_payload($id) {
-        $sales = Sales::with('sales_details', 'company', 'branch')->whereId($id)->first();
+        $sales = Sales::with('sales_details', 'payment', 'company', 'branch')->whereId($id)->first();
+
+
+        $debit_to_account = '';
+        // get the payment method from the payment details
+        if(isset($sales->payment) && !empty($sales->payment->details)) {
+            $payments = json_decode($sales->payment->details, true);
+
+            // for now, there is only one payment method accepted
+            foreach($payments as $payment) {
+                // get the payment description from the payment methods table using the payment id
+                $payment_details = PaymentMethod::whereId($payment['id'])->first();
+                $debit_to_account = $payment_details->description;
+            }
+        }
 
         if($sales->company_id == 3) {
             $naming_series = 'LO-SI-V-.YYYY.-';
             $taxes_and_charges = 'VAT Sales - LOCAL';
-            $debit_to = '1101001 - Accounts Receivable - Trade - UNO';
+            $debit_to = $debit_to_account ?? '1101001 - Accounts Receivable - Trade - UNO';
             $account_head = '2010120 - Due to BIR -  Value Added Tax - UNO';
 
         } else if ($sales->company_id == 2) {
             $naming_series = 'PR-SI-V-.YYYY.-';
             $taxes_and_charges = 'VAT Sales - PREMIER';
-            $debit_to = '1101001 - Accounts Receivable - Trade - PREMIER';
+            $debit_to = $debit_to_account ?? '1101001 - Accounts Receivable - Trade - PREMIER';
             $account_head = '2010120 - Due to BIR -  Value Added Tax - PREMIER';
         }
 
@@ -408,6 +422,7 @@ class Helper {
         $sales = Sales::with('sales_details', 'payment', 'company', 'branch')->whereId($id)->first();
 
         $payment_entries = [];
+        $reference_no = null;
 
         // get the payment method from the payment details
         if(isset($sales->payment) && !empty($sales->payment->details)) {
@@ -421,6 +436,7 @@ class Helper {
 
                 $paid_from = $payment_details->description;  // e.g. '1101001 - Accounts Receivable - Trade - UNO'     or     '1101001 - Accounts Receivable - Trade - PREMIER'
 
+                $reference_no = $payment['ref_no'];
 
                 // this code can be refactored into ternary type but let us keep this way for easy understanding
                 if($sales->company_id == 3) {
@@ -458,6 +474,7 @@ class Helper {
                     'cost_center' => $sales->branch->cost_center_name,
                     'status' => 'Submitted',
                     'docstatus' => 1,
+                    'reference_no' => $reference_no,
                     'references' => [
                         [
                             'parentfield' => 'references',

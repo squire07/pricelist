@@ -51,12 +51,12 @@ class IncomeExpenseAccountController extends Controller
                     ->whereExpenseAccount($request->expense_account)
                     ->first();
 
-        if(is_null($account)) {
+        // if(is_null($account)) {
             $incomeExpenseAccount->create($validatedData);
             return redirect()->back()->with('success','Account successfully saved!');
-        } else {
-            return redirect()->back()->with('error','Account already exists!');
-        }
+        // } else {
+        //     return redirect()->back()->with('error','Account already exists!');
+        // }
     }
 
     /**

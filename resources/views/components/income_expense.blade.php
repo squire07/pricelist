@@ -11,8 +11,8 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="text-center">{{ $sales_order->income_expense_account->income_account }}</td>
-                    <td class="text-center">{{ $sales_order->income_expense_account->expense_account }}</td>
+                    <td class="text-center">{{ $sales_order->income_expense_account->income_account ?? '' }}</td>
+                    <td class="text-center">{{ $sales_order->income_expense_account->expense_account ?? ''}}</td>
                 </tr>
             </tbody>
         </table>

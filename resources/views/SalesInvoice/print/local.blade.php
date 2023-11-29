@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
 <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}">
 </head>
+<style>
+    @media print {
+        .print-none {
+            color: transparent;
+        }
+    }
+</style>
 <body>
     <div class="wrapper">
         <div>
-            <table style="width: 100%; margin-top: 180px">
+            <table style="width: 100%; margin-top: 150px">
                 <tr>
                     <td class="text-left text-bold" style="padding-left: 200px;">{{ $sales_order->distributor_name }} [{{ $sales_order->bcid }}] [{{ $sales_order->group_name }}]</td>
                 </tr>
@@ -24,7 +31,7 @@
                 </tr>
             </table>
         </div>
-        <div class="row" style="margin-top: 100px; line-height: 15px;">
+        <div class="row" style="margin-top: 110px; line-height: 15px;">
             <div class="col-12">
                 <div>
                     <table style="width:100%">
@@ -42,71 +49,86 @@
                         </tbody>
                     </table>
                 </div>
-                <div style="position: absolute; top: 250px; width: 100%; margin-top: 70px; padding-right: 15px;">
-                    {{-- <table style="width: 100%">
+                <div style="position: absolute; top: 250px; width: 100%; margin-top: 40px; padding-right: 15px;">
+
+                    <table width="100%">
                         <tr>
-                            <td class="text-right" style="width: 60%">&nbsp;</td>
-                            <td class="text-right text-bold" style="width: 30%; padding-right: 40px">Sub Total</td>
-                            <td class="text-right" style="width: 10%">{{ $sales_order->total_amount }}</td>
+                            <td style="width:15%"></td>
+                            <td style="width:20%"></td>
+                            <td style="width:20%"></td>
+                            <td style="width:8%"></td>
+                            <td style="width:8%"></td>
+                            <td style="width:14%" class="text-right text-bold">Subtotal</td>
+                            <td style="width:15%" class="text-right">{{ $sales_order->total_amount }}</td>
                         </tr>
                         <tr>
-                            <td class="text-right">&nbsp;</td>
-                            <td class="text-right text-bold" style="width: 30%; padding-right: 40px">Shipping Fee</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td colspan="2" class="text-right text-bold">Shipping Fee</td>
                             <td class="text-right">{{ $sales_order->shipping_fee }}</td>
                         </tr>
                         <tr>
-                            <td class="text-right">&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td class="text-right text-bold d-print-none">VATable Sales</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td colspan="2" class="text-right print-none">VATable Sales</td>
                             <td class="text-right">{{ $sales_order->vatable_sales }}</td>
                         </tr>
                         <tr>
-                            <td class="text-right">&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td class="text-right text-bold d-print-none">VAT-Exempt Sales</td>
+                            <td colspan="2" class="text-center text-bold print-none"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="text-right print-none">VAT-Exempt Sales</td>
                             <td class="text-right">0.00</td>
                         </tr>
                         <tr>
-                            <td style="padding-left: 50px;">{{ $sales_order->payment->payment_type }}: {{ $sales_order->amount_tendered}}</td>
-                            <td>&nbsp;</td>
-                            <td class="text-right text-bold d-print-none">Zero Rated Sales</td>
+                            <td colspan="2" class="text-center text-bold print-none">MODE OF PAYMENT</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="text-right print-none">Zero Rated Sales</td>
                             <td class="text-right">0.00</td>
                         </tr>
-                    </table>
-                    <table style="width: 100%">
                         <tr>
-                            <td style="width: 45%; padding-left: 50px;">{{ $sales_order->so_no }}</td>
-                            <td style="width: 20%; padding-left: 100px;">Total Qty: {{ $sales_order->total_item_count }}</td>
-                            <td class="text-right text-bold d-print-none">Add 12% VAT</td>
+                            <td colspan="2" style="padding:0 0 0 25px;">{{ $sales_order->payment->payment_type }}: {{ $sales_order->amount_tendered}}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="text-right print-none">VAT-Amount</td>
                             <td class="text-right">{{ $sales_order->vat_amount }}</td>
                         </tr>
                         <tr>
-                            <td style="padding-left: 50px;">{{ $sales_order->si_no }}</td>
-                            <td>&nbsp;</td>
-                            <td class="text-right text-bold d-print-none">Total Amount Due</td>
+                            <td colspan="2" style="padding:0 0 0 25px;">{{ $sales_order->so_no }}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="text-right print-none">Total Sales</td>
+                            <td class="text-right"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding:0 0 0 25px;">{{ $sales_order->si_no }}</td>
+                            <td></td>
+                            <td>Total Qty: {{ $sales_order->total_item_count }}</td>
+                            <td></td>
+                            <td class="text-right print-none">Add: VAT</td>
+                            <td class="text-right"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td colspan="3" class="text-right text-bold print-none">TOTAL AMOUNT DUE</td>
                             <td class="text-right text-bold">{{ $sales_order->grandtotal_amount }}</td>
                         </tr>
                         <tr>
                             <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
                         </tr>
                         <tr>
                             <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td class="text-right text-bold" style="padding-right: 100px;">{{ $sales_order->updated_by }}</td>
-                        </tr>
-                    </table> --}}
-
-                    <table width="100%">
-                        <tr>
-                            <td style="width:10%"></td>
-                            <td style="width:20%"></td>
-                            <td style="width:20%"></td>
-                            <td style="width:8%"></td>
-                            <td style="width:8%"></td>
-                            <td style="width:14%" class="text-right">Subtotal</td>
-                            <td style="width:15%" class="text-right">0.00</td>
                         </tr>
                         <tr>
                             <td></td>
@@ -114,47 +136,7 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td class="text-right">Shipping Fee</td>
-                            <td class="text-right">0.00</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td class="text-right">VATable Sales</td>
-                            <td class="text-right">0.00</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="text-center text-bold">MODE OF PAYMENT</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td class="text-right">VAT-Exempt Sales</td>
-                            <td class="text-right">0.00</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Cash: 0.00</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td class="text-right">Zero Rated Sales</td>
-                            <td class="text-right">0.00</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">SO# 1234</td>
-                            <td></td>
-                            <td>Total Qty: X</td>
-                            <td></td>
-                            <td class="text-right">Add: 12% VAT</td>
-                            <td class="text-right">0.00</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">SI# 5678</td>
-                            <td></td>
-                            <td colspan="3" class="text-right text-bold">TOTAL AMOUNT DUE</td>
-                            <td class="text-right">0.00</td>
+                            <td colspan="2" class="text-center text-bold">{{ $sales_order->updated_by }}</td>
                         </tr>
                     </table>
                 </div>

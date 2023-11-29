@@ -8,7 +8,7 @@
             <div class="col-sm-6">
                 <h1>Sales Order Details</h1>
             </div>
-        </div>
+        </div>        
     </div>
 @stop
 
@@ -98,8 +98,11 @@
                 <a href="{{ url('sales-invoice/for-validation/' . $sales_order->uuid . '/print') }}" class="btn btn-primary btn-lg float-left ml-2" target="_blank" rel="noopener noreferrer"><i class="fas fa-print mr-1"></i>Print</a>
             @endif
             
-            <button class="btn btn-lg btn-success float-right" id="btn-validate" data-uuid="{{ $sales_order->uuid }}"><i class="far fa-share-square"></i>&nbsp;Validate</button>
-            <button class="btn btn-lg btn-danger float-right mx-2" id="btn-for-cancel" data-uuid="{{ $sales_order->uuid }}" data-si-no="{{ $sales_order->si_no }}"><i class="fas fa-ban"></i>&nbsp;Cancel Invoice</button>
+            {{-- for accounting role only --}}
+            @if(Auh::user()->role_id == 8) 
+                <button class="btn btn-lg btn-success float-right" id="btn-validate" data-uuid="{{ $sales_order->uuid }}" {{ isset($error) ? 'disabled' : '' }}><i class="far fa-share-square"></i>&nbsp;Validate</button>
+                <button class="btn btn-lg btn-danger float-right mx-2" id="btn-for-cancel" data-uuid="{{ $sales_order->uuid }}" data-si-no="{{ $sales_order->si_no }}"><i class="fas fa-ban"></i>&nbsp;Cancel Invoice</button>
+            @endif
         </div>
     </div>
 
@@ -121,6 +124,8 @@
             <input type="hidden" name="status_id" value="5">
         @csrf
     </form>
+
+    
 @endsection
 
 @section('adminlte_css')
@@ -132,7 +137,9 @@
 tfoot tr td:first-child {
     border: none !important;
 }
-
+.swal-custom-width{
+    width:850px !important;
+}
 </style>
 @endsection                 
 
@@ -228,5 +235,14 @@ $(document).ready(function() {
         });
     });
 });
+
+@if(isset($error))
+    Swal.fire({
+        title: 'Error!',
+        html: '{!! addslashes($error) !!}',
+        icon: 'error',
+        customClass: 'swal-custom-width',
+    });
+@endif
 </script>
 @endsection

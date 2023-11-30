@@ -94,19 +94,19 @@ class IncomeExpenseAccountController extends Controller
             'expense_account' => 'required|string',
         ]);
 
-        $account = IncomeExpenseAccount::whereCompanyId($request->company_id)
-                    ->whereCurrency($request->currency)
-                    ->whereIncomeAccount($request->income_account)
-                    ->whereExpenseAccount($request->expense_account)
-                    ->whereNot('id', $incomeExpenseAccount->id)
-                    ->first();
+        // $account = IncomeExpenseAccount::whereCompanyId($request->company_id)
+        //             ->whereCurrency($request->currency)
+        //             ->whereIncomeAccount($request->income_account)
+        //             ->whereExpenseAccount($request->expense_account)
+        //             ->whereNot('id', $incomeExpenseAccount->id)
+        //             ->first();
 
-        if(is_null($account)) {
+        // if(is_null($account)) {
             $incomeExpenseAccount->update($validatedData);
             return redirect()->back()->with('success','Account successfully updated!');
-        } else {
-            return redirect()->back()->with('error','The account cannot be updated as it already exists!');
-        }
+        // } else {
+        //     return redirect()->back()->with('error','The account cannot be updated as it already exists!');
+        // }
     }
 
     /**

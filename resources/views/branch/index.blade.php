@@ -62,7 +62,7 @@
                                         data-uuid="{{ $branch->uuid }}" 
                                         data-branch-name="{{ $branch->name }}" 
                                         data-branch-code="{{ $branch->code }}"
-                                        data-branch-company_id="{{ $branch->company_id }}"
+                                        data-branch-company_id="{{ $branch->company->name }}"
                                         data-branch-cost_center="{{ $branch->cost_center }}"
                                         data-branch-cost_center_name="{{ $branch->cost_center_name }}"
                                         data-branch-warehouse="{{ $branch->warehouse }}"
@@ -156,13 +156,8 @@
                         <div class="row">
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
-                                    <label for="comapny_id">Company</label>
-                                    <select class="form-control form-control-sm" name="company_id" id="modal_edit_company_id" disabled>
-                                        <option value="" disabled>-- Select Company --</option>
-                                        @foreach($companies as $company)
-                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <label for="name">Company</label>
+                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="25" name="company_id" id="modal_edit_company" readonly>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
@@ -332,22 +327,23 @@ input[type="text2"], textarea {
         $(document).on('click', '.btn_edit', function() {
             var uuid = $(this).attr("data-uuid");
 
-            var companySelect = $('#modal_edit_company_id');
+            // var companySelect = $('#modal_edit_company_id');
 
-            // Clear existing options
-            companySelect.empty();
+            // // Clear existing options
+            // companySelect.empty();
 
-            // Add a placeholder or default option if needed
-            companySelect.append('<option value="" disabled>-- Select Company --</option>');
+            // // Add a placeholder or default option if needed
+            // companySelect.append('<option value="" disabled>-- Select Company --</option>');
 
-            // Iterate through companies and add all companies
-            @foreach($companies as $company)
-                var companyId = {{ $company->id }};
-                var companyName = "{{ $company->name }}";
-                var option = $('<option value="' + companyId + '">' + companyName + '</option>');
-                companySelect.append(option);
-            @endforeach
+            // // Iterate through companies and add all companies
+            // @foreach($companies as $company)
+            //     var companyId = {{ $company->id }};
+            //     var companyName = "{{ $company->name }}";
+            //     var option = $('<option value="' + companyId + '">' + companyName + '</option>');
+            //     companySelect.append(option);
+            // @endforeach
 
+            var company_id = $(this).attr("data-branch-company_id");
             var name = $(this).attr("data-branch-name");
             var code = $(this).attr("data-branch-code");
             var c_id = $(this).attr("data-branch-company_id");
@@ -357,7 +353,7 @@ input[type="text2"], textarea {
             var remarks = $(this).attr("data-branch-remarks");
             var status_id = $(this).attr("data-branch-status_id");
 
-            $('#modal_edit_company_id option[value=' + c_id + ']').attr('selected', 'selected');
+            $('#modal_edit_company').val(company_id);
             $('#modal_edit_name').val(name);
             $('#modal_edit_code').val(code);
             $('#modal_edit_cost_center').val(cost_center);

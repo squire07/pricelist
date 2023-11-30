@@ -169,10 +169,10 @@ class BranchController extends Controller
             $branch->code = $request->code;
             $branch->cost_center = $request->cost_center;
         }
-        // Check if company_id is present in the request before updating
-        if ($request->has('company_id')) {
-            $branch->company_id = $request->company_id;
-        }
+        // // Check if company_id is present in the request before updating
+        // if ($request->has('company_id')) {
+        //     $branch->company_id = $request->company_id;
+        // }
         // Update other fields along with the status
         $branch->status_id = $request->status;
         $branch->remarks = $request->remarks;

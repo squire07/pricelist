@@ -294,10 +294,10 @@
                                 <td width="25%">Remarks</td>
                                 <td><span id="modal_show_remarks" style="font-weight:bold"></span></td>
                             </tr>
-                            <tr>
+                            {{-- <tr>
                                 <td width="25%">Branches</td>
                                 <td id="modal_show_branch_names"></td>
-                            </tr>
+                            </tr> --}}
                             <tr>
                                 <td width="25%">Updated By</td>
                                 <td><span id="modal_show_updated_by" style="font-weight:bold"></span></td>
@@ -448,10 +448,10 @@
             $('#ribbon_bg').addClass('bg-danger').removeClass('bg-success');
         }
 
-        const array_branches = branch_names.split(",");
-        array_branches.forEach(function(element, index, array) {
-            $('#modal_show_branch_names').append('<span class="badge bg-info mx-2" style="font-size:85%">' + element + '</span>');
-        });
+        // const array_branches = branch_names.split(",");
+        // array_branches.forEach(function(element, index, array) {
+        //     $('#modal_show_branch_names').append('<span class="badge bg-info mx-2" style="font-size:85%">' + element + '</span>');
+        // });
     });
 
      // Prevent from redirecting back to homepage when cancel button is clicked accidentally

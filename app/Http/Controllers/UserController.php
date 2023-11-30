@@ -56,6 +56,32 @@ class UserController extends Controller
             return redirect()->back()->with('error', "User with email {$request->email} already exists!");
         } 
         
+        // Validate company and branch selections
+        $selectedCompanyIds = isset($request->company_id) ? $request->company_id : [];
+        $selectedBranchIds = isset($request->branch_id) ? $request->branch_id : [];
+
+        // Create an array to store selected branches for each company
+        $selectedBranchesByCompany = [];
+
+        // Group selected branches by company
+        foreach ($selectedBranchIds as $branchId) {
+            $branch = Branch::find($branchId);
+            $companyId = $branch->company_id;
+
+            if (!isset($selectedBranchesByCompany[$companyId])) {
+                $selectedBranchesByCompany[$companyId] = [];
+            }
+
+            $selectedBranchesByCompany[$companyId][] = $branchId;
+        }
+
+        // Check if at least one branch is selected for each company
+        foreach ($selectedCompanyIds as $companyId) {
+            if (!isset($selectedBranchesByCompany[$companyId])) {
+                return redirect()->back()->with('error', "Please select at least one branch for each company!");
+            }
+        }
+
         $user = new User();
         $user->uuid = Str::uuid();
         $user->name = $request->name;
@@ -124,6 +150,32 @@ class UserController extends Controller
 
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password); 
+        }
+
+        // Validate company and branch selections
+        $selectedCompanyIds = isset($request->company_id) ? $request->company_id : [];
+        $selectedBranchIds = isset($request->branch_id) ? $request->branch_id : [];
+
+        // Create an array to store selected branches for each company
+        $selectedBranchesByCompany = [];
+
+        // Group selected branches by company
+        foreach ($selectedBranchIds as $branchId) {
+            $branch = Branch::find($branchId);
+            $companyId = $branch->company_id;
+
+            if (!isset($selectedBranchesByCompany[$companyId])) {
+                $selectedBranchesByCompany[$companyId] = [];
+            }
+
+            $selectedBranchesByCompany[$companyId][] = $branchId;
+        }
+
+        // Check if at least one branch is selected for each company
+        foreach ($selectedCompanyIds as $companyId) {
+            if (!isset($selectedBranchesByCompany[$companyId])) {
+                return redirect()->back()->with('error', "Please select at least one branch for each company!");
+            }
         }
 
         $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';

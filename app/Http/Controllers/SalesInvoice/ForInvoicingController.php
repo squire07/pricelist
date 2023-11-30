@@ -105,13 +105,13 @@ class ForInvoicingController extends Controller
         $payment_types = PaymentMethod::whereDeleted(false)
                             ->where('status_id', 6)
                             ->whereCompanyId($sales_order->company_id)
-                            ->where(function ($query) use ($exploded) {
-                                if ($exploded) {
-                                    foreach ($exploded as $branch_id) {
-                                        $query->orWhereRaw('FIND_IN_SET(?, branch_id)', [$branch_id]);
-                                    }
-                                }
-                            })
+                            // ->where(function ($query) use ($exploded) {
+                            //     if ($exploded) {
+                            //         foreach ($exploded as $branch_id) {
+                            //             $query->orWhereRaw('FIND_IN_SET(?, branch_id)', [$branch_id]);
+                            //         }
+                            //     }
+                            // })
                             ->orderBy('name')
                             ->get();
 

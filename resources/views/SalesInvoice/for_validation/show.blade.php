@@ -233,6 +233,14 @@ $(document).ready(function() {
             if (result.isConfirmed) {
                 // Submit the form
                 $('#form_validate').submit();
+
+                Swal.fire({
+                    title: "Posting to ERPNext.",
+                    html: "Please wait!",
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
             }
         });
     });

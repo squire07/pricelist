@@ -22,11 +22,13 @@
                 <table class="table table-bordered table-hover table-striped">
                     <thead>
                         <tr>
-                            <th class="text-center" width="50%">Module Name</th>
+                            <th class="text-center" width="5%">Id</th>
+                            <th class="text-center" width="45%">Module Name</th>
                             <th class="text-center" width="25%">Type</th>
                             <th class="text-center" width="25%" style="min-width:250px;">Permission</th>
                         </tr>
                         <tr>
+                            <th></th>
                             <th class="text-center">&nbsp;</th>
                             <th class="text-center">&nbsp;</th>
                             <th>
@@ -40,6 +42,7 @@
                     <tbody>
                         @foreach($modules as $key => $module)
                             <tr>
+                                <td class="text-center">{{ $module->id }}</td>
                                 <td>{{ $module->name }}</td>
                                 <td class="text-center">{{ $module->type }}</td>
                                 <td>

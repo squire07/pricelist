@@ -68,12 +68,11 @@ class ForValidationController extends Controller
      */
     public function show($uuid)
     {
-        $sales_order = Sales::with('payment')->whereUuid($uuid)
-                        ->whereStatusId(5)
-                        ->with('transaction_type')
-                        ->with('sales_details', function($query) {
-                            $query->where('deleted',0);
-                        })->firstOrFail();
+        $sales_order = Sales::with('sales_details','branch','payment','transaction_type','income_expense_account')
+                            ->whereUuid($uuid)
+                            ->whereStatusId(5)
+                            ->whereDeleted(false)
+                            ->firstOrFail();
 
         // convert the details from json_object to array object
         if(isset($sales_order->payment->details)) {
@@ -81,8 +80,61 @@ class ForValidationController extends Controller
         }
 
         $histories = History::whereUuid($sales_order->uuid)->whereDeleted(false)->get();
-        
-        return view('SalesInvoice.for_validation.show', compact('sales_order','histories'));
+
+   
+        $has_issue = false;
+        $message_issue = null;
+
+        // check if the transaction has income and expense account 
+        if ($sales_order->relationLoaded('income_expense_account')) {
+            if (!$sales_order->income_expense_account || $sales_order->income_expense_account->income_account === null || $sales_order->income_expense_account->expense_account === null) {
+                $has_issue = true;
+                $message_issue .= '&bull;&nbsp;Income and Expense Account is required for ' . $sales_order->transaction_type->name . '<br>';
+            }
+        } 
+        // check if payment method is not cash AND reference number exists
+        if ($sales_order->relationLoaded('payment')) {
+            // json_decode has already been applied at $sales_order->payment->details
+            foreach($sales_order->payment->details as $payment) {
+                $is_cash = in_array(strtolower($payment['name']), ['cash']);
+                $ref_no = empty($payment['ref_no']);
+                if(!$is_cash && $ref_no) {
+                    $has_issue = true;
+                    $message_issue .= '&bull;&nbsp;Reference number is required for ' . $payment['name'] . '<br>';
+                }
+            }
+        }
+        // check if there is/are stock for each item in warehouse
+        if ($sales_order->relationLoaded('sales_details') && $sales_order->relationLoaded('branch')) {
+
+            $todays_date = Carbon::now()->format('Y-m-d'); // do not change the date format!
+
+            $items = '';
+
+            foreach($sales_order->sales_details as $item) {
+                $param = '/api/resource/Stock Ledger Entry?filters=[["item_code", "=", "' . $item->item_code . '"], ["posting_date", "<=", "' . $todays_date . '"], ["warehouse", "=", "' . $sales_order->branch->warehouse . '"]]&fields=["item_code", "warehouse", "sum(actual_qty) as total_qty"]';
+                
+                $item_inventory = Helper::get_erpnext_data($param);
+                $item_inventory = $item_inventory['data']['data']; // note: this has status_code and data AND the server response is always 200
+
+                if($item_inventory[0]['total_qty'] == null || $item_inventory[0]['total_qty'] <= $item->quantity) {
+                    $has_issue = true;
+                    $items .= '&#8594; ' . $item->item_code . ' - ' . $item->item_name . '<br>';
+                }
+            }   
+
+            $item_count = count($sales_order->sales_details) > 1 ? 's':'';
+            
+            if($has_issue) {
+                $message_issue .= '&bull;&nbsp;Warehouse ' . $sales_order->branch->warehouse . ' has insufficient quantity for item' . $item_count . ': <br>' . $items;
+            }
+        }
+
+        if($has_issue) {
+            return view('SalesInvoice.for_validation.show', compact('sales_order','histories'))->with('error', $message_issue);
+        } else {
+            return view('SalesInvoice.for_validation.show', compact('sales_order','histories'));
+        }
     }
 
     /**
@@ -100,7 +152,11 @@ class ForValidationController extends Controller
     {
         $uuid = $request->uuid ?? $uuid;
         
-        $sales = Sales::whereUuid($uuid)->whereDeleted(false)->firstOrFail();  
+        $sales = Sales::with('sales_details','branch','payment','transaction_type','income_expense_account')
+                            ->whereUuid($uuid)
+                            ->whereStatusId(5)
+                            ->whereDeleted(false)
+                            ->firstOrFail();  
 
         // check if request contains status_id = 3
         if(isset($request->status_id) && $request->status_id == 3) { // Cancel
@@ -117,142 +173,176 @@ class ForValidationController extends Controller
 
         } else if(isset($request->status_id) && $request->status_id == 5) { // validate OR `for posting`
 
-            // 1) check distributor in erpnext if existing
-            $distributor_name = Helper::get_distributor_name_by_bcid($sales->bcid);
-            $distributor_param = '/api/resource/Customer'; // if POST, do not add '/' at the end 
 
-            $distributor_data = Helper::get_erpnext_data($distributor_param . '/' . $distributor_name);
+                // 1) check distributor in erpnext if existing
+                    $distributor_name = Helper::get_distributor_name_by_bcid($sales->bcid);
+                    $distributor_param = '/api/resource/Customer'; // if POST, do not add '/' at the end 
 
-            // 2) get the payload
-            $payload = Payload::whereUuid($sales->uuid)->first();
-
-            // 3) post the customer if not existing in erpnext
-            if($distributor_data['status_code'] == 404) {
-                $post_customer = Helper::post_erpnext_data($distributor_param, $payload->distributor);
-                // update payload with response 
-                $payload->distributor_response = $post_customer->getStatusCode();         
-                $payload->update();
-            }
+                    $distributor_data = Helper::get_erpnext_data($distributor_param . '/' . $distributor_name);
 
 
-            if(isset($post_customer) && $post_customer->getStatusCode() == 404) {
-                // !IMPORTANT: Posting SO and SI in ERPNext requires customer 
-                return redirect('sales-invoice/for-validation')->with('error', 'Could not add customer to ERPNext! Please contact your administrator.');
-            
-            } else {
-                // // After posting a new customer (distributor), we need to post the SO and SI
-
-                // // 3) Post the SO to erpnext
-                // // do {
-                //     $so_param = '/api/resource/Sales Order'; // if POST, do not add '/' at the end 
-                //     // post the so payload to erpnext
-                //     $post_so = Helper::post_erpnext_data($so_param, $payload->so);
-
-                //     dump($post_so);
-
-                //     // update payload with response
-                //     $payload->so_response_status = $post_so->getStatusCode();
-                //     $payload->so_response_body = $post_so->getBody(); 
-                //     $payload->update();
-
-                // // } while ($payload->so_response_status !== 200);
-
-                //     /* 
-                //     *  IMPORTANT!
-                //     *  - lets link sales order and si using the sales order name from reponse
-                //     *  - update the sales invoice payload and add the sales order `name` which can be found at so_response body 
-                //     */
-
-                //     // 3.1) Get the sales order response body
-                //         $so_response_body = $payload->so_response;
-
-                //         // Define the regular expression pattern
-                //         $data = json_decode($payload->so_response_body, true);
-
-                //         // Use preg_match to find the match
-                //         $so_doc_name = $data['data']['name'] ?? null;
-
-                //     // 3.2) add the `so_doc_name` to `si payload`
-
-                //         // update the si payload with so_doc_name before posting to erpnext
-                //         $data = json_decode($payload->si, true);
-
-                //         // Add "sales_order" key to each item in the "items" array
-                //         foreach ($data['items'] as &$item) {
-                //             $item['sales_order'] = $so_doc_name; 
-                //         }
-                        
-                //         // Convert back to JSON
-                //         $payload->si = json_encode($data);
-                //         $payload->update();
-                        
-                    
-                // // 4) Post the SI to erpnext
-                // // do {
-                //     $si_param = '/api/resource/Sales Invoice'; // if POST, do not add '/' at the end 
-                //     // post the so payload to erpnext
-                //     $post_si = Helper::post_erpnext_data($si_param, $payload->si);
-                    
-                //     // // update payload with response
-                //     $payload->si_response_status = $post_si->getStatusCode();
-                //     $payload->si_response_body = $post_si->getBody();
-                //     $payload->update();
-                // // } while ($payload->si_response_status !== 200);
-
-                //     /*
-                //     *  Create Payment Entry
-                //     *  link the sales invoice with payment entry using sales invoice name
-                //     */
-
-                //     // 4.1) Get the sales income response body
-                //         $si_response_body = $payload->si_response;
-
-                //         // Define the regular expression pattern
-                //         $data = json_decode($payload->si_response_body, true);
-
-                //         // Use preg_match to find the match
-                //         $si_doc_name = $data['data']['name'] ?? null;
-
-                //     // 4.2) add the `si_doc_name` to `payment payload`
-
-                //         // update the payment payload with si_doc_name before posting to erpnext
-                //         // json is formatted to handle sub array 
-                //         $datas = json_decode($payload->payment, true);
-
-                //         foreach($datas as $data) {
-                //             // Add "sales_order" key to each item in the "items" array
-                //             foreach ($data['references'] as &$reference) {
-                //                 $reference['reference_name'] = $si_doc_name; 
-                //             }
-                //         }
-                        
-                //         // Convert back to JSON
-                //         $payload->payment = json_encode($datas);
-                //         $payload->update();
+                // 2) get the payload
+                    $payload = Payload::whereUuid($sales->uuid)->first();
 
 
-                // // 5) Post the Payment Entry to erpnext
-                // $payment_param = '/api/resource/Payment Entry'; // if POST, do not add '/' at the end 
-                // // post the so payload to erpnext
-                // $post_payment = Helper::post_erpnext_data($payment_param, $payload->payment);
+                // 3) post the customer if not existing in erpnext
+                    if($distributor_data['status_code'] == 404) {
+                        $post_customer = Helper::post_erpnext_data($distributor_param, $payload->distributor);
+                        // update payload with response 
+                        $payload->distributor_response = $post_customer->getStatusCode();         
+                        $payload->update();
+                    }
+
+
+
+                // 4) if error in posting customer to erpnext
+                if(isset($post_customer) && $post_customer->getStatusCode() == 404) {
+                    // !IMPORTANT: Posting SO and SI in ERPNext requires customer 
+                    return redirect('sales-invoice/for-validation')->with('error', 'Could not add customer to ERPNext! Please contact your administrator.');
                 
-                // // // update payload with response
-                // $payload->payment_response_status = $post_payment->getStatusCode();
-                // $payload->payment_response_body = $post_payment->getBody();
-                // $payload->update();
-
-
-                // mark as released
-                $sales->status_id = 4;
-
-                if($sales->update()) {
-                    //if($post_so->getStatusCode() == 200) {
-                        return redirect('sales-invoice/for-validation')->with('success', 'Sales order was successfully recorded to ERPNext!');
-                    //}
                 } else {
-                    return redirect('sales-invoice/for-validation')->with('error', 'Unable to add SO and SI at ERPNext! Please contact your administrator.');
+                    // After posting a new customer (distributor), we need to post the SO and SI
+
+
+                    $statusCode = null;
+                    // 5) Post the SO to erpnext
+                        $so_param = '/api/resource/Sales Order'; // if POST, do not add '/' at the end 
+                        try {
+                            $post_so = Helper::post_erpnext_data($so_param, $payload->so);
+                            if ($post_so->getStatusCode() == 200) {
+                                $payload->update([
+                                    'so_response_status' => $post_so->getStatusCode(),
+                                    'so_response_body' => $post_so->getBody(),
+                                ]);
+                            } 
+                        } catch (\GuzzleHttp\Exception\ClientException $e) {
+                            $payload->update([
+                                'so_response_status' => $e->getResponse()->getStatusCode(),
+                                'so_response_body' => $e->getResponse()->getBody()->getContents(),
+                            ]);
+                            return redirect('sales-invoice/for-validation')->with('error', 'Unable to add Sales Order at ERPNext! Please contact your administrator.');
+                        }
+
+                        /* 
+                        *  IMPORTANT!
+                        *  - lets link sales order and si using the sales order name from reponse
+                        *  - update the sales invoice payload and add the sales order `name` which can be found at so_response body 
+                        */
+
+                        // 5.1) Get the sales order response body
+                            $so_response_body = $payload->so_response;
+
+                            // Define the regular expression pattern
+                            $so_data = json_decode($payload->so_response_body, true);
+
+                            // Use preg_match to find the match
+                            $so_doc_name = $so_data['data']['name'] ?? null;
+
+                        // 5.2) add the `so_doc_name` to `si payload`
+
+                            // update the si payload with so_doc_name before posting to erpnext
+                            $si_data = json_decode($payload->si, true);
+
+                            // Add "sales_order" key to each item in the "items" array
+                            foreach ($si_data['items'] as &$item) {
+                                $item['sales_order'] = $so_doc_name; 
+                            }
+                            
+                            // Convert back to JSON
+                            $payload->update([
+                                'si' => json_encode($si_data, JSON_UNESCAPED_SLASHES)
+                            ]);
+  
+                        
+                    // 6) Post the SI to erpnext
+                        $si_param = '/api/resource/Sales Invoice'; // if POST, do not add '/' at the end 
+                        try {
+                            $post_si = Helper::post_erpnext_data($si_param, $payload->si);
+                            if ($post_si->getStatusCode() == 200) {
+                                $payload->update([
+                                    'si_response_status' => $post_si->getStatusCode(),
+                                    'si_response_body' => $post_si->getBody(),
+                                ]);
+                            } 
+                        } catch (\GuzzleHttp\Exception\ClientException $e) {
+                            $payload->update([
+                                'si_response_status' => $e->getResponse()->getStatusCode(),
+                                'si_response_body' => $e->getResponse()->getBody()->getContents(),
+                            ]);
+                            return redirect('sales-invoice/for-validation')->with('error', 'Unable to add Sales Invoice at ERPNext! Please contact your administrator.');
+                        }
+
+
+                        /*
+                        *  Create Payment Entry
+                        *  link the sales invoice with payment entry using sales invoice name
+                        */
+
+                        // 6.1) Get the sales income response body
+                            $si_response_body = $payload->si_response;
+
+                            // Define the regular expression pattern
+                            $data = json_decode($payload->si_response_body, true);
+
+                            // Use preg_match to find the match
+                            $si_doc_name = $data['data']['name'] ?? null;
+
+                        // 6.2) add the `si_doc_name` to `payment payload`
+
+                            // update the payment payload with si_doc_name before posting to erpnext
+                            // json is formatted to handle sub array 
+                            $payments = json_decode($payload->payment, true);
+
+                            foreach($payments as &$payment) {
+                                // Add "sales_order" key to each item in the "items" array
+                                foreach ($payment['references'] as &$reference) {
+                                    $reference['reference_name'] = $si_doc_name; 
+                                }
+                            }
+                            
+                            // Convert back to JSON
+                            $payload->update([
+                                'payment' => json_encode($payments, JSON_UNESCAPED_SLASHES)
+                            ]);
+
+
+
+                    // 7) Post the Payment Entry to erpnext
+                        $payment_param = '/api/resource/Payment Entry'; // if POST, do not add '/' at the end 
+                        // post the so payload to erpnext; handle multiple payment
+                        $payment_obj = json_decode($payload->payment, true); // decode again as this obj has been updated above
+
+                        foreach($payment_obj as $payload_payment) {
+                            try {
+                                $post_payment = Helper::post_erpnext_data($payment_param, json_encode($payload_payment, JSON_UNESCAPED_SLASHES));
+                                if ($post_payment->getStatusCode() == 200) {
+                                    $payload->update([
+                                        'payment_response_status' => $post_payment->getStatusCode(),
+                                        'payment_response_body' => $post_payment->getBody(),
+                                    ]);
+                                } 
+                            } catch (\GuzzleHttp\Exception\ClientException $e) {
+                                $payload->update([
+                                    'payment_response_status' => $e->getResponse()->getStatusCode(),
+                                    'payment_response_body' => $e->getResponse()->getBody()->getContents(),
+                                ]);
+                                return redirect('sales-invoice/for-validation')->with('error', 'Unable to add Payment Details at ERPNext! Please contact your administrator.');
+                            }
+                        }
+
+
+                    // mark as released
+                    $sales->status_id = 4;
+
+                    if($sales->update()) {
+                        if($post_so->getStatusCode() == 200) {
+                            return redirect('sales-invoice/for-validation')->with('success', 'Sales order was successfully recorded to ERPNext!');
+                        }
+                    } else {
+                        return redirect('sales-invoice/for-validation')->with('error', 'Unable to add SO and SI at ERPNext! Please contact your administrator.');
+                    }
                 }
-            }
+
         } 
     }
 

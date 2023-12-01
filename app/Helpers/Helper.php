@@ -250,9 +250,10 @@ class Helper {
 
             return $response;
 
-        } catch (\Exception $e) {
+        } catch (\ClientException $e) {
             // Handle exceptions, such as network errors or API errors
-            echo 'An error occurred: ' . $e->getMessage();
+            // echo 'An error occurred: ' . $e->getMessage();
+            return $e;
         }
     }
 
@@ -281,8 +282,10 @@ class Helper {
 
         if($sales->company_id == 3) {
             $taxes_and_charges = 'VAT Sales - LOCAL';
+            $account_head = '2010120 - Due to BIR -  Value Added Tax - UNO';
         } else if ($sales->company_id == 2) {
             $taxes_and_charges = 'VAT Sales - PREMIER';
+            $account_head = '2010120 - Due to BIR -  Value Added Tax - PREMIER';
         }
 
         // warning: do not update/change the structure. This is erpnext's standard.
@@ -307,7 +310,7 @@ class Helper {
             'taxes' => [
                 [
                     'charge_type' => 'On Net Total',
-                    'account_head' => '2010120 - Due to BIR -  Value Added Tax - UNO', // need to be dynamic
+                    'account_head' => $account_head,
                     'description' => 'Due to BIR -  Value Added Tax',
                     'included_in_print_rate' => 1,
                     'cost_center' => $sales->branch->cost_center_name,
@@ -350,13 +353,21 @@ class Helper {
         if($sales->company_id == 3) {
             $naming_series = 'LO-SI-V-.YYYY.-';
             $taxes_and_charges = 'VAT Sales - LOCAL';
-            $debit_to = $debit_to_account ?? '1101001 - Accounts Receivable - Trade - UNO';
+            // if($sales->payment->payment_type == 'CASH' || $sales->payment->payment_type == 'cash') {
+            //     $debit_to = '1101001 - Accounts Receivable - Trade - UNO';
+            // } else {
+                $debit_to = $debit_to_account;
+            // }
             $account_head = '2010120 - Due to BIR -  Value Added Tax - UNO';
 
         } else if ($sales->company_id == 2) {
             $naming_series = 'PR-SI-V-.YYYY.-';
-            $taxes_and_charges = 'VAT Sales - PREMIER';
-            $debit_to = $debit_to_account ?? '1101001 - Accounts Receivable - Trade - PREMIER';
+            $taxes_and_charges = 'VAT Sales - PREMIER';  
+            // if($sales->payment->payment_type == 'CASH' || $sales->payment->payment_type == 'cash') {
+            //     $debit_to = '1101001 - Accounts Receivable - Trade - PREMIER';
+            // } else {
+                $debit_to = $debit_to_account;
+            // }
             $account_head = '2010120 - Due to BIR -  Value Added Tax - PREMIER';
         }
 
@@ -497,5 +508,17 @@ class Helper {
         }
 
         return json_encode($payment_entries);
+    }
+
+    public static function bp($id) {
+        // button permission
+        $id = explode(',',$id);
+
+        $permissions = UserPermission::whereUserId(Auth::user()->id)->first();
+        if (isset($permissions[$id[0]][$id[1]]) && $permissions[$id[0]][$id[1]] === 1) {
+            return null;
+        } else {
+            return 'disabled';
+        } 
     }
 }

@@ -10,7 +10,6 @@
             </div>
         </div>
     </div>
-
 @stop
 
 @section('content')
@@ -22,11 +21,11 @@
                         <tr>
                             <th class="text-center"></th>
                             <th class="text-center">ID</th>
-                            <th class="text-center">Name</th>
-                            <th class="text-center">Validity</th>
-                            <th class="text-center">Currency</th>
-                            <th class="text-center">Last Sync At</th>
-                            <th class="text-center">Last Sync By</th>
+                            <th class="text-center" style="min-width:350px">Name</th>
+                            <th class="text-center" style="min-width:200px">Validity</th>
+                            <th class="text-center" style="min-width:100px">Currency</th>
+                            <th class="text-center" style="min-width:200px">Last Sync At</th>
+                            <th class="text-center" style="min-width:150px">Last Sync By</th>
                             <th class="text-center">Income/Expense</th>
                         </tr>
                     </thead>
@@ -207,35 +206,34 @@
         // Prevent from redirecting back to homepage when cancel button is clicked accidentally
         $('#modal-validity').on("hide.bs.modal", function (e) {
 
-        if (!$('#modal-validity').hasClass('programmatic')) {
-            e.preventDefault();
-            swal.fire({
-                title: 'Are you sure?',
-                text: "Please confirm that you want to cancel",
-                type: 'warning',
-                showCancelButton: true,
-                allowEnterKey: false,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'No',
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-            }).then(function(result) {
-                if (result.value) {
-                    $('#modal-validity').addClass('programmatic');
-                    $('#modal-validity').modal('hide');
-                    e.stopPropagation();
-                } else {
-                    e.stopPropagation();
+            if (!$('#modal-validity').hasClass('programmatic')) {
+                e.preventDefault();
+                swal.fire({
+                    title: 'Are you sure?',
+                    text: "Please confirm that you want to cancel",
+                    type: 'warning',
+                    showCancelButton: true,
+                    allowEnterKey: false,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                }).then(function(result) {
+                    if (result.value) {
+                        $('#modal-validity').addClass('programmatic');
+                        $('#modal-validity').modal('hide');
+                        e.stopPropagation();
+                    } else {
+                        e.stopPropagation();
 
-                }
-            });
-
-        }
-        return true;
+                    }
+                });
+            }
+            return true;
         });
 
         $('#modal-validity').on('hidden.bs.modal', function () {
-        $('#modal-validity').removeClass('programmatic');
+            $('#modal-validity').removeClass('programmatic');
         });
 
         // Prevent user from using enter key

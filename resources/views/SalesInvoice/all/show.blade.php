@@ -96,6 +96,10 @@
 
     @include('components.payment')
 
+    @if(in_array(Auth::user()->role_id, [8,11,12]))
+        @include('components.income_expense')
+    @endif
+
     @include('components.history')
 
 @endsection

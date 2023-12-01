@@ -180,6 +180,7 @@ class UserController extends Controller
 
         $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';
         $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
+        $user->role_id = $request->role_id;
         $user->active = $request->active; 
         $user->blocked = $request->blocked; 
         $user->created_by = Auth::user()->name;

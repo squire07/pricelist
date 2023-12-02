@@ -22,7 +22,7 @@
                 <table class="table table-bordered table-hover table-striped">
                     <thead>
                         <tr>
-                            <th class="text-center" width="5%">Id</th>
+                            <th class="text-center" style="width:5%;min-width:100px;max-width:120px;">Module Id</th>
                             <th class="text-center" width="45%">Module Name</th>
                             <th class="text-center" width="25%">Type</th>
                             <th class="text-center" width="25%" style="min-width:250px;">Permission</th>
@@ -44,7 +44,9 @@
                             <tr>
                                 <td class="text-center">{{ $module->id }}</td>
                                 <td>{{ $module->name }}</td>
-                                <td class="text-center">{{ $module->type }}</td>
+                                <td class="text-center">
+                                    {{ $module->type == 'Module' && $module->id > 6 ? 'Support ' . $module->type : $module->type }}
+                                </td>
                                 <td>
                                     @foreach(json_decode($user->permission->user_permission, true) as $parent_key => $module_permission)
                                         @if($module->id == $parent_key)
@@ -129,10 +131,10 @@
 
             })
             .catch(error => {
-                console.error('Error updating permission: ', error);
+                console.log('Error updating permission: ', error);
             });
         });
-    });
+
 
         // Prevent from redirecting back to homepage when cancel button is clicked accidentally
         $('#btn-return-user').on('click', function() {
@@ -140,13 +142,13 @@
             // show the confirmation
             Swal.fire({
                 title: 'Return to User List',
-                    text: "",
-                    icon: 'warning',
-                    allowEnterKey: false,
-                    showCancelButton: true,
-                    allowOutsideClick: false,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
+                text: "",
+                icon: 'warning',
+                allowEnterKey: false,
+                showCancelButton: true,
+                allowOutsideClick: false,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes',
                 cancelButtonText: 'No'
             }).then((result) => {
@@ -155,5 +157,7 @@
                 }
             });
         });
+
+    });
 </script>
 @endsection

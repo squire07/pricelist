@@ -60,7 +60,7 @@
                                         data-toggle="modal" 
                                         data-target="#modal-edit" 
                                         data-uuid="{{ $payment->uuid }}" 
-                                        data-company-id="{{ $payment->company->id }}" 
+                                        data-company-id="{{ $payment->company->name }}" 
                                         data-name="{{ $payment->name }}" 
                                         data-description="{{ $payment->description }}" 
                                         data-code="{{ $payment->code }}"
@@ -102,7 +102,7 @@
                         <div class="row mt-3">
                             <div class="col-12">
                                 <label for="name">Description</label>
-                                <input type="text" class="form-control form-control-sm" name="description" pattern="[a-zA-Z0-9\s]+" id="modal_add_description" required>
+                                <input type="text" class="form-control form-control-sm" name="description" id="modal_add_description" required>
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -195,6 +195,12 @@
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
+                                    <label for="name">Company</label>
+                                    <input type="text" class="form-control form-control-sm" name="company_id" id="modal_edit_company_id" readonly>
+                                </div>
+                            </div>
+                            {{-- <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
                                     <label for="comapny_id">Company</label>
                                     <select class="form-control form-control-sm" name="company_id" id="modal_edit_company_id" required>
                                         <option value="" disabled>-- Select Company --</option>
@@ -203,7 +209,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="col-md-6 col-sm-12">
                                 <label for="code">Is Cash ?</label>
                                 <div class="col-12">
@@ -354,26 +360,6 @@
         $('input[type="radio"]').prop('checked', false);
         var uuid = $(this).attr("data-uuid");
 
-        var companySelect = $('#modal_edit_company_id');
-
-        // Clear existing options
-        companySelect.empty();
-
-        // Add a placeholder or default option if needed
-        companySelect.append('<option value="" disabled>-- Select Company --</option>');
-
-        // Iterate through companies and add all companies
-        @foreach($companies as $company)
-            var companyId = {{ $company->id }};
-            var companyName = "{{ $company->name }}";
-            var companyStatus = "{{ $company->status_id }}";
-
-            if (companyStatus == 8) {
-                var option = $('<option value="' + companyId + '">' + companyName + '</option>');
-
-                companySelect.append(option);
-            }
-        @endforeach
         var c_id = $(this).attr("data-company-id");
         var name = $(this).attr("data-name");
         var description = $(this).attr("data-description");
@@ -383,7 +369,7 @@
         var is_cash = $(this).attr("data-is-cash");
         var branch_id = $(this).attr("data-branch-id");
 
-        $('#modal_edit_company_id option[value=' + c_id + ']').attr('selected', 'selected');
+        $('#modal_edit_company_id').val(c_id); 
         $('#modal_edit_name').val(name); 
         $('#modal_edit_description').val(description); 
         $('#modal_edit_code').val(code);

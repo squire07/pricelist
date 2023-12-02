@@ -78,7 +78,7 @@ class PaymentMethodController extends Controller
     public function update(Request $request, $uuid)
     {
         $payment_method = PaymentMethod::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
-        $payment_method->company_id = $request->company_id;
+        // $payment_method->company_id = $request->company_id;
         $payment_method->name = $request->name;
         $payment_method->description = $request->description;
         $payment_method->code = $request->code;

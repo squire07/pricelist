@@ -137,6 +137,14 @@
                             </a>
                         </li>
                     @endif
+                    @if(in_array(14, $navigation_ids))
+                        <li class="nav-item">
+                            <a href="{{ url('payment-methods') }}" class="nav-link {{ $url_segment_1 == 'payment-methods' ? 'active':'' }}" target="_self">
+                                <i class="far fa-credit-card nav-icon"></i>
+                                <p>Payment Methods</p>
+                            </a>
+                        </li>
+                    @endif
                     @if(in_array(11, $navigation_ids))
                         <li class="nav-item">
                             <a href="{{ url('roles') }}" class="nav-link {{ $url_segment_1 == 'roles' ? 'active':'' }}" target="_self">
@@ -166,14 +174,6 @@
                             <a href="{{  url('transaction-types')  }}" class="nav-link {{ $url_segment_1 == 'transaction-types' || $url_segment_1 == 'income-expense-accounts' ? 'active':'' }}" target="_self">
                                 <i class="fas fa-receipt nav-icon"></i>
                                 <p>Transaction Types</p>
-                            </a>
-                        </li>
-                    @endif
-                    @if(in_array(14, $navigation_ids))
-                        <li class="nav-item">
-                            <a href="{{ url('payment-methods') }}" class="nav-link {{ $url_segment_1 == 'payment-methods' ? 'active':'' }}" target="_self">
-                                <i class="far fa-credit-card nav-icon"></i>
-                                <p>Payment Methods</p>
                             </a>
                         </li>
                     @endif

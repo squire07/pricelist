@@ -26,6 +26,7 @@
                             <th class="text-center">Dimension</th>
                             <th class="text-center">Region</th>
                             <th class="text-center">Rate</th>
+                            <th class="text-center">Status</th>
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -37,6 +38,17 @@
                                 <td class="text-center">{{ $shipping_fee->region }}</td>
                                 <td class="text-center">{{ $shipping_fee->parcel_rate }}</td>
                                 <td class="text-center">
+                                    @if($shipping_fee->status == 0)
+                                        <span class="badge badge-success">
+                                            Active
+                                        </span>
+                                    @elseif($shipping_fee->status == 1)
+                                        <span class="badge badge-danger">
+                                            Inactive
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
                                     <button type="button" class="btn btn-sm btn-primary btn_edit" 
                                         data-toggle="modal" 
                                         data-target="#modal-edit" 
@@ -44,7 +56,8 @@
                                         data-shipping_fee-parcel_size="{{ $shipping_fee->parcel_size }}" 
                                         data-shipping_fee-dimension="{{ $shipping_fee->dimension }}"
                                         data-shipping_fee-region="{{ $shipping_fee->region}}"
-                                        data-shipping_fee-parcel_rate="{{ $shipping_fee->parcel_rate}}">
+                                        data-shipping_fee-parcel_rate="{{ $shipping_fee->parcel_rate}}"
+                                        data-shipping_fee-status="{{ $shipping_fee->status}}">
                                         <i class="fas fa-pencil-alt"></i>&nbsp;Edit
                                     </button>
                                 </td>
@@ -91,7 +104,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="name">Parcel Rate</label>
-                                <input type="text" class="form-control form-control-sm" name="parcel_rate" maxlength="25" minlength="3" id="modal_add_parcel_rate" required>
+                                <input type="text" class="form-control form-control-sm" name="parcel_rate" maxlength="5" minlength="3" id="modal_add_parcel_rate" required>
                             </div>
                         </div>
                     </div>
@@ -148,7 +161,16 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="remarks">Parcel Rate</label>
-                                    <input type="text" class="form-control form-control-sm" name="parcel_rate" minlength="3" id="modal_edit_parcel_rate">
+                                    <input type="text" class="form-control form-control-sm" name="parcel_rate" minlength="3" maxlength="5" id="modal_edit_parcel_rate">
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label for="status">Shipping Fee</label><br>
+                                    <input type="radio" id="status_0" name="status" value="0">
+                                    <label for="">Active</label>&nbsp;
+                                    <input type="radio" id="status_1" name="status" value="1" style="margin-top: 8px">
+                                    <label for="">Inactive</label><br>
                                 </div>
                             </div>
                         </div>
@@ -162,51 +184,6 @@
         </div>
     </div>
 
-    {{--  modal for show --}}
-    {{-- <div class="modal fade" id="modal-show">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Branch Details</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                            <div class="row">
-                                <div class="ribbon-wrapper ribbon-lg">
-                                    <div class="ribbon" id="ribbon_bg">
-                                        <span id="modal_show_status_id"></span>
-                                    </div>
-                                </div>
-                            </div>         
-                        <div class="container-fluid">
-                            <div class="col-12">
-                                Name:
-                                <span id="modal_show_name" style="font-weight:bold"></span>
-                            </div>
-                            <div class="col-12">
-                                Branch Code:
-                                <span id="modal_show_code"  style="font-weight:bold"></span>
-                            </div>
-                            <div class="col-12">
-                                Remarks:
-                                <span id="modal_show_remarks" style="font-weight:bold"></span>
-                            </div>
-                            <div class="col-12">
-                                Updated By:
-                                <span id="modal_show_updated_by" style="font-weight:bold"></span>
-                            </div>
-                        </div>
-                    </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>
-                        </div>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 <style>
 input[type="text2"], textarea {
   color: #ffffff;
@@ -237,7 +214,7 @@ input[type="text2"], textarea {
             ],
             columnDefs: [ 
                 {
-                    targets: [4], // column index (start from 0)
+                    targets: [5], // column index (start from 0)
                     orderable: false, // set orderable false for selected columns
                 }
             ],
@@ -258,11 +235,18 @@ input[type="text2"], textarea {
             var region = $(this).attr("data-shipping_fee-region");
             var dimension = $(this).attr("data-shipping_fee-dimension");
             var parcel_rate = $(this).attr("data-shipping_fee-parcel_rate");
+            var status = $(this).attr("data-shipping_fee-status");
 
             $('#modal_edit_parcel_size').val(parcel_size); 
             $('#modal_edit_dimension').val(dimension);
             $('#modal_edit_region').val(region);
             $('#modal_edit_parcel_rate').val(parcel_rate);
+
+            if(status == 1) {
+            $('input[type="radio"][value="1"]').prop('checked', true);
+            } else if(status == 0) {
+            $('input[type="radio"][value="0"]').prop('checked', true);
+            } 
 
             // define the edit form action
             let action = window.location.origin + "/shipping-fee/" + uuid;
@@ -326,10 +310,6 @@ input[type="text2"], textarea {
             const inputValue = e.target.value;
             const numericValue = inputValue.replace(/[^0-9]/g, ''); // Remove non-numeric characters
             e.target.value = numericValue;
-        });
-
-        $('#modal_add_dimension, #modal_add_parcel_rate').bind('copy paste', function (e) {
-            e.preventDefault();
         });
     });
 </script>

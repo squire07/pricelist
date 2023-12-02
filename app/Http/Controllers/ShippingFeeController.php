@@ -31,20 +31,29 @@ class ShippingFeeController extends Controller
      */
     public function store(Request $request)
     {
-
-        $existSizeRegionDimensionRate = ShippingFee::whereParcelSize($request->parcel_size)->whereDeleted(false)->first();
-        if(!$existSizeRegionDimensionRate) {
-            $shipping_fee = new ShippingFee();
-            $shipping_fee->uuid = Str::uuid();
-            $shipping_fee->parcel_size = $request->parcel_size;
-            $shipping_fee->region = $request->region;
-            $shipping_fee->dimension = $request->dimension;
-            $shipping_fee->parcel_rate = $request->parcel_rate;
-            $shipping_fee->created_by = Auth::user()->name;
-            $shipping_fee->save();
+        // Check for duplicate record
+        $duplicateRecord = ShippingFee::where('parcel_size', $request->parcel_size)
+            ->where('region', $request->region)
+            ->whereDeleted(false)
+            ->exists();
+    
+        if ($duplicateRecord) {
+            return redirect()->back()->with('error', 'Duplicate record found for parcel size and region.');
+        }
+    
+        $shipping_fee = new ShippingFee();
+        $shipping_fee->uuid = Str::uuid();
+        $shipping_fee->parcel_size = $request->parcel_size;
+        $shipping_fee->region = $request->region;
+        $shipping_fee->dimension = $request->dimension;
+        $shipping_fee->parcel_rate = $request->parcel_rate;
+        $shipping_fee->status = 0;
+        $shipping_fee->created_by = Auth::user()->name;
+    
+        if ($shipping_fee->save()) {
             return redirect()->back()->with('success', 'Shipping Fee has been created!');
         } else {
-            return redirect()->back()->with('error', 'Shipping Fee already exists!');
+            return redirect()->back()->with('error', 'Failed to create shipping fee.');
         }
     }
 
@@ -69,22 +78,41 @@ class ShippingFeeController extends Controller
      */
     public function update(Request $request, $uuid)
     {
-        if (ShippingFee::where('parcel_size', $request->parcel_size)->whereNot('uuid', $uuid)->exists()) {
-            return redirect()->back()->with('error', "Parcel size {$request->parcel_size} already exists!");
+        // Find the shipping fee record
+        $shipping_fee = ShippingFee::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
+    
+        // Check for duplicate record
+        $duplicateRecord = ShippingFee::where('parcel_size', $request->parcel_size)
+            ->where('region', $request->region)
+            ->where('id', '!=', $shipping_fee->id) // Exclude the current record
+            ->exists();
+    
+        if ($duplicateRecord) {
+            return redirect()->back()->with('error', 'Duplicate record found for parcel size and region.');
         }
-        $shipping_fee = ShippingFee::whereUuid($uuid)->whereDeleted(false)->firstOrFail(); 
+    
+        // Update the fields
         $shipping_fee->parcel_size = $request->parcel_size;
         $shipping_fee->region = $request->region;
-        $shipping_fee->dimension = $request->dimension;
+        $shipping_fee->dimension = str_replace(',', '', $request->dimension);
         $shipping_fee->parcel_rate = $request->parcel_rate;
+    
+        // Only update status if it's changed
+        if ($request->has('status') && $shipping_fee->status != $request->status) {
+            $shipping_fee->status = $request->status;
+        }
+    
+        // Set the updated_by field
         $shipping_fee->updated_by = Auth::user()->name;
-        if($shipping_fee->update()) {
+    
+        // Try to update the record
+        if ($shipping_fee->update()) {
             return redirect()->back()->with('success', 'Shipping Fee has been updated!');
-        } else { 
+        } else {
             return redirect()->back()->with('error', 'Failed to update shipping fee.');
         }
     }
-
+    
     /**
      * Remove the specified resource from storage.
      */

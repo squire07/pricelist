@@ -84,7 +84,7 @@ class SalesController extends Controller
                                 });
                             })->orderBy('name')->get();
  
-        $shipping_fees = ShippingFee::whereDeleted(false)->get();
+        $shipping_fees = ShippingFee::whereDeleted(false)->whereStatus(1)->get();
 
         $companies = Company::whereDeleted(false)->whereIn('status_id', [8,1])->get(); // 1 does not exists in status table as active/enable
 

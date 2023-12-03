@@ -122,16 +122,21 @@ class ForInvoicingController extends Controller
                             // ->whereBranchId($sales_order->branch_id) //$sales_order->branch_id
                             ->get();
 
-
         // get the next available booklet
+        $found_next_available_invoice = false;
+
         $available_booklet_id = null;
         foreach($si_assignments as $booklet) {
             foreach($booklet->booklet_details as $detail) {
                 if($detail->used == 0) {
                     $available_booklet_id = $booklet->id;
                     // stop the loop
-                    break;
+                    $found_next_available_invoice = true;
+                    break 2;
                 } 
+            }
+            if ($found_next_available_invoice == true) {
+                break;
             }
         }
 

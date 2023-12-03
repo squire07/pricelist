@@ -235,8 +235,8 @@ $(document).ready(function() {
                 $('#form_validate').submit();
 
                 Swal.fire({
-                    title: "Posting to ERPNext.",
-                    html: "Please wait!",
+                    title: "Posting to ERPNext",
+                    html: "Please wait",
                     didOpen: () => {
                         Swal.showLoading();
                     }

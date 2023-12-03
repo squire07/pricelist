@@ -38,14 +38,10 @@
                                 <td class="text-center">{{ $shipping_fee->region }}</td>
                                 <td class="text-center">{{ $shipping_fee->parcel_rate }}</td>
                                 <td class="text-center">
-                                    @if($shipping_fee->status == 0)
-                                        <span class="badge badge-success">
-                                            Active
-                                        </span>
-                                    @elseif($shipping_fee->status == 1)
-                                        <span class="badge badge-danger">
-                                            Inactive
-                                        </span>
+                                    @if($shipping_fee->status == 1)
+                                        <span class="badge badge-success">Active</span>
+                                    @else
+                                        <span class="badge badge-danger">Inactive</span>
                                     @endif
                                 </td>
                                 <td class="text-center">
@@ -167,9 +163,9 @@
                             <div class="col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label for="status">Shipping Fee</label><br>
-                                    <input type="radio" id="status_0" name="status" value="0">
+                                    <input type="radio" id="status_1" name="status" value="1">
                                     <label for="">Active</label>&nbsp;
-                                    <input type="radio" id="status_1" name="status" value="1" style="margin-top: 8px">
+                                    <input type="radio" id="status_0" name="status" value="0" style="margin-top: 8px">
                                     <label for="">Inactive</label><br>
                                 </div>
                             </div>
@@ -243,9 +239,9 @@ input[type="text2"], textarea {
             $('#modal_edit_parcel_rate').val(parcel_rate);
 
             if(status == 1) {
-            $('input[type="radio"][value="1"]').prop('checked', true);
+                $('input[type="radio"][value="1"]').prop('checked', true);
             } else if(status == 0) {
-            $('input[type="radio"][value="0"]').prop('checked', true);
+                $('input[type="radio"][value="0"]').prop('checked', true);
             } 
 
             // define the edit form action
@@ -279,7 +275,6 @@ input[type="text2"], textarea {
                         $('#modal_add_parcel_rate').val('');
                     } else {
                         e.stopPropagation();
-
                     }
                 });
 
@@ -288,7 +283,7 @@ input[type="text2"], textarea {
         });
 
         $('#modal-add , #modal-edit').on('hidden.bs.modal', function () {
-        $('#modal-add , #modal-edit').removeClass('programmatic');
+            $('#modal-add , #modal-edit').removeClass('programmatic');
         });
 
         // Prevent user from using enter key
@@ -300,10 +295,10 @@ input[type="text2"], textarea {
         });
 
         $( '#modal-add, #modal-edit' ).on( 'keypress', function( e ) {
-        if( event.keyCode === 10 || e.keyCode === 13 ) {
-            e.preventDefault();
-            $( this ).trigger( 'submit' );
-        }
+            if( event.keyCode === 10 || e.keyCode === 13 ) {
+                e.preventDefault();
+                $( this ).trigger( 'submit' );
+            }
         });   
         
         $('#modal_add_dimension, #modal_add_parcel_rate, #modal_edit_dimension, #modal_edit_parcel_rate').on('input', function(e) {    

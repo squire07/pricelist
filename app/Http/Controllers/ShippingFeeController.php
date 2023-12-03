@@ -95,7 +95,7 @@ class ShippingFeeController extends Controller
         $shipping_fee->parcel_size = $request->parcel_size;
         $shipping_fee->region = $request->region;
         $shipping_fee->dimension = str_replace(',', '', $request->dimension);
-        $shipping_fee->parcel_rate = $request->parcel_rate;
+        $shipping_fee->parcel_rate = str_replace(',', '', $request->parcel_rate);
     
         // Only update status if it's changed
         if ($request->has('status') && $shipping_fee->status != $request->status) {

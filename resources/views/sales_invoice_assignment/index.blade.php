@@ -21,7 +21,7 @@
             <div class="tab-content" id="custom-tabs-tabContent">
                 <div class="tab-pane fade show active" id="booklets" role="tabpanel" aria-labelledby="booklets-tab">
                     <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                        <table id="dt_booklet_a" class="table table-bordered table-hover table-striped" width="100%">
+                        <table id="dt_booklet" class="table table-bordered table-hover table-striped" width="100%">
                             <thead>
                                 <tr>
                                     <th class="text-center">ID</th>
@@ -38,27 +38,26 @@
                             </thead>
                             <tbody>
                                 @foreach($booklets as $series)
-
-                                        <tr>
-                                            <td class="text-center">{{ $series->id }}</td>
-                                            <td>{{ $series->cashier->name ?? '' }}</td>
-                                            <td class="text-center">{{ $series->series_from }}</td>
-                                            <td class="text-center">{{ $series->series_to }}</td>
-                                            <td class="text-center">{{ $series->branch->name }}</td>
-                                            <td class="text-center">{{ $series->count }}</td>
-                                            <td class="text-center">
-                                                <div class="progress progress-sm">
-                                                    <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ $series->percentage_used }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $series->percentage_used . '%' }}">
-                                                    </div>
+                                    <tr>
+                                        <td class="text-center">{{ $series->id }}</td>
+                                        <td>{{ $series->cashier->name ?? '' }}</td>
+                                        <td class="text-center">{{ $series->series_from }}</td>
+                                        <td class="text-center">{{ $series->series_to }}</td>
+                                        <td class="text-center">{{ $series->branch->name }}</td>
+                                        <td class="text-center">{{ $series->count }}</td>
+                                        <td class="text-center">
+                                            <div class="progress progress-sm">
+                                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ $series->percentage_used }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $series->percentage_used . '%' }}">
                                                 </div>
-                                                <span>{{ $series->percentage_used . '%' }}</span>
-                                            </td>
-                                            <td class="text-center">{{ $series->created_at }}</td>
-                                            <td class="text-center">{{ $series->created_by }}</td>
-                                            <td class="text-center">
-                                                <a href="{{ url('sales-invoice-assignment/' . $series->uuid ) }}" class="btn btn-sm btn-default"><i class="far fa-eye"></i>&nbsp;Show</a>
-                                            </td>
-                                        </tr>
+                                            </div>
+                                            <span>{{ $series->percentage_used . '%' }}</span>
+                                        </td>
+                                        <td class="text-center">{{ $series->created_at }}</td>
+                                        <td class="text-center">{{ $series->created_by }}</td>
+                                        <td class="text-center">
+                                            <a href="{{ url('sales-invoice-assignment/' . $series->uuid ) }}" class="btn btn-sm btn-default"><i class="far fa-eye"></i>&nbsp;Show</a>
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -120,7 +119,7 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-4">
+                            {{-- <div class="row mt-4">
                                 <div class="col-6">
                                     <div class="form-group clearfix">
                                         <div class="d-inline">
@@ -129,7 +128,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -197,35 +196,6 @@
             }
         });
 
-
-        $('#dt_booklet_a').DataTable({
-            dom: 'Bfrtip',
-            autoWidth: true,
-            responsive: true,
-            order: [[ 0, "asc" ]],
-            searching: true,
-            lengthMenu: [[10, 25, 50, -1], ['10 rows', '25 rows', '50 rows', "Show All"]],  
-            buttons: [
-                {
-                    extend: 'pageLength',
-                    className: 'btn-default btn-sm',
-                },
-            ],
-            columnDefs: [ 
-                {
-                    targets: [9], // column index (start from 0)
-                    orderable: false, // set orderable false for selected columns
-                }
-            ],
-            initComplete: function () {
-                $("#dt_booklet_a").wrap("<div style='overflow:auto;width:100%;position:relative;'></div>");
-
-                var elements = document.getElementsByClassName('btn-secondary');
-                while(elements.length > 0){
-                    elements[0].classList.remove('btn-secondary');
-                }
-            }
-        });
         // this will check the real value of textbox then disables/enable the button
         $('#series_from').on('keyup', function() {
             let a = this.value;
@@ -329,7 +299,6 @@
 
                     }
                 });
-
             }
             return true;
         });
@@ -338,18 +307,18 @@
         });
 
         // Prevent user from using enter key
-        $("input:text, button").keypress(function(event) {
-            if (event.keyCode === 10 || event.keyCode == 13) {
+        $('input:text, button').keypress(function(event) {
+            if(event.keyCode === 10 || event.keyCode == 13) {
                 event.preventDefault();
                 return false;
             }
         });
 
-        $( '#modal-add, #modal-edit' ).on( 'keypress', function( e ) {
-        if( event.keyCode === 10 || e.keyCode === 13 ) {
-            e.preventDefault();
-            $( this ).trigger( 'submit' );
-        }
+        $('#modal-add, #modal-edit').on('keypress', function( e ) {
+            if(event.keyCode === 10 || e.keyCode === 13) {
+                e.preventDefault();
+                $(this).trigger('submit');
+            }
         });
     });
 </script>

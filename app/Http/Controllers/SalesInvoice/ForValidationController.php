@@ -198,7 +198,7 @@ class ForValidationController extends Controller
                 // 4) if error in posting customer to erpnext
                 if(isset($post_customer) && $post_customer->getStatusCode() == 404) {
                     // !IMPORTANT: Posting SO and SI in ERPNext requires customer 
-                    return redirect('sales-invoice/for-validation')->with('error', 'Could not add customer to ERPNext! Please contact your administrator.');
+                    return redirect('sales-invoice/for-validation')->with('error', 'Unable not add customer in ERPNext! Please contact your administrator.');
                 
                 } else {
                     // After posting a new customer (distributor), we need to post the SO and SI
@@ -220,7 +220,7 @@ class ForValidationController extends Controller
                                 'so_response_status' => $e->getResponse()->getStatusCode(),
                                 'so_response_body' => $e->getResponse()->getBody()->getContents(),
                             ]);
-                            return redirect('sales-invoice/for-validation')->with('error', 'Unable to add Sales Order at ERPNext! Please contact your administrator.');
+                            return redirect('sales-invoice/for-validation')->with('error', 'Unable to add Sales Order in ERPNext! Please contact your administrator.');
                         }
 
                         /* 
@@ -269,7 +269,7 @@ class ForValidationController extends Controller
                                 'si_response_status' => $e->getResponse()->getStatusCode(),
                                 'si_response_body' => $e->getResponse()->getBody()->getContents(),
                             ]);
-                            return redirect('sales-invoice/for-validation')->with('error', 'Unable to add Sales Invoice at ERPNext! Please contact your administrator.');
+                            return redirect('sales-invoice/for-validation')->with('error', 'Unable to add Sales Invoice in ERPNext! Please contact your administrator.');
                         }
 
 
@@ -326,7 +326,7 @@ class ForValidationController extends Controller
                                     'payment_response_status' => $e->getResponse()->getStatusCode(),
                                     'payment_response_body' => $e->getResponse()->getBody()->getContents(),
                                 ]);
-                                return redirect('sales-invoice/for-validation')->with('error', 'Unable to add Payment Details at ERPNext! Please contact your administrator.');
+                                return redirect('sales-invoice/for-validation')->with('error', 'Unable to add Payment Details in ERPNext! Please contact your administrator.');
                             }
                         }
 
@@ -336,10 +336,10 @@ class ForValidationController extends Controller
 
                     if($sales->update()) {
                         if($post_so->getStatusCode() == 200) {
-                            return redirect('sales-invoice/for-validation')->with('success', 'Sales order was successfully recorded to ERPNext!');
+                            return redirect('sales-invoice/for-validation')->with('success', 'Sales Invoice was successfully recorded to ERPNext!');
                         }
                     } else {
-                        return redirect('sales-invoice/for-validation')->with('error', 'Unable to add SO and SI at ERPNext! Please contact your administrator.');
+                        return redirect('sales-invoice/for-validation')->with('error', 'Unable to add Sales Order, Sales Invoice and Payment Details in ERPNext! Please contact your administrator.');
                     }
                 }
 

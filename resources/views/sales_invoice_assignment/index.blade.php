@@ -18,16 +18,6 @@
 @section('content')
     <div class="container-fluid">
         <div class="card">
-
-            <ul class="nav nav-tabs text-bold" id="custom-tabs-tab" role="tablist">
-                <li class="nav-item">
-                <a class="nav-link active" id="booklets-tab" data-toggle="pill" href="#booklets" role="tab" aria-controls="booklets" aria-selected="true">Booklets</a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link" id="prefixed-tab" data-toggle="pill" href="#prefixed" role="tab" aria-controls="prefixed" aria-selected="false">Prefixed</a>
-                </li>
-            </ul>
-
             <div class="tab-content" id="custom-tabs-tabContent">
                 <div class="tab-pane fade show active" id="booklets" role="tabpanel" aria-labelledby="booklets-tab">
                     <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
@@ -48,7 +38,7 @@
                             </thead>
                             <tbody>
                                 @foreach($booklets as $series)
-                                    @if($series->prefixed == 0)
+
                                         <tr>
                                             <td class="text-center">{{ $series->id }}</td>
                                             <td>{{ $series->cashier->name ?? '' }}</td>
@@ -69,62 +59,12 @@
                                                 <a href="{{ url('sales-invoice-assignment/' . $series->uuid ) }}" class="btn btn-sm btn-default"><i class="far fa-eye"></i>&nbsp;Show</a>
                                             </td>
                                         </tr>
-                                    @endif
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div> 
-                </div>
-
-
-                <div class="tab-pane fade" id="prefixed" role="tabpanel" aria-labelledby="prefixed-tab">
-                    <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                        <table id="dt_booklet" class="table table-bordered table-hover table-striped" width="100%">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">ID</th>
-                                    <th class="text-center">Cashier</th>
-                                    <th class="text-center">Series From</th>
-                                    <th class="text-center">Series To</th>
-                                    <th class="text-center">Branch</th>
-                                    <th class="text-center">Count</th>
-                                    <th class="text-center">% Usage</th>
-                                    <th class="text-center">Created At</th>
-                                    <th class="text-center">Assigned By</th>
-                                    <th class="text-center">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($booklets as $series)
-                                    @if($series->prefixed == 1)
-                                        <tr>
-                                            <td class="text-center">{{ $series->id }}</td>
-                                            <td>{{ $series->cashier->name ?? '' }}</td>
-                                            <td class="text-center">{{ 'A' . $series->series_from }}</td>
-                                            <td class="text-center">{{ 'A' . $series->series_to }}</td>
-                                            <td class="text-center">{{ $series->branch->name }}</td>
-                                            <td class="text-center">{{ $series->count }}</td>
-                                            <td class="text-center">
-                                                <div class="progress progress-sm">
-                                                    <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{ $series->percentage_used }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $series->percentage_used . '%' }}">
-                                                    </div>
-                                                </div>
-                                                <span>{{ $series->percentage_used . '%' }}</span>
-                                            </td>
-                                            <td class="text-center">{{ $series->created_at }}</td>
-                                            <td class="text-center">{{ $series->created_by }}</td>
-                                            <td class="text-center">
-                                                <a href="{{ url('sales-invoice-assignment/' . $series->uuid ) }}" class="btn btn-sm btn-default"><i class="far fa-eye"></i>&nbsp;Show</a>
-                                            </td>
-                                        </tr>
-                                    @endif
                                 @endforeach
                             </tbody>
                         </table>
                     </div> 
                 </div>
             </div>
-               
         </div>
     </div>
 

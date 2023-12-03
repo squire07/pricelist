@@ -115,11 +115,14 @@ class ForInvoicingController extends Controller
                             ->orderBy('name')
                             ->get();
 
+        // cashier's branch id(s), can be multiple
+        $branch_ids = explode(',', Auth::user()->branch_id); //Auth::user()->branch_id);
+
         // get all the booklets assigned to Auth::user()->id 
         $si_assignments = SalesInvoiceAssignment::with('booklet_details')
                             ->whereDeleted(false)
-                            ->whereUserId(Auth::user()->id)
-                            // ->whereBranchId($sales_order->branch_id) //$sales_order->branch_id
+                            ->where('branch_id', $sales_order->branch_id)
+                            ->orWhere('user_id', Auth::user()->id)
                             ->get();
 
         // get the next available booklet

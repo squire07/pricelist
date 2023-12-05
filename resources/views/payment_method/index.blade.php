@@ -96,13 +96,13 @@
                         <div class="row mt-3">
                             <div class="col-12">
                                 <label for="name">Name</label>
-                                <input type="text" class="form-control form-control-sm" name="name" pattern="[a-zA-Z0-9\s]+" id="modal_add_name" required>
+                                <input type="text" class="form-control form-control-sm" name="name" id="modal_add_name" required>
                             </div>
                         </div>
                         <div class="row mt-3">
                             <div class="col-12">
                                 <label for="name">Description</label>
-                                <input type="text" class="form-control form-control-sm" name="description" id="modal_add_description" required>
+                                <input type="text" class="form-control form-control-sm" name="description" id="modal_add_description" placeholder="IMPORTANT: Must be exactly same from ERPNext" required>
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -130,7 +130,7 @@
                             <div class="col-12">
                                 <label for="code">Is Cash ?</label>
                                 <div class="col-12">
-                                    <input type="radio" id="modal_create_is_cash" name="status" value="1">
+                                    <input type="radio" id="modal_create_is_cash" name="status" value="1" required>
                                     <label for="" class="mr-4">Yes</label>
                                     <input type="radio" id="modal_create_is_cash" name="status" value="0">
                                     <label for="">No</label>
@@ -184,7 +184,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Description</label>
-                                    <input type="text" class="form-control form-control-sm" name="description" id="modal_edit_description" required>
+                                    <input type="text" class="form-control form-control-sm" name="description" id="modal_edit_description" placeholder="IMPORTANT: Must be exactly same from ERPNext" required>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
@@ -242,7 +242,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="remarks">Remarks</label>
-                                    <input type="" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks">
+                                    <input type="" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks" required>
                                 </div>
                             </div>
                         </div>

@@ -37,22 +37,37 @@ class PaymentMethodController extends Controller
      */
     public function store(Request $request)
     {
-        $exist = PaymentMethod::whereName($request->name)->orWhere('code',$request->code)->whereDeleted(false)->first();
-        if(!$exist) {
-            $payment_method = new PaymentMethod();
-            $payment_method->uuid = Str::uuid();
-            $payment_method->company_id = $request->company_id;
-            $payment_method->name = $request->name;
-            $payment_method->description = $request->description;
-            $payment_method->code = $request->code;
-            $payment_method->status_id = 6; // default to draft ?
-            $payment_method->is_cash = $request->is_cash ?? 0;
-            $payment_method->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
-            $payment_method->created_by = Auth::user()->name;
-            $payment_method->save();
-            return redirect('payment-methods')->with('success','Payment Method Saved!');
+        // Validate if the payment method already exists for the given company ID and name
+        $existingPaymentMethodByName = PaymentMethod::where('company_id', $request->company_id)
+        ->where('name', $request->name)
+        ->first();
+
+        // Validate if the payment method already exists for the given company ID and account number
+        $existingPaymentMethodByCode = PaymentMethod::where('company_id', $request->company_id)
+        ->where('code', $request->code)
+        ->first();
+
+        if ($existingPaymentMethodByName) {
+        return redirect('payment-methods')->with('error', 'Account Name already exists for this company!');
+        } elseif ($existingPaymentMethodByCode) {
+        return redirect('payment-methods')->with('error', 'Account Number already exists for this company!');
+        }
+
+        // Continue with the rest of the code
+        $payment_method = new PaymentMethod();
+        $payment_method->uuid = Str::uuid();
+        $payment_method->company_id = $request->company_id;
+        $payment_method->name = $request->name;
+        $payment_method->description = $request->description;
+        $payment_method->code = $request->code;
+        $payment_method->status_id = 6; // default to draft?
+        $payment_method->is_cash = $request->is_cash ?? 0;
+        $payment_method->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
+        $payment_method->created_by = Auth::user()->name;
+        if ($payment_method->save()) {
+        return redirect('payment-methods')->with('success', 'Payment Method Saved!');
         } else {
-            return redirect('payment-methods')->with('error', 'Payment Method already exists!');
+        return redirect('payment-methods')->with('error', 'Failed to save Payment Method.');
         }
     }
 
@@ -78,7 +93,26 @@ class PaymentMethodController extends Controller
     public function update(Request $request, $uuid)
     {
         $payment_method = PaymentMethod::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
-        // $payment_method->company_id = $request->company_id;
+    
+        // Validate if the payment method already exists for the given company ID and name
+        $existingPaymentMethodByName = PaymentMethod::where('company_id', $payment_method->company_id)
+            ->where('name', $request->name)
+            ->where('uuid', '!=', $uuid) // Exclude the current record being updated
+            ->first();
+    
+        // Validate if the payment method already exists for the given company ID and account number
+        $existingPaymentMethodByCode = PaymentMethod::where('company_id', $payment_method->company_id)
+            ->where('code', $request->code)
+            ->where('uuid', '!=', $uuid) // Exclude the current record being updated
+            ->first();
+    
+        if ($existingPaymentMethodByName) {
+            return redirect('payment-methods')->with('error', 'Account Name already exists for this company!');
+        } elseif ($existingPaymentMethodByCode) {
+            return redirect('payment-methods')->with('error', 'Account Number already exists for this company!');
+        }
+    
+        // Continue with the update if no duplicate records are found
         $payment_method->name = $request->name;
         $payment_method->description = $request->description;
         $payment_method->code = $request->code;
@@ -88,12 +122,13 @@ class PaymentMethodController extends Controller
         $payment_method->remarks = $request->remarks;
         $payment_method->updated_at = Carbon::now();
         $payment_method->updated_by = Auth::user()->name;
-        $payment_method->update();
-
-        return redirect('payment-methods')->with('success','Payment Method Updated!');
     
+        if ($payment_method->update()) {
+            return redirect('payment-methods')->with('success', 'Payment Method Updated!');
+        } else {
+            return redirect('payment-methods')->with('error', 'Failed to update Payment Method.');
+        }
     }
-
     /**
      * Remove the specified resource from storage.
      */

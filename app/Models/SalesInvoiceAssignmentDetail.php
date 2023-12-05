@@ -12,6 +12,6 @@ class SalesInvoiceAssignmentDetail extends Model
     // relationships
     public function booklet()
     {
-        return $this->hasMany('App\Models\SalesInvoiceAssignment', 'id', 'sales_invoice_assignment_id');
+        return $this->belongsTo('App\Models\SalesInvoiceAssignment', 'id', 'sales_invoice_assignment_id');
     }
 }

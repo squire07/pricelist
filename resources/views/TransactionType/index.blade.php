@@ -27,6 +27,7 @@
                             <th class="text-center" style="min-width:200px">Last Sync At</th>
                             <th class="text-center" style="min-width:150px">Last Sync By</th>
                             <th class="text-center">Income/Expense</th>
+                            <th class="d-none"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -61,12 +62,28 @@
                                     </a>
                                 </td>
 
-                                @foreach($transaction_type->accounts as $account)
-                                    <td class="d-none">{{ $account->company->name ?? null }}</td>
-                                    <td class="d-none">{{ $account->currency }}</td>
-                                    <td class="d-none">{{ $account->income_account }}</td>
-                                    <td class="d-none">{{ $account->expense_account }}</td>
-                                @endforeach
+                                <td class="d-none">
+                                    <table class="table table-striped no-wrap">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Company</th>
+                                                <th class="text-center">Currency</th>
+                                                <th class="text-center">Income Account</th>
+                                                <th class="text-center">Expense Account</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($transaction_type->accounts as $account)
+                                                <tr>
+                                                    <td>{{ $account->company->name ?? null }}</td>
+                                                    <td class="text-center">{{ $account->currency ?? null }}</td>
+                                                    <td class="text-center">{{ $account->income_account ?? null }}</td>
+                                                    <td class="text-center">{{ $account->expense_account ?? null }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -302,7 +319,7 @@
                     for (let j = 0; j < 4 && i + j < data.length; j++) {
                         // Add the text-center class for the second and third columns
                         const className = j > 0 ? 'text-center' : '';
-                        tbody += `<td class="${className}">${data[i + j]}</td>`;
+                        tbody += `<td class="${className}" style="width:100vw;">${data[i + j]}</td>`;
                     }
                     tbody += '</tr>';
                 }
@@ -311,14 +328,15 @@
             }
 
             return (
-                '<table cellpadding="5" cellspacing="0" border="0" style="width:100%;">' +
-                    '<thead>' +
-                        '<tr>' +
-                            '<th class="text-center">Company</th><th class="text-center">Currency</th><th class="text-center">Income Account</th><th class="text-center">Expense Account</th>' +
-                        '</tr>' +
-                    '</thead>' +
-                    '<tbody>' + tbody + '</tbody>' +
-                '</table>'
+                // '<table cellpadding="5" cellspacing="0" border="0" style="width:100%;">' +
+                //     '<thead>' +
+                //         '<tr>' +
+                //             '<th class="text-center">Company</th><th class="text-center">Currency</th><th class="text-center">Income Account</th><th class="text-center">Expense Account</th>' +
+                //         '</tr>' +
+                //     '</thead>' +
+                    // '<tbody>' + tbody + '</tbody>' +
+                // '</table>'
+                tbody
             );
         }
 

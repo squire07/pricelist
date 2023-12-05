@@ -163,11 +163,11 @@
                             </div>
                             <div class="col-12">
                                 <label for="income_account">Income Account</label>
-                                <input type="text" class="form-control form-control-sm" name="income_account" id="modal_edit_income_account" minlength="15" required>
+                                <input type="text" class="form-control form-control-sm" name="income_account" id="modal_edit_income_account" minlength="15" placeholder="IMPORTANT: Must be exactly same from ERPNext" required>
                             </div>
                             <div class="col-12">
                                 <label for="expense_account">Expense Account</label>
-                                <input type="text" class="form-control form-control-sm" name="expense_account" id="modal_edit_expense_account" minlength="15" required>
+                                <input type="text" class="form-control form-control-sm" name="expense_account" id="modal_edit_expense_account" minlength="15" placeholder="IMPORTANT: Must be exactly same from ERPNext" required>
                             </div>
                         </div>
                     </div>

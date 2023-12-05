@@ -32,7 +32,7 @@ class ShippingFeeController extends Controller
     public function store(Request $request)
     {
         // Check for duplicate record
-        $duplicate_record = ShippingFee::where('parcel_size', $request->parcel_size)
+        $duplicate_record = ShippingFee::whereParcelSize($request->parcel_size)
                                 ->whereRegion($request->region)
                                 ->whereDeleted(false)
                                 ->exists();
@@ -79,7 +79,7 @@ class ShippingFeeController extends Controller
     public function update(Request $request, $uuid)
     {
         // Check for duplicate record
-        $duplicate_record = ShippingFee::where('parcel_size', $request->parcel_size)
+        $duplicate_record = ShippingFee::whereParcelSize($request->parcel_size)
                                 ->whereRegion($request->region)
                                 ->whereNot('uuid', $uuid)
                                 ->exists();

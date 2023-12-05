@@ -38,12 +38,11 @@ class PaymentMethodController extends Controller
     public function store(Request $request)
     {
         // validate
-        $existing = PaymentMethod::where('company_id', $request->company_id)
-                        ->where(function ($query) use ($request, $uuid) {
-                            $query->where('name', $request->name)
-                                ->orWhere('code', $request->code);
+        $existing = PaymentMethod::whereCompanyId($request->company_id)
+                        ->where(function ($query) use ($request) {
+                            $query->whereName($request->name)
+                                ->orWhere('code',$request->code);
                         })
-                        ->whereNot('uuid', $uuid)
                         ->first();
     
         if ($existing) {
@@ -94,10 +93,10 @@ class PaymentMethodController extends Controller
     public function update(Request $request, $uuid)
     {    
         // validate
-        $existing = PaymentMethod::where('company_id', $request->company_id)
+        $existing = PaymentMethod::whereCompanyId($request->company_id)
                         ->where(function ($query) use ($request, $uuid) {
-                            $query->where('name', $request->name)
-                                ->orWhere('code', $request->code);
+                            $query->whereName($request->name)
+                                ->orWhere('code',$request->code);
                         })
                         ->whereNot('uuid', $uuid)
                         ->first();

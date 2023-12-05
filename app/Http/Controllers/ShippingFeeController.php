@@ -47,7 +47,7 @@ class ShippingFeeController extends Controller
         $shipping_fee->region = $request->region;
         $shipping_fee->dimension = $request->dimension;
         $shipping_fee->parcel_rate = $request->parcel_rate;
-        $shipping_fee->status = 0;
+        $shipping_fee->status = 1;
         $shipping_fee->created_by = Auth::user()->name;
     
         if ($shipping_fee->save()) {

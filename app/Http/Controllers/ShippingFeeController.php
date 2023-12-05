@@ -32,12 +32,12 @@ class ShippingFeeController extends Controller
     public function store(Request $request)
     {
         // Check for duplicate record
-        $duplicateRecord = ShippingFee::where('parcel_size', $request->parcel_size)
-            ->where('region', $request->region)
-            ->whereDeleted(false)
-            ->exists();
+        $duplicate_record = ShippingFee::where('parcel_size', $request->parcel_size)
+                                ->whereRegion($request->region)
+                                ->whereDeleted(false)
+                                ->exists();
     
-        if ($duplicateRecord) {
+        if ($duplicate_record) {
             return redirect()->back()->with('error', 'Duplicate record found for parcel size and region.');
         }
     
@@ -78,19 +78,18 @@ class ShippingFeeController extends Controller
      */
     public function update(Request $request, $uuid)
     {
-        // Find the shipping fee record
-        $shipping_fee = ShippingFee::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
-    
         // Check for duplicate record
-        $duplicateRecord = ShippingFee::where('parcel_size', $request->parcel_size)
-            ->where('region', $request->region)
-            ->where('id', '!=', $shipping_fee->id) // Exclude the current record
-            ->exists();
-    
-        if ($duplicateRecord) {
+        $duplicate_record = ShippingFee::where('parcel_size', $request->parcel_size)
+                                ->whereRegion($request->region)
+                                ->whereNot('uuid', $uuid)
+                                ->exists();
+                                
+        if ($duplicate_record) {
             return redirect()->back()->with('error', 'Duplicate record found for parcel size and region.');
         }
     
+        // Find the shipping fee record
+        $shipping_fee = ShippingFee::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
         // Update the fields
         $shipping_fee->parcel_size = $request->parcel_size;
         $shipping_fee->region = $request->region;

@@ -86,7 +86,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="name">Dimension</label>
-                                <input type="text" class="form-control form-control-sm" name="dimension" maxlength="25" minlength="3" id="modal_add_dimension" required>
+                                <input type="text" class="form-control form-control-sm" name="dimension" maxlength="12" minlength="3" id="modal_add_dimension" required>
                             </div>
                             <div class="col-12">
                                 <label for="name">Region</label>
@@ -100,7 +100,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="name">Parcel Rate</label>
-                                <input type="text" class="form-control form-control-sm" name="parcel_rate" maxlength="5" minlength="3" id="modal_add_parcel_rate" required>
+                                <input type="text" class="form-control form-control-sm" name="parcel_rate" maxlength="12" minlength="3" id="modal_add_parcel_rate" required>
                             </div>
                         </div>
                     </div>
@@ -139,7 +139,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="code">Dimension</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" name="dimension" id="modal_edit_dimension" required>
+                                    <input type="text" class="form-control form-control-sm text-bold" name="dimension" maxlength="12" id="modal_edit_dimension" required>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
@@ -157,7 +157,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="remarks">Parcel Rate</label>
-                                    <input type="text" class="form-control form-control-sm" name="parcel_rate" minlength="3" maxlength="5" id="modal_edit_parcel_rate">
+                                    <input type="text" class="form-control form-control-sm" name="parcel_rate" minlength="3" maxlength="12" id="modal_edit_parcel_rate">
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-12">

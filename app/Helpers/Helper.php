@@ -16,6 +16,7 @@ use App\Models\PermissionModule;
 use App\Models\Sales;
 use App\Models\SalesInvoiceAssignmentDetail;
 use App\Models\User;
+use App\Models\UserPermission;
 use Auth;
 use Session;
 use GuzzleHttp\Client;
@@ -510,15 +511,36 @@ class Helper {
         return json_encode($payment_entries);
     }
 
-    public static function bp($id) {
-        // button permission
-        $id = explode(',',$id);
-
+    public static function BP($module_id, $method_id) {
         $permissions = UserPermission::whereUserId(Auth::user()->id)->first();
-        if (isset($permissions[$id[0]][$id[1]]) && $permissions[$id[0]][$id[1]] === 1) {
+        $module = json_decode($permissions->user_permission,true);
+        if (isset($module[$module_id][$method_id]) && $module[$module_id][$method_id] === 1) {
             return null;
         } else {
             return 'disabled';
         } 
+    }
+
+    public static function sales_invoice_prefix($iteration) 
+    {
+        $prefix = array(
+            25 => 'A',
+            50 => 'B',
+            75 => 'C',
+            100 => 'D',
+            125 => 'E',
+            150 => 'F',
+            175 => 'G',
+            200 => 'H',
+        );
+
+        foreach ($prefix as $lower_limit => $letter) {
+            $upper_limit = $lower_limit + 249;
+    
+            if ($iteration >= $lower_limit && $iteration <= $upper_limit) {
+                return $letter;
+            }
+        }
+        return null;
     }
 }

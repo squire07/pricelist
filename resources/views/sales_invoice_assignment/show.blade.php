@@ -73,7 +73,9 @@
                         @foreach($series->booklet_details as $detail)
                             <tr>
                                 <td class="text-center">{{ $detail->id }}</td>
-                                <td class="text-center">{{ $series->cost_center . '-' . $detail->series_number }}</td>
+                                <td class="text-center">
+                                    {{ $series->cost_center . '-' . $detail->prefix_value . $detail->series_number }}
+                                </td>
                                 <td class="text-center">
                                     @if($detail->used == 1 && Helper::get_sales_status($detail->id) != 'Cancelled')
                                         <i class="fas fa-check-circle" style="color:#28a745"></i>

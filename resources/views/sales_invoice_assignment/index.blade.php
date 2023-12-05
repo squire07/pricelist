@@ -9,11 +9,15 @@
                 <h1>Sales Invoice Assignment</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <button type="button" class="btn btn-info btn-add-booklet" data-toggle="modal" data-target="#modal-add">Add Booklet</button>
+                <button type="button" class="btn btn-info btn-add-booklet" data-toggle="modal" data-target="#modal-add" {{ Helper::BP(12,2) }}>Add Booklet</button>
             </div>
         </div>
     </div>
 @stop
+
+@php
+    $button_state = Helper::BP(12,3);
+@endphp
 
 @section('content')
     <div class="container-fluid">
@@ -41,8 +45,8 @@
                                     <tr>
                                         <td class="text-center">{{ $series->id }}</td>
                                         <td>{{ $series->cashier->name ?? '' }}</td>
-                                        <td class="text-center">{{ $series->series_from }}</td>
-                                        <td class="text-center">{{ $series->series_to }}</td>
+                                        <td class="text-center">{{ Helper::sales_invoice_prefix($series->series_from) . $series->series_from }}</td>
+                                        <td class="text-center">{{ Helper::sales_invoice_prefix($series->series_to) . $series->series_to }}</td>
                                         <td class="text-center">{{ $series->branch->name }}</td>
                                         <td class="text-center">{{ $series->count }}</td>
                                         <td class="text-center">
@@ -55,7 +59,7 @@
                                         <td class="text-center">{{ $series->created_at }}</td>
                                         <td class="text-center">{{ $series->created_by }}</td>
                                         <td class="text-center">
-                                            <a href="{{ url('sales-invoice-assignment/' . $series->uuid ) }}" class="btn btn-sm btn-default"><i class="far fa-eye"></i>&nbsp;Show</a>
+                                            <a href="{{ url('sales-invoice-assignment/' . $series->uuid ) }}" class="btn btn-sm btn-default {{ $button_state }}"><i class="far fa-eye"></i>&nbsp;Show</a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -84,7 +88,7 @@
                             <div class="form-group">
                                 <label for="cashier_id">Cashier</label>
                                 <select class="select2" id="cashier_id" name="cashier_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                    <option disabled selected>-- Select Cashier --</option>
+                                    <option selected disabled>-- Select Cashier --</option>
                                     @foreach($cashiers as $cashier)
                                         <option value="{{ $cashier->id }}" data-branch-id="{{ $cashier->branch_id }}">
                                             {{ $cashier->name . ' (' . str_replace(',', ', ', Helper::get_branch_name_by_id($cashier->branch_id)) . ')'}}
@@ -200,8 +204,9 @@
         $('#series_from').on('keyup', function() {
             let a = this.value;
             let b = $('#series_to').val();
+            let cashier_id = $('#cashier_id').val();
             if(b.trim() !== '') {
-                if (parseFloat(a) < parseFloat(b)) {
+                if ((parseFloat(a) < parseFloat(b)) && cashier_id !== null) {
                     $('#btn-modal-save').prop('disabled',false);
                 } else {
                     $('#btn-modal-save').prop('disabled',true);
@@ -215,8 +220,9 @@
         $('#series_to').on('keyup', function() {
             let a = this.value;
             let b = $('#series_from').val();
+            let cashier_id = $('#cashier_id').val();
             if(b.trim() !== '') {
-                if (parseFloat(a) > parseFloat(b)) {
+                if ((parseFloat(a) > parseFloat(b)) && cashier_id !== null) {
                     $('#btn-modal-save').prop('disabled',false);
                 } else {
                     $('#btn-modal-save').prop('disabled',true);
@@ -227,6 +233,13 @@
         });
 
         $('#cashier_id').on('change', function() {
+            if($(this).val() !== null) {
+                $('#series_from').prop('disabled', false);
+                $('#series_to').prop('disabled', false);
+            } else {
+                $('#series_from').prop('disabled', true);
+                $('#series_to').prop('disabled', true);
+            }
             var selectedOption = $(this).find('option:selected');
             var branch_id = selectedOption.data('branch-id');
 
@@ -268,7 +281,7 @@
             }
         });
 
-        $('#btn-modal-save').on('click', function() {
+        $('#btn-modal-save').on('click', function(e) {
             $(this).prop('disabled',true);
             $('#form_modal_add').submit();
         });

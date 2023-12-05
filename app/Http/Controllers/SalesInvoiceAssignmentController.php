@@ -9,6 +9,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Auth;
+use App\Helpers\Helper;
+use Illuminate\Support\Facades\Validator;
 
 class SalesInvoiceAssignmentController extends Controller
 {
@@ -18,11 +20,36 @@ class SalesInvoiceAssignmentController extends Controller
      */
     public function index()
     {
-        $booklets = SalesInvoiceAssignment::with('booklet_details')->whereDeleted(false)->get();
+        $cashiers = User::whereDeleted(false)
+                        ->whereActive(true)
+                        ->whereBlocked(false)
+                        ->whereRoleId(2)
+                        // ->where(function ($query) {
+                        //     foreach (explode(',', Auth::user()->branch_id) as $branch_id) {
+                        //         $query->whereRaw('FIND_IN_SET(?, branch_id)', [$branch_id]);
+                        //     }
+                        // })
+                        ->where(function ($query) {
+                            if(!in_array(Auth::user()->role_id, [11,12])) {
+                                $query->whereBranchId(Auth::user()->branch_id);
+                            }
+                        })
+                        ->get();
+
+        $booklets = SalesInvoiceAssignment::with('booklet_details')
+                        ->whereDeleted(false)
+                        ->where(function ($query) use ($cashiers) {
+                            // foreach($cashiers as $branch_id) {
+                            //     $query->whereRaw('FIND_IN_SET(?, branch_id)', [$branch_id]);
+                            // }
+                            if(!in_array(Auth::user()->role_id, [11,12])) {
+                                $query->whereIn('branch_id', explode(',', Auth::user()->branch_id));
+                            }
+                        })
+                        ->get();
 
         // count the number of used series per booklet
         foreach($booklets as $booklet) {
-
             // reset the used counter per booklet
             $used_count = 0;
             foreach($booklet->booklet_details as $series) {
@@ -32,28 +59,9 @@ class SalesInvoiceAssignmentController extends Controller
             }            
             // add a new element (column) to collection `booklet`; NOT `booklets`
             $booklet['used'] = $used_count;
-
             $booklet['percentage_used'] = $used_count == 0 ? 0 : round(($used_count / $booklet->count) * 100);
         }
 
-        // get current users branch ids 
-        $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
-
-        // Create a base query for cashiers
-        $cashiers = User::whereDeleted(false)
-                            ->whereActive(true)
-                            ->whereBlocked(false)
-                            ->whereRoleId(2);
-
-        // If the user's role is not 12, filter by branch
-        if (Auth::user()->role_id != 12) {
-            $cashiers = $cashiers->where(function ($query) use ($user_branch) {
-                $query->whereIn('branch_id', explode(',', $user_branch))
-                    ->orWhere('branch_id', $user_branch);
-            })->get();
-        } else {
-            $cashiers = $cashiers->get();
-        }
 
         return view('sales_invoice_assignment.index', compact('booklets','cashiers'));
     }
@@ -71,32 +79,53 @@ class SalesInvoiceAssignmentController extends Controller
      */
     public function store(Request $request)
     {
-        $prefixed = false;
-        $prefix_value = '';
-
-        // check if prefix is set
-        if(isset($request->checkbox_prefix)) {
-            $prefixed = true;
-            $prefix_value = 'A';
-        } 
+        // $validator = Validator::make($request->all(), [
+        //     'branch_id' => 'required|int',
+        //     'series_from' => 'required|int',
+        //     'series_to' => 'required|int',
+        // ]);
+    
+        // if ($validator->fails()) {
+        //     return redirect()->back()->with('error', 'Data Incomplete!');
+        // }
+    
 
         $series_number = [
-            $prefix_value . substr(str_repeat(0, 6).$request->series_from, - 6), 
-            $prefix_value . substr(str_repeat(0, 6).$request->series_to, - 6)
+            substr(str_repeat(0, 6).$request->series_from, - 6), 
+            substr(str_repeat(0, 6).$request->series_to, - 6)
         ];
 
-        $cashier_branch_id = User::whereDeleted(false)->whereId($request->cashier_id)->first()->branch_id;
+        $branch_id = $request->cashier_branch_id ?? User::whereDeleted(false)->whereId($request->cashier_id)->first()->branch_id;
 
-        $branch_id = $request->cashier_branch_id ?? $cashier_branch_id;
+        // checker
+        $details = SalesInvoiceAssignment::with('booklet_details')
+                        ->whereDeleted(false)
+                        ->whereBranchId($branch_id)
+                        ->whereHas('booklet_details', function ($query) use ($series_number) {
+                            $query->whereIn('series_number', $series_number);
+                        })
+                        ->get();
 
-        // complex; We'll use query builder
-        $details = SalesInvoiceAssignment::select('sales_invoice_assignments.*')
-                    ->leftJoin('sales_invoice_assignment_details', 'sales_invoice_assignments.id', '=', 'sales_invoice_assignment_details.sales_invoice_assignment_id')
-                    ->where('sales_invoice_assignments.deleted', false)
-                    ->where('sales_invoice_assignments.branch_id', $branch_id)
-                    ->whereIn('sales_invoice_assignment_details.series_number', $series_number)
-                    ->get();
- 
+        // counter
+        $details_branch = SalesInvoiceAssignment::with('booklet_details')
+                        ->whereDeleted(false)
+                        ->whereBranchId($branch_id)
+                        ->get();
+
+        // merge all the results into a single collection so we can count all the invoices
+        $merged_details = collect();
+        foreach ($details_branch as $booklet_details) {
+            $merged_details = $merged_details->merge($booklet_details->booklet_details);
+        }
+
+        $existing_invoice_total_count = 0; 
+        if($details_branch->isNotEmpty()){
+            $existing_invoice_total_count = count($merged_details);
+        }
+
+
+        $total_request_count = intval($request->series_to) - intval($request->series_from) + 1; // ex: (0003200 - 0003101) = 99 + 1 => 100;
+
         if($details->isNotEmpty()) {
             return redirect()->back()->with('error', 'The series number already exists!'); 
         } else {
@@ -106,20 +135,29 @@ class SalesInvoiceAssignmentController extends Controller
             $booklet->branch_id = $branch_id; // get the cashier's designated branch
             $booklet->series_from = $request->series_from; // prefix (leading zero's) automatically added from model's setter
             $booklet->series_to = $request->series_to; // prefix (leading zero's) automatically added from model's setter
-            $booklet->prefixed = $prefixed;
-            $booklet->prefix_value = $prefix_value;
-            $booklet->count = ($request->series_to - $request->series_from) + 1; // ex: (0003200 - 0003101) = 99 + 1 => 100;
+            $booklet->count = $total_request_count;
             $booklet->created_by = Auth::user()->name;
 
             if($booklet->save()) {
+
+                $loop_count = 1;
+
                 for($i = $request->series_from; $i <= $request->series_to; $i++) {
+
+                    // prefix, run once only; IMPORTANT! do not inline;
+                    $prefix = Helper::sales_invoice_prefix($existing_invoice_total_count + $loop_count);
+
                     $details = new SalesInvoiceAssignmentDetail();
                     $details->uuid = $booklet->uuid;
                     $details->sales_invoice_assignment_id = $booklet->id;
-                    $details->series_number = $prefix_value . substr(str_repeat(0, 6).$i, - 6); // add prefix 0
+                    $details->prefixed = is_null($prefix) ? 0 : 1;
+                    $details->prefix_value = $prefix;
+                    $details->series_number = substr(str_repeat(0, 6).$i, - 6); // add prefix 0
                     $details->created_by = Auth::user()->name;
                     // updated by and updated at will be assigned to the cashier and when the series was used
                     $details->save();
+
+                    $loop_count++;
                 }
                 return redirect()->back()->with('success', 'Sales invoice booklet has been created!'); 
             }

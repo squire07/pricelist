@@ -49,7 +49,8 @@
                                     data-company-code="{{ $company->code }}"
                                     data-company-status_id="{{ $company->status->name}}"
                                     data-company-remarks="{{ $company->remarks }}"
-                                    data-company-updated_by="{{ $company->updated_by }}">
+                                    data-company-updated_by="{{ $company->updated_by }}"
+                                    {{ Helper::BP(8,3) }}>
                                     <i class="far fa-eye"></i>&nbsp;Show
                                 </button>
                                 <button type="button" class="btn btn-sm btn-primary btn_edit" 
@@ -59,7 +60,8 @@
                                     data-company-name="{{ $company->name }}" 
                                     data-company-code="{{ $company->code }}"
                                     data-company-status_id="{{ $company->status->name}}"
-                                    data-company-remarks="{{ $company->remarks }}">
+                                    data-company-remarks="{{ $company->remarks }}"
+                                    {{ Helper::BP(8,4) }}>
                                     <i class="fas fa-pencil-alt"></i>&nbsp;Edit
                                 </button>
                             </tr>

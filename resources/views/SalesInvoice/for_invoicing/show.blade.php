@@ -90,9 +90,9 @@
         <div class="card-footer text-center">
             <a href="{{ url('sales-invoice/for-invoice') }}" class="btn btn-lg btn-info float-left" style="margin-top: 8px"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
 
-            <button class="btn btn-lg btn-success float-right" style="margin-top: 8px; margin-left: 10px" id="btn-submit-payment" data-uuid="{{ $sales_order->uuid }}" data-so-no="{{ $sales_order->so_no }}"><i class="far fa-share-square"></i>&nbsp;Submit</button>
+            <button class="btn btn-lg btn-success float-right" style="margin-top: 8px; margin-left: 10px" id="btn-submit-payment" data-uuid="{{ $sales_order->uuid }}" data-so-no="{{ $sales_order->so_no }}" {{ Helper::BP(2,4) }}><i class="far fa-share-square"></i>&nbsp;Submit</button>
 
-            <button class="btn btn-lg btn-danger float-right" style="margin-top: 8px" id="btn-for-return" data-uuid="{{ $sales_order->uuid }}" data-so-no="{{ $sales_order->so_no }}"><i class="fas fa-undo-alt"></i>&nbsp;Return</button>
+            <button class="btn btn-lg btn-danger float-right" style="margin-top: 8px" id="btn-for-return" data-uuid="{{ $sales_order->uuid }}" data-so-no="{{ $sales_order->so_no }}" {{ Helper::BP(2,4) }}><i class="fas fa-undo-alt"></i>&nbsp;Return</button>
         </div>
     </div>
 

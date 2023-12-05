@@ -9,11 +9,16 @@
                 <h1>Branches</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add">Add Branch</button>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add" {{ Helper::BP(7,2) }}>Add Branch</button>
             </div>
         </div>
     </div>
 @stop
+
+@php
+    $show_button_state = Helper::BP(7,3);
+    $edit_button_state = Helper::BP(7,4);
+@endphp
 
 @section('content')
     <div class="container-fluid">
@@ -53,7 +58,8 @@
                                         data-branch-warehouse="{{ $branch->warehouse }}"
                                         data-branch-status_id="{{ $branch->status->name}}"
                                         data-branch-remarks="{{ $branch->remarks }}"
-                                        data-branch-updated_by="{{ $branch->updated_by }}">
+                                        data-branch-updated_by="{{ $branch->updated_by }}"
+                                        {{ $show_button_state }}>
                                         <i class="far fa-eye"></i>&nbsp;Show
                                     </button>
                                     <button type="button" class="btn btn-sm btn-primary btn_edit" 
@@ -67,7 +73,8 @@
                                         data-branch-cost_center_name="{{ $branch->cost_center_name }}"
                                         data-branch-warehouse="{{ $branch->warehouse }}"
                                         data-branch-status_id="{{ $branch->status->name}}"
-                                        data-branch-remarks="{{ $branch->remarks }}">
+                                        data-branch-remarks="{{ $branch->remarks }}"
+                                        {{ $edit_button_state }}>
                                         <i class="fas fa-pencil-alt"></i>&nbsp;Edit
                                     </button>
                                 </td>

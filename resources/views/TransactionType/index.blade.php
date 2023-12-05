@@ -12,6 +12,10 @@
     </div>
 @stop
 
+@php
+    $show_button_state = Helper::BP(13,3);
+@endphp
+
 @section('content')
     <div class="container-fluid">
         <div class="card">
@@ -57,7 +61,7 @@
                                 <td class="text-center">{{ $transaction_type->updated_at }}</td>
                                 <td class="text-center">{{ $transaction_type->updated_by }}</td>
                                 <td class="text-center">
-                                    <a href="{{ url('income-expense-accounts/' . $transaction_type->uuid) }}" class="btn btn-sm btn-default" target="_self">
+                                    <a href="{{ url('income-expense-accounts/' . $transaction_type->uuid) }}" class="btn btn-sm btn-default {{ $show_button_state }}" target="_self">
                                         <i class="fas fa-share-square mr-2"></i>Accounts
                                     </a>
                                 </td>

@@ -9,11 +9,16 @@
                 <h1>Users</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add">Add User</button>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add" {{ Helper::BP(15,2) }}>Add User</button>
             </div>
         </div>
     </div>
 @stop
+
+@php
+    $edit_user_button_state = Helper::BP(15,4);
+    $edit_user_permission_button_state = Helper::BP(16,4)
+@endphp
 
 @section('content')
     <div class="container-fluid">
@@ -74,10 +79,11 @@
                                     data-role-id="{{ $user->role_id }}"
                                     data-company-id="{{ $user->company_id }}"
                                     data-user-active="{{ $user->active }}"
-                                    data-user-blocked="{{ $user->blocked }}">
+                                    data-user-blocked="{{ $user->blocked }}"
+                                    {{ $edit_user_button_state }}>
                                     <i class="fas fa-pencil-alt"></i>&nbsp;Edit
                                 </button>
-                                    <a href="{{  url('permissions/' . $user->uuid . '/edit' ) }}" class="btn btn-sm btn-success" target="_self"><i class="fas fa-tasks"></i></a>
+                                    <a href="{{  url('permissions/' . $user->uuid . '/edit' ) }}" class="btn btn-sm btn-success {{ $edit_user_permission_button_state }}" target="_self"><i class="fas fa-tasks"></i></a>
                                 </td>
                             </tr>
                         @endforeach

@@ -9,11 +9,16 @@
                 <h1>Payment Methods</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add">Add Payment Method</button>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add" {{ Helper::BP(14,2) }}>Add Payment Method</button>
             </div>
         </div>
     </div>
 @stop
+
+@php
+    $show_button_state = Helper::BP(14,3);
+    $edit_button_state = Helper::BP(14,4);
+@endphp
 
 @section('content')
     <div class="container-fluid">
@@ -53,7 +58,8 @@
                                         data-is-cash="{{ $payment->is_cash }}"
                                         data-branch-names="{{ Helper::get_branch_name_by_id($payment->branch_id) }}"
                                         data-remarks="{{ $payment->remarks }}"
-                                        data-updated-by="{{ $payment->updated_by }}">
+                                        data-updated-by="{{ $payment->updated_by }}"
+                                        {{ $show_button_state }}>
                                         <i class="far fa-eye"></i>&nbsp;Show
                                     </button>
                                     <button type="button" class="btn btn-sm btn-primary btn_edit" 
@@ -67,7 +73,8 @@
                                         data-branch-id="{{ $payment->branch_id }}"
                                         data-is-cash="{{ $payment->is_cash }}"
                                         data-status-id="{{ $payment->status_id }}"
-                                        data-remarks="{{ $payment->remarks }}">
+                                        data-remarks="{{ $payment->remarks }}"
+                                        {{ $edit_button_state }}>
                                         <i class="fas fa-pencil-alt"></i>&nbsp;Edit
                                     </button>
                                 </td>

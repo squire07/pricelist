@@ -9,11 +9,15 @@
                 <h1>Shipping Fee</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add">Add Shipping Fee</button>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add" {{ Helper::BP(21,2) }}>Add Shipping Fee</button>
             </div>
         </div>
     </div>
 @stop
+
+@php
+    $edit_button_state = Helper::BP(21,4);
+@endphp
 
 @section('content')
     <div class="container-fluid">
@@ -53,7 +57,8 @@
                                         data-shipping_fee-dimension="{{ $shipping_fee->dimension }}"
                                         data-shipping_fee-region="{{ $shipping_fee->region}}"
                                         data-shipping_fee-parcel_rate="{{ $shipping_fee->parcel_rate}}"
-                                        data-shipping_fee-status="{{ $shipping_fee->status}}">
+                                        data-shipping_fee-status="{{ $shipping_fee->status}}"
+                                        {{ $edit_button_state }}>
                                         <i class="fas fa-pencil-alt"></i>&nbsp;Edit
                                     </button>
                                 </td>

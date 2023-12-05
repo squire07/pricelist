@@ -9,11 +9,16 @@
                 <h1>Roles</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add">Add Role</button>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add" {{ Helper::BP(11,2) }}>Add Role</button>
             </div>
         </div>
     </div>
 @stop
+
+@php
+    $show_button_state = Helper::BP(11,3);
+    $edit_button_state = Helper::BP(11,4);
+@endphp
 
 @section('content')
     <div class="container-fluid">
@@ -47,7 +52,8 @@
                                         data-id="{{ $role->id }}"
                                         data-uuid="{{ $role->uuid }}"
                                         data-role-name="{{ $role->name }}" 
-                                        data-role-updated_by="{{ $role->updated_by }}">
+                                        data-role-updated_by="{{ $role->updated_by }}"
+                                        {{ $show_button_state }}>
                                         <i class="far fa-eye"></i>&nbsp;Show
                                     </button>
                                     <button type="button" class="btn btn-sm btn-primary btn_edit" 
@@ -56,7 +62,8 @@
                                         data-id="{{ $role->id }}" 
                                         data-uuid="{{ $role->uuid }}" 
                                         data-role-name="{{ $role->name }}" 
-                                        data-role-remarks="{{ $role->remarks }}">
+                                        data-role-remarks="{{ $role->remarks }}"
+                                        {{ $edit_button_state }}>
                                         <i class="fas fa-pencil-alt"></i>&nbsp;Edit
                                     </button>
                                 </td>

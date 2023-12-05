@@ -169,7 +169,7 @@
                     <div class="row">
                         <div class="col-12 text-center">
                             <input type="button" value="Cancel" id="btn_cancel_so" class="btn btn-lg btn-danger">
-                            <button class="btn btn-primary btn-lg m-2 " id="btn_save_so"><i class="fas fa-save mr-2"></i>Save Sales Order</button>
+                            <button class="btn btn-primary btn-lg m-2 " id="btn_save_so" {{ Helper::BP(1,2) }}><i class="fas fa-save mr-2"></i>Save Sales Order</button>
                         </div>
                     </div>
             </div>    

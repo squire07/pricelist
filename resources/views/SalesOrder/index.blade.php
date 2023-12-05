@@ -9,7 +9,7 @@
                 <h1>Sales Orders</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#modal-so-option"><i class="fas fa-cart-plus"></i> Create Sales Order</a>
+                <a href="#" class="btn btn-primary {{ Helper::BP(1,2) }}" data-toggle="modal" data-target="#modal-so-option"><i class="fas fa-cart-plus"></i> Create Sales Order</a>
             </div>
         </div>
     </div>
@@ -71,7 +71,7 @@
                                         <span class="badge badge-primary">P</span>
                                     @endif
                                 </td>
-                                <td class="text-center"><a href="{{ url('sales-orders/' . $sales_order->uuid ) }}" target="_self">{{ $sales_order->so_no }}</a></td>
+                                <td class="text-center"><a href="{{ url('sales-orders/' . $sales_order->uuid ) }}" class="{{ Helper::BP(1,3) }}" target="_self">{{ $sales_order->so_no }}</a></td>
                                 <td class="text-center">{{ $sales_order->transaction_type->name }}</td>
                                 <td class="text-center">{{ $sales_order->bcid }}</td>
                                 <td class="text-center">{{ $sales_order->distributor_name }}</td>

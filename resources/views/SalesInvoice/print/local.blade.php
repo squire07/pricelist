@@ -94,7 +94,10 @@
                             <td class="text-right">0.00</td>
                         </tr>
                         <tr>
-                            <td colspan="2" style="padding:0 0 0 25px;">{{ $sales_order->payment->payment_type }}: {{ $sales_order->amount_tendered}}</td>
+                            <td style="padding:0 0 0 25px;">{{ $sales_order->payment->payment_type }}: {{ $sales_order->grandtotal_amount}}</td>
+                            <td>{{ json_encode($sales_order->payment->details) }} 
+                                {{ isset($sales_order->payment->details[0]['ref_no']) ? 'REF #: ' . strtoupper($sales_order->payment->details[0]['ref_no']) : '' }}
+                            </td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -112,8 +115,7 @@
                         <tr>
                             <td colspan="2" style="padding:0 0 0 25px;">{{ $sales_order->si_no }}</td>
                             <td></td>
-                            <td>Total Qty: {{ $sales_order->total_item_count }}</td>
-                            <td></td>
+                            <td colspan="2" class="text-center">Total Qty: {{ $sales_order->total_item_count }}</td>                            
                             <td class="text-right print-none">Add: VAT</td>
                             <td class="text-right"></td>
                         </tr>

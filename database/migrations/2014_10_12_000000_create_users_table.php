@@ -26,7 +26,7 @@ return new class extends Migration
             $table->tinyInteger('deleted')->default(false);
             $table->tinyInteger('active')->default(true);
             $table->tinyInteger('blocked')->default(false);
-            $table->tinyInteger('attemps')->default(0);
+            $table->tinyInteger('attempts')->default(0);
             $table->timestamps();
             $table->softDeletes();
             $table->string('created_by',55)->nullable();

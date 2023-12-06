@@ -1,4 +1,4 @@
-@if(isset($sales_order->payment->details))
+@if(isset($sales_order->payment->details) && in_array(Auth::user()->role_id,[8,11,12]))
 <div class="card card-primary card-outline">
     <div class="card-header text-bold">Accounts</div>
     <div class="card-body">

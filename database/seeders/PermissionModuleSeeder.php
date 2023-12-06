@@ -34,7 +34,7 @@ class PermissionModuleSeeder extends Seeder
             16 => array('name' => 'User Permission', 'type' => 'module', 'controller' => 'UserPermissionController', 'redirect' => 'permissions'),
             
             17 => array('name' => 'Build Report', 'type' => 'report', 'controller' => 'BuildReportController', 'redirect' => 'reports/build-report'),
-            18 => array('name' => 'Logs', 'type' => 'report', 'controller' => 'ActivityLogController', 'redirect' => 'reports/logs'),
+            18 => array('name' => 'Logs', 'type' => 'report', 'controller' => 'HistoryController', 'redirect' => 'reports/logs'),
             19 => array('name' => 'Stock Card', 'type' => 'report', 'controller' => 'StockCardController', 'redirect' => 'reports/stock-card'),
             20 => array('name' => 'Transaction Listing', 'type' => 'report', 'controller' => 'TransactionListingController', 'redirect' => 'reports/transaction-listing'),
 

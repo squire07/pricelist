@@ -16,6 +16,8 @@ return new class extends Migration
             $table->uuid('uuid');
             $table->foreignId('sales_invoice_assignment_id');
             $table->string('series_number', 12);
+            $table->tinyInteger('prefixed')->default(false);
+            $table->string('prefix_value', 3)->nullable();
             $table->tinyInteger('used')->default(false);
             $table->string('so_no')->nullable();
             $table->string('si_no')->nullable();

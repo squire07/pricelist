@@ -18,8 +18,6 @@ return new class extends Migration
             $table->foreignId('branch_id')->constrained();
             $table->integer('series_from')->unsigned();
             $table->integer('series_to')->unsigned();
-            $table->tinyInteger('prefixed')->default(false);
-            $table->string('prefix_value', 5)->nullable(); // 5 chars for future use
             $table->integer('count');
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();

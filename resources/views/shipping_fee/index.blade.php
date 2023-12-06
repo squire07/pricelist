@@ -138,19 +138,19 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Parcel Size</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="25" minlength="3" name="parcel_size" id="modal_edit_parcel_size" required>
+                                    <input type="text" class="form-control form-control-sm" maxlength="25" minlength="3" name="parcel_size" id="modal_edit_parcel_size" required>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="code">Dimension</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" name="dimension" maxlength="9" id="modal_edit_dimension" required>
+                                    <input type="text" class="form-control form-control-sm" name="dimension" maxlength="9" id="modal_edit_dimension" required>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="code">Region</label>
-                                    <select class="form-control form-control-sm text-bold" name="region" id="modal_edit_region" required>
+                                    <select class="form-control form-control-sm" name="region" id="modal_edit_region" required>
                                         <option value="" disabled selected>-- Select Region --</option>
                                         <option value="NCR">NCR</option>
                                         <option value="Luzon">Luzon</option>
@@ -162,7 +162,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="remarks">Parcel Rate</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" name="parcel_rate" minlength="3" maxlength="12" id="modal_edit_parcel_rate">
+                                    <input type="text" class="form-control form-control-sm" name="parcel_rate" minlength="3" maxlength="12" id="modal_edit_parcel_rate">
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-12">

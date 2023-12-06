@@ -91,7 +91,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="name">Dimension</label>
-                                <input type="text" class="form-control form-control-sm" name="dimension" maxlength="12" minlength="3" id="modal_add_dimension" required>
+                                <input type="text" class="form-control form-control-sm" name="dimension" maxlength="9" minlength="3" id="modal_add_dimension" required>
                             </div>
                             <div class="col-12">
                                 <label for="name">Region</label>
@@ -144,7 +144,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="code">Dimension</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" name="dimension" maxlength="12" id="modal_edit_dimension" required>
+                                    <input type="text" class="form-control form-control-sm text-bold" name="dimension" maxlength="9" id="modal_edit_dimension" required>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('dimension')->default(0);
             $table->double('parcel_rate')->default(0);
             $table->tinyInteger('status')->default(1); // Boolean: 1 - Active / Yes / True ;   0 - Inactive / No / False
+            $table->text('remarks')->nullable();
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
             $table->softDeletes();

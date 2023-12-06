@@ -174,6 +174,12 @@
                                     <label for="">Inactive</label><br>
                                 </div>
                             </div>
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="remarks">Remarks</label>
+                                    <input type="" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks" required>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">

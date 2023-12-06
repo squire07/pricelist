@@ -129,13 +129,13 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Name</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="25" name="name" id="modal_edit_name" disabled>
+                                    <input type="text" class="form-control form-control-sm" maxlength="25" name="name" id="modal_edit_name" disabled>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="code">Company Code</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="2" name="code" id="modal_edit_code" required>
+                                    <input type="text" class="form-control form-control-sm" maxlength="2" name="code" id="modal_edit_code" required>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-12">
@@ -152,7 +152,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="remarks">Remarks</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" name="remarks" id="modal_edit_remarks" style="text-transform:uppercase" required>
+                                    <input type="text" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks" style="text-transform:uppercase" required>
                                 </div>
                             </div>
                         </div>

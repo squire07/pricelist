@@ -102,6 +102,7 @@ class SalesController extends Controller
 
             $branches = Branch::whereDeleted(false)
                             ->whereIn('id', $branch_ids)
+                            ->whereIn('company_id', $company_ids)
                             ->whereIn('status_id',[8,1])
                             ->get(['id','name']);
         }

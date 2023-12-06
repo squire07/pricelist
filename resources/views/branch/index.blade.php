@@ -164,42 +164,42 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Company</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="25" name="company_id" id="modal_edit_company" readonly>
+                                    <input type="text" class="form-control form-control-sm" maxlength="25" name="company_id" id="modal_edit_company" readonly>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Name</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="25" name="name" id="modal_edit_name" required>
+                                    <input type="text" class="form-control form-control-sm" maxlength="25" name="name" id="modal_edit_name" required>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="code">Branch Code</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="3" name="code" id="modal_edit_code" required>
+                                    <input type="text" class="form-control form-control-sm" maxlength="3" name="code" id="modal_edit_code" required>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="code">Cost Center</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="3" name="cost_center" id="modal_edit_cost_center" required>
+                                    <input type="text" class="form-control form-control-sm" maxlength="3" name="cost_center" id="modal_edit_cost_center" required>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Cost Center Name</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="50" name="cost_center_name" id="modal_edit_cost_center_name" placeholder="IMPORTANT: Must be exactly same from ERPNext" required>
+                                    <input type="text" class="form-control form-control-sm" maxlength="50" name="cost_center_name" id="modal_edit_cost_center_name" placeholder="IMPORTANT: Must be exactly same from ERPNext" required>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Warehouse</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="50" name="warehouse" id="modal_edit_warehouse" placeholder="IMPORTANT: Must be exactly same from ERPNext" required>
+                                    <input type="text" class="form-control form-control-sm" maxlength="50" name="warehouse" id="modal_edit_warehouse" placeholder="IMPORTANT: Must be exactly same from ERPNext" required>
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-12">
                                 <div class="form-group">
-                                    Branch Status?<br>
+                                    <label for="name">Branch Status?</label><br>
                                     <input type="radio" id="status_8" name="status" value="8">
                                     <label for="">Active</label>&nbsp;
                                     <input type="radio" id="status_9" name="status" value="9" style="margin-top: 8px">

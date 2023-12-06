@@ -304,6 +304,9 @@ class ForInvoicingController extends Controller
                             $query->where('deleted',0);
                         })->firstOrFail();
 
+        $payment_details = json_decode($sales_order->payment->details,true);
+        $sales_order->ref_no = $payment_details[0]['ref_no'];
+
         $sales_order->total_item_count = $sales_order->sales_details->sum('quantity');
         $sales_order->amount_tendered = number_format($sales_order->payment['total_amount'] + $sales_order->payment['change'], 2, '.', ',');
 

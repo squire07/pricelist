@@ -95,9 +95,7 @@
                         </tr>
                         <tr>
                             <td style="padding:0 0 0 25px;">{{ $sales_order->payment->payment_type }}: {{ $sales_order->grandtotal_amount}}</td>
-                            <td>{{ json_encode($sales_order->payment->details) }} 
-                                {{ isset($sales_order->payment->details[0]['ref_no']) ? 'REF #: ' . strtoupper($sales_order->payment->details[0]['ref_no']) : '' }}
-                            </td>
+                            <td>{{ $sales_order->ref_no != '' ? 'REF #: ' . $sales_order->ref_no : '' }}</td>
                             <td></td>
                             <td></td>
                             <td></td>

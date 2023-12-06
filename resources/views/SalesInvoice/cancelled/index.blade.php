@@ -68,7 +68,7 @@
                                         <span class="badge badge-primary">P</span>
                                     @endif
                                 </td>
-                                <td class="text-center"><a href="{{ url('sales-invoice/cancelled/' . $sales_order->uuid ) }}" target="_self">{{ $sales_order->so_no }}</a></td>
+                                <td class="text-center"><a href="{{ url('sales-invoice/cancelled/' . $sales_order->uuid ) }}" class="{{ Helper::BP(5,3) }}" target="_self">{{ $sales_order->so_no }}</a></td>
                                 <td class="text-center">{{ $sales_order->transaction_type->name }}</td>
                                 <td class="text-center">{{ $sales_order->bcid }}</td>
                                 <td class="text-center">{{ $sales_order->distributor_name }}</td>

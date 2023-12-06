@@ -100,8 +100,8 @@
             
             {{-- for accounting role only --}}
             @if(Auth::user()->role_id == 8) 
-                <button class="btn btn-lg btn-success float-right" id="btn-validate" data-uuid="{{ $sales_order->uuid }}" {{ isset($error) ? 'disabled' : '' }}><i class="far fa-share-square"></i>&nbsp;Validate</button>
-                <button class="btn btn-lg btn-danger float-right mx-2" id="btn-for-cancel" data-uuid="{{ $sales_order->uuid }}" data-si-no="{{ $sales_order->si_no }}"><i class="fas fa-ban"></i>&nbsp;Cancel Invoice</button>
+                <button class="btn btn-lg btn-success float-right" id="btn-validate" data-uuid="{{ $sales_order->uuid }}" {{ isset($error) ? 'disabled' : '' }} {{ Helper::BP(4,4) }}><i class="far fa-share-square"></i>&nbsp;Validate</button>
+                <button class="btn btn-lg btn-danger float-right mx-2" id="btn-for-cancel" data-uuid="{{ $sales_order->uuid }}" data-si-no="{{ $sales_order->si_no }}" {{ Helper::BP(4,4) }}><i class="fas fa-ban"></i>&nbsp;Cancel Invoice</button>
             @endif
         </div>
     </div>

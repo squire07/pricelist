@@ -150,7 +150,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="code">Region</label>
-                                    <select class="form-control form-control-sm" name="region" id="modal_edit_region" required>
+                                    <select class="form-control form-control-sm text-bold" name="region" id="modal_edit_region" required>
                                         <option value="" disabled selected>-- Select Region --</option>
                                         <option value="NCR">NCR</option>
                                         <option value="Luzon">Luzon</option>
@@ -162,7 +162,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="remarks">Parcel Rate</label>
-                                    <input type="text" class="form-control form-control-sm" name="parcel_rate" minlength="3" maxlength="12" id="modal_edit_parcel_rate">
+                                    <input type="text" class="form-control form-control-sm text-bold" name="parcel_rate" minlength="3" maxlength="12" id="modal_edit_parcel_rate">
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-12">

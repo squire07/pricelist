@@ -130,7 +130,7 @@ class LoginController extends Controller
             * For Main Navigation Use
             * SESSION: get all the module id's that has "1":1  `index`:allowed  and store in session to be used by main navigation
             */
-            Session::put('navigation_ids', $module_ids);
+            //Session::put('navigation_ids', $module_ids);
             // END of Main Navigation Use
 
             return redirect('/' . $redirect);

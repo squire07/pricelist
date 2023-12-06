@@ -521,6 +521,16 @@ class Helper {
         } 
     }
 
+    public static function MP($module_id, $method_id) {
+        $permissions = UserPermission::whereUserId(Auth::user()->id)->first();
+        $module = json_decode($permissions->user_permission,true);
+        if (isset($module[$module_id][$method_id]) && $module[$module_id][$method_id] === 1) {
+            return true;
+        } else {
+            return false;
+        } 
+    }
+
     public static function sales_invoice_prefix($iteration) 
     {
         $prefix = array(

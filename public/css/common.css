@@ -190,5 +190,9 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
 }
 
 
-
-
+a.disabled {
+    pointer-events: none; 
+    color: gray;
+    text-decoration: none;
+    cursor: not-allowed; 
+}

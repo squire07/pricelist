@@ -125,7 +125,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Name</label>
-                                    <input type="text" class="form-control form-control-sm text-bold" maxlength="25" name="name" id="modal_edit_name" required>
+                                    <input type="text" class="form-control form-control-sm" maxlength="25" name="name" id="modal_edit_name" required>
                                 </div>
                             </div>
                         </div>

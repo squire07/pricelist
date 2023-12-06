@@ -152,7 +152,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="remarks">Remarks</label>
-                                    <input type="text" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks" style="text-transform:uppercase" required>
+                                    <input type="text" class="form-control form-control-sm" name="remarks" id="modal_edit_remarks" required>
                                 </div>
                             </div>
                         </div>
@@ -256,7 +256,6 @@
 
             $('#modal_edit_name').val(name); 
             $('#modal_edit_code').val(code);
-            $('#modal_edit_remarks').val(remarks);
             $('#modal_show_status_id').val(status_id);
 
             if(status_id == 'Active') {

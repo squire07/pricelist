@@ -103,7 +103,7 @@
                         <div class="row mt-3">
                             <div class="col-12">
                                 <label for="name">Name</label>
-                                <input type="text" class="form-control form-control-sm" name="name" id="modal_add_name" required>
+                                <input type="text" class="form-control form-control-sm" name="name" maxlength="25" id="modal_add_name" required>
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -185,7 +185,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Name</label>
-                                    <input type="text" class="form-control form-control-sm" name="name" id="modal_edit_name" required>
+                                    <input type="text" class="form-control form-control-sm" name="name" id="modal_edit_name" maxlength="25" required>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">

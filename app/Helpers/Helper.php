@@ -511,6 +511,7 @@ class Helper {
         return json_encode($payment_entries);
     }
 
+    // button permission
     public static function BP($module_id, $method_id) {
         $permissions = UserPermission::whereUserId(Auth::user()->id)->first();
         $module = json_decode($permissions->user_permission,true);
@@ -521,6 +522,7 @@ class Helper {
         } 
     }
 
+    // menu permission
     public static function MP($module_id, $method_id) {
         $permissions = UserPermission::whereUserId(Auth::user()->id)->first();
         $module = json_decode($permissions->user_permission,true);
@@ -534,18 +536,18 @@ class Helper {
     public static function sales_invoice_prefix($iteration) 
     {
         $prefix = array(
-            25 => 'A',
-            50 => 'B',
-            75 => 'C',
-            100 => 'D',
-            125 => 'E',
-            150 => 'F',
-            175 => 'G',
-            200 => 'H',
+            6 => 'A',
+            11 => 'B',
+            16 => 'C',
+            21 => 'D',
+            26 => 'E',
+            31 => 'F',
+            36 => 'G',
+            41 => 'H',
         );
 
         foreach ($prefix as $lower_limit => $letter) {
-            $upper_limit = $lower_limit + 249;
+            $upper_limit = $lower_limit + 5; // change this to actual 
     
             if ($iteration >= $lower_limit && $iteration <= $upper_limit) {
                 return $letter;

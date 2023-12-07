@@ -20,6 +20,7 @@ return new class extends Migration
                 $table->tinyInteger('company_id');
                 $table->string('branch_id', 55)->nullable();
                 $table->tinyInteger('is_cash')->default(0); // payment reference number is not required if cash is true (1)
+                $table->tinyInteger('is_debit_to')->default(0);
                 $table->tinyInteger('status_id')->default(6);
                 $table->text('remarks')->nullable();
                 $table->tinyInteger('deleted')->default(false);

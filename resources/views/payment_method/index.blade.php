@@ -32,6 +32,7 @@
                             <th class="text-center">Account Number</th>
                             <th class="text-center">Company</th>
                             <th class="text-center">Is Cash</th>
+                            <th class="text-center">Is Debit To</th>
                             <th class="text-center">Status</th>
                             <th class="text-center">Action</th>
                         </tr>
@@ -44,6 +45,7 @@
                                 <td class="text-center">{{ $payment->code }}</td>
                                 <td class="text-center">{{ $payment->company->name }}</td>
                                 <td class="text-center">{{ $payment->is_cash == 0 ? 'No' : 'Yes' }}</td>
+                                <td class="text-center">{{ $payment->is_debit_to == 0 ? 'No' : 'Yes' }}</td>
                                 <td class="text-center"><span class="badge {{ Helper::badge($payment->status_id) }}">{{ $payment->status->name }}</span></td>
                                 <td class="text-center">
                                     <button type="button" class="btn btn-sm btn-default btn_show" 

@@ -284,6 +284,7 @@ input[type="text2"], textarea {
                         $('#modal_add_dimension').val('');
                         $('#modal_add_region').val('');
                         $('#modal_add_parcel_rate').val('');
+                        $('#modal_edit_remarks').val('');
                     } else {
                         e.stopPropagation();
                     }
@@ -312,10 +313,26 @@ input[type="text2"], textarea {
             }
         });   
         
-        $('#modal_add_dimension, #modal_add_parcel_rate, #modal_edit_dimension, #modal_edit_parcel_rate').on('input', function(e) {    
+        $('#modal_add_dimension, #modal_edit_dimension').on('input', function(e) {    
             const inputValue = e.target.value;
             const numericValue = inputValue.replace(/[^0-9]/g, ''); // Remove non-numeric characters
             e.target.value = numericValue;
+        });
+
+        $('#modal_add_parcel_rate, #modal_edit_parcel_rate').on('input', function(e) {
+            let inputValue = e.target.value;
+
+            // Remove non-numeric and non-dot characters
+            inputValue = inputValue.replace(/[^0-9.]/g, '');
+
+            // Ensure there's only one dot in the value
+            const dotIndex = inputValue.indexOf('.');
+            if (dotIndex !== -1) {
+                inputValue = inputValue.slice(0, dotIndex + 3); // Keep up to two decimal places
+            }
+
+            // Update the input value
+            e.target.value = inputValue;
         });
     });
 </script>

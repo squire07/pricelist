@@ -45,7 +45,7 @@
                                 <td class="text-center">{{ $module->id }}</td>
                                 <td>{{ $module->name }}</td>
                                 <td class="text-center">
-                                    {{ $module->type == 'Module' && $module->id > 6 ? 'Support ' . $module->type : $module->type }}
+                                    {{ $module->type == 'Module' && ($module->id > 6 && $module->id != 23) ? 'Support ' . $module->type : $module->type }}
                                 </td>
                                 <td>
                                     @foreach(json_decode($user->permission->user_permission, true) as $parent_key => $module_permission)

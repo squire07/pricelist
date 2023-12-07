@@ -20,15 +20,15 @@ class StatusSeeder extends Seeder
             'For Invoice',
             'Cancelled',
             'Released',
+            'For Validation',
+            'Enabled', // *
+            'Disabled', // *
+            'Active', // *
+            'Inactive', // *
             'For Posting',
-            'Enabled',
-            'Disabled',
-            'Active',
-            'Inactive',
-
-            
-
         ];
+
+        // * must be removed on future release
 
         foreach($statuses as $key => $name) {
             Status::create([

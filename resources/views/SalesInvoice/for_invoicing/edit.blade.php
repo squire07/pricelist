@@ -177,7 +177,7 @@
                                 <span>Invoice No:</span>
                                 <input type="text" id="si_assignment_no" class="custom-input-text"
                                     data-id="{{ $first_booklet ? $first_booklet->id : null }}" 
-                                    value="{{ $first_booklet ? $first_booklet->prefix . $first_booklet->series_number : null }}" 
+                                    value="{{ $first_booklet ? $first_booklet->prefix_value . $first_booklet->series_number : null }}" 
                                     readonly tabindex="-1">
                             </h2>
                         </div>

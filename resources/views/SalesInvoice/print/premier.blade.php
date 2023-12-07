@@ -88,23 +88,21 @@
                             <td class="text-right">0.00</td>
                         </tr>
                         <tr>
-                            <td colspan="2" style="padding:0 0 0 25px;">{{ $sales_order->payment->payment_type }}: {{ $sales_order->amount_tendered}}</td>
-                            <td></td>
-                            <td></td>
+                            <td colspan="2"> {{ $sales_order->payment->payment_type }}: {{ $sales_order->grandtotal_amount}}</td>
+                            <td colspan="2" class="text-left">{{ $sales_order->ref_no != '' ? 'REF #: ' . $sales_order->ref_no : '' }}</td>
                             <td></td>
                             <td class="text-right print-none">Zero Rated Sales</td>
                             <td class="text-right">0.00</td>
                         </tr>
                         <tr>
-                            <td colspan="2" style="padding:0 0 0 25px;">{{ $sales_order->so_no }}</td>
+                            <td colspan="2">{{ $sales_order->so_no }}</td>
                             <td></td>
-                            <td>Total Qty: {{ $sales_order->total_item_count }}</td>
-                            <td></td>
+                            <td colspan="2" class="text-center">Total Qty: {{ $sales_order->total_item_count }}</td>
                             <td class="text-right print-none">Add: 12% VAT</td>
                             <td class="text-right">{{ $sales_order->vat_amount }}</td>
                         </tr>
                         <tr>
-                            <td colspan="2" style="padding:0 0 0 25px;">{{ $sales_order->si_no }}</td>
+                            <td colspan="2">{{ $sales_order->si_no }}</td>
                             <td>&nbsp;</td>
                         </tr>
                         <tr>

@@ -94,16 +94,14 @@
                             <td class="text-right">0.00</td>
                         </tr>
                         <tr>
-                            <td style="padding:0 0 0 25px;">{{ $sales_order->payment->payment_type }}: {{ $sales_order->grandtotal_amount}}</td>
-                            <td>{{ $sales_order->ref_no != '' ? 'REF #: ' . $sales_order->ref_no : '' }}</td>
-                            <td></td>
-                            <td></td>
+                            <td>{{ $sales_order->payment->payment_type }}: {{ $sales_order->grandtotal_amount}}</td>
+                            <td colspan="3" class="text-left" style="padding: 0 0 0 50px;">{{ $sales_order->ref_no != '' ? 'REF #: ' . $sales_order->ref_no : '' }}</td>
                             <td></td>
                             <td class="text-right print-none">VAT-Amount</td>
                             <td class="text-right">{{ $sales_order->vat_amount }}</td>
                         </tr>
                         <tr>
-                            <td colspan="2" style="padding:0 0 0 25px;">{{ $sales_order->so_no }}</td>
+                            <td colspan="2">{{ $sales_order->so_no }}</td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -111,7 +109,7 @@
                             <td class="text-right"></td>
                         </tr>
                         <tr>
-                            <td colspan="2" style="padding:0 0 0 25px;">{{ $sales_order->si_no }}</td>
+                            <td colspan="2">{{ $sales_order->si_no }}</td>
                             <td></td>
                             <td colspan="2" class="text-center">Total Qty: {{ $sales_order->total_item_count }}</td>                            
                             <td class="text-right print-none">Add: VAT</td>

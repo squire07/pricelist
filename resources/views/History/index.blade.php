@@ -17,7 +17,7 @@
         <div class="card">
             <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
                 
-                <form id="request_date" class="form-horizontal" action="{{ url('reports/history') }}" method="get">
+                <form id="request_date" class="form-horizontal" action="{{ url('reports/logs') }}" method="get">
                     @csrf
                     <label for="daterange">Request Date</label>
                     <div class="row">

@@ -247,21 +247,29 @@
                         <div class="col-md-12 col-sm-12">
                             <div class="form-group">
                                 <label for="companies">Companies</label>
-                                <select class="form-control select2" multiple="multiple" id="modal_edit_company_id" name="company_id[]" data-name="company_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                <select class="form-control select2" multiple="multiple" id="modal_edit_company_id" name="company_id[]" data-name="company_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" readonly>
                                     @foreach($companies as $company)
-                                        <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                        @php
+                                            $companyStatus = $company->status_id == 9 ? 'inactive-company' : 'active-company';
+                                        @endphp
+                                        <option value="{{ $company->id }}" class="{{ $companyStatus }}" @if($company->status_id == 9) disabled @endif>{{ $company->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-12 col-sm-12">
+                        <div class="col-md-12 col-sm-12"> 
                             <div class="form-group">
                                 <label for="companies">Branches</label>
                                 <select class="form-control select2" multiple="multiple" id="modal_edit_branch_id" name="branch_id[]" data-name="branch_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
                                     @foreach($branches as $branch)
-                                        <option value="{{ $branch->id }}" class="{{ $branch->company_id == 3 ? 'branch-local' : 'branch-premier' }}">{{ $branch->name }}</option>
+                                    @php
+                                    // Determine classes based on conditions
+                                    $companyClass = $branch->company_id == 3 ? 'branch-local' : 'branch-premier';
+                                    $statusClass = $branch->status_id == 9 ? 'inactive-branch' : 'active-branch';
+                                    @endphp
+                                        <option value="{{ $branch->id }}" class="{{ $companyClass }} {{ $statusClass }}">{{ $branch->name }}</option>
                                     @endforeach
-                                </select>                                 
+                                </select>                               
                             </div>
                         </div>
                     </div>
@@ -330,6 +338,8 @@ $(document).ready(function() {
     // use class instead of id because the button are repeating. ID can be only used once
     $(document).on('click', '.btn_edit', function() {
 
+        $('#modal_edit_branch_id').prop('disabled', true);
+
         var uuid = $(this).attr("data-uuid");
 
         var company_id = $(this).attr("data-company-id");
@@ -362,62 +372,101 @@ $(document).ready(function() {
             $('#blocked_0[value="0"]').prop('checked', true);
         } 
 
-
         // ================== COMPANY DROPDOWN ON EDIT ==================
-            // convert the company_id from string to array
-            var company_ids_arr = company_id.split(",");
-            // This code will set the selected options as default based on vaues
-            // Initialize Select2
-            $('#modal_edit_company_id').select2();
-            $("#modal_edit_company_id").val(company_ids_arr).trigger("change");
-            // Trigger change event to reflect the selected options
-            $('#modal_edit_company_id').trigger('change');
+        // Convert the company_id from string to array
+        var company_ids_arr = company_id.split(",");
+        // Initialize Select2
+        var companyDropdown = $('#modal_edit_company_id').select2();
+
+        // Event handler for opening the dropdown
+        companyDropdown.on('select2:opening', function (e) {
+            // Clear previous selected options before opening the dropdown
+            $(this).val(null).trigger('change');
+        });
+
+        // Iterate through options and disable inactive companies
+        $('#modal_edit_company_id option').each(function () {
+            var companyId = $(this).val();
+            var companyStatus = $(this).hasClass('inactive-company');
+
+            // Set the selected attribute based on the provided company_id
+            if (company_ids_arr.includes(companyId)) {
+                $(this).prop('selected', true);
+            }
+
+            // Check if the option is active
+            if ($(this).hasClass('active-company')) {
+                $(this).prop('disabled', false);
+            } else {
+                $(this).prop('disabled', true);
+            }
+        });
+
+        // Trigger change event to reflect the selected options
+        companyDropdown.trigger('change');
         // ================== END COMPANY DROPDOWN ON EDIT ==================
 
         // ================== BRANCH DROPDOWN ON EDIT ==================
-            // Convert the branch_id from string to array
-            var branch_ids_arr = branch_id.split(",");
-            // This code will set the selected options as default based on vaues
-            // Initialize Select2
+        // Convert the branch_id from string to array
+        var branch_ids_arr = branch_id.split(",");
+        // This code will set the selected options as default based on values
+        // Initialize Select2
+        $('#modal_edit_branch_id').select2();
+        $("#modal_edit_branch_id").val(branch_ids_arr).trigger("change");
+        // Trigger change event to reflect the selected options
+        $('#modal_edit_branch_id').trigger('change');
+
+        // Hide branches that are not part of the company (class: branch-local for id 3 and branch-premier for id 2)
+        if (company_ids_arr.includes('3') && !company_ids_arr.includes('2')) {
+            // enable all local
+            $('#modal_edit_branch_id option.branch-local').each(function () {
+                // Check if the option is active
+                if ($(this).hasClass('active-branch')) {
+                    $(this).prop('disabled', false);
+                } else {
+                    $(this).prop('disabled', true);
+                }
+            });
+            // disable all premier
+            $('#modal_edit_branch_id option.branch-premier').prop('disabled', true);
+            // re-initialize
             $('#modal_edit_branch_id').select2();
-            $("#modal_edit_branch_id").val(branch_ids_arr).trigger("change");
-            // Trigger change event to reflect the selected options
-            $('#modal_edit_branch_id').trigger('change');
-            // Hide branches that are not part of the company (class: branch-local for id 3 and branch-premier for id 2)
-            if (company_ids_arr.includes('3') && !company_ids_arr.includes('2')) {
-                // enable all local
-                $('#modal_edit_branch_id option.branch-local').each(function() {
+        } else if (company_ids_arr.includes('2') && !company_ids_arr.includes('3')) {
+            // enable all premier
+            $('#modal_edit_branch_id option.branch-premier').each(function () {
+                // Check if the option is active
+                if ($(this).hasClass('active-branch')) {
                     $(this).prop('disabled', false);
-                });
-                // disable all premier
-                $('#modal_edit_branch_id option.branch-premier').each(function() {
+                } else {
                     $(this).prop('disabled', true);
-                });
-                // re-initialize
-                $('#modal_edit_branch_id').select2();
-            } else if (company_ids_arr.includes('2') && !company_ids_arr.includes('3')) {
-                // enable all premier
-                $('#modal_edit_branch_id option.branch-premier').each(function() {
+                }
+            });
+            // disable all local
+            $('#modal_edit_branch_id option.branch-local').prop('disabled', true);
+            // re-initialize
+            $('#modal_edit_branch_id').select2();
+        } else if (company_ids_arr.includes('2') && company_ids_arr.includes('3')) {
+            // enable all local, AND
+            $('#modal_edit_branch_id option.branch-local').each(function () {
+                // Check if the option is active
+                if ($(this).hasClass('active-branch')) {
                     $(this).prop('disabled', false);
-                });
-                // disable all local
-                $('#modal_edit_branch_id option.branch-local').each(function() {
+                } else {
                     $(this).prop('disabled', true);
-                });
-                // re-initialize
-                $('#modal_edit_branch_id').select2();
-            } else if(company_ids_arr.includes('2') && company_ids_arr.includes('3')) {
-                // enable all local, AND
-                $('#modal_edit_branch_id option.branch-local').each(function() {
+                }
+            });
+            // enable all premier
+            $('#modal_edit_branch_id option.branch-premier').each(function () {
+                // Check if the option is active
+                if ($(this).hasClass('active-branch')) {
                     $(this).prop('disabled', false);
-                });
-                // enable all premier
-                $('#modal_edit_branch_id option.branch-premier').each(function() {
-                    $(this).prop('disabled', false);
-                });
-                // re-initialize
-                $('#modal_edit_branch_id').select2();
-            }  
+                } else {
+                    $(this).prop('disabled', true);
+                }
+            });
+            // re-initialize
+            $('#modal_edit_branch_id').select2();
+        }
         // ================== END OF BRANCH DROPDOWN ON EDIT ==================
 
         // define the edit form action
@@ -425,87 +474,109 @@ $(document).ready(function() {
         $('#form_modal_edit').attr('action', action);
     });
 
-    // Initialize branch_ids_arr variable outside the event handler
-    let branch_ids_arr;
-    // this code will check the current content of branch dropdown after the modal appears
+        // Initialize branch_ids_arr variable outside the event handler
+        let branch_ids_arr;
+        // this code will check the current content of branch dropdown after the modal appears
 
-    $('#modal-edit').on('shown.bs.modal', function () {
-        // Get the value of the dropdown inside the modal
-        let branch_ids_arr = $('#modal_edit_branch_id').val();
-        // ================== SUB EVENT ==================
-        // This is the event handling when COMPANY DROPDOWN has been changed
-        $('#modal_edit_company_id').on('change', function () {
-            // This code will execute when the Select2 input has been changed
-            var company_ids_arr = $('#modal_edit_company_id').val(); // do not use this.value so that it will return array instead of string
-            
-            // Hide branches that are not part of the company (class: branch-local for id 3 and branch-premier for id 2)
-            if (company_ids_arr.includes('3') && !company_ids_arr.includes('2')) {
-                // remove the branch dropdown contents based on company id
-                // $('#modal_edit_branch_id').val([]).trigger('change');
-                $('#modal_edit_branch_id option').each(function() {
-                    if ($(this).hasClass('branch-premier')) {
-                        // Check if the option is in the second select2 and has the 'cd' class
-                        $(this).prop('selected', false);
+        $('#modal-edit').on('shown.bs.modal', function () {
+            // Get the value of the dropdown inside the modal
+            let branch_ids_arr = $('#modal_edit_branch_id').val();
+            // ================== SUB EVENT ==================
+            // This is the event handling when COMPANY DROPDOWN has been changed
+            $('#modal_edit_company_id').on('change', function () {
+                // This code will execute when the Select2 input has been changed
+                var company_ids_arr = $('#modal_edit_company_id').val(); // do not use this.value so that it will return array instead of string
+
+                $('#modal_edit_branch_id').prop('disabled', false);
+                
+                // Hide branches that are not part of the company (class: branch-local for id 3 and branch-premier for id 2)
+                if (company_ids_arr.includes('3') && !company_ids_arr.includes('2')) {
+                    // remove the branch dropdown contents based on company id
+                    // $('#modal_edit_branch_id').val([]).trigger('change');
+                    $('#modal_edit_branch_id option').each(function() {
+                        if ($(this).hasClass('branch-premier')) {
+                            // Check if the option is in the second select2 and has the 'cd' class
+                            $(this).prop('selected', false);
+                        }
+                    });
+
+                    // enable all local
+                    $('#modal_edit_branch_id option.branch-local').each(function() {
+                        $(this).prop('disabled', false);
+                        if ($(this).hasClass('active-branch')) {
+                        $(this).prop('disabled', false);
+                    } else {
+                        $(this).prop('disabled', true);
                     }
-                });
+                    });
+                    // disable all premier
+                    $('#modal_edit_branch_id option.branch-premier').each(function() {
+                        $(this).prop('disabled', true);
+                    });
+                    // re-initialize
+                    $('#modal_edit_branch_id').select2();
+                } else if (company_ids_arr.includes('2') && !company_ids_arr.includes('3')) {
+                    // remove the branch dropdown contents based on company id
+                    // $('#modal_edit_branch_id').val([]).trigger('change');
+                    $('#modal_edit_branch_id option').each(function() {
+                        if ($(this).hasClass('branch-local')) {
+                            // Check if the option is in the second select2 and has the 'cd' class
+                            $(this).prop('selected', false);
+                        }
+                    });
 
-                // enable all local
-                $('#modal_edit_branch_id option.branch-local').each(function() {
-                    $(this).prop('disabled', false);
-                });
-                // disable all premier
-                $('#modal_edit_branch_id option.branch-premier').each(function() {
-                    $(this).prop('disabled', true);
-                });
-                // re-initialize
-                $('#modal_edit_branch_id').select2();
-            } else if (company_ids_arr.includes('2') && !company_ids_arr.includes('3')) {
-                // remove the branch dropdown contents based on company id
-                // $('#modal_edit_branch_id').val([]).trigger('change');
-                $('#modal_edit_branch_id option').each(function() {
-                    if ($(this).hasClass('branch-local')) {
-                        // Check if the option is in the second select2 and has the 'cd' class
-                        $(this).prop('selected', false);
+                    // enable all premier
+                    $('#modal_edit_branch_id option.branch-premier').each(function() {
+                        $(this).prop('disabled', false);
+                        if ($(this).hasClass('active-branch')) {
+                        $(this).prop('disabled', false);
+                    } else {
+                        $(this).prop('disabled', true);
                     }
-                });
-
-                // enable all premier
-                $('#modal_edit_branch_id option.branch-premier').each(function() {
-                    $(this).prop('disabled', false);
-                });
-                // disable all local
-                $('#modal_edit_branch_id option.branch-local').each(function() {
-                    $(this).prop('disabled', true);
-                });
-                // re-initialize
-                $('#modal_edit_branch_id').select2();
-            } else if(company_ids_arr.includes('2') && company_ids_arr.includes('3')) {
-                // enable all local, AND
-                $('#modal_edit_branch_id option.branch-local').each(function() {
-                    $(this).prop('disabled', false);
-                });
-                // enable all premier
-                $('#modal_edit_branch_id option.branch-premier').each(function() {
-                    $(this).prop('disabled', false);
-                });
-                // re-initialize
-                $('#modal_edit_branch_id').select2();
-            } else if (!company_ids_arr.includes('2') && !company_ids_arr.includes('3')) {
-                // remove the branch dropdown contents based on company id
-                $('#modal_edit_branch_id').val([]).trigger('change');
-                // enable all local, AND
-                $('#modal_edit_branch_id option.branch-local').each(function() {
-                    $(this).prop('disabled', true);
-                });
-                // enable all premier
-                $('#modal_edit_branch_id option.branch-premier').each(function() {
-                    $(this).prop('disabled', true);
-                });
-                // re-initialize
-                $('#modal_edit_branch_id').select2();
-            }
-        });
-    });    
+                    });
+                    // disable all local
+                    $('#modal_edit_branch_id option.branch-local').each(function() {
+                        $(this).prop('disabled', true);
+                    });
+                    // re-initialize
+                    $('#modal_edit_branch_id').select2();
+                } else if(company_ids_arr.includes('2') && company_ids_arr.includes('3')) {
+                    // enable all local, AND
+                    $('#modal_edit_branch_id option.branch-local').each(function() {
+                        $(this).prop('disabled', false);
+                        if ($(this).hasClass('active-branch')) {
+                        $(this).prop('disabled', false);
+                    } else {
+                        $(this).prop('disabled', true);
+                    }
+                    });
+                    // enable all premier
+                    $('#modal_edit_branch_id option.branch-premier').each(function() {
+                        $(this).prop('disabled', false);
+                        if ($(this).hasClass('active-branch')) {
+                        $(this).prop('disabled', false);
+                    } else {
+                        $(this).prop('disabled', true);
+                    }
+                    });
+                    // re-initialize
+                    $('#modal_edit_branch_id').select2();
+                } else if (!company_ids_arr.includes('2') && !company_ids_arr.includes('3')) {
+                    // remove the branch dropdown contents based on company id
+                    $('#modal_edit_branch_id').val([]).trigger('change');
+                    // enable all local, AND
+                    $('#modal_edit_branch_id option.branch-local').each(function() {
+                        $(this).prop('disabled', true);
+                    });
+                    // enable all premier
+                    $('#modal_edit_branch_id option.branch-premier').each(function() {
+                        $(this).prop('disabled', true);
+                    });
+                    // re-initialize
+                    $('#modal_edit_branch_id').select2();
+                }
+            });
+        });    
 
     // Prevent from redirecting back to homepage when cancel button is clicked accidentally
     $('#modal-add, #modal-edit').on("hide.bs.modal", function (e) {
@@ -539,11 +610,11 @@ $(document).ready(function() {
                     $('#modal_add_role_id').val(''); 
                     $('#modal_add_company_id').val(null).trigger('change');
                     $('#modal_add_branch_id').val(null).trigger('change'); 
-                    $('#modal_edit_company_id').val(null).trigger('change'); 
-                    $('#modal_edit_branch_id').val(null).trigger('change');                     
+                    $('#modal_edit_company_id').val(null).trigger('change');   
+                    $('#modal_add_branch_id').prop('disabled', true);     
+                    $('#modal_edit_branch_id').prop('disabled', true);              
                 } else {
                     e.stopPropagation();
-
                 }
             });
 
@@ -770,92 +841,6 @@ $(document).ready(function() {
             }
         });
     });
-
-    //   $('#modal-add').submit(function () {
-    //     // Get the selected values from both company and branch dropdowns
-    //     var selectedCompanies = $('#modal_add_company_id').val();
-    //     var selectedBranches = $('#modal_add_branch_id').val();
-
-    //     // Check if no companies are selected
-    //     if (!selectedCompanies || selectedCompanies.length === 0) {
-    //         Swal.fire({
-    //             icon: 'error',
-    //             title: 'Error',
-    //             allowEnterKey: false,
-    //             text: 'Please select at least one company.'
-    //         });
-    //         // You can prevent further action, for example:
-    //         return false;
-    //     }
-
-    //     // Check if there is at least one branch selected for each selected company
-    //     for (var i = 0; i < selectedCompanies.length; i++) {
-    //         var company = selectedCompanies[i];
-    //         // Check if there is at least one branch selected with the corresponding company_id
-    //         if (!selectedBranches.some(branch => branch.startsWith('branch-' + company))) {
-    //             Swal.fire({
-    //                 icon: 'error',
-    //                 title: 'Error',
-    //                 allowEnterKey: false,
-    //                 text: 'Please select at least one branch for Company ' + company + '.'
-    //             });
-    //             // You can prevent further action, for example:
-    //             return false;
-    //         }
-    //     }
-
-    //     // If the conditions are met, proceed with the desired action
-    //     // For example, submit a form or perform another action
-    // });
-
-
-
-    // $('#modal-edit').submit(function () {
-    //     // Get the selected values from both company and branch dropdowns
-    //     var selectedCompanies = $('#modal_edit_company_id').val();
-    //     var selectedBranches = $('#modal_edit_branch_id').val();
-
-    //     // Check the conditions for validation
-    //     if (selectedCompanies.length === 2) {
-    //         // Two companies are selected
-    //         if (selectedBranches.length === 1) {
-    //             // Only one branch is selected
-    //             Swal.fire({
-    //                 icon: 'error',
-    //                 title: 'Error',
-    //                 allowEnterKey: false,
-    //                 text: 'Please select two branches for the selected companies.'
-    //             });
-    //             // You can prevent further action, for example:
-    //             return false;
-    //         } else if (selectedBranches.length === 2) {
-    //             // Two branches are selected
-    //             // Now check if the branches have the corresponding class of the selected companies
-    //             var isValidSelection = true;
-    //             for (var i = 0; i < selectedCompanies.length; i++) {
-    //                 var companyId = selectedCompanies[i];
-    //                 var branchClass = companyId === '2' ? 'branch-premier' : 'branch-local';
-    //                 if (!selectedBranches.includes(branchClass)) {
-    //                     isValidSelection = false;
-    //                     break;
-    //                 }
-    //             }
-
-    //             if (!isValidSelection) {
-    //                 Swal.fire({
-    //                 icon: 'error',
-    //                 title: 'Error',
-    //                 allowEnterKey: false,
-    //                 text: 'Please select branches corresponding to the selected companies.'
-    //             });
-    //                 // You can prevent further action, for example:
-    //                 return false;
-    //             }
-    //         }
-    //     }
-    //     // If the conditions are met, proceed with the desired action
-    //     // For example, submit a form or perform another action
-    // });
 });    
 </script>
 @endsection

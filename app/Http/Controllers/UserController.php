@@ -22,7 +22,7 @@ class UserController extends Controller
     {
         $users = User::with(['role','branch','company'])->whereDeleted(false)->get();
         
-        $companies = Company::whereDeleted(false)->whereIn('status_id', [8,1])->get(); // 1 does not exists in status table as active/enable
+        $companies = Company::whereDeleted(false)->get(); // 1 does not exists in status table as active/enable
 
         $company_ids = [];
         foreach($companies as $company) {

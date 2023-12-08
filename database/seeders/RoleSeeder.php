@@ -27,7 +27,8 @@ class RoleSeeder extends Seeder
             'Treasury',
             'Manager',
             'Administrator',
-            'Superadmin'
+            'Superadmin',
+            'Accounting Manager'
         ];
 
         foreach($roles as $key => $name) {

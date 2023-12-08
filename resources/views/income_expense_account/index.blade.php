@@ -9,7 +9,7 @@
                 <h1>Income and Expense Accounts</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add">Add Account</button>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add" {{ Helper::BP(22,2) }}>Add Account</button>
             </div>
         </div>
     </div>
@@ -52,7 +52,8 @@
                                         data-company-id="{{ $account->company_id }}" 
                                         data-currency="{{ $account->currency }}"
                                         data-income-account="{{ $account->income_account }}"
-                                        data-expense-account="{{ $account->expense_account }}">
+                                        data-expense-account="{{ $account->expense_account }}"
+                                        {{ Helper::BP(22,4) }}>
                                         <i class="fas fa-pencil-alt"></i>&nbsp;Edit
                                     </button>
                                 </td>

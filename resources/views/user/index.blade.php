@@ -375,13 +375,10 @@ $(document).ready(function() {
         // ================== COMPANY DROPDOWN ON EDIT ==================
         // Convert the company_id from string to array
         var company_ids_arr = company_id.split(",");
-        // Initialize Select2
-        var companyDropdown = $('#modal_edit_company_id').select2();
 
-        // Event handler for opening the dropdown
-        companyDropdown.on('select2:opening', function (e) {
-            // Clear previous selected options before opening the dropdown
-            $(this).val(null).trigger('change');
+        // Initialize Select2 after manipulating options
+        var companyDropdown = $('#modal_edit_company_id').select2({
+            multiple: true
         });
 
         // Iterate through options and disable inactive companies
@@ -389,16 +386,14 @@ $(document).ready(function() {
             var companyId = $(this).val();
             var companyStatus = $(this).hasClass('inactive-company');
 
+            // Check if the option is active
+            if (companyStatus) {
+                $(this).prop('disabled', true);
+            }
+
             // Set the selected attribute based on the provided company_id
             if (company_ids_arr.includes(companyId)) {
                 $(this).prop('selected', true);
-            }
-
-            // Check if the option is active
-            if ($(this).hasClass('active-company')) {
-                $(this).prop('disabled', false);
-            } else {
-                $(this).prop('disabled', true);
             }
         });
 

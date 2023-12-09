@@ -58,6 +58,7 @@
                                         data-code="{{ $payment->code }}"
                                         data-status-id="{{ $payment->status->name }}"
                                         data-is-cash="{{ $payment->is_cash }}"
+                                        data-is-debit-to="{{ $payment->is_debit_to }}"
                                         data-branch-names="{{ Helper::get_branch_name_by_id($payment->branch_id) }}"
                                         data-remarks="{{ $payment->remarks }}"
                                         data-updated-by="{{ $payment->updated_by }}"
@@ -74,6 +75,7 @@
                                         data-code="{{ $payment->code }}"
                                         data-branch-id="{{ $payment->branch_id }}"
                                         data-is-cash="{{ $payment->is_cash }}"
+                                        data-is-debit-to="{{ $payment->is_debit_to }}"
                                         data-status-id="{{ $payment->status_id }}"
                                         data-remarks="{{ $payment->remarks }}"
                                         {{ $edit_button_state }}>
@@ -135,28 +137,24 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-3">
+                        <div class="col-md-6 col-sm-12">
+                            <label for="code">Is Cash ?</label>
                             <div class="col-12">
-                                <label for="code">Is Cash ?</label>
-                                <div class="col-12">
-                                    <input type="radio" id="modal_create_is_cash" name="status" value="1" required>
-                                    <label for="" class="mr-4">Yes</label>
-                                    <input type="radio" id="modal_create_is_cash" name="status" value="0">
-                                    <label for="">No</label>
-                                </div>
+                                <input type="radio" id="modal_create_is_cash" name="is_cash" value="1" required>
+                                <label for="" class="mr-4">Yes</label>
+                                <input type="radio" id="modal_create_is_cash" name="is_cash" value="0">
+                                <label for="">No</label>
                             </div>
                         </div>
-                        {{-- <div class="row mt-3">
+                        <div class="col-md-6 col-sm-12">
+                            <label for="code">Is Debit To ?</label>
                             <div class="col-12">
-                                <div class="form-group">
-                                    <label for="branches">Branches</label>
-                                    @foreach($branches as $branch)
-                                        <br/>
-                                        <input type="checkbox" name="branch_id[]" id="modal_add_branch_id" value={{ $branch->id }}><span class="ml-2">{{ $branch->name }}</span>
-                                    @endforeach
-                                </div>
+                                <input type="radio" id="modal_create_is_debit_to" name="is_debit_to" value="1" required>
+                                <label for="" class="mr-4">Yes</label>
+                                <input type="radio" id="modal_create_is_debit_to" name="is_debit_to" value="0">
+                                <label for="">No</label>
                             </div>
-                        </div> --}}
+                        </div>
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="modal_add_close" >Close</button>
@@ -208,17 +206,6 @@
                                     <input type="text" class="form-control form-control-sm" name="company_id" id="modal_edit_company_id" readonly>
                                 </div>
                             </div>
-                            {{-- <div class="col-md-12 col-sm-12">
-                                <div class="form-group">
-                                    <label for="comapny_id">Company</label>
-                                    <select class="form-control form-control-sm" name="company_id" id="modal_edit_company_id" required>
-                                        <option value="" disabled>-- Select Company --</option>
-                                        @foreach($companies as $company)
-                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div> --}}
                             <div class="col-md-6 col-sm-12">
                                 <label for="code">Is Cash ?</label>
                                 <div class="col-12">
@@ -229,6 +216,15 @@
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-12">
+                                <label for="code">Is Debit To ?</label>
+                                <div class="col-12">
+                                    <input type="radio" name="is_debit_to" value="1">
+                                    <label for="" class="mr-4">Yes</label>
+                                    <input type="radio" name="is_debit_to" value="0">
+                                    <label for="">No</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="status">Payment Status</label>
                                     <div class="col-12">
@@ -239,15 +235,6 @@
                                     </div>
                                 </div>
                             </div>
-                            {{-- <div class="col-md-12 col-sm-12">
-                                <div class="form-group">
-                                    <label for="branches">Branches</label>
-                                    @foreach($branches as $branch)
-                                        <br/>
-                                        <input type="checkbox" name="branch_id[]" id="modal_edit_branch_{{ $branch->id }}" value={{ $branch->id }}><span class="ml-2">{{ $branch->name }}</span>
-                                    @endforeach
-                                </div>
-                            </div> --}}
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="remarks">Remarks</label>
@@ -304,6 +291,10 @@
                             <tr>
                                 <td width="25%">Is Cash ?</td>
                                 <td><span id="modal_show_is_cash" style="font-weight:bold"></span></td>
+                            </tr>
+                            <tr>
+                                <td width="25%">Is Debit To ?</td>
+                                <td><span id="modal_show_is_debit_to" style="font-weight:bold"></span></td>
                             </tr>
                             <tr>
                                 <td width="25%">Remarks</td>
@@ -422,6 +413,7 @@
         var remarks = $(this).attr("data-remarks");
         var status_id = $(this).attr("data-status-id");
         var is_cash = $(this).attr("data-is-cash");
+        var is_debit_to = $(this).attr("data-is-debit-to");
         var branch_names = $(this).attr("data-branch-names");
         var updated_by = $(this).attr("data-updated-by");
 
@@ -435,6 +427,7 @@
         $('#modal_show_remarks').text(remarks);
         $('#modal_show_status_id').text(status_id);
         $('#modal_show_is_cash').text(is_cash == 1 ? 'Yes' : 'No')
+        $('#modal_show_is_debit_to').text(is_debit_to == 1 ? 'Yes' : 'No')
         $('#modal_show_updated_by').text(updated_by);
 
         if (status_id == 'Enabled' || status_id == 1) {

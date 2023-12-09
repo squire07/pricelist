@@ -19,7 +19,7 @@ class PaymentMethodController extends Controller
     public function index()
     {
         $payments = PaymentMethod::with('status')->whereDeleted(false)->get();
-        $companies = Company::whereDeleted(false)->get();
+        $companies = Company::whereDeleted(false)->whereIn('status_id',[8,1])->get();
         $branches = Branch::whereDeleted(false)->get();
         return view('payment_method.index',compact('payments','companies','branches'));
     }
@@ -48,7 +48,7 @@ class PaymentMethodController extends Controller
         if ($existing) {
             if ($existing->name === $request->name) {
                 return redirect('payment-methods')->with('error', 'Account Name already exists for this company!');
-            } elseif ($existing_code) {
+            } elseif ($existing->code === $request->code) {
                 return redirect('payment-methods')->with('error', 'Account Number already exists for this company!');
             }
         }
@@ -62,6 +62,7 @@ class PaymentMethodController extends Controller
         $payment_method->code = $request->code;
         $payment_method->status_id = 6; // default to draft?
         $payment_method->is_cash = $request->is_cash ?? 0;
+        $payment_method->is_debit_to = $request->is_debit_to ?? 0;
         $payment_method->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
         $payment_method->created_by = Auth::user()->name;
         if ($payment_method->save()) {
@@ -104,7 +105,7 @@ class PaymentMethodController extends Controller
         if ($existing) {
             if ($existing->name === $request->name) {
                 return redirect('payment-methods')->with('error', 'Account Name already exists for this company!');
-            } elseif ($existing_code) {
+            } elseif ($existing->code === $request->code) {
                 return redirect('payment-methods')->with('error', 'Account Number already exists for this company!');
             }
         }
@@ -116,6 +117,7 @@ class PaymentMethodController extends Controller
         $payment_method->code = $request->code;
         $payment_method->status_id = $request->status ?? 6; // set default to enabled
         $payment_method->is_cash = $request->is_cash ?? $payment_method->is_cash;
+        $payment_method->is_debit_to = $request->is_debit_to ?? $payment_method->is_debit_to;
         $payment_method->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
         $payment_method->remarks = $request->remarks;
         $payment_method->updated_at = Carbon::now();

@@ -31,7 +31,7 @@ class HistoryController extends Controller
                                             ->orderByDesc('id')
                                             ->get();
                 
-        return view('History.index', compact('sales_histories'));
+        return view('history.index', compact('sales_histories'));
     }
 
     /**

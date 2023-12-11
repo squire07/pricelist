@@ -268,7 +268,7 @@ class ForInvoicingController extends Controller
                     $nuc = new Nuc();
                     $nuc->uuid = $sales->uuid;
                     $nuc->bcid = $sales->bcid;
-                    $nuc->total_nuc = $sales->total_nuc;
+                    $nuc->total_nuc = str_replace(',', '', $sales->total_nuc);
                     $nuc->save();
                 }
             }

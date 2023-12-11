@@ -27,7 +27,10 @@
                     </thead>
                     <tbody></tbody>
                 </table>
-            </div>    
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-sm btn-primary" id="btn-sync" {{ !in_array(Auth::user()->role_id, [11,12]) ? 'disabled' : '' }}><i class="fas fa-sync mr-1"></i>Sync</button>     
+            </div>     
         </div>
     </div>
 @endsection
@@ -50,6 +53,7 @@
             autoWidth: true,
             responsive: true,
             lengthMenu: [[10, 25, 50, -1], ['10 rows', '25 rows', '50 rows', "Show All"]],
+            order: [[ 0, "desc" ]],
             buttons: [
                 {
                     extend: 'pageLength',
@@ -70,6 +74,44 @@
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
             },
 
+        });
+
+        $('#btn-sync').on('click', function() {
+            Swal.fire({
+                title: 'Are you sure you want to sync with Prime Dashboard?',
+                text: "This may take some time!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, sync!',
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    Swal.getCancelButton().setAttribute('hidden', true);
+                    return fetch(window.location.origin + '/distributors/sync-distributors')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(response.statusText)
+                        }
+                        return response.ok
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(
+                            `Request failed: ${error}`
+                        )
+                    })
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Sync complete!',
+                        icon: 'success',
+                    }).then(function() {
+                        location.reload();
+                    })
+                }
+            })
         });
     });
 </script>

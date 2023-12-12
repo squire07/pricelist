@@ -20,7 +20,8 @@ return new class extends Migration
             $table->longText('si')->nullable();
             $table->longText('payment')->nullable();
             $table->string('nuc_points')->nullable();
-            $table->string('distributor_response')->nullable();
+            $table->string('distributor_response_status')->nullable();
+            $table->string('distributor_response_body')->nullable();
             $table->string('so_response_status')->nullable();
             $table->longText('so_response_body')->nullable();
             $table->string('si_response_status')->nullable();

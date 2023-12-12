@@ -24,8 +24,9 @@ class ItemSeeder extends Seeder
 
             $param = '/api/resource/Item Price?filters=[["Item Price","price_list","in", ["' . $price_list->name .'"]]]&fields=["name","item_code","item_name","price_list","currency","price_list_rate","nuc"]&limit=1000';
             $data = Helper::get_erpnext_data($param);
+            $data = json_decode($data->getBody()->getContents(), true);
 
-            foreach($data['data']['data'] as $key => $item) {
+            foreach($data['data'] as $key => $item) {
                 Item::create([
                     'uuid' => Str::uuid(),
                     'code' => $item['item_code'],

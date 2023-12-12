@@ -20,8 +20,9 @@ class TransactionTypeSeeder extends Seeder
         // ERPNext 
         $param = '/api/resource/Price List?limit=500&filters=[["selling","=","1"]]';
         $data = Helper::get_erpnext_data($param);
+        $data = json_decode($data->getBody()->getContents(), true);
 
-        foreach($data['data']['data'] as $key => $price_lists){
+        foreach($data['data'] as $key => $price_lists){
             $transaction_type = TransactionType::create([
                 'uuid' => Str::uuid(),
                 'name' => $price_lists['name'],

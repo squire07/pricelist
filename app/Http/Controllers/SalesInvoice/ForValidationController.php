@@ -115,11 +115,14 @@ class ForValidationController extends Controller
                 $param = '/api/resource/Stock Ledger Entry?filters=[["item_code", "=", "' . $item->item_code . '"], ["posting_date", "<=", "' . $todays_date . '"], ["warehouse", "=", "' . $sales_order->branch->warehouse . '"]]&fields=["item_code", "warehouse", "sum(actual_qty) as total_qty"]';
                 
                 $item_inventory = Helper::get_erpnext_data($param);
-                $item_inventory = $item_inventory['data']['data']; // note: this has status_code and data AND the server response is always 200
 
-                if($item_inventory[0]['total_qty'] == null || $item_inventory[0]['total_qty'] <= $item->quantity) {
-                    $has_issue = true;
-                    $items .= '&#8594; ' . $item->item_code . ' - ' . $item->item_name . '<br>';
+                if($item_inventory->getStatusCode() == 200) {
+                    $data = json_decode($item_inventory->getBody()->getContents(), true);
+                    $item_inventory = $data['data']; // note: this has status_code and data AND the server response is always 200
+                    if($item_inventory[0]['total_qty'] == null || $item_inventory[0]['total_qty'] <= $item->quantity) {
+                        $has_issue = true;
+                        $items .= '&#8594; ' . $item->item_code . ' - ' . $item->item_name . '<br>';
+                    }
                 }
             }   
 
@@ -177,23 +180,30 @@ class ForValidationController extends Controller
                 // 1) check distributor in erpnext if existing
                     $distributor_name = Helper::get_distributor_name_by_bcid($sales->bcid);
                     $distributor_param = '/api/resource/Customer'; // if POST, do not add '/' at the end 
-
-                    $distributor_data = Helper::get_erpnext_data($distributor_param . '/' . $distributor_name);
-
+                    
+                    $distributor_data = Helper::get_erpnext_data($distributor_param . '/' . trim($distributor_name));
 
                 // 2) get the payload
                     $payload = Payload::whereUuid($sales->uuid)->first();
 
-
                 // 3) post the customer if not existing in erpnext
-                    if($distributor_data['status_code'] == 404) {
-                        $post_customer = Helper::post_erpnext_data($distributor_param, $payload->distributor);
-                        // update payload with response 
-                        $payload->distributor_response = $post_customer->getStatusCode();         
-                        $payload->update();
+                    if(method_exists($distributor_data, 'getCode') && $distributor_data->getCode() == 404) {
+                        try {
+                            $post_customer = Helper::post_erpnext_data($distributor_param, $payload->distributor);
+                            // update payload with response 
+                            
+                            $payload->update([
+                                'distributor_response_status' => $post_customer->getStatusCode(),
+                                'distributor_response_body' => $post_customer->getBody()->getContents(),
+                            ]);
+                        } catch (\GuzzleHttp\Exception\ClientException $e) {
+                            $payload->update([
+                                'distributor_response_status' => $e->getResponse()->getStatusCode(),
+                                'distributor_response_body' => $e->getResponse()->getBody()->getContents(),
+                            ]);
+                        }
                     }
-
-
+                    
 
                 // 4) if error in posting customer to erpnext
                 if(isset($post_customer) && $post_customer->getStatusCode() == 404) {
@@ -336,10 +346,10 @@ class ForValidationController extends Controller
 
                     if($sales->update()) {
                         if($post_so->getStatusCode() == 200) {
-                            return redirect('sales-invoice/for-validation')->with('success', 'Sales Invoice was successfully recorded to ERPNext!');
+                            return redirect('sales-invoice/for-validation')->with('success', 'Sales order was successfully recorded to ERPNext!');
                         }
                     } else {
-                        return redirect('sales-invoice/for-validation')->with('error', 'Unable to add Sales Order, Sales Invoice and Payment Details in ERPNext! Please contact your administrator.');
+                        return redirect('sales-invoice/for-validation')->with('error', 'Unable to add SO and SI in ERPNext! Please contact your administrator.');
                     }
                 }
 

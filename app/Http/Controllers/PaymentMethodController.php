@@ -94,18 +94,24 @@ class PaymentMethodController extends Controller
     public function update(Request $request, $uuid)
     {    
         // validate
-        // Check for duplicate before updating
         $existing = PaymentMethod::whereCompanyId($request->company_id)
-        ->where(function ($query) use ($request, $uuid) {
-            $query->whereName($request->name)
-            ->orWhere('code', $request->code);
-        })
-        ->orWhereNot('uuid', $uuid)
-        ->first();
-        
-        if ($existing) {
-            return redirect('payment-methods')->with('error', 'Account name or code already exists for this company!');
+                        ->where(function ($query) use ($request, $uuid) {
+                            $query->whereName($request->name)
+                                ->orWhere('code', $request->code);
+                        })
+                        ->orWhereNot('uuid', $uuid)
+                        ->first();
+    
+    if ($existing) {
+        if ($existing->name === $request->name && $existing->code === $request->code) {
+            return redirect('payment-methods')->with('error', 'Duplicate payment method for this company!');
+        } elseif ($existing->name === $request->name) {
+            return redirect('payment-methods')->with('error', 'Account Name already exists for this company!');
+        } elseif ($existing->code === $request->code) {
+            return redirect('payment-methods')->with('error', 'Account Number already exists for this company!');
         }
+    }
+
         // Continue with the update if no duplicate records are found
         $payment_method = PaymentMethod::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
         $payment_method->name = $request->name;

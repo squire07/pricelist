@@ -41,7 +41,7 @@
                 <div class="col-3">
                     <div class="form-group">
                         <label for="distributor">Distributor</label>
-                        <input type="text" class="form-control form-control-sm" id="distributor" value="{{ $payload->distributor_response }}" disabled>
+                        <input type="text" class="form-control form-control-sm" id="distributor" value="{{ $payload->distributor_response_status }}" disabled>
                     </div>
                 </div>
                 <div class="col-3">
@@ -69,7 +69,7 @@
             <div class="row">
                 <div class="col-3">
                     <label for="">Distributor</label>
-                    <textarea class="form-control json-textarea" disabled></textarea>
+                    <textarea class="form-control json-textarea" disabled>{{ $payload->distributor_response_body }}</textarea>
                 </div>
                 <div class="col-3">
                     <label for="">Sales Order</label>

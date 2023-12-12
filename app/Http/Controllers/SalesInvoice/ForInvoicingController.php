@@ -180,7 +180,7 @@ class ForInvoicingController extends Controller
     {
         $uuid = $request->uuid ?? $uuid;
         
-        $sales = Sales::whereUuid($uuid)->whereDeleted(false)->firstOrFail();  
+        $sales = Sales::with('branch')->whereUuid($uuid)->whereDeleted(false)->firstOrFail();  
 
         // check if request contains status_id = 1
         if(isset($request->status_id) && $request->status_id == 1) { // Draft
@@ -269,6 +269,9 @@ class ForInvoicingController extends Controller
                     $nuc->uuid = $sales->uuid;
                     $nuc->bcid = $sales->bcid;
                     $nuc->total_nuc = str_replace(',', '', $sales->total_nuc);
+                    // branch and oid
+                    $nuc->branch = $sales->branch->name;
+                    $nuc->oid = Helper::get_si_assignment_no($sales->si_assignment_id);
                     $nuc->save();
                 }
             }

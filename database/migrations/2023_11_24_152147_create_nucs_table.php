@@ -16,6 +16,8 @@ return new class extends Migration
             $table->uuid('uuid');
             $table->string('bcid');
             $table->double('total_nuc')->default(0);
+            $table->string('branch')->nullable();
+            $table->string('oid')->nullable(); // invoice number
             $table->string('state', 15)->nullable();
             $table->tinyInteger('status')->default(0); // 0 - uncredited; 1 - credited;
             $table->tinyInteger('deleted')->default(false);

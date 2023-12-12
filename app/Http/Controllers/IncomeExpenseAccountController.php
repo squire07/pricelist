@@ -68,9 +68,12 @@ class IncomeExpenseAccountController extends Controller
         $accounts = TransactionType::with('accounts')->whereUuid($uuid)->first();
         
         $companies = Company::whereDeleted(false)->whereIn('status_id', [8,1])->get(); // 1 does not exists as status. To refactor soon as Active 1 = true, 0 = false;
-        $currencies = Helper::get_erpnext_data('/api/resource/Currency?filters={"enabled":"1"}');
-        $currencies = $currencies['data']['data'];
-        
+        $data_currencies = Helper::get_erpnext_data('/api/resource/Currency?filters={"enabled":"1"}');
+
+        if($data_currencies->getStatusCode() == 200) {
+            $data = json_decode($data_currencies->getBody()->getContents(), true);
+            $currencies = $data['data'];
+        }        
         return view('income_expense_account.index', compact('accounts','companies','currencies'));
     }
 

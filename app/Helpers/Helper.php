@@ -183,12 +183,12 @@ class Helper {
 
     public static function get_si_assignment_no($id) {
         $si_assignment_detail = SalesInvoiceAssignmentDetail::whereId($id)->first();
-        return $si_assignment_detail->series_number;
+        return $si_assignment_detail->prefix_value . $si_assignment_detail->series_number;
     }
 
     public static function get_distributor_name_by_bcid($bcid) {
         $distributor = Distributor::whereBcid($bcid)->first();
-        return $distributor->name;
+        return trim($distributor->name);
     }
 
     public static function get_sales_status($si_assignment_id) {
@@ -223,16 +223,9 @@ class Helper {
                     'Accept' => 'application/json', 
                 ],
             ]);
-
-            return [
-                'status_code' => $response->getStatusCode(),
-                'data' => json_decode($response->getBody(), true),
-            ];
+            return $response;
         } catch (\Exception $e) {
-            return [
-                'status_code' => 404,
-                'error' => $e->getMessage(),
-            ];
+            return $e;
         }
     }
 
@@ -269,7 +262,7 @@ class Helper {
         }
 
         $payload = [
-            'customer_name' => $distributor->name,
+            'customer_name' => trim($distributor->name),
             'customer_type' => 'Company',
             'customer_group' => 'All Customer Groups',
             'territory' => 'All Territories'
@@ -348,28 +341,32 @@ class Helper {
                 // get the payment description from the payment methods table using the payment id
                 $payment_details = PaymentMethod::whereId($payment['id'])->first();
                 $debit_to_account = $payment_details->description;
+                $is_debit_to = $payment_details->is_debit_to == 1 ? 1 : 0;
             }
         }
 
         if($sales->company_id == 3) {
             $naming_series = 'LO-SI-V-.YYYY.-';
             $taxes_and_charges = 'VAT Sales - LOCAL';
-            // if($sales->payment->payment_type == 'CASH' || $sales->payment->payment_type == 'cash') {
-            //     $debit_to = '1101001 - Accounts Receivable - Trade - UNO';
-            // } else {
-                $debit_to = $debit_to_account;
-            // }
             $account_head = '2010120 - Due to BIR -  Value Added Tax - UNO';
 
+            if($is_debit_to == 1) {
+                $debit_to = $debit_to_account;
+            } else {
+                $debit_to = '1101001 - Accounts Receivable - Trade - UNO';
+            }
+            
         } else if ($sales->company_id == 2) {
             $naming_series = 'PR-SI-V-.YYYY.-';
-            $taxes_and_charges = 'VAT Sales - PREMIER';  
-            // if($sales->payment->payment_type == 'CASH' || $sales->payment->payment_type == 'cash') {
-            //     $debit_to = '1101001 - Accounts Receivable - Trade - PREMIER';
-            // } else {
-                $debit_to = $debit_to_account;
-            // }
+            $taxes_and_charges = 'VAT Sales - PREMIER';
             $account_head = '2010120 - Due to BIR -  Value Added Tax - PREMIER';
+
+            if($is_debit_to == 1) {
+                $debit_to = $debit_to_account;
+            } else {
+                $debit_to = '1101001 - Accounts Receivable - Trade - PREMIER';
+            }
+                    
         }
 
         // get the income and expense accounts
@@ -446,15 +443,25 @@ class Helper {
 
                 $naming_series = 'ACC-PAY-.YYYY.-';
 
-                $paid_from = $payment_details->description;  // e.g. '1101001 - Accounts Receivable - Trade - UNO'     or     '1101001 - Accounts Receivable - Trade - PREMIER'
-
                 $reference_no = $payment['ref_no'];
 
                 // this code can be refactored into ternary type but let us keep this way for easy understanding
                 if($sales->company_id == 3) {
-                    $paid_to = '1010002 - Cash - Undeposited Collections - UNO';
+                    if($payment_details->is_debit_to == 0) {
+                        $paid_from = '1101001 - Accounts Receivable - Trade - UNO';
+                        $paid_to = $payment_details->description;
+                    } else {
+                        $paid_from = $payment_details->description;
+                        $paid_to = '1010002 - Cash - Undeposited Collections - UNO';
+                    }
                 } else if ($sales->company_id == 2) {
-                    $paid_to = '1010002 - Cash - Undeposited Collections - PREMIER';
+                    if($payment_details->is_debit_to == 0) {
+                        $paid_from = '1101001 - Accounts Receivable - Trade - PREMIER';
+                        $paid_to = $payment_details->description;
+                    } else {
+                        $paid_from = $payment_details->description;
+                        $paid_to = '1010002 - Cash - Undeposited Collections - PREMIER';
+                    }
                 }
 
                 // this is the amount per payment method
@@ -480,13 +487,14 @@ class Helper {
                     'paid_amount' => floatval($total_amount), 
                     'received_amount' => floatval($total_amount),
                     'target_exchange_rate' => 1.0,
-                    'paid_to' => $paid_to,
                     'paid_from' => $paid_from,
+                    'paid_to' => $paid_to,
                     'currency' => $sales->transaction_type->currency ?? 'PHP',
                     'cost_center' => $sales->branch->cost_center_name,
                     'status' => 'Submitted',
                     'docstatus' => 1,
                     'reference_no' => $reference_no,
+                    'reference_date' => date("Y-m-d", strtotime($sales->payment->created_at)),
                     'references' => [
                         [
                             'parentfield' => 'references',
@@ -553,6 +561,6 @@ class Helper {
                 return $letter;
             }
         }
-        return null;
+        return null; 
     }
 }

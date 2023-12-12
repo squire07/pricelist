@@ -21,6 +21,8 @@
                         <tr>
                             <th class="text-center">UUID</th>
                             <th class="text-center">BCID</th>
+                            <th class="text-center">Branch</th>
+                            <th class="text-center">OID</th>
                             <th class="text-center">SO No</th>
                             <th class="text-center">SI No</th>
                             <th class="text-center">NUC Points</th>
@@ -33,6 +35,8 @@
                             <tr>
                                 <td class="text-center">{{ $nuc->uuid }}</td>
                                 <td class="text-center">{{ $nuc->bcid }}</td>
+                                <td class="text-center">{{ $nuc->branch }}</td>
+                                <td class="text-center">{{ $nuc->oid }}</td>
                                 <td class="text-center">{{ $nuc->sales->so_no ?? '' }}</td>
                                 <td class="text-center">{{ $nuc->sales->si_no ?? '' }}</td>
                                 <td class="text-right">{{ $nuc->total_nuc }}</td>
@@ -62,7 +66,7 @@
                     className: 'btn-default btn-sm',
                 },
             ],
-            order: [[6, 'desc']],
+            order: [[8, 'desc']],
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
             },

@@ -247,7 +247,7 @@
                         <div class="col-md-12 col-sm-12">
                             <div class="form-group">
                                 <label for="companies">Companies</label>
-                                <select class="form-control select2" multiple="multiple" id="modal_edit_company_id" name="company_id[]" data-name="company_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" readonly>
+                                <select class="form-control select2" multiple="multiple" id="modal_edit_company_id" name="company_id[]" data-name="company_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;">
                                     @foreach($companies as $company)
                                         @php
                                             $companyStatus = $company->status_id == 9 ? 'inactive-company' : 'active-company';
@@ -377,28 +377,53 @@ $(document).ready(function() {
         var company_ids_arr = company_id.split(",");
 
         // Initialize Select2 after manipulating options
-        var companyDropdown = $('#modal_edit_company_id').select2({
-            multiple: true
+        var company_dropdown = $('#modal_edit_company_id').select2({
+            multiple: true,
+            templateResult: function (option) {
+                // Check if the option is inactive and hide it from the dropdown
+                if ($(option.element).hasClass('inactive-company')) {
+                    return null;
+                }
+                return option.text;
+            }
         });
+
+        // Flag to control whether values should be cleared
+        var clear_inactive_values = false;
 
         // Iterate through options and disable inactive companies
         $('#modal_edit_company_id option').each(function () {
             var companyId = $(this).val();
-            var companyStatus = $(this).hasClass('inactive-company');
+            var company_status = $(this).hasClass('inactive-company');
 
             // Check if the option is active
-            if (companyStatus) {
+            if (company_status) {
                 $(this).prop('disabled', true);
             }
 
             // Set the selected attribute based on the provided company_id
             if (company_ids_arr.includes(companyId)) {
                 $(this).prop('selected', true);
+
+                // Set the flag to clear inactive values when a new company is selected
+                if (company_status) {
+                    clear_inactive_values = true;
+                }
             }
         });
 
         // Trigger change event to reflect the selected options
-        companyDropdown.trigger('change');
+        company_dropdown.trigger('change');
+
+        // Manually handle the opening event to clear inactive values
+        company_dropdown.on('select2:opening', function (e) {
+            // Check if there are existing selections and the flag is set
+            if (clear_inactive_values) {
+                company_dropdown.find('option.inactive-company:selected').prop('selected', false);
+                clear_inactive_values = false;
+            }
+        });
+
         // ================== END COMPANY DROPDOWN ON EDIT ==================
 
         // ================== BRANCH DROPDOWN ON EDIT ==================
@@ -573,26 +598,25 @@ $(document).ready(function() {
             });
         });    
 
-    // Prevent from redirecting back to homepage when cancel button is clicked accidentally
-    $('#modal-add, #modal-edit').on("hide.bs.modal", function (e) {
-
-        if (!$('#modal-add , #modal-edit').hasClass('programmatic')) {
-            e.preventDefault();
-            swal.fire({
-                title: 'Are you sure?',
-                text: "Please confirm that you want to cancel",
-                type: 'warning',
-                showCancelButton: true,
-                allowEnterKey: false,
-                allowOutsideClick: false,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'No',
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-            }).then(function(result) {
-                if (result.value) {
-                    $('#modal-add , #modal-edit').addClass('programmatic');
-                    $('#modal-add , #modal-edit').modal('hide');
+        // Prevent from redirecting back to homepage when cancel button is clicked accidentally
+        $('#modal-add').on("hide.bs.modal", function (e) {
+            if (!$('#modal-add').hasClass('programmatic')) {
+                e.preventDefault();
+                swal.fire({
+                    title: 'Are you sure?',
+                    text: "Please confirm that you want to cancel",
+                    type: 'warning',
+                    showCancelButton: true,
+                    allowEnterKey: false,
+                    allowOutsideClick: false,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                }).then(function (result) {
+                    if (result.value) {
+                    $('#modal-add').addClass('programmatic');
+                    $('#modal-add').modal('hide');
                     e.stopPropagation();
                     $('#modal_add_name').val('');
                     $('#modal_add_username').val('');
@@ -605,20 +629,59 @@ $(document).ready(function() {
                     $('#modal_add_role_id').val(''); 
                     $('#modal_add_company_id').val(null).trigger('change');
                     $('#modal_add_branch_id').val(null).trigger('change'); 
-                    $('#modal_edit_company_id').val(null).trigger('change');   
                     $('#modal_add_branch_id').prop('disabled', true);     
-                    $('#modal_edit_branch_id').prop('disabled', true);              
+                    } else {
+                        e.stopPropagation();
+                    }
+                });
+            }
+            return true;
+        });
+
+        // Event handler for showing modal
+        $('#modal-add').on('show.bs.modal', function () {
+        });
+
+        // Event handler for hidden modal
+        $('#modal-add').on('hidden.bs.modal', function () {
+            // Remove the 'programmatic' class
+            $('#modal-add').removeClass('programmatic');
+
+    });
+
+    // Prevent from redirecting back to homepage when cancel button is clicked accidentally
+    $('#modal-edit').on("hide.bs.modal", function (e) {
+        if (!$('#modal-edit').hasClass('programmatic')) {
+            e.preventDefault();
+            swal.fire({
+                title: 'Are you sure?',
+                text: "Please confirm that you want to cancel",
+                type: 'warning',
+                showCancelButton: true,
+                allowEnterKey: false,
+                allowOutsideClick: false,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+            }).then(function (result) {
+                if (result.value) {
+                    $('#modal-edit').addClass('programmatic');
+                    $('#modal-edit').modal('hide');
+                    e.stopPropagation();
+                    window.location.href = '/users';
                 } else {
                     e.stopPropagation();
                 }
             });
-
         }
         return true;
     });
 
-    $('#modal-add, #modal-edit').on('hidden.bs.modal', function () {
-        $('#modal-add, #modal-edit').removeClass('programmatic');
+    // Event handler for hidden modal
+    $('#modal-edit').on('hidden.bs.modal', function () {
+    // Remove the 'programmatic' class
+    $('#modal-edit').removeClass('programmatic');
     });
 
     //password and confirm password success and error for create modal
@@ -836,6 +899,10 @@ $(document).ready(function() {
             }
         });
     });
+    history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.go(1);
+    };
 });    
 </script>
 @endsection

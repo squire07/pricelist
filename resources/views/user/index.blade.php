@@ -257,6 +257,16 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="companies">Current Companies</label>
+                                <select class="form-control select2" multiple="multiple" id="modal_edit_company_names" name="company_id[]" data-name="company_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;">
+                                    @foreach($companies as $company)
+                                        <option value="{{ $company->id }}" class="{{ $companyStatus }}" @if($company->status_id == 9) disabled @endif>{{ $company->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="col-md-12 col-sm-12"> 
                             <div class="form-group">
                                 <label for="companies">Branches</label>
@@ -269,7 +279,17 @@
                                     @endphp
                                         <option value="{{ $branch->id }}" class="{{ $companyClass }} {{ $statusClass }}">{{ $branch->name }}</option>
                                     @endforeach
-                                </select>                               
+                                </select>                             
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-sm-12"> 
+                            <div class="form-group">
+                                <label for="companies">Current Branches</label>
+                                <select class="form-control select2" multiple="multiple" id="modal_edit_branch_names" name="branch_id[]" data-name="branch_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" disabled>
+                                    @foreach($branches as $branch)
+                                        <option value="{{ $branch->id }}" class="{{ $companyClass }} {{ $statusClass }}">{{ $branch->name }}</option>
+                                    @endforeach
+                                </select>                             
                             </div>
                         </div>
                     </div>
@@ -339,6 +359,8 @@ $(document).ready(function() {
     $(document).on('click', '.btn_edit', function() {
 
         $('#modal_edit_branch_id').prop('disabled', true);
+        $('#modal_edit_company_names').prop('disabled', true);
+        $('#modal_edit_branch_names').prop('disabled', true);
 
         var uuid = $(this).attr("data-uuid");
 
@@ -377,7 +399,7 @@ $(document).ready(function() {
         var company_ids_arr = company_id.split(",");
 
         // Initialize Select2 after manipulating options
-        var company_dropdown = $('#modal_edit_company_id').select2({
+        var company_dropdown = $('#modal_edit_company_id, #modal_edit_company_names').select2({
             multiple: true,
             templateResult: function (option) {
                 // Check if the option is inactive and hide it from the dropdown
@@ -392,7 +414,7 @@ $(document).ready(function() {
         var clear_inactive_values = false;
 
         // Iterate through options and disable inactive companies
-        $('#modal_edit_company_id option').each(function () {
+        $('#modal_edit_company_id option, #modal_edit_company_names option').each(function () {
             var companyId = $(this).val();
             var company_status = $(this).hasClass('inactive-company');
 
@@ -413,6 +435,7 @@ $(document).ready(function() {
         });
 
         // Trigger change event to reflect the selected options
+        
         company_dropdown.trigger('change');
 
         // Manually handle the opening event to clear inactive values
@@ -423,7 +446,6 @@ $(document).ready(function() {
                 clear_inactive_values = false;
             }
         });
-
         // ================== END COMPANY DROPDOWN ON EDIT ==================
 
         // ================== BRANCH DROPDOWN ON EDIT ==================
@@ -431,8 +453,8 @@ $(document).ready(function() {
         var branch_ids_arr = branch_id.split(",");
         // This code will set the selected options as default based on values
         // Initialize Select2
-        $('#modal_edit_branch_id').select2();
-        $("#modal_edit_branch_id").val(branch_ids_arr).trigger("change");
+        $('#modal_edit_branch_id, #modal_edit_branch_names').select2();
+        $("#modal_edit_branch_id, #modal_edit_branch_names").val(branch_ids_arr).trigger("change");
         // Trigger change event to reflect the selected options
         $('#modal_edit_branch_id').trigger('change');
 

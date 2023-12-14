@@ -260,7 +260,7 @@
                         <div class="col-md-12 col-sm-12">
                             <div class="form-group">
                                 <label for="companies">Current Companies</label>
-                                <select class="form-control select2" multiple="multiple" id="modal_edit_company_names" name="company_id[]" data-name="company_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;">
+                                <select class="form-control select22" multiple="multiple" id="modal_edit_company_names" name="company_id[]" data-name="company_name[]" data-dropdown-css-class="select22-primary" style="width: 100%;">
                                     @foreach($companies as $company)
                                         <option value="{{ $company->id }}" class="{{ $companyStatus }}" @if($company->status_id == 9) disabled @endif>{{ $company->name }}</option>
                                     @endforeach
@@ -285,7 +285,7 @@
                         <div class="col-md-12 col-sm-12"> 
                             <div class="form-group">
                                 <label for="companies">Current Branches</label>
-                                <select class="form-control select2" multiple="multiple" id="modal_edit_branch_names" name="branch_id[]" data-name="branch_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" disabled>
+                                <select class="form-control select22" multiple="multiple" id="modal_edit_branch_names" name="branch_id[]" data-name="branch_name[]" data-dropdown-css-class="select22-primary" style="width: 100%;" disabled>
                                     @foreach($branches as $branch)
                                         <option value="{{ $branch->id }}" class="{{ $companyClass }} {{ $statusClass }}">{{ $branch->name }}</option>
                                     @endforeach
@@ -311,6 +311,16 @@
     }
     .error-message{
         color:red;
+    }
+    #modal_edit_company_names + .select2-container .select2-selection,
+    #modal_edit_branch_names + .select2-container .select2-selection {
+        background-color: transparent !important;
+    }
+
+    /* Optional: You may also want to remove the border */
+    #modal_edit_company_names + .select2-container .select2-selection,
+    #modal_edit_branch_names + .select2-container .select2-selection {
+        border: none !important;
     }
 </style>
 @endsection

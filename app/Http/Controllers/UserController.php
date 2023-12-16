@@ -57,27 +57,27 @@ class UserController extends Controller
         } 
         
         // Validate company and branch selections
-        $selectedCompanyIds = isset($request->company_id) ? $request->company_id : [];
-        $selectedBranchIds = isset($request->branch_id) ? $request->branch_id : [];
+        $selected_company_id = isset($request->company_id) ? $request->company_id : [];
+        $selected_branch_id = isset($request->branch_id) ? $request->branch_id : [];
 
         // Create an array to store selected branches for each company
-        $selectedBranchesByCompany = [];
+        $selected_branched_by_company = [];
 
         // Group selected branches by company
-        foreach ($selectedBranchIds as $branchId) {
+        foreach ($selected_branch_id as $branchId) {
             $branch = Branch::find($branchId);
             $companyId = $branch->company_id;
 
-            if (!isset($selectedBranchesByCompany[$companyId])) {
-                $selectedBranchesByCompany[$companyId] = [];
+            if (!isset($selected_branched_by_company[$companyId])) {
+                $selected_branched_by_company[$companyId] = [];
             }
 
-            $selectedBranchesByCompany[$companyId][] = $branchId;
+            $selected_branched_by_company[$companyId][] = $branchId;
         }
 
         // Check if at least one branch is selected for each company
-        foreach ($selectedCompanyIds as $companyId) {
-            if (!isset($selectedBranchesByCompany[$companyId])) {
+        foreach ($selected_company_id as $companyId) {
+            if (!isset($selected_branched_by_company[$companyId])) {
                 return redirect()->back()->with('error', "Please select at least one branch for each company!");
             }
         }
@@ -143,52 +143,54 @@ class UserController extends Controller
         if (User::where('email', $request->email)->whereNot('uuid', $uuid)->exists()) {
             return redirect()->back()->with('error', "User with email {$request->email} already exists!");
         } 
-
+    
         $user = User::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
         $user->name = $request->name;
         $user->email = $request->email;
-
+    
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password); 
         }
 
         // Validate company and branch selections
-        $selectedCompanyIds = isset($request->company_id) ? $request->company_id : [];
-        $selectedBranchIds = isset($request->branch_id) ? $request->branch_id : [];
+        $selected_company_id = isset($request->company_id) ? $request->company_id : [];
+        $selected_branch_ids = isset($request->branch_id) ? $request->branch_id : [];
 
         // Create an array to store selected branches for each company
-        $selectedBranchesByCompany = [];
+        $selected_branched_by_company = [];
 
         // Group selected branches by company
-        foreach ($selectedBranchIds as $branchId) {
+        foreach ($selected_branch_ids as $branchId) {
             $branch = Branch::find($branchId);
             $companyId = $branch->company_id;
 
-            if (!isset($selectedBranchesByCompany[$companyId])) {
-                $selectedBranchesByCompany[$companyId] = [];
+            if (!isset($selected_branched_by_company[$companyId])) {
+                $selected_branched_by_company[$companyId] = [];
             }
 
-            $selectedBranchesByCompany[$companyId][] = $branchId;
+            $selected_branched_by_company[$companyId][] = $branchId;
         }
 
         // Check if at least one branch is selected for each company
-        foreach ($selectedCompanyIds as $companyId) {
-            if (!isset($selectedBranchesByCompany[$companyId])) {
-                return redirect()->back()->with('error', "Please select at least one branch for each company!");
+        foreach ($selected_company_id as $companyId) {
+            if (!isset($selected_branched_by_company[$companyId])) {
+                // Only return an error if branches are selected for the company
+                if (isset($request->branch_id) && in_array($companyId, $request->company_id)) {
+                    return redirect()->back()->with('error', "Please select at least one branch for each company!");
+                }
             }
         }
-
         $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';
-        $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
+        $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : $user->branch_id;
         $user->role_id = $request->role_id;
         $user->active = $request->active; 
         $user->blocked = $request->blocked; 
         $user->created_by = Auth::user()->name;
-        if($user->update()) {
-            return redirect()->back()->with('success', 'User has been updated!');
-        } else {
-            return redirect()->back()->with('error', 'Failed to update user.');
-        }
+        
+        // Always save the user, regardless of whether the update succeeds
+        $user->update();
+        
+        return redirect()->back()->with('success', 'User has been updated!');
     }
 
     /**

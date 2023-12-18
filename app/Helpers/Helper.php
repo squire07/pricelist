@@ -245,8 +245,26 @@ class Helper {
             return $response;
 
         } catch (\ClientException $e) {
-            // Handle exceptions, such as network errors or API errors
-            // echo 'An error occurred: ' . $e->getMessage();
+            return $e;
+        }
+    }
+
+    public static function put_erpnext_data($param, $post_data) {
+        $client = new Client();
+    
+        try {
+            $response = $client->put(env('ERPNEXT_URL') . $param, [
+                'headers' => [
+                    'Authorization' => 'Token ' . env('ERPNEXT_API_KEY') . ':' . env('ERPNEXT_API_SECRET'),
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json'
+                ],
+                'json' => json_decode($post_data, true)
+            ]);
+
+            return $response;
+
+        } catch (\ClientException $e) {
             return $e;
         }
     }

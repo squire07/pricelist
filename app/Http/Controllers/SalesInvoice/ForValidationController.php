@@ -341,6 +341,23 @@ class ForValidationController extends Controller
                         }
 
 
+                    // 8) Update the status of Sales Order to 'completed'
+                        // $so_response_body = $payload->so_response;
+
+                        // // Define the regular expression pattern
+                        // $data = json_decode($payload->so_response_body, true);
+
+                        // // Use preg_match to find the match
+                        // $so_doc_name = $data['data']['name'] ?? null;
+
+                        // $so_param = '/api/resource/Sales Order/' . $so_doc_name;
+                        // $so_status_update = "{'status':'Completed'}"; // this will be decoded by the function
+                        // try {
+                        //     $so_status_put = Helper::put_erpnext_data($so_param, $so_status_update);
+                        // } catch (\GuzzleHttp\Exception\ClientException $e) {
+                        //     return false;
+                        // }
+
                     // mark as released
                     $sales->status_id = 4;
 

@@ -17,7 +17,7 @@ class DistributorSeeder extends Seeder
     {
         Distributor::truncate();
   
-        $csvFile = fopen(base_path('database/data/list_of_distributors_as_of_12112023.csv'), 'r');
+        $csvFile = fopen(base_path('database/data/list_of_distributor_test.csv'), 'r');
   
         $firstline = true;
         while (($data = fgetcsv($csvFile, 2000000, ',')) !== FALSE) {

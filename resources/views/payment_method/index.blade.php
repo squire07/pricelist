@@ -205,7 +205,12 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="name">Company</label>
-                                    <input type="text" class="form-control form-control-sm" name="company_id" id="modal_edit_company_id" readonly>
+                                    <input type="text" class="form-control form-control-sm" name="company_name" id="modal_edit_company_name" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <input type="hidden" class="form-control form-control-sm" name="company_id" id="modal_edit_company_id">
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-12">
@@ -276,7 +281,7 @@
                         <table class="table table-borderless">
                             <tr>
                                 <td width="25%">Company</td>
-                                <td><span id="modal_show_company_id" style="font-weight:bold"></span></td>
+                                <td><span id="modal_show_company_name" style="font-weight:bold"></span></td>
                             </tr>
                             <tr>
                                 <td width="25%">Name</td>
@@ -363,6 +368,7 @@
         var uuid = $(this).attr("data-uuid");
 
         var c_id = $(this).attr("data-company-id");
+        var c_name = $(this).attr("data-company-name");
         var name = $(this).attr("data-name");
         var description = $(this).attr("data-description");
         var code = $(this).attr("data-code");
@@ -371,6 +377,7 @@
         var is_cash = $(this).attr("data-is-cash");
         var branch_id = $(this).attr("data-branch-id");
 
+        $('#modal_edit_company_name').val(c_name); 
         $('#modal_edit_company_id').val(c_id); 
         $('#modal_edit_name').val(name); 
         $('#modal_edit_description').val(description); 
@@ -409,6 +416,7 @@
 
         var uuid = $(this).attr("data-uuid");
         var c_id = $(this).attr("data-company-id");
+        var c_name = $(this).attr("data-company-name");
         var name = $(this).attr("data-name");
         var description = $(this).attr("data-description");
         var code = $(this).attr("data-code");
@@ -422,7 +430,7 @@
         // is_cash = is_cash == 1 ? 'Yes' : 'No';
 
         // set multiple attributes
-        $('#modal_show_company_id').text(c_id);
+        $('#modal_show_company_name').text(c_name);
         $('#modal_show_name').text(name);
         $('#modal_show_description').text(description);
         $('#modal_show_code').text(code);

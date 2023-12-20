@@ -101,13 +101,13 @@ class PaymentMethodController extends Controller
                         })
                         ->whereNot('uuid', $uuid)
                         ->first();
-    
+                        
         if ($existing) {
             $msg = '';
             if ($existing->name === $request->name && $existing->code === $request->code) {
-                $msg .= 'Duplicate payment method for this company!<br>';
+                $msg .= 'Duplicate payment method for this company!';
             } elseif ($existing->name === $request->name) {
-                $msg .= 'Account Name already exists for this company!<br>';
+                $msg .= 'Account Name already exists for this company!';
             } elseif ($existing->code === $request->code) {
                 $msg .= 'Account Number already exists for this company!';
             }

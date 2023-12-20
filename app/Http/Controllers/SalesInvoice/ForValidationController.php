@@ -68,7 +68,7 @@ class ForValidationController extends Controller
      */
     public function show($uuid)
     {
-        $sales_order = Sales::with('sales_details','branch','payment','transaction_type','income_expense_account')
+        $sales_order = Sales::with('sales_details','branch','payment','transaction_type','income_expense_account','payload')
                             ->whereUuid($uuid)
                             ->whereStatusId(5)
                             ->whereDeleted(false)

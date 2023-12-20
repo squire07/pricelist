@@ -46,6 +46,11 @@ class Sales extends Model
         return $this->hasOne('App\Models\Branch', 'id', 'branch_id');
     }
 
+    public function payload()
+    {
+        return $this->hasOne('App\Models\Payload', 'uuid', 'uuid');
+    }
+
 
     // getter and setter
     public function getTotalAmountAttribute($value)

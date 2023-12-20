@@ -22,7 +22,12 @@
                 @endforeach --}}
                 <tr>
                     <td>{{ $sales_order->payment->details[0]['name'] }}</td>
-                    <td class="text-center">{{ isset($sales_order->payment->details[0]['ref_no']) ? strtoupper($sales_order->payment->details[0]['ref_no']) : '' }}</td>
+                    <td class="text-center">
+                        {{ isset($sales_order->payment->details[0]['ref_no']) ? strtoupper($sales_order->payment->details[0]['ref_no']) : '' }}
+                        @if (isset($sales_order->payload) && $sales_order->payload->payment_response_status == 417)
+                            <i class="fas fa-times-circle text-red ml-2"></i>
+                        @endif
+                    </td>
                     <td class="text-right">{{  $sales_order->grandtotal_amount }}</td>
                     <td class="text-center">{{ $sales_order->payment->created_at }}</td>
                 </tr>

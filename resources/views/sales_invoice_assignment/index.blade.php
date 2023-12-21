@@ -306,7 +306,10 @@
                         $('#modal-add').addClass('programmatic');
                         $('#modal-add').modal('hide');
                         e.stopPropagation();
-                        $('#cashier_id').val('');
+                        $('#cashier_id').val(null).trigger('change');
+                        $('#cashier_branch_id').val(null).trigger('change');
+                        $('#series_from').val('');
+                        $('#series_to').val('');
                     } else {
                         e.stopPropagation();
 
@@ -332,6 +335,16 @@
                 e.preventDefault();
                 $(this).trigger('submit');
             }
+        });
+
+        $('#series_from, #series_to').on('input', function(e) {    
+            const inputValue = e.target.value;
+            const numericValue = inputValue.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+            e.target.value = numericValue;
+        });
+
+        $('#series_from, #series_to').bind('copy paste', function (e) {
+            e.preventDefault();
         });
     });
 </script>

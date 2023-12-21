@@ -40,18 +40,26 @@ class PaymentMethodController extends Controller
         // validate
         $existing = PaymentMethod::whereCompanyId($request->company_id)
                         ->where(function ($query) use ($request) {
-                            $query->whereName($request->name)
-                                ->orWhere('code',$request->code);
+                            $query->whereName($request->name);
                         })
                         ->first();
     
         if ($existing) {
-            if ($existing->name === $request->name) {
                 return redirect('payment-methods')->with('error', 'Account Name already exists for this company!');
-            } elseif ($existing->code === $request->code) {
-                return redirect('payment-methods')->with('error', 'Account Number already exists for this company!');
-            }
         }
+
+        // if ($existing) {
+        //     $msg = '';
+        //     if ($existing->name === $request->name && $existing->code === $request->code) {
+        //         $msg .= 'Duplicate payment method for this company!';
+        //     } elseif ($existing->name === $request->name) {
+        //         $msg .= 'Account Name already exists for this company!';
+        //     } elseif ($existing->code === $request->code) {
+        //         $msg .= 'Account Number already exists for this company!';
+        //     }
+
+        //     return redirect('payment-methods')->with('error', $msg);
+        // }
 
         // Continue with the rest of the code
         $payment_method = new PaymentMethod();
@@ -96,24 +104,27 @@ class PaymentMethodController extends Controller
         // validate
         $existing = PaymentMethod::whereCompanyId($request->company_id)
                         ->where(function ($query) use ($request, $uuid) {
-                            $query->whereName($request->name)
-                                ->orWhere('code', $request->code);
+                            $query->whereName($request->name);
                         })
                         ->whereNot('uuid', $uuid)
                         ->first();
-                        
+        
         if ($existing) {
-            $msg = '';
-            if ($existing->name === $request->name && $existing->code === $request->code) {
-                $msg .= 'Duplicate payment method for this company!';
-            } elseif ($existing->name === $request->name) {
-                $msg .= 'Account Name already exists for this company!';
-            } elseif ($existing->code === $request->code) {
-                $msg .= 'Account Number already exists for this company!';
-            }
-
-            return redirect('payment-methods')->with('error', $msg);
+            return redirect('payment-methods')->with('error', 'Account Name already exists for this company!');
         }
+
+        // if ($existing) {
+        //     $msg = '';
+        //     if ($existing->name === $request->name && $existing->code === $request->code) {
+        //         $msg .= 'Duplicate payment method for this company!';
+        //     } elseif ($existing->name === $request->name) {
+        //         $msg .= 'Account Name already exists for this company!';
+        //     } elseif ($existing->code === $request->code) {
+        //         $msg .= 'Account Number already exists for this company!';
+        //     }
+
+        //     return redirect('payment-methods')->with('error', $msg);
+        // }
 
         // Continue with the update if no duplicate records are found
         $payment_method = PaymentMethod::whereUuid($uuid)->whereDeleted(false)->firstOrFail();

@@ -46,5 +46,23 @@
             </tbody>
         </table>
     </div>
+    @if (isset($sales_order->payload) && $sales_order->payload->payment_response_status == 417)
+        <div class="card-footer text-center">
+            @php
+                $json = json_decode($sales_order->payload->payment_response_body, true);
+
+                // Check if the decoding was successful
+                if ($json !== null) {
+                    // Extract the exception message
+                    $exception_message = explode(':', $json['exception'], 2)[1];
+
+                    // Trim any leading or trailing spaces
+                    $exception_message = trim($exception_message);
+                }
+            @endphp
+
+            {{ $exception_message }}
+        </div>
+    @endif
 </div>
 @endif

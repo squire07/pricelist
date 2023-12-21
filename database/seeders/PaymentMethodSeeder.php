@@ -49,7 +49,7 @@ class PaymentMethodSeeder extends Seeder
         // ];
 
         $payment_methods = [
-            1 => array('name' => 'CASH', 'description' => '1101001 - Accounts Receivable - Trade - UNO', 'code' => '1101001', 'company_id' => '3', 'branch_id' => '1,2,3,4,5,6', 'is_cash' => '1', 'is_debit_to' => 1),
+            1 => array('name' => 'CASH', 'description' => '1010002 - Cash - Undeposited Collections - UNO', 'code' => '1010002', 'company_id' => '3', 'branch_id' => '1,2,3,4,5,6', 'is_cash' => '1', 'is_debit_to' => 0),
             2 => array('name' => 'EW 076', 'description' => '1010501 - LO-CIB-Eastwest Bank- - UNO', 'code' => '1010501', 'company_id' => '3', 'branch_id' => '1,2,3,4,5,6', 'is_cash' => 0, 'is_debit_to' => 0),
             3 => array('name' => 'BDO 009', 'description' => '1010202 - LO-CIB-BDO UBS - UNO', 'code' => '1010202', 'company_id' => '3', 'branch_id' => '1,2,3,4,5,6', 'is_cash' => 0, 'is_debit_to' => 0),
             4 => array('name' => 'BDO 177', 'description' => '1010205 - LO-CIB-BDO UNO Premier Sales - UNO', 'code' => '1010205', 'company_id' => '3', 'branch_id' => '1,2,3,4,5,6', 'is_cash' => 0, 'is_debit_to' => 0),
@@ -68,7 +68,7 @@ class PaymentMethodSeeder extends Seeder
             17 => array('name' => 'Contra Commission', 'description' => '6010481 - OPE - Commission - Contra Commission PHP - LOCAL', 'code' => '6010481', 'company_id' => '3', 'branch_id' => '1,2,3,4,5,6', 'is_cash' => 0, 'is_debit_to' => 0),
             18 => array('name' => 'Commission GC', 'description' => '6010441 - OPE-Commission - GC PHP - LOCAL', 'code' => '6010441', 'company_id' => '3', 'branch_id' => '1,2,3,4,5,6', 'is_cash' => 0, 'is_debit_to' => 0),
 
-            19 => array('name' => 'CASH', 'description' => '1101001 - Accounts Receivable - Trade - PREMIER', 'code' => '1101001', 'company_id' => '2', 'branch_id' => '7,8,9,10,11,12', 'is_cash' => '1', 'is_debit_to' => 1),
+            19 => array('name' => 'CASH', 'description' => '1010002 - Cash - Undeposited Collections - PREMIER', 'code' => '1010002', 'company_id' => '2', 'branch_id' => '7,8,9,10,11,12', 'is_cash' => '1', 'is_debit_to' => 0),
             20 => array('name' => 'EW 076**', 'description' => 'Unknown', 'code' => '1010501', 'company_id' => '2', 'branch_id' => '7,8,9,10,11,12', 'is_cash' => 0, 'is_debit_to' => 0),
             21 => array('name' => 'BDO 009**', 'description' => 'Unknown', 'code' => '1000035', 'company_id' => '2', 'branch_id' => '7,8,9,10,11,12', 'is_cash' => 0, 'is_debit_to' => 0),
             22 => array('name' => 'BDO 074', 'description' => '1020201 - PR-CIB-BDO CREDIT CARD - PREMIER', 'code' => '1020201', 'company_id' => '2', 'branch_id' => '7,8,9,10,11,12', 'is_cash' => 0, 'is_debit_to' => 0),
@@ -84,6 +84,9 @@ class PaymentMethodSeeder extends Seeder
             32 => array('name' => 'AR Lazmall', 'description' => '1101032 - Accounts Receivable - Lazmall - PREMIER', 'code' => '1101032', 'company_id' => '2', 'branch_id' => '7,8,9,10,11,12', 'is_cash' => 0, 'is_debit_to' => 1),
             33 => array('name' => 'AR Paynamics', 'description' => '1101030 - Accounts Receivable - Paynamics - PREMIER', 'code' => '1101030', 'company_id' => '2', 'branch_id' => '7,8,9,10,11,12', 'is_cash' => 0, 'is_debit_to' => 1),
             34 => array('name' => 'Unknown**', 'description' => 'Unknown', 'code' => '6010481', 'company_id' => '2', 'branch_id' => '7,8,9,10,11,12', 'is_cash' => 0, 'is_debit_to' => 0),
+
+            35 => array('name' => 'COD', 'description' => '1010002 - Cash - Undeposited Collections - UNO', 'code' => '1010002', 'company_id' => '3', 'branch_id' => '1,2,3,4,5,6', 'is_cash' => '1', 'is_debit_to' => 0),
+            36 => array('name' => 'COD', 'description' => '1010002 - Cash - Undeposited Collections - PREMIER', 'code' => '1010002', 'company_id' => '2', 'branch_id' => '7,8,9,10,11,12', 'is_cash' => '1', 'is_debit_to' => 0),
         ];
 
         foreach($payment_methods as $key => $payment_method) {

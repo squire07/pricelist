@@ -59,19 +59,27 @@
                             </a>
                         </li>
                     @endif
-                    @if(Helper::MP(3,1))
-                        <li class="nav-item">
-                            <a href="{{ url('sales-invoice/released') }}" class="nav-link {{ $url_segment_2 == 'released' ? 'active':'' }}" target="_self">
-                                <i class="fas fa-external-link-alt nav-icon"></i>
-                                <p>Released</p>
-                            </a>
-                        </li>
-                    @endif
                     @if(Helper::MP(4,1))
                         <li class="nav-item">
                             <a href="{{ url('sales-invoice/for-validation') }}" class="nav-link {{ $url_segment_2 == 'for-validation' ? 'active':'' }}" target="_self">
                                 <i class="fas fa-clipboard-check nav-icon"></i>
                                 <p>For Validation</p>
+                            </a>
+                        </li>
+                    @endif
+                    @if(Helper::MP(23,1))
+                        <li class="nav-item">
+                            <a href="{{ url('sales-invoice/for-posting') }}" class="nav-link {{ $url_segment_2 == 'for-posting' ? 'active':'' }}" target="_self">
+                                <i class="fas fa-file-upload nav-icon"></i>
+                                <p>For Posting</p>
+                            </a>
+                        </li>
+                    @endif
+                    @if(Helper::MP(3,1))
+                        <li class="nav-item">
+                            <a href="{{ url('sales-invoice/released') }}" class="nav-link {{ $url_segment_2 == 'released' ? 'active':'' }}" target="_self">
+                                <i class="fas fa-external-link-alt nav-icon"></i>
+                                <p>Released</p>
                             </a>
                         </li>
                     @endif

@@ -75,6 +75,44 @@ class UserSeeder extends Seeder
 
             47 => array('name' => 'Aris Flores', 'username' => 'aris', 'role_id' => 12, 'branch_id' => NULL, 'company_id' => NULL),
             48 => array('name' => 'Test User', 'username' => 'test', 'role_id' => 12, 'branch_id' => NULL, 'company_id' => NULL),
+
+
+            49 => array('name' => 'Jorelle Joie Aviso', 'username' => 'javiso', 'role_id' => 6, 'branch_id' => 1, 'company_id' => 3),
+            50 => array('name' => 'Richard Selosa', 'username' => 'rselosa', 'role_id' => 3, 'branch_id' => 1, 'company_id' => 3),
+            51 => array('name' => 'Efren Bacsa', 'username' => 'ebacsa', 'role_id' => 1, 'branch_id' => 1, 'company_id' => 3),
+            52 => array('name' => 'Amadeo Virgil', 'username' => 'avirgil', 'role_id' => 1, 'branch_id' => 1, 'company_id' => 3),
+            53 => array('name' => 'Lou Angelic Peralta', 'username' => 'lperalta', 'role_id' => 1, 'branch_id' => 1, 'company_id' => 3),
+            54 => array('name' => 'Jan Jacob Uy', 'username' => 'juy', 'role_id' => 1, 'branch_id' => 1, 'company_id' => 3),
+            55 => array('name' => 'Lyn lyn Biboso', 'username' => 'lbiboso', 'role_id' => 2, 'branch_id' => 1, 'company_id' => 3),
+            56 => array('name' => 'Renna Tamo', 'username' => 'rtamo', 'role_id' => 2, 'branch_id' => 1, 'company_id' => 3),
+            57 => array('name' => 'Mckenly Joy Panaligan', 'mpanaligan' => 'aris', 'role_id' => 2, 'branch_id' => 1, 'company_id' => 3),
+            58 => array('name' => 'Marie Grace Rellado', 'mrellado' => 'test', 'role_id' => 2, 'branch_id' => 1, 'company_id' => 3),
+            
+            59 => array('name' => 'Charish Catanus', 'username' => 'ccatanus', 'role_id' => 6, 'branch_id' => '2,8', 'company_id' => '2,3'),
+            60 => array('name' => 'Jozel Ann Loreto', 'username' => 'rselosa', 'role_id' => 2, 'branch_id' => '2,8', 'company_id' => '2,3'),
+            61 => array('name' => 'Marical Luna', 'username' => 'mluna', 'role_id' => 2, 'branch_id' => '4,10', 'company_id' => '2,3'),
+            62 => array('name' => 'Midz Mayormita', 'username' => 'mmayormita', 'role_id' =>1, 'branch_id' => '4,10', 'company_id' => '2,3'),
+            63 => array('name' => 'Primrose Alvaro', 'username' => 'palvaro', 'role_id' => 2, 'branch_id' => '5,11', 'company_id' => '2,3'),
+            64 => array('name' => 'Joar Segapo', 'username' => 'jsegapo', 'role_id' => 1, 'branch_id' => '5,11', 'company_id' => '2,3'),
+            65 => array('name' => 'Joseyulo Embudo Jr', 'username' => 'jembudo', 'role_id' => 6, 'branch_id' => '5,11', 'company_id' => '2,3'),
+            66 => array('name' => 'Gerome Guina', 'username' => 'gguina', 'role_id' => 2, 'branch_id' => '3,9', 'company_id' => '2,3'),
+            67 => array('name' => 'Kristia-Ann E. Pingkian', 'kpingkian' => 'aris', 'role_id' => 6, 'branch_id' => '3,9', 'company_id' => '2,3'),
+            68 => array('name' => 'Greg Porras', 'username' => 'gporras', 'role_id' => 6, 'branch_id' => 7, 'company_id' => 2),
+
+            69 => array('name' => 'Jun Jun D. Alonzo', 'username' => 'jalonzo', 'role_id' => 1, 'branch_id' => 7, 'company_id' => 2),
+            70 => array('name' => 'Jane Moya', 'username' => 'jmoya', 'role_id' => 8, 'branch_id' => 2, 'company_id' => 2),
+            71 => array('name' => 'Jhessa Marie D. Morales', 'username' => 'jmorales', 'role_id' => 2, 'branch_id' => NULL, 'company_id' => 2),
+            72 => array('name' => 'Jeffrey Tayco', 'username' => 'jtayco', 'role_id' => 7, 'branch_id' => NULL, 'company_id' => '2,3'),
+            73 => array('name' => 'Shelley Mangila', 'username' => 'smangila', 'role_id' => 7, 'branch_id' => NULL, 'company_id' => '2,3'),
+            74 => array('name' => 'Jermie Sandrino', 'username' => 'jsandrino', 'role_id' => 7, 'branch_id' => NULL, 'company_id' => '2,3'),
+            75 => array('name' => 'Rose Ann Remollo', 'username' => 'rremollo', 'role_id' => 5, 'branch_id' => NULL, 'company_id' => '2,3'),
+            76 => array('name' => 'Pricess Asor', 'username' => 'pasor', 'role_id' => 2, 'branch_id' => NULL, 'company_id' => '2,3'),
+            77 => array('name' => 'Ella Mae Madrigal', 'username' => 'emadrigal', 'role_id' => 2, 'branch_id' => NULL, 'company_id' => '2,3'),
+            78 => array('name' => 'Danilo Jr. Brillante', 'username' => 'dbrillante', 'role_id' => 1, 'branch_id' => NULL, 'company_id' => '2,3'),
+
+            69 => array('name' => 'Jerjurie Delotindo', 'username' => 'jdelotindo', 'role_id' => 1, 'branch_id' => NULL, 'company_id' => '2,3'),
+            70 => array('name' => 'Ana Marie Jasmin', 'username' => 'ajasmin', 'role_id' => 7, 'branch_id' => NULL, 'company_id' => '2,3'),
+            71 => array('name' => 'Rachel Malan', 'username' => 'rmalan', 'role_id' => 7, 'branch_id' => NULL, 'company_id' => '2,3'),
         ];
 
         foreach($users as $key => $user) {

@@ -50,13 +50,6 @@ class UserPermissionController extends Controller
     public function edit(UserPermission $userPermission, $uuid)
     {
         $user = User::with('permission')->whereUuid($uuid)->first();
-        
-        // for better ui presentation
-        // $main_modules = PermissionModule::whereDeleted(false)->whereType('module')->where('id', '<=', 6)->orderBy('id')->get();
-        // $support_modules = PermissionModule::whereDeleted(false)->whereType('module')->where('id', '>', 6)->orderBy('name')->get();
-        // $report_modules = PermissionModule::whereDeleted(false)->whereType('report')->orderBy('name')->get();
-
-        // $modules = $main_modules->merge($support_modules)->merge($report_modules);
 
         $modules = PermissionModule::whereDeleted(false)->orderBy('sequence')->get();
 

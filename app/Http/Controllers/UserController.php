@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Hash;
-use App\Models\Role;
-use App\Models\User;
-use App\Models\Branch;
-use App\Models\Company;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\UserPermission;
-use App\Models\PermissionModule;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Branch;
+use App\Models\Company;
+use App\Models\PermissionModule;
+use App\Models\Role;
+use App\Models\User;
+use App\Models\UserPermission;
+use Session;
+use Hash;
 
 class UserController extends Controller
 {
@@ -199,5 +200,14 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function update_password(Request $request)
+    {
+        $user = User::whereDeleted(false)->whereId(Auth::user()->id)->first();
+        $user->password = Hash::make($request->new_password);
+        $user->update();
+        Session::forget('default_password');
+        return redirect()->back()->with('success', 'Password has been updated.');
     }
 }

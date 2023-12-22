@@ -90,12 +90,31 @@
                                 <select class="select2" id="cashier_id" name="cashier_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
                                     <option selected disabled>-- Select Cashier --</option>
                                     @foreach($cashiers as $cashier)
-                                        <option value="{{ $cashier->id }}" data-branch-id="{{ $cashier->branch_id }}">
+                                        <option value="{{ $cashier->id }}" data-branch-id="{{ $cashier->branch_id }}" data-company-id="{{ $cashier->company_id }}">
                                             {{ $cashier->name . ' (' . str_replace(',', ', ', Helper::get_branch_name_by_id($cashier->branch_id)) . ')'}}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
+{{-- 
+                            <div class="form-group">
+                                <label for="cashier_id">Cashier</label>
+                                <select class="select2" id="cashier_id" name="cashier_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                    <option selected disabled>-- Select Cashier --</option>
+                                    @foreach($cashiers as $cashier)
+                                        @php
+                                            $branchName = str_replace(',', ', ', Helper::get_branch_name_by_id($cashier->branch_id));
+                                            $optionLabel = $cashier->name . ' (' . $branchName . ')';
+                                            $companyId = $cashier->company_id;
+                                            $isCompanyInactive = \App\Models\Company::where('id', $companyId)->where('status_id', 9)->exists();
+                                        @endphp
+                            
+                                        <option value="{{ $cashier->id }}" data-branch-id="{{ $cashier->branch_id }}" data-company-id="{{ $companyId }}" @if($isCompanyInactive) disabled @endif>
+                                            {{ $optionLabel }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div> --}}
 
                             <div class="form-group d-none" id="div_cashier_branch_id">
                                 <label for="cashier_branch_id">Branch</label>
@@ -233,9 +252,9 @@
         });
 
         $('#cashier_id').on('change', function() {
-            if($(this).val() !== null) {
-                $('#series_from').prop('disabled', false);
-                $('#series_to').prop('disabled', false);
+            if ($(this).val() !== null) {
+            $('#series_from').prop('disabled', false);
+            $('#series_to').prop('disabled', false);
             } else {
                 $('#series_from').prop('disabled', true);
                 $('#series_to').prop('disabled', true);
@@ -246,7 +265,7 @@
             // split if multiple
             var multiple_ids = /,/.test(branch_id);
 
-            if(multiple_ids === true) {
+            if (multiple_ids === true) {
                 // show the branch div
                 $('#div_cashier_branch_id').removeClass('d-none');
 
@@ -257,33 +276,75 @@
                         'Content-type': 'application/json',
                     }
                 })
-                .then(response => response.json())
-                .then((response) => {
-                    obj = JSON.parse(JSON.stringify(response));
+                    .then(response => response.json())
+                    .then((response) => {
+                        obj = JSON.parse(JSON.stringify(response));
 
-                    // empty or remove first the content if there is/are
-                    $('#cashier_branch_id').empty();
+                        // empty or remove first the content if there is/are
+                        $('#cashier_branch_id').empty();
 
-                    // append the cashier_branch_id
-                    for(let i=0; i<obj.length; i++) {
-                        // Create a new option element
-                        var new_option = new Option(obj[i].name, obj[i].id, false, false);
+                        // append the cashier_branch_id
+                        for (let i = 0; i < obj.length; i++) {
+                            // Check if the company and branch are active
+                            if (obj[i].company_status === 8 && obj[i].branch_status === 8) {
+                                // Create a new option element
+                                var new_option = new Option(obj[i].name, obj[i].id, false, false);
 
-                        // Append the new option to the select element
-                        $('#cashier_branch_id').append(new_option);
-                    }
-                    // update the option
-                    $('#cashier_branch_id').trigger('change');
-                })
+                                // Append the new option to the select element
+                                $('#cashier_branch_id').append(new_option);
+                            }
+                        }
+                        // update the option
+                        $('#cashier_branch_id').trigger('change');
+                    })
             } else {
                 // hide the branch div
                 $('#div_cashier_branch_id').addClass('d-none');
             }
         });
 
-        $('#btn-modal-save').on('click', function(e) {
-            $(this).prop('disabled',true);
-            $('#form_modal_add').submit();
+        $('#btn-modal-save').on('click', function (e) {
+            // Prevent the default form submission
+            e.preventDefault();
+
+            // Disable the button to prevent multiple submissions
+            $(this).prop('disabled', true);
+
+            // Fetch the branches by using the cashier's id
+            fetch(window.location.origin + '/api/branches_by_cashiers_id/' + $('#cashier_id').val(), {
+                method: 'get',
+                headers: {
+                    'Content-type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then((branches) => {
+                // Filter active branches
+                const activeBranches = branches.filter(branch => branch.company_status === 8 && branch.branch_status === 8);
+
+                // Update the #div_cashier_branch_id dropdown with active branches
+                $('#cashier_branch_id').empty();
+
+                // Append the active branches to the dropdown
+                for (let i = 0; i < activeBranches.length; i++) {
+                    var new_option = new Option(activeBranches[i].name, activeBranches[i].id, false, false);
+                    $('#cashier_branch_id').append(new_option);
+                }
+
+                // Check if there is an active branch selected
+                if ($('#cashier_branch_id').val() !== null) {
+                    // Submit the form
+                    $('#form_modal_add').submit();
+                } else {
+                    // Enable the button and show a message or take appropriate action
+                    $(this).prop('disabled', false);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Company or Branch is Inactive.',
+                    });
+                }
+            });
         });
     
         // Prevent from redirecting back to homepage when cancel button is clicked accidentally

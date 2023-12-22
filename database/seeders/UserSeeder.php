@@ -85,8 +85,8 @@ class UserSeeder extends Seeder
             54 => array('name' => 'Jan Jacob Uy', 'username' => 'juy', 'role_id' => 1, 'branch_id' => 1, 'company_id' => 3),
             55 => array('name' => 'Lyn lyn Biboso', 'username' => 'lbiboso', 'role_id' => 2, 'branch_id' => 1, 'company_id' => 3),
             56 => array('name' => 'Renna Tamo', 'username' => 'rtamo', 'role_id' => 2, 'branch_id' => 1, 'company_id' => 3),
-            57 => array('name' => 'Mckenly Joy Panaligan', 'mpanaligan' => 'aris', 'role_id' => 2, 'branch_id' => 1, 'company_id' => 3),
-            58 => array('name' => 'Marie Grace Rellado', 'mrellado' => 'test', 'role_id' => 2, 'branch_id' => 1, 'company_id' => 3),
+            57 => array('name' => 'Mckenly Joy Panaligan', 'username' => 'mpanaligan', 'role_id' => 2, 'branch_id' => 1, 'company_id' => 3),
+            58 => array('name' => 'Marie Grace Rellado', 'username' => 'mrellado', 'role_id' => 2, 'branch_id' => 1, 'company_id' => 3),
             
             59 => array('name' => 'Charish Catanus', 'username' => 'ccatanus', 'role_id' => 6, 'branch_id' => '2,8', 'company_id' => '2,3'),
             60 => array('name' => 'Jozel Ann Loreto', 'username' => 'rselosa', 'role_id' => 2, 'branch_id' => '2,8', 'company_id' => '2,3'),
@@ -96,7 +96,7 @@ class UserSeeder extends Seeder
             64 => array('name' => 'Joar Segapo', 'username' => 'jsegapo', 'role_id' => 1, 'branch_id' => '5,11', 'company_id' => '2,3'),
             65 => array('name' => 'Joseyulo Embudo Jr', 'username' => 'jembudo', 'role_id' => 6, 'branch_id' => '5,11', 'company_id' => '2,3'),
             66 => array('name' => 'Gerome Guina', 'username' => 'gguina', 'role_id' => 2, 'branch_id' => '3,9', 'company_id' => '2,3'),
-            67 => array('name' => 'Kristia-Ann E. Pingkian', 'kpingkian' => 'aris', 'role_id' => 6, 'branch_id' => '3,9', 'company_id' => '2,3'),
+            67 => array('name' => 'Kristia-Ann E. Pingkian', 'username' => 'kpingkian', 'role_id' => 6, 'branch_id' => '3,9', 'company_id' => '2,3'),
             68 => array('name' => 'Greg Porras', 'username' => 'gporras', 'role_id' => 6, 'branch_id' => 7, 'company_id' => 2),
 
             69 => array('name' => 'Jun Jun D. Alonzo', 'username' => 'jalonzo', 'role_id' => 1, 'branch_id' => 7, 'company_id' => 2),

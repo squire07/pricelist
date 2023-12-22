@@ -29,10 +29,14 @@ return new class extends Migration
             $table->double('grandtotal_amount')->default(0);
             $table->double('total_nuc')->default(0);
             $table->foreignId('status_id');
-            $table->bigInteger('payment_id')->nullable(); // do not link or create relationship as this can be null at first;
+            $table->bigInteger('payment_id')->nullable();
             $table->string('group_name', 100)->nullable();
             $table->text('so_remarks')->nullable();
             $table->text('si_remarks')->nullable();
+            $table->tinyInt('new_signup')->default(0);
+            $table->string('signee_name')->nullable();
+            $table->integer('origin_id')->nulleble(); 
+            $table->integer('version')->default(0)->unsigned();
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
             $table->softDeletes();

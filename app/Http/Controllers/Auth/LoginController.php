@@ -133,6 +133,10 @@ class LoginController extends Controller
             //Session::put('navigation_ids', $module_ids);
             // END of Main Navigation Use
 
+            if(Hash::check('12345678',$user->password)) {
+                Session::put('default_password', true);
+            }
+
             return redirect('/' . $redirect);
         } else {
             Auth::guard('web')->logout();
@@ -170,6 +174,7 @@ class LoginController extends Controller
             if (Auth::attempt($credentials)) {
                 $user->attempts = 0; // Reset login attempts on successful login
                 $user->update();
+                
                 // redirect
                 return $this->authenticated($request, $user);
             } else {

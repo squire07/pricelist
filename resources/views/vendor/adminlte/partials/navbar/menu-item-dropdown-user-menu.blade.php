@@ -13,6 +13,14 @@
     @php( $logout_url = $logout_url ? url($logout_url) : '' )
 @endif
 
+@if(Session::get('default_password') == true)
+<li class="nav-item">
+    <a class="nav-link" href="#" id="change_password" role="button">
+        <i class="fas fa-key"></i>
+    </a>
+</li>
+@endif
+
 <li class="nav-item dropdown user-menu">
 
     {{-- User menu toggler --}}

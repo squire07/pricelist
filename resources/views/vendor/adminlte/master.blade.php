@@ -130,6 +130,8 @@
         @endif
     @endif
 
+    @include('components.change_password')
+
     {{-- Custom Scripts --}}
     @yield('adminlte_js')
 

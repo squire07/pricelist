@@ -84,7 +84,7 @@
                         </div>
                         <div class="col-lg-4 col-md-4">
                             <label for="item_name">Item Name</label>
-                            <select class="form-control form-control-sm select2 select2-primary" id="item_name" data-dropdown-css-class="select2-primary " disabled>
+                            <select class="form-control form-control-sm select2 select2-primary" id="item_name" data-dropdown-css-class="select2-primary " style="width: 100%;" disabled>
                             </select>
                         </div>
                         <div class="col-xl-1 col-md-2">

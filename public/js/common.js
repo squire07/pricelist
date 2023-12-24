@@ -3,63 +3,18 @@ $(document).ready(function() {
     // CHANGE PASSWORD: note: must be refactored
     $('#change_password').on('click', function() {
         $("#update_password").trigger("reset");
-        $('#current_password,#new_password,#confirm_password').removeClass('is-valid is-invalid');
+        $('#new_password,#confirm_password').removeClass('is-valid is-invalid');
         $('#np_error_msg_length,#np_error_msg_mismatch,#cp_error_msg_length,#cp_error_msg_mismatch').addClass('d-none');
         $('#modal_change_password').modal('show');
     });
 
-    $('#new_password').on('blur', function() {
-        if($('#confirm_password').val() != '' && $('#confirm_password').val() !== $(this).val()) {
-            $(this).addClass('is-invalid');
-            $('#np_error_msg_mismatch').text('Password and confirm password do not match.');
-            $('#np_error_msg_mismatch').removeClass('d-none');
-            $('#btn-update-password').prop('disabled',true);
-        } else {
-            $(this).removeClass('is-invalid');
-            $('#np_error_msg_mismatch').addClass('d-none');
-            $('#btn-update-password').prop('disabled',false);
-        }
-
-        if($(this).val().length < 6) {
-            $(this).addClass('is-invalid');
-            $('#np_error_msg_length').text('Password must be at least 6 characters.');
-            $('#np_error_msg_length').removeClass('d-none');
-            $('#btn-update-password').prop('disabled',true);
-        } else {
-            $(this).removeClass('is-invalid');
-            $('#np_error_msg_length').addClass('d-none');
-            $('#btn-update-password').prop('disabled',false);
-        }
-    });
-
-    $('#confirm_password').on('blur', function() {
-        if($('#new_password').val() != '' && $('#new_password').val() !== $(this).val()) {
-            $(this).addClass('is-invalid');
-            $('#cp_error_msg_mismatch').text('Password and confirm password do not match.');
-            $('#cp_error_msg_mismatch').removeClass('d-none');
-            $('#btn-update-password').prop('disabled',true);
-        } else {
-            $(this).removeClass('is-invalid');
-            $('#cp_error_msg_mismatch').addClass('d-none');
-            $('#btn-update-password').prop('disabled',false);
-        }
-
-        if($(this).val().length < 6) {
-            $(this).addClass('is-invalid');
-            $('#cp_error_msg_length').text('Password must be at least 6 character#s.');
-            $('#cp_error_msg_length').removeClass('d-none');
-            $('#btn-update-password').prop('disabled',true);
-        } else {
-            $(this).removeClass('is-invalid');
-            $('#cp_error_msg_length').addClass('d-none');
-            $('#btn-update-password').prop('disabled',false);
-        }
-    });
-
     $('#confirm_password,#new_password').on('keyup', function() {
         if($('#confirm_password').val() == $('#new_password').val()) {
-            $('#cp_error_msg_mismatch').addClass('d-none');
-            $('#np_error_msg_mismatch').addClass('d-none');
+            $('.password-mismatch').addClass('d-none');
+            $('#btn-update-password').prop('disabled',false);
+        } else {
+            $('.password-mismatch').removeClass('d-none');
+            $('#btn-update-password').prop('disabled',true);
         }
     });
 

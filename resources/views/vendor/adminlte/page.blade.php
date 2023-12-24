@@ -48,6 +48,7 @@
             @include('adminlte::partials.sidebar.right-sidebar')
         @endif
 
+        @include('components.change_password')
     </div>
 @stop
 

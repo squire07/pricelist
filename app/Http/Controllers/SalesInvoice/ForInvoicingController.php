@@ -182,102 +182,107 @@ class ForInvoicingController extends Controller
         
         $sales = Sales::with('branch')->whereUuid($uuid)->whereDeleted(false)->firstOrFail();  
 
-        // check if request contains status_id = 1
-        if(isset($request->status_id) && $request->status_id == 1) { // Draft
-            $sales->status_id = $request->status_id;
-            $sales->so_remarks = $request->so_remarks;
-            $sales->updated_by = Auth::user()->name; // updated_at will be automatically filled by laravel
-            if($sales->update()) {
-                // pass the message to user if the update is successful
-                $message = $sales->so_no . ' successfully returned to Draft!';
-            }
-
-            Helper::transaction_history($sales->id, $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Return Sales Order to Draft', $sales->so_remarks);
-
-            // redirect to index page with dynamic message coming from different statuses
-            return redirect('sales-invoice/for-invoice')->with(['success' => $message]);
-
-        } else if(isset($request->status_id) && $request->status_id == 5) { // For Validation
-            
-
-            $payment_details = array_map(function($id, $name, $ref_no, $amount) {
-                return [
-                    'id' => $id,
-                    'name' => $name,
-                    'ref_no' => $ref_no,
-                    'amount' => $amount
-                ];
-            }, $request->hidden_payment_type_ids, $request->hidden_payment_type_name, $request->payment_references, $request->payments);        
-
-            // create record of payment details
-            $payment = new Payment();
-            $payment->uuid = $sales->uuid;
-            $payment->sales_id = $sales->id;
-            $payment->payment_type = implode(', ', $request->hidden_payment_type_name); // for easy reading only, actual info is/are in details column 
-            $payment->total_amount = $sales->grandtotal_amount;
-            $payment->details = json_encode($payment_details);
-            $payment->change = str_replace(',', '', $request->cash_change);
-            $payment->created_by = Auth::user()->name;
-            $payment->updated_by = Auth::user()->name;
-            $payment->save();
-
-
-            // update the sales table [parent]
-            $sales->status_id = $request->status_id;
-            $sales->payment_id = $payment->id; // now, lets create the relationship that is not defined in the create_sales_table migration;
-            $sales->si_no = str_replace("SO", "SI", $sales->so_no);
-            $sales->si_assignment_id = $request->si_assignment_id;
-
-
-            if($sales->update()) {
-                // update the sales invoice assignment details
-                $si_assignment = SalesInvoiceAssignmentDetail::whereId($request->si_assignment_id)->first();
-                $si_assignment->used = 1;
-                $si_assignment->so_no = $sales->so_no;
-                $si_assignment->si_no = $sales->si_no;
-                $si_assignment->update();
-
-                // pass the message to user if the update is successful
-                $message = $sales->so_no . ' payment submitted!';
-
-
-                // create the transaction history first before creating the payload
-                Helper::transaction_history($sales->id, $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Submit Payment', $sales->so_remarks);
-
-
-                // PAYLOAD
-                /* create the erpnext payload here
-                *  note: all payload will be submitted to erpnext after 'for validation'
-                */
-                $payload = new Payload();
-                $payload->uuid = $sales->uuid;
-                $payload->bcid = $sales->bcid;
-                $payload->distributor = Helper::create_distributor_payload($sales->bcid) ?? null;
-                $payload->so = Helper::create_so_payload($sales->id);
-                $payload->si = Helper::create_si_payload($sales->id);
-                $payload->payment = Helper::create_payment_payload($sales->id);
-                $payload->nuc_points = $sales->total_nuc;
-                $payload->created_by = Auth::user()->name;
-                $payload->save();
-
-                /* 
-                *   post NUC points to prime - indirectly; let the system push the nuc points using scheduled job
-                *   save only the transaction with nuc points
-                */
-                if($sales->total_nuc > 0) {
-                    $nuc = new Nuc();
-                    $nuc->uuid = $sales->uuid;
-                    $nuc->bcid = $sales->bcid;
-                    $nuc->total_nuc = str_replace(',', '', $sales->total_nuc);
-                    // branch and oid
-                    $nuc->branch = $sales->branch->name;
-                    $nuc->oid = Helper::get_si_assignment_no($sales->si_assignment_id);
-                    $nuc->save();
+        if($sales->version == $request->version) {
+            // check if request contains status_id = 1
+            if(isset($request->status_id) && $request->status_id == 1) { // Draft
+                $sales->status_id = $request->status_id;
+                $sales->so_remarks = $request->so_remarks;
+                $sales->updated_by = Auth::user()->name; // updated_at will be automatically filled by laravel
+                $sales->version = $sales->version + 1;
+                if($sales->update()) {
+                    // pass the message to user if the update is successful
+                    $message = $sales->so_no . ' successfully returned to Draft!';
                 }
-            }
 
-            // redirect to index page with dynamic message coming from different statuses
-            return redirect('sales-invoice/for-invoice')->with(['success' => $message, 'uuid' => $uuid]);
+                Helper::transaction_history($sales->id, $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Return Sales Order to Draft', $sales->so_remarks);
+
+                // redirect to index page with dynamic message coming from different statuses
+                return redirect('sales-invoice/for-invoice')->with(['success' => $message]);
+
+            } else if(isset($request->status_id) && $request->status_id == 5) { // For Validation
+                
+
+                $payment_details = array_map(function($id, $name, $ref_no, $amount) {
+                    return [
+                        'id' => $id,
+                        'name' => $name,
+                        'ref_no' => $ref_no,
+                        'amount' => $amount
+                    ];
+                }, $request->hidden_payment_type_ids, $request->hidden_payment_type_name, $request->payment_references, $request->payments);        
+
+                // create record of payment details
+                $payment = new Payment();
+                $payment->uuid = $sales->uuid;
+                $payment->sales_id = $sales->id;
+                $payment->payment_type = implode(', ', $request->hidden_payment_type_name); // for easy reading only, actual info is/are in details column 
+                $payment->total_amount = $sales->grandtotal_amount;
+                $payment->details = json_encode($payment_details);
+                $payment->change = str_replace(',', '', $request->cash_change);
+                $payment->created_by = Auth::user()->name;
+                $payment->updated_by = Auth::user()->name;
+                $payment->save();
+
+
+                // update the sales table [parent]
+                $sales->status_id = $request->status_id;
+                $sales->payment_id = $payment->id; // now, lets create the relationship that is not defined in the create_sales_table migration;
+                $sales->si_no = str_replace("SO", "SI", $sales->so_no);
+                $sales->si_assignment_id = $request->si_assignment_id;
+                $sales->version = $sales->version + 1;
+
+                if($sales->update()) {
+                    // update the sales invoice assignment details
+                    $si_assignment = SalesInvoiceAssignmentDetail::whereId($request->si_assignment_id)->first();
+                    $si_assignment->used = 1;
+                    $si_assignment->so_no = $sales->so_no;
+                    $si_assignment->si_no = $sales->si_no;
+                    $si_assignment->update();
+
+                    // pass the message to user if the update is successful
+                    $message = $sales->so_no . ' payment submitted!';
+
+
+                    // create the transaction history first before creating the payload
+                    Helper::transaction_history($sales->id, $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Submit Payment', $sales->so_remarks);
+
+
+                    // PAYLOAD
+                    /* create the erpnext payload here
+                    *  note: all payload will be submitted to erpnext after 'for validation'
+                    */
+                    $payload = new Payload();
+                    $payload->uuid = $sales->uuid;
+                    $payload->bcid = $sales->bcid;
+                    $payload->distributor = Helper::create_distributor_payload($sales->bcid) ?? null;
+                    $payload->so = Helper::create_so_payload($sales->id);
+                    $payload->si = Helper::create_si_payload($sales->id);
+                    $payload->payment = Helper::create_payment_payload($sales->id);
+                    $payload->nuc_points = $sales->total_nuc;
+                    $payload->created_by = Auth::user()->name;
+                    $payload->save();
+
+                    /* 
+                    *   post NUC points to prime - indirectly; let the system push the nuc points using scheduled job
+                    *   save only the transaction with nuc points
+                    */
+                    if($sales->total_nuc > 0) {
+                        $nuc = new Nuc();
+                        $nuc->uuid = $sales->uuid;
+                        $nuc->bcid = $sales->bcid;
+                        $nuc->total_nuc = str_replace(',', '', $sales->total_nuc);
+                        // branch and oid
+                        $nuc->branch = $sales->branch->name;
+                        $nuc->oid = Helper::get_si_assignment_no($sales->si_assignment_id);
+                        $nuc->save();
+                    }
+                }
+
+                // redirect to index page with dynamic message coming from different statuses
+                return redirect('sales-invoice/for-invoice')->with(['success' => $message, 'uuid' => $uuid]);
+            }
+        } else {
+            return redirect('sales-invoice/for-invoice')->with('error', 'This sales invoice was recently modified by another user!');
         }
     }
 

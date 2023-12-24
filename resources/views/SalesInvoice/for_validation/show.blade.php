@@ -118,12 +118,14 @@
             <input type="hidden" name="uuid" id="form_cancel_uuid">
             <input type="hidden" name="status_id" value="3">
             <input type="hidden" name="si_remarks" id="form_cancel_si_remarks">
+            <input type="hidden" name="version" value="{{ $sales_order->version }}">
         @csrf
     </form>
     <form id="form_validate" method="POST">
         @method('PATCH')
             <input type="hidden" name="uuid" id="form_validate_uuid">
             <input type="hidden" name="status_id" value="5">
+            <input type="hidden" name="version" value="{{ $sales_order->version }}">
         @csrf
     </form>
 

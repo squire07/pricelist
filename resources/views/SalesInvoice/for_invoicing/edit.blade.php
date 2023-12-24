@@ -161,6 +161,7 @@
                     @csrf
                     @method('PUT')
                     <input type="hidden" name="status_id" value="5">
+                    <input type="hidden" name="version" value="{{ $sales_order->version }}">
 
                     {{-- 3 fields:  payment_type_id, remarks, cash_tendered --}}
 
@@ -319,9 +320,6 @@ $(document).ready(function() {
         // update the value of hidden field `count_payment_type` from zero to new value
         $('#count_payment_type').val(count_payment_type.length);
 
-        console.log(count_payment_type);
-        console.log(count_payment_type.length);
-
 
         // empty first
         $('#cash_tendered_fields').empty();
@@ -468,7 +466,7 @@ $(document).ready(function() {
         });
 
 
-        if (is_cash_sufficient === true && all_fields_filled) {
+        if (is_cash_sufficient === 'true' && all_fields_filled) {
             $('#btn_modal_print_invoice').prop('disabled', false);
         } else {
             $('#btn_modal_print_invoice').prop('disabled', true);
@@ -585,9 +583,9 @@ $(document).ready(function() {
 
         }
         return true;
-        });
+    });
 
-        $('#modal-submit-payment').on('hidden.bs.modal', function () {
+    $('#modal-submit-payment').on('hidden.bs.modal', function () {
         $('#modal-submit-payment').removeClass('programmatic');
     });
 

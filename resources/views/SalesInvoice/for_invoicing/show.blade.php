@@ -104,6 +104,7 @@
             <input type="hidden" name="uuid" id="hidden_uuid">
             <input type="hidden" name="status_id" value="1">
             <input type="hidden" name="so_remarks" id="hidden_so_remarks">
+            <input type="hidden" name="version" value="{{ $sales_order->version }}">
         @csrf
     </form>
 @endsection

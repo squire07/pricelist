@@ -10,6 +10,7 @@ use App\Helpers\Helper;
 use App\Models\Branch;
 use App\Models\Company;
 use App\Models\History;
+use App\Models\Origin;
 use App\Models\Sales;
 use App\Models\SalesDetails;
 use App\Models\ShippingFee;
@@ -107,14 +108,16 @@ class SalesController extends Controller
                             ->get(['id','name']);
         }
 
-        return view('SalesOrder.create', compact('transaction_types','branches','shipping_fees'));
+        $origins = Origin::whereDeleted(false)->orderBy('name')->get(['id','name']);
+
+        return view('SalesOrder.create', compact('transaction_types','branches','shipping_fees','origins'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
+    {   //dd($request);
         $sales = new Sales();
         $sales->uuid = Helper::uuid(new Sales);
         $sales->transaction_type_id = $request->transaction_type_id;
@@ -133,6 +136,11 @@ class SalesController extends Controller
         $sales->group_name = $request->group_name;
         $sales->created_by = Auth::user()->name;
         $sales->updated_by = Auth::user()->name;
+        
+        // additional
+        $sales->new_signup = $request->signee_name != null ? 1 : 0;
+        $sales->signee_name = trim($request->signee_name) ?? null;
+        $sales->origin_id = $request->origin_id;
 
         // if the parent information is saved, then, save the details information
         if($sales->save()) {
@@ -224,123 +232,136 @@ class SalesController extends Controller
         $transaction_types = TransactionType::whereDeleted(false)->get();
         $branches = Branch::whereDeleted(false)->get(['id','name']);
         $shipping_fees = ShippingFee::whereDeleted(false)->get();
+        $origins = Origin::whereDeleted(false)->orderBy('name')->get(['id','name']);
 
-        return view('SalesOrder.edit', compact('sales_order','transaction_types','branches','shipping_fees'));
+        return view('SalesOrder.edit', compact('sales_order','transaction_types','branches','shipping_fees','origins'));
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $uuid)
-    {
+    {   
         $uuid = $request->uuid ?? $uuid;
         
         $sales = Sales::whereUuid($uuid)->whereDeleted(false)->firstOrFail();  
         
-        // check if request contains status_id = 2
-        if(isset($request->status_id) && $request->status_id == 2) {
-            $sales->status_id = $request->status_id;
-            $sales->updated_by = Auth::user()->name; // updated_at will be automatically filled by laravel
-            if($sales->update()) {
-                // pass the message to user if the update is successful
-                $message = $sales->so_no . ' successfully marked for invoicing';
+        if($sales->version == $request->version) {
+            // check if request contains status_id = 2
+            if(isset($request->status_id) && $request->status_id == 2) {
+                $sales->status_id = $request->status_id;
+                $sales->updated_by = Auth::user()->name; // updated_at will be automatically filled by laravel
+                $sales->version = $sales->version + 1;
+                if($sales->update()) {
+                    // pass the message to user if the update is successful
+                    $message = $sales->so_no . ' successfully marked for invoicing';
+                }
+
+                Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Order', 'Submitted For Invoicing', NULL);
+
+            } else {
+                // other requests, status_id goes here. (from EDIT method)
+
+                // update the bcid, distributor's name and group if available, else retain the original data
+                $sales->bcid = $request->bcid ?? $sales->bcid;
+                $sales->distributor_name = $request->distributor_name ?? $sales->distributor_name;
+                $sales->group_name = $request->group_name ?? $sales->group_name;
+                // update total amount and total nuc points, else retain the original
+                $sales->total_amount = $request->total_amount ?? $sales->total_amount;
+                $sales->total_nuc = $request->total_nuc ?? $sales->total_nuc;
+                $sales->shipping_fee = $request->shipping_fee ?? $sales->shipping_fee;
+                $sales->vatable_sales = $request->vatable_sales ?? $sales->vatable_sales;
+                $sales->vat_amount = $request->vat_amount ?? $sales->vat_amount;
+                $sales->grandtotal_amount = $request->grandtotal_amount ?? $sales->grandtotal_amount;
+                $sales->version = $sales->version + 1;
+
+                 // additional
+                $sales->new_signup = $request->signee_name != null ? 1 : 0;
+                $sales->signee_name = trim($request->signee_name) ?? null;
+                $sales->origin_id = $request->origin_id;
+                
+                if($sales->update()) {
+
+                    // check if there is/are item(s) for deletion 
+                    if(isset($request->deleted_item_id) && !is_null($request->deleted_item_id)) {
+                        // mark the id(s) as deleted 
+                        $exploded_ids = explode(',', $request->deleted_item_id);
+                        foreach($exploded_ids as $sales_details_id) {
+                            // update the sales_details table
+                            $sales_details = SalesDetails::whereId($sales_details_id)->first();
+                            $sales_details->deleted = 1;
+                            $sales_details->deleted_at = Carbon::now();
+                            $sales_details->deleted_by = Auth::user()->name;
+                            $sales_details->update();
+                        }
+                    }
+
+                
+                    // check for additional item(s)
+                    $item_details = [];
+                    if(isset($request->item_name)) {
+                        // convert the multiple array into one single array (flat array)
+                        foreach($request->item_name as $key => $value) {
+                            $item_details[$key]['item_name'] = $value;
+
+                            if (isset($request->item_code[$key])) {
+                                $item_details[$key]['item_code'] = $request->item_code[$key];
+                            }
+
+                            if (isset($request->quantity[$key])) {
+                                $item_details[$key]['quantity'] = str_replace(',', '', $request->quantity[$key]);
+                            }
+                        
+                            if (isset($request->amount[$key])) {
+                                $item_details[$key]['amount'] = str_replace(',', '', $request->amount[$key]);
+                            }
+                        
+                            if (isset($request->nuc[$key])) {
+                                $item_details[$key]['nuc'] = str_replace(',', '', $request->nuc[$key]);
+                            }
+                        
+                            if (isset($request->rs_points[$key])) {
+                                $item_details[$key]['rs_points'] = str_replace(',', '', $request->rs_points[$key]);
+                            }
+                        
+                            if (isset($request->subtotal_nuc[$key])) {
+                                $item_details[$key]['subtotal_nuc'] = str_replace(',', '', $request->subtotal_nuc[$key]);
+                            }
+                        
+                            if (isset($request->subtotal_amount[$key])) {
+                                $item_details[$key]['subtotal_amount'] = str_replace(',', '', $request->subtotal_amount[$key]);
+                            }
+                        }
+
+                        // save the flat array to sales details table
+                        foreach($item_details as $item) {
+                            $details = new SalesDetails();
+                            $details->sales_id = $sales->id;
+                            $details->item_code = $item['item_code'] ?? null;;
+                            $details->item_name = $item['item_name'] ?? null;;
+                            $details->item_price = $item['amount'] ?? null;;
+                            $details->quantity = $item['quantity'] ?? null;;
+                            $details->amount = $item['subtotal_amount'] ?? null;; 
+                            $details->nuc = $item['subtotal_nuc'] ?? null;;
+                            $details->created_by = Auth::user()->name;
+                            $details->updated_by = Auth::user()->name;
+                            $details->save();
+                        }
+                    }
+
+                    $message = $sales->so_no . ' successfully updated';
+                }
+
+                Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Order', 'Update Sales Order', NULL);
+
             }
 
-            Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Order', 'Submitted For Invoicing', NULL);
-
+            // redirect to index page with dynamic message coming from different statuses
+            return redirect('sales-orders')->with('success', $message);
+        
         } else {
-            // other requests, status_id goes here. (from EDIT method)
-            //dd($request);
-
-            // update the bcid, distributor's name and group if available, else retain the original data
-            $sales->bcid = $request->bcid ?? $sales->bcid;
-            $sales->distributor_name = $request->distributor_name ?? $sales->distributor_name;
-            $sales->group_name = $request->group_name ?? $sales->group_name;
-            // update total amount and total nuc points, else retain the original
-            $sales->total_amount = $request->total_amount ?? $sales->total_amount;
-            $sales->total_nuc = $request->total_nuc ?? $sales->total_nuc;
-            $sales->shipping_fee = $request->shipping_fee ?? $sales->shipping_fee;
-            $sales->vatable_sales = $request->vatable_sales ?? $sales->vatable_sales;
-            $sales->vat_amount = $request->vat_amount ?? $sales->vat_amount;
-            $sales->grandtotal_amount = $request->grandtotal_amount ?? $sales->grandtotal_amount;
-            if($sales->update()) {
-
-                // check if there is/are item(s) for deletion 
-                if(isset($request->deleted_item_id) && !is_null($request->deleted_item_id)) {
-                    // mark the id(s) as deleted 
-                    $exploded_ids = explode(',', $request->deleted_item_id);
-                    foreach($exploded_ids as $sales_details_id) {
-                        // update the sales_details table
-                        $sales_details = SalesDetails::whereId($sales_details_id)->first();
-                        $sales_details->deleted = 1;
-                        $sales_details->deleted_at = Carbon::now();
-                        $sales_details->deleted_by = Auth::user()->name;
-                        $sales_details->update();
-                    }
-                }
-
-            
-                // check for additional item(s)
-                $item_details = [];
-                if(isset($request->item_name)) {
-                    // convert the multiple array into one single array (flat array)
-                    foreach($request->item_name as $key => $value) {
-                        $item_details[$key]['item_name'] = $value;
-
-                        if (isset($request->item_code[$key])) {
-                            $item_details[$key]['item_code'] = $request->item_code[$key];
-                        }
-
-                        if (isset($request->quantity[$key])) {
-                            $item_details[$key]['quantity'] = str_replace(',', '', $request->quantity[$key]);
-                        }
-                    
-                        if (isset($request->amount[$key])) {
-                            $item_details[$key]['amount'] = str_replace(',', '', $request->amount[$key]);
-                        }
-                    
-                        if (isset($request->nuc[$key])) {
-                            $item_details[$key]['nuc'] = str_replace(',', '', $request->nuc[$key]);
-                        }
-                    
-                        if (isset($request->rs_points[$key])) {
-                            $item_details[$key]['rs_points'] = str_replace(',', '', $request->rs_points[$key]);
-                        }
-                    
-                        if (isset($request->subtotal_nuc[$key])) {
-                            $item_details[$key]['subtotal_nuc'] = str_replace(',', '', $request->subtotal_nuc[$key]);
-                        }
-                    
-                        if (isset($request->subtotal_amount[$key])) {
-                            $item_details[$key]['subtotal_amount'] = str_replace(',', '', $request->subtotal_amount[$key]);
-                        }
-                    }
-
-                    // save the flat array to sales details table
-                    foreach($item_details as $item) {
-                        $details = new SalesDetails();
-                        $details->sales_id = $sales->id;
-                        $details->item_code = $item['item_code'] ?? null;;
-                        $details->item_name = $item['item_name'] ?? null;;
-                        $details->item_price = $item['amount'] ?? null;;
-                        $details->quantity = $item['quantity'] ?? null;;
-                        $details->amount = $item['subtotal_amount'] ?? null;; 
-                        $details->nuc = $item['subtotal_nuc'] ?? null;;
-                        $details->created_by = Auth::user()->name;
-                        $details->updated_by = Auth::user()->name;
-                        $details->save();
-                    }
-                }
-
-                $message = $sales->so_no . ' successfully updated';
-            }
-
-            Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Order', 'Update Sales Order', NULL);
-
+            return redirect('sales-orders')->with('error', 'This sales order was recently modified by another user!');
         }
-
-        // redirect to index page with dynamic message coming from different statuses
-        return redirect('sales-orders')->with('success', $message);
     }
 
     /**

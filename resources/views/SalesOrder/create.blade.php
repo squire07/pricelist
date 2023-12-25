@@ -19,6 +19,8 @@
                 <form class="form-horizontal" id="form_sales_order" action="{{ url('sales-orders') }}" method="POST" autocomplete="off">
                     @csrf
                     <input type="hidden" name="tfoot_total_nuc" id="tfoot_total_nuc" value="0"/>
+                    <input type="hidden" name="signee_name" id="signee_name">
+                    <input type="hidden" name="origin_id" id="origin_id">
                     <div class="row">
                         <div class="col-md-4 col-sm-12">
                             <div class="form-group">
@@ -84,7 +86,7 @@
                         </div>
                         <div class="col-lg-4 col-md-4">
                             <label for="item_name">Item Name</label>
-                            <select class="form-control form-control-sm select2 select2-primary" id="item_name" data-dropdown-css-class="select2-primary " style="width: 100%;" disabled>
+                            <select class="form-control form-control-sm select2 select2-primary" id="item_name" data-dropdown-css-class="select2-primary " style="width:100%;" disabled>
                             </select>
                         </div>
                         <div class="col-xl-1 col-md-2">
@@ -167,11 +169,33 @@
                     </div>
 
                     <div class="row">
+                        <div class="col-12">
+                            <div class="form-group clearfix">
+                                <div class="icheck-primary d-inline">
+                                    <input type="checkbox" name="new_signup" id="checkbox_new_signup">
+                                    <label for="checkbox_new_signup">New sign up:</label>
+                                    <span class="ml-2" id="span_signee_name"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group clearfix">
+                                <div class="icheck-primary d-inline">
+                                    <input type="checkbox" name="origin" id="checkbox_origin">
+                                    <label for="checkbox_origin">Origin:</label>
+                                    <span class="ml-2" id="span_origin"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col-12 text-center">
                             <input type="button" value="Cancel" id="btn_cancel_so" class="btn btn-lg btn-danger">
                             <button class="btn btn-primary btn-lg m-2 " id="btn_save_so" {{ Helper::BP(1,2) }}><i class="fas fa-save mr-2"></i>Save Sales Order</button>
                         </div>
                     </div>
+                {{-- </form> --}}
             </div>    
         </div>
     </div>
@@ -209,6 +233,65 @@
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="btn-sf-close">Close</button>
                     <input type="button" class="btn btn-primary btn-sm m-2" id="btn-add-sf" value="Save" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-add-new-signup" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">New Sign Up</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">    
+                            <div class="form-group">
+                                <label for="modal_new_signup_name">Name</label>
+                                <input type="text" class="form-control form-control-sm" id="modal_new_signup_name" placeholder="Complete Name">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="btn-new-signup-cancel">Cancel</button>
+                    <input type="button" class="btn btn-primary btn-sm m-2" id="btn-add-new-signup" value="Add" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-add-origin" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Origin</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">    
+                            <div class="form-group">
+                                <label for="modal_origin_name">Name</label>
+                                <select class="form-control form-control-sm select2 select2-primary" id="modal-select-origin-id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                    <option value="" selected="true">-- Select Origin --</option>
+                                    @foreach($origins as $origin)
+                                        <option value="{{ $origin->id }}">{{ $origin->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="btn-origin-cancel">Cancel</button>
+                    <input type="button" class="btn btn-primary btn-sm m-2" id="btn-add-origin" value="Add" disabled>
                 </div>
             </div>
         </div>
@@ -680,7 +763,7 @@ tbody tr:nth-child(odd) {
 
         // =========== START OF SHIPPING FEE MODAL ===========
 
-    // if sf_amount field is empty, then disable the save button
+        // if sf_amount field is empty, then disable the save button
         $("#modal_select_sf").on('change', function() {
             if($(this).val() != '') {
                 $('#btn-add-sf').prop('disabled', false);
@@ -748,103 +831,72 @@ tbody tr:nth-child(odd) {
         // Prevent from redirecting back to homepage when cancel button is clicked accidentally
         $('#btn_cancel_so').on('click', function() {
 
-        // show the confirmation
-        Swal.fire({
-            title: 'Cancel Transaction?',
-                text: 'All unsaved progress will be lost.',
-                icon: 'warning',
-                showCancelButton: true,
-                allowEnterKey: false,
-                allowOutsideClick: false,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location = "/sales-orders";
-            }
-        });
-    });
-
-
-
-        $('#btn_save_so').on('click', function(e) {
-            // prevent auto submit
-            e.preventDefault();
-
-            // simple validation 
-            let allAreFilled = true;
-
-            document.getElementById("form_sales_order").querySelectorAll("[required]").forEach(function(i) {
-                if (!allAreFilled) return;
-                if (!i.value) { 
-                    allAreFilled = false;  
-                    return; 
-                } 
-                else if(url_param == 'delivery' && $('#tfoot_sf_total_amount').val() == 0) {
-                    allAreFilled = false;
-                    return;
-                }
-            });
-
-            if (!allAreFilled) {
-    
-                // set focus to specific field
-                if($.trim($("#transaction_type").val()) == "") {
-                    $('#transaction_type').focus();
-                    required_field('Transaction Type');
-                } 
-                else if($.trim($("#branch_id").val()) == "") {
-                    $('#branch_id').focus();
-                    required_field('Branch');
-                } 
-                else if($.trim($("#bcid").val()) == "") {
-                    $('#bcid').focus();
-                    required_field('BCID');
-                }
-                else if($.trim($("#distributor_name").val()) == "") {
-                    $('#distributor_name').focus();
-                    required_field('Distributor name');
-                }
-                else if($.trim($("#group_name").val()) == "") {
-                    $('#group_name').focus();
-                    required_field('Group');
-                }
-
-                // check if item count equals to zero before checking the shipping fee
-                else if(item_count == 0) {
-                    Swal.fire({
-                        title: 'Please add an item',
-                        text: 'Select an item and add quantity.', 
-                        icon: 'error',
-                        allowEnterKey: false,
-                        allowOutsideClick: false
-                    });
-                }
-                else if(url_param == 'delivery' && $('#tfoot_sf_total_amount').val() == 0) {
-                    required_field('Shipping Fee');
-                }
-            } 
-
-            // lets check if there is/are actual item(s) in the details table before submitting
-            // use `if else` statement to support older browser
-            else if(item_count > 0) {
-                Swal.fire({
-                    title: 'Are you sure you want to save this sales order?',
+            // show the confirmation
+            Swal.fire({
+                title: 'Cancel Transaction?',
+                    text: 'All unsaved progress will be lost.',
                     icon: 'warning',
                     showCancelButton: true,
                     allowEnterKey: false,
                     allowOutsideClick: false,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, save!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                       $('#form_sales_order').submit();
-                    }
-                });
-            } else {
-                // show error
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location = "/sales-orders";
+                }
+            }
+        );
+
+    });
+
+
+    $('#btn_save_so').on('click', function(e) {
+        // prevent auto submit
+        e.preventDefault();
+
+        // simple validation 
+        let allAreFilled = true;
+
+        document.getElementById("form_sales_order").querySelectorAll("[required]").forEach(function(i) {
+            if (!allAreFilled) return;
+            if (!i.value) { 
+                allAreFilled = false;  
+                return; 
+            } 
+            else if(url_param == 'delivery' && $('#tfoot_sf_total_amount').val() == 0) {
+                allAreFilled = false;
+                return;
+            }
+        });
+
+        if (!allAreFilled) {
+
+            // set focus to specific field
+            if($.trim($("#transaction_type").val()) == "") {
+                $('#transaction_type').focus();
+                required_field('Transaction Type');
+            } 
+            else if($.trim($("#branch_id").val()) == "") {
+                $('#branch_id').focus();
+                required_field('Branch');
+            } 
+            else if($.trim($("#bcid").val()) == "") {
+                $('#bcid').focus();
+                required_field('BCID');
+            }
+            else if($.trim($("#distributor_name").val()) == "") {
+                $('#distributor_name').focus();
+                required_field('Distributor name');
+            }
+            else if($.trim($("#group_name").val()) == "") {
+                $('#group_name').focus();
+                required_field('Group');
+            }
+
+            // check if item count equals to zero before checking the shipping fee
+            else if(item_count == 0) {
                 Swal.fire({
                     title: 'Please add an item',
                     text: 'Select an item and add quantity.', 
@@ -853,56 +905,218 @@ tbody tr:nth-child(odd) {
                     allowOutsideClick: false
                 });
             }
-        });
+            else if(url_param == 'delivery' && $('#tfoot_sf_total_amount').val() == 0) {
+                required_field('Shipping Fee');
+            }
+        } 
 
-        function required_field(field) {
+        // lets check if there is/are actual item(s) in the details table before submitting
+        // use `if else` statement to support older browser
+        else if(item_count > 0) {
             Swal.fire({
-                title: field + ' is required',
+                title: 'Are you sure you want to save this sales order?',
+                icon: 'warning',
+                showCancelButton: true,
+                allowEnterKey: false,
+                allowOutsideClick: false,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, save!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#form_sales_order').submit();
+                }
+            });
+        } else {
+            // show error
+            Swal.fire({
+                title: 'Please add an item',
+                text: 'Select an item and add quantity.', 
                 icon: 'error',
                 allowEnterKey: false,
                 allowOutsideClick: false
             });
         }
+    });
 
-        function calculateVAT(salesAmount) {
-            // Calculate VATable Sales
-            let vatable_sales = parseFloat(salesAmount) / 1.12; 
+    
 
-            // Calculate VAT Amount
-            let vat_amount = parseFloat(vatable_sales) * 0.12;
 
-            // Calculate the difference between salesAmount and the sum of vatable_sales and vat_amount
-            const difference = parseFloat(salesAmount) - (vatable_sales + vat_amount);
+    function required_field(field) {
+        Swal.fire({
+            title: field + ' is required',
+            icon: 'error',
+            allowEnterKey: false,
+            allowOutsideClick: false
+        });
+    }
 
-            // Round vat_amount to account for the difference
-            vat_amount += difference;
+    function calculateVAT(salesAmount) {
+        // Calculate VATable Sales
+        let vatable_sales = parseFloat(salesAmount) / 1.12; 
 
-            // Return an object with both results
-            return {
-                vatable_sales: vatable_sales.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-                vat_amount: vat_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-            };
+        // Calculate VAT Amount
+        let vat_amount = parseFloat(vatable_sales) * 0.12;
+
+        // Calculate the difference between salesAmount and the sum of vatable_sales and vat_amount
+        const difference = parseFloat(salesAmount) - (vatable_sales + vat_amount);
+
+        // Round vat_amount to account for the difference
+        vat_amount += difference;
+
+        // Return an object with both results
+        return {
+            vatable_sales: vatable_sales.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+            vat_amount: vat_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        };
+    }
+
+    // check if url contains parameter e.g. 'so'
+    function getUrlParameter(parameterName) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(parameterName);
+    }
+
+    // Prevent user from using enter key
+    $("input:text").keypress(function(event) {
+        if (event.keyCode === 10 || event.keyCode == 13) {
+            event.preventDefault();
+            return false;
+        }
+    });
+
+    $('#btn_save_so, #add_item, #btn_cancel_so').keypress(function (event) {
+        if (event.keyCode === 10 || event.keyCode === 13) {
+            event.preventDefault();
+        }
+    });
+
+
+    // =========== START OF NEW SIGN UP ===========
+    $('#checkbox_new_signup').on('click', function() {
+        if (this.checked) {
+            // disable add button
+            $('#btn-add-new-signup').attr('disabled', true);
+            $('#modal-add-new-signup').modal('show');
+        } else {
+            // remove the name
+            $('#span_signee_name').text('');
+            // remove to form hidden field
+            $('#signee_name').val('');
+        }
+    });
+
+    $('#modal_new_signup_name').on('keyup', function(e) {
+        var char_code = e.which || e.keyCode;
+
+        if (!((char_code >= 65 && char_code <= 90) || (char_code >= 97 && char_code <= 122) || char_code === 32 || char_code === 8)) {
+            e.preventDefault();
+
+            this.value = this.value.replace(/[^a-zA-Z ]/g, '');
         }
 
-        // check if url contains parameter e.g. 'so'
-        function getUrlParameter(parameterName) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(parameterName);
+        if(this.value.length > 3) {
+            // enable add button
+            $('#btn-add-new-signup').prop('disabled', false);
+        } else {
+            // disable add button
+            $('#btn-add-new-signup').prop('disabled', true);
         }
+        
+    });
 
-        // Prevent user from using enter key
-        $("input:text").keypress(function(event) {
-            if (event.keyCode === 10 || event.keyCode == 13) {
-                event.preventDefault();
-                return false;
-            }
-        });
+    $('#btn-add-new-signup').on('click', function() {
+        // get the value
+        let signee_name = $('#modal_new_signup_name').val();
+        // add the signee name to label
+        $('#span_signee_name').text(signee_name.toUpperCase());
+        // add to form hidden field
+        $('#signee_name').val(signee_name.toUpperCase());
+        // close the modal
+        $('#modal-add-new-signup').modal('hide');
+        // retain the check
+        $('#checkbox_new_signup').prop('checked', true);
+    });
 
-        $('#btn_save_so, #add_item, #btn_cancel_so').keypress(function (event) {
-            if (event.keyCode === 10 || event.keyCode === 13) {
-                event.preventDefault();
-            }
-        });
+    $('#btn-new-signup-cancel').on('click', function() {
+        // remove the value
+        $('#modal_new_signup_name').val('');
+        // uncheck the checkbox
+        $('#checkbox_new_signup').prop('checked', false);
+    });
+
+    $('#modal-add-new-signup').on('hide.bs.modal', function (e) {
+        // Check if the close button (x button) was clicked
+        if (e.target === this) {
+            // remove the value
+            $('#modal_new_signup_name').val('');
+            // uncheck the checkbox
+            $('#checkbox_new_signup').prop('checked', false);
+        } 
+    });
+    
+    // =========== END OF NEW SIGN UP ===========
+
+
+
+
+
+    // =========== START OF ORIGIN ===========
+    $('#checkbox_origin').on('click', function() {
+        if (this.checked) {
+            // disable add button
+            $('#btn-add-origin').attr('disabled', true);
+            $('#modal-add-origin').modal('show');
+        } else {
+            // remove the origin
+            $('#span_origin').text('');
+            // remove to form hidden field
+            $('#origin_id').val('');
+        }
+    });
+
+    $('#modal-select-origin-id').on('change', function() {
+        if(this.value != '') {
+            // enable add button
+            $('#btn-add-origin').attr('disabled', false);
+        } else {
+            // disable add button
+            $('#btn-add-origin').attr('disabled', true);
+        }
+    });
+
+    $('#btn-add-origin').on('click', function() {
+        // get the value
+        let origin_id = $('#modal-select-origin-id').val();
+        let origin_name = $('#modal-select-origin-id').select2('data')[0].text;
+        // add the origin name to label
+        $('#span_origin').text(origin_name);
+        // add to form hidden field
+        $('#origin_id').val(origin_id);
+        // close the modal
+        $('#modal-add-origin').modal('hide');
+        // retain the check
+        $('#checkbox_origin').prop('checked', true);
+    });
+
+    $('#btn-origin-cancel').on('click', function() {
+        // select the null from dropdown
+        $('#modal-select-origin-id').val($('#modal-select-origin-id option:first').val()).trigger('change');
+        // uncheck the checkbox
+        $('#checkbox_origin').prop('checked', false);
+    });
+
+    $('#modal-add-origin').on('hide.bs.modal', function (e) {
+        // Check if the close button (x button) was clicked
+        if (e.target === this) {
+            // select the null from dropdown
+            $('#modal-select-origin-id').val($('#modal-select-origin-id option:first').val()).trigger('change');
+            // uncheck the checkbox
+            $('#checkbox_origin').prop('checked', false);
+        } 
+    });
+
+    // =========== END OF ORIGIN ===========
 });
 </script>
 @endsection

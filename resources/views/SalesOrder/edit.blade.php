@@ -180,6 +180,26 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col-12">
+                            <div class="form-group clearfix">
+                                <div class="icheck-primary d-inline">
+                                    <input type="checkbox" name="new_signup" id="checkbox_new_signup" {{ $sales_order->new_signup != null ? 'checked' : '' }}>
+                                    <label for="checkbox_new_signup">New sign up:</label>
+                                    <span class="ml-2" id="span_signee_name">{{ $sales_order->signee_name }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group clearfix">
+                                <div class="icheck-primary d-inline">
+                                    <input type="checkbox" name="origin" id="checkbox_origin" {{ $sales_order->origin_id != null ? 'checked' : '' }}>
+                                    <label for="checkbox_origin">Origin:</label>
+                                    <span class="ml-2" id="span_origin">{{ $sales_order->origin != null ? $sales_order->origin->name : null }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-12 text-center">
                             <input type="button" value="Cancel" id="btn_cancel_so" class="btn btn-lg btn-danger">
                             <button class="btn btn-primary btn-lg m-2 " id="btn_save_so" {{ Helper::BP(1,4) }}><i class="fas fa-save mr-2"></i>Save Sales Order</button>
@@ -191,6 +211,11 @@
 
                     {{-- item(s) for deletion --}}
                     <input type="hidden" name="deleted_item_id" id="deleted_item_id">
+
+                    {{-- other hidden fields --}}
+                    <input type="hidden" name="signee_name" id="signee_name">
+                    <input type="hidden" name="origin_id" id="origin_id">
+                    <input type="hidden" name="version" value="{{ $sales_order->version }}">
                 </form>
             </div>    
         </div>
@@ -229,6 +254,65 @@
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="btn_sf_close" >Close</button>
                     <input type="button" class="btn btn-primary btn-sm m-2" id="btn-add-sf" value="Save" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-add-new-signup" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">New Sign Up</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">    
+                            <div class="form-group">
+                                <label for="modal_new_signup_name">Name</label>
+                                <input type="text" class="form-control form-control-sm" id="modal_new_signup_name" placeholder="Complete Name">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="btn-new-signup-cancel">Cancel</button>
+                    <input type="button" class="btn btn-primary btn-sm m-2" id="btn-add-new-signup" value="Add" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-add-origin" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Origin</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">    
+                            <div class="form-group">
+                                <label for="modal_origin_name">Name</label>
+                                <select class="form-control form-control-sm select2 select2-primary" id="modal-select-origin-id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                                    <option value="" selected="true">-- Select Origin --</option>
+                                    @foreach($origins as $origin)
+                                        <option value="{{ $origin->id }}">{{ $origin->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="btn-origin-cancel">Cancel</button>
+                    <input type="button" class="btn btn-primary btn-sm m-2" id="btn-add-origin" value="Add" disabled>
                 </div>
             </div>
         </div>
@@ -782,6 +866,137 @@ tbody tr:nth-child(odd) {
                 event.preventDefault();
             }
         });
+
+
+
+
+        
+
+        // =========== START OF NEW SIGN UP ===========
+        $('#checkbox_new_signup').on('click', function() {
+            if (this.checked) {
+                // disable add button
+                $('#btn-add-new-signup').attr('disabled', true);
+                $('#modal-add-new-signup').modal('show');
+            } else {
+                // remove the name
+                $('#span_signee_name').text('');
+                // remove to form hidden field
+                $('#signee_name').val('');
+            }
+        });
+
+        $('#modal_new_signup_name').on('keyup', function(e) {
+            var char_code = e.which || e.keyCode;
+
+            if (!((char_code >= 65 && char_code <= 90) || (char_code >= 97 && char_code <= 122) || char_code === 32 || char_code === 8)) {
+                e.preventDefault();
+
+                this.value = this.value.replace(/[^a-zA-Z ]/g, '');
+            }
+
+            if(this.value.length > 3) {
+                // enable add button
+                $('#btn-add-new-signup').prop('disabled', false);
+            } else {
+                // disable add button
+                $('#btn-add-new-signup').prop('disabled', true);
+            }
+            
+        });
+
+        $('#btn-add-new-signup').on('click', function() {
+            // get the value
+            let signee_name = $('#modal_new_signup_name').val();
+            // add the signee name to label
+            $('#span_signee_name').text(signee_name.toUpperCase());
+            // add to form hidden field
+            $('#signee_name').val(signee_name.toUpperCase());
+            // close the modal
+            $('#modal-add-new-signup').modal('hide');
+            // retain the check
+            $('#checkbox_new_signup').prop('checked', true);
+        });
+
+        $('#btn-new-signup-cancel').on('click', function() {
+            // remove the value
+            $('#modal_new_signup_name').val('');
+            // uncheck the checkbox
+            $('#checkbox_new_signup').prop('checked', false);
+        });
+
+        $('#modal-add-new-signup').on('hide.bs.modal', function (e) {
+            // Check if the close button (x button) was clicked
+            if (e.target === this) {
+                // remove the value
+                $('#modal_new_signup_name').val('');
+                // uncheck the checkbox
+                $('#checkbox_new_signup').prop('checked', false);
+            } 
+        });
+        
+        // =========== END OF NEW SIGN UP ===========
+
+
+
+
+
+        // =========== START OF ORIGIN ===========
+        $('#checkbox_origin').on('click', function() {
+            if (this.checked) {
+                // disable add button
+                $('#btn-add-origin').attr('disabled', true);
+                $('#modal-add-origin').modal('show');
+            } else {
+                // remove the origin
+                $('#span_origin').text('');
+                // remove to form hidden field
+                $('#origin_id').val('');
+            }
+        });
+
+        $('#modal-select-origin-id').on('change', function() {
+            if(this.value != '') {
+                // enable add button
+                $('#btn-add-origin').attr('disabled', false);
+            } else {
+                // disable add button
+                $('#btn-add-origin').attr('disabled', true);
+            }
+        });
+
+        $('#btn-add-origin').on('click', function() {
+            // get the value
+            let origin_id = $('#modal-select-origin-id').val();
+            let origin_name = $('#modal-select-origin-id').select2('data')[0].text;
+            // add the origin name to label
+            $('#span_origin').text(origin_name);
+            // add to form hidden field
+            $('#origin_id').val(origin_id);
+            // close the modal
+            $('#modal-add-origin').modal('hide');
+            // retain the check
+            $('#checkbox_origin').prop('checked', true);
+        });
+
+        $('#btn-origin-cancel').on('click', function() {
+            // select the null from dropdown
+            $('#modal-select-origin-id').val($('#modal-select-origin-id option:first').val()).trigger('change');
+            // uncheck the checkbox
+            $('#checkbox_origin').prop('checked', false);
+        });
+
+        $('#modal-add-origin').on('hide.bs.modal', function (e) {
+            // Check if the close button (x button) was clicked
+            if (e.target === this) {
+                // select the null from dropdown
+                $('#modal-select-origin-id').val($('#modal-select-origin-id option:first').val()).trigger('change');
+                // uncheck the checkbox
+                $('#checkbox_origin').prop('checked', false);
+            } 
+        });
+
+        // =========== END OF ORIGIN ===========
 });
 </script>
 @endsection

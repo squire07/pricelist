@@ -88,6 +88,26 @@
                     </table>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group clearfix">
+                        <div class="icheck-primary d-inline">
+                            <input type="checkbox" {{ $sales_order->new_signup != null ? 'checked' : '' }}>
+                            <label for="checkbox_new_signup">New sign up:</label>
+                            <span class="ml-2">{{ $sales_order->signee_name }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group clearfix">
+                        <div class="icheck-primary d-inline">
+                            <input type="checkbox" {{ $sales_order->origin_id != null ? 'checked' : '' }}>
+                            <label for="checkbox_origin">Origin:</label>
+                            <span class="ml-2">{{ $sales_order->origin != null ? $sales_order->origin->name : null }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="card-footer text-center">
             <a href="{{ url('sales-invoice/all') }}" class="btn btn-lg btn-info float-left"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>

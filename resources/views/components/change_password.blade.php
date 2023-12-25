@@ -1,3 +1,4 @@
+@if(Hash::check('12345678',Auth::user()->password))
 <div class="modal fade" id="modal_change_password">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
@@ -34,3 +35,4 @@
         </div>
     </div>
 </div>
+@endif

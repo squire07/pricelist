@@ -13,7 +13,10 @@
     @php( $logout_url = $logout_url ? url($logout_url) : '' )
 @endif
 
-@if(Session::get('default_password') == true)
+@php( $route_name = Route::currentRouteName() )
+@php( $route_action = $route_name ? explode('.', $route_name) : null)
+
+@if(Session::get('default_password') == true && isset($route_action[1]) && $route_action[1] == 'index')
 <li class="nav-item">
     <a class="nav-link" href="#" id="change_password" role="button">
         <i class="fas fa-key"></i>
@@ -88,7 +91,6 @@
                 {{ csrf_field() }}
             </form>
         </li>
-
     </ul>
 
 </li>

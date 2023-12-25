@@ -51,6 +51,11 @@ class Sales extends Model
         return $this->hasOne('App\Models\Payload', 'uuid', 'uuid');
     }
 
+    public function origin()
+    {
+        return $this->hasOne('App\Models\Origin', 'id', 'origin_id');
+    }
+
 
     // getter and setter
     public function getTotalAmountAttribute($value)

@@ -139,4 +139,9 @@ class Sales extends Model
     {
         $this->attributes['grandtotal_amount'] = str_replace(',', '', $value);
     }
+
+    public function setSigneeNameAttribute($value)
+    {
+        $this->attributes['signee_name'] = strtoupper($value);
+    }
 }

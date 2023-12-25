@@ -1,4 +1,7 @@
-@if(Hash::check('12345678',Auth::user()->password))
+@php( $route_name = Route::currentRouteName() )
+@php( $route_action = $route_name ? explode('.', $route_name) : null)
+
+@if(Hash::check('12345678',Auth::user()->password) && isset($route_action[1]) && $route_action[1] == 'index')
 <div class="modal fade" id="modal_change_password">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">

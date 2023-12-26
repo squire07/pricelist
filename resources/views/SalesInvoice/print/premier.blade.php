@@ -21,7 +21,13 @@
         <div>
             <table style="width: 100%; margin-top: 180px">
                 <tr>
-                    <td class="text-left text-bold" style="padding-left: 200px;">{{ $sales_order->distributor_name }} [{{ $sales_order->bcid }}] [{{ $sales_order->group_name }}]</td>
+                    <td class="text-left text-bold" style="padding-left: 200px;">
+                        @if($sales_order->signee_name != null)
+                            {{ $sales_order->signee_name }}
+                        @else
+                            {{ $sales_order->distributor_name }} [{{ $sales_order->bcid }}] [{{ $sales_order->group_name }}]
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td class="text-right">&nbsp;</td>

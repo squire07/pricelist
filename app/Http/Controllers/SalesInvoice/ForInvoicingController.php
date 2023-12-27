@@ -231,6 +231,7 @@ class ForInvoicingController extends Controller
                 $sales->si_assignment_id = $request->si_assignment_id;
                 $sales->version = $sales->version + 1;
                 $sales->cashiers_remarks = $request->cashiers_remarks;
+                $sales->updated_by = Auth::user()->name;
 
                 if($sales->update()) {
                     // update the sales invoice assignment details

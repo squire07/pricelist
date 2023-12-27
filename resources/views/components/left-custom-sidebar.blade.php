@@ -257,6 +257,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ url('tools/origins') }}" class="nav-link {{ $url_segment_2 == 'origins' ? 'active':'' }}" target="_self">
+                            <i class="fas fa-store nav-icon"></i>
+                            <p>Origins</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ url('tools/payload') }}" class="nav-link {{ $url_segment_2 == 'payload' ? 'active':'' }}" target="_self">
                             <i class="fas fa-cloud-upload-alt nav-icon"></i>
                             <p>Payload</p>

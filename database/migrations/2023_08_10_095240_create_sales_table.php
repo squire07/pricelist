@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('group_name', 100)->nullable();
             $table->text('so_remarks')->nullable();
             $table->text('si_remarks')->nullable();
-            $table->tinyInt('new_signup')->default(0);
+            $table->tinyInteger('new_signup')->default(0);
             $table->string('signee_name')->nullable();
             $table->integer('origin_id')->nulleble(); 
             $table->integer('version')->default(0)->unsigned();

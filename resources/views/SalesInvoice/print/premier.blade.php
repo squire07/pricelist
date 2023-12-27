@@ -101,14 +101,14 @@
                             <td class="text-right">0.00</td>
                         </tr>
                         <tr>
-                            <td colspan="2">{{ $sales_order->so_no }}</td>
+                            <td colspan="2">{{ $sales_order->so_no }} &bull; {{ $sales_order->si_no }}</td>
                             <td></td>
                             <td colspan="2" class="text-center">Total Qty: {{ $sales_order->total_item_count }}</td>
                             <td class="text-right print-none">Add: 12% VAT</td>
                             <td class="text-right">{{ $sales_order->vat_amount }}</td>
                         </tr>
                         <tr>
-                            <td colspan="2">{{ $sales_order->si_no }}</td>
+                            <td colspan="2">{{ $sales_order->cashiers_remark }}</td>
                             <td>&nbsp;</td>
                         </tr>
                         <tr>

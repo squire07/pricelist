@@ -241,6 +241,13 @@
                                 <span class="d-none" id="is-cash-sufficient">false</span>
                             </div>
                         </div>
+
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="cashiers_remarks">Remarks:</label>
+                                <textarea class="form-control" name="cashiers_remark" cols="30" rows="5" style="width:100%"></textarea>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal">Close</button>

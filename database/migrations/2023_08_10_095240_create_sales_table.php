@@ -38,6 +38,7 @@ return new class extends Migration
             $table->integer('origin_id')->nulleble(); 
             $table->integer('version')->default(0)->unsigned();
             $table->tinyInteger('deleted')->default(false);
+            $table->text('cashiers_remarks')->nullabl();
             $table->timestamps();
             $table->softDeletes();
             $table->string('created_by',55)->nullable();

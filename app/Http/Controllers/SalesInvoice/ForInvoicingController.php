@@ -230,6 +230,7 @@ class ForInvoicingController extends Controller
                 $sales->si_no = str_replace("SO", "SI", $sales->so_no);
                 $sales->si_assignment_id = $request->si_assignment_id;
                 $sales->version = $sales->version + 1;
+                $sales->cashiers_remark = $request->cashiers_remark;
 
                 if($sales->update()) {
                     // update the sales invoice assignment details

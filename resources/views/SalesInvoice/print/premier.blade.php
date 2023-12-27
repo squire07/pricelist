@@ -108,7 +108,7 @@
                             <td class="text-right">{{ $sales_order->vat_amount }}</td>
                         </tr>
                         <tr>
-                            <td colspan="2">{{ $sales_order->cashiers_remark }}</td>
+                            <td colspan="2">{{ $sales_order->cashiers_remarks }}</td>
                             <td>&nbsp;</td>
                         </tr>
                         <tr>

@@ -115,7 +115,7 @@
                             <td class="text-right"></td>
                         </tr>
                         <tr>
-                            <td colspan="2">{{ $sales_order->cashiers_remark }}</td>
+                            <td colspan="2">{{ $sales_order->cashiers_remarks }}</td>
                             <td></td>
                             <td colspan="2" class="text-center">Total Qty: {{ $sales_order->total_item_count }}</td>                            
                             <td class="text-right print-none">Add: VAT</td>

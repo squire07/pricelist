@@ -245,7 +245,7 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label for="cashiers_remarks">Remarks:</label>
-                                <textarea class="form-control" name="cashiers_remark" cols="30" rows="5" style="width:100%"></textarea>
+                                <textarea class="form-control" name="cashiers_remarks" cols="30" rows="5" style="width:100%"></textarea>
                             </div>
                         </div>
                     </div>

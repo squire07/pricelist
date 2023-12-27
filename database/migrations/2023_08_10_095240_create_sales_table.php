@@ -35,7 +35,7 @@ return new class extends Migration
             $table->text('si_remarks')->nullable();
             $table->tinyInteger('new_signup')->default(0);
             $table->string('signee_name')->nullable();
-            $table->integer('origin_id')->nulleble(); 
+            $table->integer('origin_id')->nullable(); 
             $table->integer('version')->default(0)->unsigned();
             $table->tinyInteger('deleted')->default(false);
             $table->text('cashiers_remarks')->nullable();

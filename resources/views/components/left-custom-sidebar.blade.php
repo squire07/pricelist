@@ -251,6 +251,12 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
+                        <a href="{{ url('tools/maintained-members') }}" class="nav-link {{ $url_segment_2 == 'maintained-members' ? 'active':'' }}" target="_self">
+                            <i class="fas fa-people-arrows nav-icon"></i>
+                            <p>Maintained Members</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ url('tools/nuc') }}" class="nav-link {{ $url_segment_2 == 'nuc' ? 'active':'' }}" target="_self">
                             <i class="fas fa-stroopwafel nav-icon"></i>
                             <p>NUC</p>

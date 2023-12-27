@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('maintained_members', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
+            $table->bigInteger('data_id');
             $table->string('bcid');
             $table->string('year', 4);
             $table->string('month', 2);

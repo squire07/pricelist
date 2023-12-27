@@ -13,7 +13,7 @@ class MaintainedMemberController extends Controller
      */
     public function index()
     {
-        $maintained_members = MaintainedMember::all();
+        $maintained_members = MaintainedMember::orderByDesc('year')->orderByDesc('month')->get();
         return view('tools.maintained_member.index', compact('maintained_members'));
     }
 

@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         $this->call(BranchSeeder::class);
         $this->call(CompanySeeder::class);
         $this->call(DistributorSeeder::class);
+        $this->call(MaintainedMemberSeeder::class);
         $this->call(OriginSeeder::class);
         $this->call(PaymentMethodSeeder::class);
         $this->call(PermissionModuleSeeder::class);

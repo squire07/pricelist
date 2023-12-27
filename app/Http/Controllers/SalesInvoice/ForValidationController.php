@@ -393,7 +393,7 @@ class ForValidationController extends Controller
                         if($sales->update()) {
 
                             // pass the message to user if the update is successful
-                            Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Invoice', 'Validate Sales Invoice', $sales->si_remarks);
+                            Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->si_no, 'Sales Invoice', 'Validate Sales Invoice', $sales->si_remarks);
 
                             if($post_so->getStatusCode() == 200) {
                                 return redirect('sales-invoice/for-validation')->with('success', 'Sales order was successfully recorded to ERPNext!');

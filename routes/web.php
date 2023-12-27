@@ -20,7 +20,9 @@ use App\Http\Controllers\SalesInvoice\ReleasedController;
 use App\Http\Controllers\SalesInvoiceAssignmentController;
 use App\Http\Controllers\ShippingFeeController;
 use App\Http\Controllers\StockCardController;
+use App\Http\Controllers\Tools\MaintainedMemberController;
 use App\Http\Controllers\Tools\NucController;
+use App\Http\Controllers\Tools\OriginController;
 use App\Http\Controllers\Tools\PayloadController;
 use App\Http\Controllers\TestBuildReportController;
 use App\Http\Controllers\TransactionListingController;
@@ -117,7 +119,10 @@ Route::middleware(['auth','gate'])->group(function () {
 // this is exclusive for super admim, no need for gate middleware
 Route::middleware(['auth','superadmin'])->group(function () {
     Route::group(['prefix' => 'tools', 'name' => 'tools', 'alias' => 'tools'], function() {
+        Route::resource('maintained-members', MaintainedMemberController::class)->only('index');
         Route::resource('nuc', NucController::class)->only('index');
+        Route::resource('origins', OriginController::class)->only('index');
         Route::resource('payload', PayloadController::class)->only(['index', 'show']);
     });
 });
+

@@ -10,9 +10,9 @@ class Nuc extends Model
     use HasFactory;
 
     // relationship
-    public function sales()
+    public function distributor()
     {
-        return $this->hasOne('App\Models\Sales', 'uuid', 'uuid');
+        return $this->hasOne('App\Models\Distributor', 'id', 'id');
     }
 
     // getter and setter

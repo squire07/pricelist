@@ -2,17 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Sales;
+use App\Models\Branch;
+use App\Models\History;
 use App\Models\BuildReport;
+use App\Models\Nuc;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class BuildReportController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('Buildreport.index');
+        $branches = Branch::whereDeleted(false)->orderBy('name')->get();
+
+        $sales_orders = Nuc::with('distributor')
+                            ->where(function ($query) use ($request) {
+                                if ($request->has('daterange')) {
+                                    $date = explode(' - ', $request->daterange);
+                                    $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
+                                    $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
+                        
+                                    // Apply the whereBetween condition
+                                    $query->whereBetween('created_at', [$from, $to]);
+                                }
+                            })                       
+                            ->orderByDesc('id')
+                            ->get();
+                
+        return view('buildreport.index', compact('sales_orders'));
     }
 
     /**

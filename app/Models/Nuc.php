@@ -17,7 +17,7 @@ class Nuc extends Model
 
     public function distributor()
     {
-        return $this->hasOne('App\Models\Distributor', 'id', 'id');
+        return $this->hasOne('App\Models\Distributor', 'bcid', 'bcid');
     }
 
     // getter and setter

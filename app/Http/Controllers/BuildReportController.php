@@ -17,9 +17,7 @@ class BuildReportController extends Controller
      */
     public function index(Request $request)
     {
-        $branches = Branch::whereDeleted(false)->orderBy('name')->get();
-
-        $sales_orders = Nuc::with('distributor')
+        $sales_orders = Nuc::with('distributor','branch')
                             ->where(function ($query) use ($request) {
                                 if ($request->has('daterange')) {
                                     $date = explode(' - ', $request->daterange);

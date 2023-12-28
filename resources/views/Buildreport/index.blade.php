@@ -48,10 +48,11 @@
                         <tr>
                             <th class="text-center">Date</th>
                             <th class="text-center">Branch</th>
-                            <th class="text-center">SI #</th>
+                            <th class="text-center">OID #</th>
                             <th class="text-center">BCID</th>
                             <th class="text-center">Name</th>
                             <th class="text-center">Total NUC</th>
+                            <th class="text-center">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -61,8 +62,9 @@
                                 <td class="text-center">{{ $sales_order->branch }}</td>
                                 <td class="text-center">{{ $sales_order->oid }}</td>
                                 <td class="text-center">{{ $sales_order->bcid }}</td>
-                                <td class="text-center">{{ $sales_order->distributor->name }}</td>
+                                <td class="text-center">{{ $sales_order->distributor->name ?? null }}</td>
                                 <td class="text-right">{{ $sales_order->total_nuc }}</td>
+                                <td class="text-center">{{ $sales_order->status == 1 ? 'Credited' : null }}</td>
                             </tr>
                         @endforeach
                     </tbody>

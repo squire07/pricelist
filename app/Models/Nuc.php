@@ -20,10 +20,20 @@ class Nuc extends Model
         return $this->hasOne('App\Models\Distributor', 'bcid', 'bcid');
     }
 
+    public function branch()
+    {
+        return $this->hasOne('App\Models\Branch', 'id', 'branch_id');
+    }
+
     // getter and setter
 
     public function setBcidAttribute($value)
     {
         $this->attributes['bcid'] = substr(str_repeat(0, 12).$value, - 12);
+    }
+
+    public function getTotalNucAttribute($value)
+    {
+        return number_format($value,2,'.',',');
     }
 }

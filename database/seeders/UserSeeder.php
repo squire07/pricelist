@@ -86,7 +86,7 @@ class UserSeeder extends Seeder
             55 => array('name' => 'Lyn lyn Biboso', 'username' => 'lbiboso', 'role_id' => 2, 'branch_id' => 1, 'company_id' => 3),
             56 => array('name' => 'Renna Tamo', 'username' => 'rtamo', 'role_id' => 2, 'branch_id' => 1, 'company_id' => 3),
             57 => array('name' => 'Mckenly Joy Panaligan', 'username' => 'mpanaligan', 'role_id' => 2, 'branch_id' => 1, 'company_id' => 3),
-            58 => array('name' => 'Marie Grace Rellado', 'username' => 'mrellado', 'role_id' => 2, 'branch_id' => 1, 'company_id' => 3),
+            58 => array('name' => 'Marie Grace Relado', 'username' => 'mrelado', 'role_id' => 2, 'branch_id' => 1, 'company_id' => 3),
             
             59 => array('name' => 'Charish Catanus', 'username' => 'ccatanus', 'role_id' => 6, 'branch_id' => '2,8', 'company_id' => '2,3'),
             60 => array('name' => 'Jozel Ann Loreto', 'username' => 'jloreto', 'role_id' => 2, 'branch_id' => '2,8', 'company_id' => '2,3'),

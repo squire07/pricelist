@@ -251,16 +251,16 @@
             }
         });
 
-        $('#cashier_id').on('change', function() {
+        $('#cashier_id').on('change', function () {
             if ($(this).val() !== null) {
-            $('#series_from').prop('disabled', false);
-            $('#series_to').prop('disabled', false);
+                $('#series_from').prop('disabled', false);
+                $('#series_to').prop('disabled', false);
             } else {
                 $('#series_from').prop('disabled', true);
                 $('#series_to').prop('disabled', true);
             }
-            var selectedOption = $(this).find('option:selected');
-            var branch_id = selectedOption.data('branch-id');
+            var selected_option = $(this).find('option:selected');
+            var branch_id = selected_option.data('branch-id');
 
             // split if multiple
             var multiple_ids = /,/.test(branch_id);
@@ -280,6 +280,9 @@
                     .then((response) => {
                         obj = JSON.parse(JSON.stringify(response));
 
+                        // count the number of active companies
+                        var active_company_count = 0;
+
                         // empty or remove first the content if there is/are
                         $('#cashier_branch_id').empty();
 
@@ -287,6 +290,8 @@
                         for (let i = 0; i < obj.length; i++) {
                             // Check if the company and branch are active
                             if (obj[i].company_status === 8 && obj[i].branch_status === 8) {
+                                active_company_count++;
+
                                 // Create a new option element
                                 var new_option = new Option(obj[i].name, obj[i].id, false, false);
 
@@ -294,9 +299,17 @@
                                 $('#cashier_branch_id').append(new_option);
                             }
                         }
+
                         // update the option
                         $('#cashier_branch_id').trigger('change');
-                    })
+
+                        // hide the branch div if there are no or only one active company
+                        if (active_company_count <= 1) {
+                            $('#div_cashier_branch_id').addClass('d-none');
+                        } else {
+                            $('#div_cashier_branch_id').removeClass('d-none');
+                        }
+                    });
             } else {
                 // hide the branch div
                 $('#div_cashier_branch_id').addClass('d-none');

@@ -90,7 +90,10 @@ class ForInvoicingController extends Controller
      */
     public function edit(Sales $sales, $uuid)
     {
-        $sales_order = Sales::with('sales_details','transaction_type','status')->whereUuid($uuid)->firstOrFail();
+        $sales_order = Sales::with('transaction_type','status')
+                            ->with('sales_details', function($query) {
+                                $query->where('deleted',0);
+                            })->whereUuid($uuid)->firstOrFail();
 
         /* Based on cashier's branch id
         *  Branch id 1,7 = West Insula Local and Premier

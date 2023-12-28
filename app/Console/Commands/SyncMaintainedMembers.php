@@ -1,75 +1,34 @@
 <?php
 
-namespace App\Http\Controllers\Tools;
+namespace App\Console\Commands;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Console\Command;
 use App\Models\MaintainedMember;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
-class MaintainedMemberController extends Controller
+
+class SyncMaintainedMembers extends Command
 {
     /**
-     * Display a listing of the resource.
+     * The name and signature of the console command.
+     *
+     * @var string
      */
-    public function index()
-    {
-        $maintained_members = MaintainedMember::orderByDesc('year')->orderByDesc('month')->get();
-        return view('tools.maintained_member.index', compact('maintained_members'));
-    }
+    protected $signature = 'command:SyncMaintainedMembers';
 
     /**
-     * Show the form for creating a new resource.
+     * The console command description.
+     *
+     * @var string
      */
-    public function create()
-    {
-        //
-    }
+    protected $description = 'Get the latest records of maintained members daily';
 
     /**
-     * Store a newly created resource in storage.
+     * Execute the console command.
      */
-    public function store(Request $request)
+    public function handle()
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
-    public function sync()
-    {
-        //create global token to retrieve product details
+        // create global token to retrieve product details
         $global_token = Http::asForm()->post(env('PRIME_IDP'), [
             'username' => 'spectator',
             'password' => '6fYR72',
@@ -103,6 +62,5 @@ class MaintainedMemberController extends Controller
         } else {
             return false;
         }
-        
     }
 }

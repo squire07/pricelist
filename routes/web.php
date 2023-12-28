@@ -119,10 +119,10 @@ Route::middleware(['auth','gate'])->group(function () {
 // this is exclusive for super admim, no need for gate middleware
 Route::middleware(['auth','superadmin'])->group(function () {
     Route::group(['prefix' => 'tools', 'name' => 'tools', 'alias' => 'tools'], function() {
+        Route::get('maintained-members/sync', [MaintainedMemberController::class, 'sync']); // must be in api, use passport
         Route::resource('maintained-members', MaintainedMemberController::class)->only('index');
         Route::resource('nuc', NucController::class)->only('index');
         Route::resource('origins', OriginController::class)->only('index');
         Route::resource('payload', PayloadController::class)->only(['index', 'show']);
     });
 });
-

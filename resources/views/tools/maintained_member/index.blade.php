@@ -22,7 +22,7 @@
                             <th class="text-center">BCID</th>
                             <th class="text-center">Year</th>
                             <th class="text-center">Month</th>
-                            <th class="text-center">Created At</th>
+                            <th class="text-center">Last Synced At</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -31,7 +31,7 @@
                                 <td class="text-center">{{ $account->bcid }}</td>
                                 <td class="text-center">{{ $account->year }}</td>
                                 <td class="text-center">{{ $account->month }}</td>
-                                <td class="text-center">{{ $account->created_at }}</td>
+                                <td class="text-center">{{ $account->updated_at }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -64,13 +64,51 @@
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
             },
             initComplete: function () {
-                $("#dt_origins").wrap("<div style='overflow:auto;width:100%;position:relative;'></div>");
+                $("#dt_maintained").wrap("<div style='overflow:auto;width:100%;position:relative;'></div>");
 
                 var elements = document.getElementsByClassName('btn-secondary');
                 while(elements.length > 0){
                     elements[0].classList.remove('btn-secondary');
                 }
             }
+        });
+
+        $('#btn-sync').on('click', function() {
+            Swal.fire({
+                title: 'Are you sure you want to sync with Prime?',
+                text: "This may take some time!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, sync!',
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    Swal.getCancelButton().setAttribute('hidden', true);
+                    return fetch(window.location.origin + '/tools/maintained-members/sync')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(response.statusText)
+                        }
+                        return response.ok
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(
+                            `Request failed: ${error}`
+                        )
+                    })
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Sync complete!',
+                        icon: 'success',
+                    }).then(function() {
+                        location.reload();
+                    })
+                }
+            })
         });
     });
 </script>

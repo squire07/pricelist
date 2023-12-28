@@ -18,16 +18,25 @@ return new class extends Migration
             $table->longText('distributor')->nullable();
             $table->longText('so')->nullable();
             $table->longText('si')->nullable();
+            $table->longText('comment')->nullable(); // cashiers comment
             $table->longText('payment')->nullable();
             $table->string('nuc_points')->nullable();
+
             $table->string('distributor_response_status')->nullable();
             $table->string('distributor_response_body')->nullable();
+            
             $table->string('so_response_status')->nullable();
             $table->longText('so_response_body')->nullable();
+            
             $table->string('si_response_status')->nullable();
             $table->longText('si_response_body')->nullable();
+
+            $table->string('comment_status')->nullable();
+            $table->longText('comment_body')->nullable();
+            
             $table->string('payment_response_status')->nullable();
             $table->longText('payment_response_body')->nullable();
+            
             $table->text('nuc_points_response')->nullable();
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();

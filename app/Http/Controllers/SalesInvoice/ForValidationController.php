@@ -317,16 +317,33 @@ class ForValidationController extends Controller
                             *  link the sales invoice with payment entry using sales invoice name
                             */
 
-                            // 6.1) Get the sales income response body
+                            // 6.1) Get the sales invoice response body
                                 $si_response_body = $payload->si_response;
 
-                                // Define the regular expression pattern
+                                // decode
                                 $data = json_decode($payload->si_response_body, true);
 
-                                // Use preg_match to find the match
+                                // get the si doc name
                                 $si_doc_name = $data['data']['name'] ?? null;
 
-                            // 6.2) add the `si_doc_name` to `payment payload`
+
+                            // 6.2) add a cashiers comment 
+                                if($payload->comment != null) {
+                                    $comments = json_decode($payload->comment, true);
+
+                                    foreach($comments as &$comment) {
+                                        $comments['reference_name'] = $si_doc_name;
+                                    }
+
+                                    // Convert back to JSON
+                                    $payload->update([
+                                        'comment' => json_encode($comments, JSON_UNESCAPED_SLASHES)
+                                    ]);
+                                }
+
+
+
+                            // 6.3) add the `si_doc_name` to `payment payload`
 
                                 // update the payment payload with si_doc_name before posting to erpnext
                                 // json is formatted to handle sub array 
@@ -346,7 +363,35 @@ class ForValidationController extends Controller
 
 
 
-                        // 7) Post the Payment Entry to erpnext
+
+                        // 7) Post the Comment to erpnext
+                            if($payload->comment != null) {
+                                $comment_param = '/api/resource/Comment'; // if POST, do not add '/' at the end 
+                
+                                try {
+                                    $post_comment = Helper::post_erpnext_data($comment_param, $payload->comment);
+                                    if ($post_comment->getStatusCode() == 200) {
+                                        $payload->update([
+                                            'comment_status' => $post_comment->getStatusCode(),
+                                            'comment_body' => $post_comment->getBody(),
+                                        ]);
+                                    } 
+                                } catch (\GuzzleHttp\Exception\ClientException $e) {
+                                    $payload->update([
+                                        'comment_status' => $e->getResponse()->getStatusCode(),
+                                        'comment_body' => $e->getResponse()->getBody()->getContents(),
+                                    ]);
+
+                                    $sales->version = $sales->version + 1;
+                                    $sales->update();
+
+                                    return redirect('sales-invoice/for-validation')->with('error', 'Unable to add comment to sales invoice in ERPNext! Please contact your administrator.');
+                                }
+                            }
+                            
+
+
+                        // 8) Post the Payment Entry to erpnext
                             $payment_param = '/api/resource/Payment Entry'; // if POST, do not add '/' at the end 
                             // post the so payload to erpnext; handle multiple payment
                             $payment_obj = json_decode($payload->payment, true); // decode again as this obj has been updated above
@@ -374,7 +419,7 @@ class ForValidationController extends Controller
                             }
 
 
-                        // 8) Update the status of Sales Order to 'completed'
+                        // 9) Update the status of Sales Order to 'completed'
                             // $so_response_body = $payload->so_response;
 
                             // // Define the regular expression pattern

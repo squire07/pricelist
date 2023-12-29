@@ -262,6 +262,7 @@ class ForInvoicingController extends Controller
                     $payload->distributor = Helper::create_distributor_payload($sales->bcid) ?? null;
                     $payload->so = Helper::create_so_payload($sales->id);
                     $payload->si = Helper::create_si_payload($sales->id);
+                    $payload->comment = $sales->cashiers_remarks != null ? Helper::create_comment_payload($sales->cashiers_remarks) : null;
                     $payload->payment = Helper::create_payment_payload($sales->id);
                     $payload->nuc_points = $sales->total_nuc;
                     $payload->created_by = Auth::user()->name;

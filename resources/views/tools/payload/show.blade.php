@@ -13,77 +13,96 @@
 @stop
 
 @section('content')
-    <div class="card">
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">Distributor</h3>
+        </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-3">
-                    <label for="">Distributor</label>
-                    <textarea class="form-control json-textarea">{{ $payload->distributor }}</textarea>
+                <div class="col-6">
+                    <label for="">Body</label>
+                    <textarea class="form-control json-textarea" readonly>{{ $payload->distributor }}</textarea>
                 </div>
-                <div class="col-3">
-                    <label for="">Sales Order</label>
-                    <textarea class="form-control json-textarea">{{ $payload->so }}</textarea>
-                </div>
-                <div class="col-3">
-                    <label for="">Sales Invoice</label>
-                    <textarea class="form-control json-textarea">{{ $payload->si }}</textarea>
-                </div>
-                <div class="col-3">
-                    <label for="">Payment</label>
-                    <textarea class="form-control json-textarea">{{ $payload->payment }}</textarea>
+                <div class="col-6">
+                    <label for="">Response: {{ $payload->distributor_response_status }} </label>
+                    <textarea class="form-control json-textarea" readonly>{{ $payload->distributor_response_body }}</textarea>
                 </div>
             </div>
+        </div>
+    </div>
 
-            
-            <h5 class="mt-5">Response Code</h5>
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">Sales Order</h3>
+        </div>
+        <div class="card-body">
             <div class="row">
-                
-                <div class="col-3">
-                    <div class="form-group">
-                        <label for="distributor">Distributor</label>
-                        <input type="text" class="form-control form-control-sm" id="distributor" value="{{ $payload->distributor_response_status }}" disabled>
-                    </div>
+                <div class="col-6">
+                    <label for="">Body</label>
+                    <textarea class="form-control json-textarea" readonly>{{ $payload->so }}</textarea>
                 </div>
-                <div class="col-3">
-                    <div class="form-group">
-                        <label for="sales_order">Sales Order</label>
-                        <input type="text" class="form-control form-control-sm" id="sales_order" value="{{ $payload->so_response_status }}" disabled>
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="form-group">
-                        <label for="sales_invoice">Sales Invoice</label>
-                        <input type="text" class="form-control form-control-sm" id="sales_invoice" value="{{ $payload->si_response_status }}" disabled>
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="form-group">
-                        <label for="payment">Payment</label>
-                        <input type="text" class="form-control form-control-sm" id="payment" value="{{ $payload->payment_response_status }}" disabled>
-                    </div>
+                <div class="col-6">
+                    <label for="">Response: {{ $payload->so_response_status }}</label>
+                    <textarea class="form-control json-textarea" readonly>{{ $payload->so_response_body }}</textarea>
                 </div>
             </div>
+        </div>
+    </div>
 
-
-            <h5 class="mt-5">Response Body</h5>
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">Sales Invoice</h3>
+        </div>
+        <div class="card-body">
             <div class="row">
-                <div class="col-3">
-                    <label for="">Distributor</label>
-                    <textarea class="form-control json-textarea" disabled>{{ $payload->distributor_response_body }}</textarea>
+                <div class="col-6">
+                    <label for="">Body</label>
+                    <textarea class="form-control json-textarea" readonly>{{ $payload->si }}</textarea>
                 </div>
-                <div class="col-3">
-                    <label for="">Sales Order</label>
-                    <textarea class="form-control json-textarea">{{ $payload->so_response_body }}</textarea>
-                </div>
-                <div class="col-3">
-                    <label for="">Sales Invoice</label>
-                    <textarea class="form-control json-textarea">{{ $payload->si_response_body }}</textarea>
-                </div>
-                <div class="col-3">
-                    <label for="">Payment</label>
-                    <textarea class="form-control json-textarea">{{ $payload->payment_response_body }}</textarea>
+                <div class="col-6">
+                    <label for="">Response: {{ $payload->si_response_status }}</label>
+                    <textarea class="form-control json-textarea" readonly>{{ $payload->si_response_body }}</textarea>
                 </div>
             </div>
+        </div>
+    </div>
+
+
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">Comment</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <label for="">Body</label>
+                    <textarea class="form-control json-textarea" readonly>{{ $payload->comment }}</textarea>
+                </div>
+                <div class="col-6">
+                    <label for="">Response: {{ $payload->comment_status }}</label>
+                    <textarea class="form-control json-textarea" readonly>{{ $payload->comment_body }}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">Payment</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <label for="">Body</label>
+                    <textarea class="form-control json-textarea" readonly>{{ $payload->payment }}</textarea>
+                </div>
+                <div class="col-6">
+                    <label for="">Response: {{ $payload->payment_response_status }}</label>
+                    <textarea class="form-control json-textarea" readonly>{{ $payload->payment_response_body }}</textarea>
+                </div>
+            </div>
+
         </div>
         <div class="card-footer">
             <a href="{{ url('tools/payload') }}" class="btn btn-lg btn-info float-left"><i class="fas fa-arrow-left"></i>&nbsp;Back</a>

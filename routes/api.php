@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\BranchController;
 use App\Http\Controllers\api\DistributorController;
+use App\Http\Controllers\api\ErpNextController;
 use App\Http\Controllers\api\ItemController;
 use App\Http\Controllers\api\ShippingFeeController;
 use App\Http\Controllers\api\PermissionController;
@@ -31,3 +32,4 @@ Route::get('branches_by_cashiers_id/{cashiers_id}', [BranchController::class, 'g
 
 Route::post('permission', [PermissionController::class, 'user_permission']);
 
+Route::post('cancel-invoice', [ErpNextController::class, 'cancel_invoice']);

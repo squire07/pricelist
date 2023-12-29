@@ -106,6 +106,25 @@ class Helper {
         return true;
     }
 
+    public static function erp_transaction_history($record_id, $record_uuid, $transaction_type_id, $status_id, $so_no, $module, $event_name, $remarks, $erpnext_user) {
+        $history = new History();
+        $history->record_id = $record_id;
+        $history->uuid = $record_uuid;
+        $history->transaction_type_id = $transaction_type_id;
+        $history->status_id = $status_id;
+        $history->so_no = $so_no;
+        $history->module = $module;
+        $history->event_name = $event_name;
+        $history->remarks = $remarks;
+        $history->created_by = $erpnext_user;
+        $history->updated_by = $erpnext_user;
+        $history->created_at = Carbon::now();
+        $history->updated_at = Carbon::now();
+        $history->save();
+
+        return true;
+    }
+
 
     // should I store this in cache/session or in login method to prevent querying multiple times on every page loads?
     public static function get_user_role_name() {

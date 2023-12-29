@@ -345,6 +345,17 @@ class Helper {
         return json_encode($payload);
     }
 
+    public static function create_comment_payload($comment) {
+        $payload = [
+            'comment_type' => 'Comment',
+            'reference_doctype' => 'Sales Invoice',
+            'comment_by' => Auth::user()->name,
+            'content' => Auth::user()->name . ': ' . $comment,
+            'doctype' => 'Comment'
+        ];
+        return json_encode($payload);
+    }
+
     public static function create_si_payload($id) {
         $sales = Sales::with('sales_details', 'payment', 'company', 'branch')->whereId($id)->first();
 

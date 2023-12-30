@@ -273,6 +273,10 @@ class ForInvoicingController extends Controller
                     *   save only the transaction with nuc points
                     */
                     if($sales->total_nuc > 0) {
+                        /* NUC Status
+                        *   0 - not credited;  1 - credited;  2 - cancelled
+                        */
+
                         $nuc = new Nuc();
                         $nuc->uuid = $sales->uuid;
                         $nuc->bcid = $sales->bcid;

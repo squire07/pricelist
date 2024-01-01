@@ -43,7 +43,7 @@
                                 <td class="text-left">{{ $payment->name }}</td>
                                 <td class="text-left">{{ $payment->description }}</td>
                                 <td class="text-center">{{ $payment->code }}</td>
-                                <td class="text-center">{{ $payment->company->name }}</td>
+                                <td class="text-center">{{ $payment->company->name ?? '' }}</td>
                                 <td class="text-center">{{ $payment->is_cash == 0 ? 'No' : 'Yes' }}</td>
                                 <td class="text-center">{{ $payment->is_debit_to == 0 ? 'No' : 'Yes' }}</td>
                                 <td class="text-center"><span class="badge {{ Helper::badge($payment->status_id) }}">{{ $payment->status->name }}</span></td>
@@ -52,8 +52,8 @@
                                         data-toggle="modal" 
                                         data-target="#modal-show" 
                                         data-uuid="{{ $payment->uuid }}" 
-                                        data-company-id="{{ $payment->company->id }}"
-                                        data-company-name="{{ $payment->company->name }}"  
+                                        data-company-id="{{ $payment->company->id ?? '' }}"
+                                        data-company-name="{{ $payment->company->name ?? '' }}"  
                                         data-name="{{ $payment->name }}" 
                                         data-description="{{ $payment->description }}" 
                                         data-code="{{ $payment->code }}"
@@ -70,8 +70,8 @@
                                         data-toggle="modal" 
                                         data-target="#modal-edit" 
                                         data-uuid="{{ $payment->uuid }}" 
-                                        data-company-id="{{ $payment->company->id }}" 
-                                        data-company-name="{{ $payment->company->name }}" 
+                                        data-company-id="{{ $payment->company->id ?? '' }}" 
+                                        data-company-name="{{ $payment->company->name ?? '' }}" 
                                         data-name="{{ $payment->name }}" 
                                         data-description="{{ $payment->description }}" 
                                         data-code="{{ $payment->code }}"

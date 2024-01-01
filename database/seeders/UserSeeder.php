@@ -165,7 +165,7 @@ class UserSeeder extends Seeder
 
 
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('companies')->truncate();
+        DB::table('users')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $sql_file = database_path('database/data/users.sql');

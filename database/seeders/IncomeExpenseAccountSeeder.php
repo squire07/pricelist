@@ -18,7 +18,7 @@ class IncomeExpenseAccountSeeder extends Seeder
     public function run(): void
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('companies')->truncate();
+        DB::table('income_expense_accounts')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $sql_file = database_path('database/data/income_expense_accounts.sql');

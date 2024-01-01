@@ -17,22 +17,19 @@ class CompanySeeder extends Seeder
      */
     public function run(): void
     {
-        // company names 
-        $company_codes = [
-            1 => array('id' => 1, 'code' => 'HW'),
-            2 => array('id' => 2, 'code' => 'PR'), 
-            3 => array('id' => 3, 'code' => 'LO'),
+        // STATIC: 
+        $companies = [
+            1 => array('id' => 1, 'name' => 'HOW Holdings Corporation', 'code' => 'HW', 'status_id' => 9),
+            2 => array('id' => 2, 'name' => 'Uno Premier Philippines International Corporation', 'code' => 'PR', 'status_id' => 8), 
+            3 => array('id' => 3, 'name' => 'Unlimited Network of Opportunities Int\'l Corp', 'code' => 'LO', 'status_id' => 8),
         ];
 
-        $param = '/api/resource/Company';
-        $data = Helper::get_erpnext_data($param);
-        $data = json_decode($data->getBody()->getContents(), true);
-
-        foreach($data['data'] as $key => $company) {
+        foreach($companies as $key => $company) {
             Company::create([
                 'uuid' => Str::uuid(),
                 'name' => $company['name'],
-                'code' => $company_codes[$key+1]['code'],
+                'code' => $company['code'],
+                'status_id' => $company['status_id'],
                 'created_at' => Carbon::now()->toDateTimeString(),
                 'updated_at' => Carbon::now()->toDateTimeString(),
                 'created_by' => Auth::user()->name ?? 'System',

@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->call(StatusSeeder::class);
         $this->call(TransactionTypeSeeder::class);
         $this->call(UserSeeder::class);
+        $this->call(UserPermissionSeeder::class);
 
         // dummy data only
         $this->call(ItemSeeder::class);

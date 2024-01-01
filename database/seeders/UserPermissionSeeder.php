@@ -2,15 +2,12 @@
 
 namespace Database\Seeders;
 
-use Carbon\Carbon;
-use Illuminate\Support\Str;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\IncomeExpenseAccount;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
-class IncomeExpenseAccountSeeder extends Seeder
+class UserPermissionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -21,7 +18,7 @@ class IncomeExpenseAccountSeeder extends Seeder
         DB::table('companies')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $sql_file = database_path('database/data/income_expense_accounts.sql');
+        $sql_file = database_path('database/data/user_permissions.sql');
 
         if (File::exists($sql_file)) {
             $sql = File::get($sql_file);

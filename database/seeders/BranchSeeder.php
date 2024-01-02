@@ -100,6 +100,20 @@ class BranchSeeder extends Seeder
                 'cost_center_name' => '008 - E-COMMERCE - PREMIER',
                 'warehouse' => 'E-Commerce Merchandise - PREMIER'
             ),
+            13 => array(
+                'name' => 'UBC HONG KONG', 
+                'code' => 'UHK', 'company_id' => 2, 
+                'cost_center' => '041',
+                'cost_center_name' => '041 - HONGKONG - PREMIER',
+                'warehouse' => 'Hongkong UBC Merchandise - PREMIER'
+            ),
+            14 => array(
+                'name' => 'Uno Café', 
+                'code' => 'CAF', 'company_id' => 2, 
+                'cost_center' => '015',
+                'cost_center_name' => '015 - CAFE-WEST INSULA - PREMIER',
+                'warehouse' => 'Uno Café Merchandise - PREMIER'
+            ),
         ];
 
         foreach($branches as $key => $branch) {

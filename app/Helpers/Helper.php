@@ -15,6 +15,7 @@ use App\Models\PaymentMethod;
 use App\Models\PermissionModule;
 use App\Models\Sales;
 use App\Models\SalesInvoiceAssignmentDetail;
+use App\Models\TransactionType;
 use App\Models\User;
 use App\Models\UserPermission;
 use Auth;
@@ -610,5 +611,13 @@ class Helper {
             }
         }
         return null; 
+    }
+
+    public static function get_product_assembly_ids() 
+    {
+        // Return must be array only
+        return TransactionType::where('name', 'LIKE', '%product pack%')
+                                    ->orWhere('name', 'LIKE', '%uno cafe%')
+                                    ->pluck('id')->toArray();
     }
 }

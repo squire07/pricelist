@@ -68,6 +68,16 @@
                             </tr>
                         @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th class="d-none"></th>
+                            <th class="d-none"></th>
+                            <th class="d-none"></th>
+                            <th class="d-none"></th>
+                            <th class="d-none" style="text-align: right">TOTAL</th>
+                            <th class="d-none">sum_nuc</th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>    
         </div>
@@ -86,57 +96,59 @@
         // re-initialize the datatable
         $('#dt_sales_orders').DataTable({
             dom: 'Bfrtip',
-            // serverSide: true,
-            // processing: true,
             deferRender: true,
             paging: true,
             searching: true,
-            lengthMenu: [[10, 25, 50, -1], ['10 rows', '25 rows', '50 rows', "Show All"]],  
+            lengthMenu: [[10, 25, 50, -1], ['10 rows', '25 rows', '50 rows', 'Show All']],  
             buttons: [
                 {
-                extend: 'pageLength',
-                className: 'btn-default btn-sm',
-            },
-            {
-                extend: 'excel',
-                text: 'Export to Excel',
-                footer: true,
-                filename: 'NUC_Build_' + getCurrentDate(),
-                customize: function(xlsx) {
-                    var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                    extend: 'pageLength',
+                    className: 'btn-default btn-sm',
+                },
+                {
+                    extend: 'excel',
+                    text: 'Export to Excel',
+                    footer: true,
+                    filename: 'NUC_Build_' + getCurrentDate(),
+                    customize: function(xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
 
-                    // Get the data from DataTable
-                    var dataTable = $('#dt_sales_orders').DataTable();
-                    var data = dataTable.rows().data();
+                        // Get the data from DataTable
+                        var data_table = $('#dt_sales_orders').DataTable();
+                        var data = data_table.rows().data();
 
-                    // Compute the total sum of column F
-                    var columnIndex = 5;
-                    var totalSum = computeTotalSum(data, columnIndex);
+                        // Calculate the sum of data in sum nuc
+                        var sum = 0;
+                        data.each(function(value, index) {
+                            sum += parseFloat(value[5]);
+                        });
 
-                    // Add a footer row with the total sum
-                    var footerRow = '<row><c t="inlineStr" s="footer"><is><t>Total Sum: ' + totalSum + '</t></is></c></row>';
-                    sheet.childNodes[0].childNodes[1].innerHTML += footerRow;
-                }
-            },
-            {
-                extend: 'pdf',
-                text: 'Export to PDF'
-            }
-        ],
+                        // Add the sum to the Excel file
+                        var sum_row = sheet.createElement('row');
+                        var c6 = sum_row.appendChild(sheet.createElement('c'));
+                        var t6 = c6.appendChild(sheet.createElement('t'));
+                        t6.innerHTML = '<t>' + sum + '</t>';
+                        sheet.getElementsByTagName('sheetData')[0].appendChild(sum_row);
+                    }
+                },
+            ],
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
             },
+            footerCallback: function (row, data, start, end, display) {
+                var api = this.api();
+
+                // Calculate the sum of data in sum nuc across all pages
+                var sum_nuc = api.column(5).data().reduce(function (acc, val) {
+                    return acc + parseFloat(val);
+                }, 0);
+
+                // Update the footer
+                $(api.column(5).footer()).html(sum_nuc);
+            }
         });
     });
-        // Function to compute the total sum of a single column
-        function computeTotalSum(data, columnIndex) {
-            var sum = 0;
-                for (var i = 0; i < data.length; i++) {
-                    sum += parseFloat(data[i][columnIndex]) || 0;
-                }
-            return sum;
-        }
-
+    
         // Function to get the current date in the format YYYY-MM-DD
         function getCurrentDate() {
             var today = new Date();

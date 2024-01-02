@@ -29,6 +29,7 @@ class BuildReportController extends Controller
                                 }
                             })                       
                             ->orderByDesc('id')
+                            ->where('status', 1)
                             ->get();
                 
         return view('buildreport.index', compact('sales_orders'));

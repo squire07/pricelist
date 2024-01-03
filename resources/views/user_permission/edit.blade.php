@@ -53,7 +53,7 @@
                                             @foreach($module_permission as $child_key => $permission)
                                                 @php
                                                     $disable_create = (in_array($module->id, [2, 3, 4, 5, 6, 9, 16, 23]) && $child_key == 2) ? 'disabled' : '';
-                                                    $disable_view = (in_array($module->id, [9, 22, 23]) && $child_key == 3) ? 'disabled' : '';
+                                                    $disable_view = (in_array($module->id, [9, 23]) && $child_key == 3) ? 'disabled' : '';
                                                     $disable_update = (in_array($module->id, [3, 5, 6, 9]) && $child_key == 4) ? 'disabled' : '';
                                                     $is_check = ($permission == 1 && !$disable_create && !$disable_update) ? 'checked' : '';
                                                 @endphp

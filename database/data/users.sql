@@ -1,63 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 5.1.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1:3306
--- Generation Time: Jan 01, 2024 at 03:41 PM
--- Server version: 8.0.27
--- PHP Version: 8.0.13
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `gl_v2`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
-  `uuid` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `username` varchar(55) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role_id` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `branch_id` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `company_id` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `deleted` tinyint NOT NULL DEFAULT '0',
-  `active` tinyint NOT NULL DEFAULT '1',
-  `blocked` tinyint NOT NULL DEFAULT '0',
-  `attempts` tinyint NOT NULL DEFAULT '0',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `created_by` varchar(55) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `updated_by` varchar(55) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `deleted_by` varchar(55) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=99 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `users`
---
-
 INSERT INTO `users` (`id`, `uuid`, `name`, `username`, `email`, `email_verified_at`, `password`, `role_id`, `branch_id`, `company_id`, `remember_token`, `deleted`, `active`, `blocked`, `attempts`, `created_at`, `updated_at`, `deleted_at`, `created_by`, `updated_by`, `deleted_by`) VALUES
 (1, 'daea9d1e-8aca-4f97-aaf3-49a552b16929', 'Redemption West Local', 'redemption_westlocal', 'redemption_westlocal@glv2.com', NULL, '$2y$10$tLjQCrHPNKRmteS1Fd/pnOqwH.TEFmi54j80CSpRjC6Ce0frChJAq', '1', '44,1', '3', NULL, 0, 1, 0, 1, '2023-12-22 17:34:37', '2023-12-28 03:32:14', NULL, 'Test User', 'System', NULL),
 (2, '6c9bd976-8416-4e63-be6f-a95ca1bac550', 'Redemption West Premier', 'redemption_westpremier', 'redemption_westpremier@glv2.com', NULL, '$2y$10$zF7GjtcGZ/tIj8H7AdUQd.UC5eUyXBlkEyIFdwzCfcv9UUbl.o6rC', '1', '7', '2', NULL, 0, 1, 0, 0, '2023-12-22 17:34:37', '2023-12-22 17:34:37', NULL, 'System', 'System', NULL),
@@ -156,8 +96,3 @@ INSERT INTO `users` (`id`, `uuid`, `name`, `username`, `email`, `email_verified_
 (95, 'cec1ddd1-79ab-43e6-a1e8-53410debf754', 'Clarabel Dominguez', 'cdominguez_cashier', 'cdominguez_cashier@glv2.com', NULL, '$2y$10$4eEzIjZCoG5VUoPEjUqtgu3OAy5iGq9k3hTmvy0n.xNzZoHcQ.MOe', '2', '46', '2', NULL, 0, 1, 0, 0, '2023-12-28 22:13:20', '2023-12-28 22:13:20', NULL, 'Test User', NULL, NULL),
 (96, '1220687b-4e60-4028-a2b1-e6a59b45938e', 'Neil Harvey Gadores', 'ngadores', 'ngadores@glv2.com', NULL, '$2y$10$4.3qJ7hz2rGeScrLaTRYd.AJgQOlWqb17KXTlS29OeDwtO75nQtwu', '2', '46', '2', NULL, 0, 1, 0, 0, '2023-12-28 22:14:06', '2023-12-28 22:14:06', NULL, 'Test User', NULL, NULL),
 (97, '70bd0d21-bd5c-4792-9cd5-93f4c955e643', 'Lester Manatas', 'lmanatas', 'lmanatas@glv2.com', NULL, '$2y$10$rbMQBcxD6CdV8HrCA/RODuzK4BVEywKLYa6/YZ.J9/zjChChiRquS', '2', '46', '2', NULL, 0, 1, 0, 0, '2023-12-28 22:14:36', '2023-12-28 22:14:36', NULL, 'Test User', NULL, NULL);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

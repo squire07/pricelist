@@ -1,53 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 5.1.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1:3306
--- Generation Time: Jan 01, 2024 at 03:44 PM
--- Server version: 8.0.27
--- PHP Version: 8.0.13
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `gl_v2`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `transaction_types`
---
-
-DROP TABLE IF EXISTS `transaction_types`;
-CREATE TABLE IF NOT EXISTS `transaction_types` (
-  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
-  `uuid` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `currency` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `is_active` tinyint NOT NULL DEFAULT '1',
-  `deleted` tinyint NOT NULL DEFAULT '0',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `created_by` varchar(55) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `updated_by` varchar(55) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `deleted_by` varchar(55) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `transaction_types`
---
-
 INSERT INTO `transaction_types` (`id`, `uuid`, `name`, `currency`, `is_active`, `deleted`, `created_at`, `updated_at`, `deleted_at`, `created_by`, `updated_by`, `deleted_by`) VALUES
 (1, '45338eeb-5f67-43c6-bd68-1184ed683750', 'Standard Selling', 'PHP', 1, 0, '2023-12-29 05:26:43', '2023-12-29 05:26:43', NULL, 'System', 'System', NULL),
 (2, '97e58729-057c-443a-bc61-0191ab1a7e20', 'Standard Selling USD', 'USD', 1, 0, '2023-12-29 05:26:43', '2023-12-29 05:26:43', NULL, 'System', 'System', NULL),
@@ -92,8 +42,3 @@ INSERT INTO `transaction_types` (`id`, `uuid`, `name`, `currency`, `is_active`, 
 (41, '314652ff-20fb-4c72-b6d6-10f7eccb7805', 'UNO CAFE E-STORE', 'PHP', 1, 0, '2023-12-29 05:26:43', '2023-12-29 05:26:43', NULL, 'System', 'System', NULL),
 (42, '4dcd30ae-993a-4478-b860-2a3cdee950c7', 'UNO CAFE SRP USD', 'USD', 1, 0, '2023-12-29 05:26:43', '2023-12-29 05:26:43', NULL, 'System', 'System', NULL),
 (43, '5f2ac006-af3a-47d2-b839-05aac841d060', 'UNO CAFE DISTRIBUTOR RS USD', 'USD', 1, 0, '2023-12-29 05:26:43', '2023-12-29 05:26:43', NULL, 'System', 'System', NULL);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

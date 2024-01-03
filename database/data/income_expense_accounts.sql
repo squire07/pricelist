@@ -1,55 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 5.1.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1:3306
--- Generation Time: Jan 01, 2024 at 03:47 PM
--- Server version: 8.0.27
--- PHP Version: 8.0.13
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `gl_v2`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `income_expense_accounts`
---
-
-DROP TABLE IF EXISTS `income_expense_accounts`;
-CREATE TABLE IF NOT EXISTS `income_expense_accounts` (
-  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
-  `uuid` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `transaction_type_id` int NOT NULL,
-  `company_id` int DEFAULT NULL,
-  `currency` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `income_account` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `expense_account` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `deleted` tinyint NOT NULL DEFAULT '0',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `created_by` varchar(55) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `updated_by` varchar(55) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `deleted_by` varchar(55) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `income_expense_accounts`
---
-
 INSERT INTO `income_expense_accounts` (`id`, `uuid`, `transaction_type_id`, `company_id`, `currency`, `income_account`, `expense_account`, `deleted`, `created_at`, `updated_at`, `deleted_at`, `created_by`, `updated_by`, `deleted_by`) VALUES
 (1, '7f906ea4-f55c-4fc7-b2bc-ad7672bea6c2', 1, 3, 'PHP', '4010101 - Sales - UBC Product Pack - UNO', '5010102 - COGS-UBC Product Pack - UNO', 0, '2023-12-05 04:29:45', '2023-12-05 04:29:45', NULL, 'Test User', 'Test User', NULL),
 (2, 'aac52109-886b-44a2-b7f6-3271b1809797', 4, 2, 'PHP', '4010215 - Sales - UBS Preneur - PREMIER', '5010216 - COGS-UBS Preneur - PREMIER', 0, '2023-11-24 08:20:38', '2023-11-24 08:20:38', NULL, 'Roxanne Santiago', 'Roxanne Santiago', NULL),
@@ -115,8 +63,3 @@ INSERT INTO `income_expense_accounts` (`id`, `uuid`, `transaction_type_id`, `com
 (62, 'a87c8b92-2b96-4849-a957-6c69aa884ba5', 39, 2, 'PHP', '4010271 - Sales - SRP PHP - PREMIER', '5010208 - COGS-SRP - PREMIER', 0, '2023-11-30 04:50:01', '2023-11-30 04:50:01', NULL, 'Test User', 'Test User', NULL),
 (63, '847bebcb-9cef-49a1-855b-e1c62148ae5c', 40, 2, 'PHP', '4010241 - Sales - Distributors PHP - PREMIER', '5010205 - COGS-Distributors - PREMIER', 0, '2023-12-22 03:03:48', '2023-12-22 03:03:48', NULL, 'Maricel Vergara', 'Maricel Vergara', NULL),
 (64, 'cacd99f8-cc29-40bb-b6eb-6f508cd7dd0c', 41, 2, 'PHP', '4010251 - Sales - E Store PHP - PREMIER', '5010206 - COGS-E Store - PREMIER', 0, '2023-12-22 03:05:01', '2023-12-22 03:05:01', NULL, 'Maricel Vergara', 'Maricel Vergara', NULL);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

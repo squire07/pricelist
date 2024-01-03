@@ -168,14 +168,11 @@ class UserSeeder extends Seeder
         DB::table('users')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $sql_file = database_path('database/data/users.sql');
+        $sql_file = database_path('data/users.sql');
 
         if (File::exists($sql_file)) {
-            $sql = File::get($sql_file);
-
-            // Execute the SQL queries
+            $sql = file_get_contents($sql_file);
             DB::unprepared($sql);
-        }
-
+        } 
     }
 }

@@ -18,12 +18,10 @@ class UserPermissionSeeder extends Seeder
         DB::table('user_permissions')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $sql_file = database_path('database/data/user_permissions.sql');
+        $sql_file = database_path('data/user_permissions.sql');
 
         if (File::exists($sql_file)) {
             $sql = File::get($sql_file);
-
-            // Execute the SQL queries
             DB::unprepared($sql);
         }
     }

@@ -21,12 +21,10 @@ class IncomeExpenseAccountSeeder extends Seeder
         DB::table('income_expense_accounts')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $sql_file = database_path('database/data/income_expense_accounts.sql');
+        $sql_file = database_path('data/income_expense_accounts.sql');
 
         if (File::exists($sql_file)) {
             $sql = File::get($sql_file);
-
-            // Execute the SQL queries
             DB::unprepared($sql);
         }
     }

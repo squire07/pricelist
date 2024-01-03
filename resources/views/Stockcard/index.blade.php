@@ -19,25 +19,28 @@
     <div class="container-fluid">
         <div class="card-body table-responsive p-0">
             <table class="table table-hover text-nowrap">
-            <thead>
-            <tr>
-            <th>Date</th>
-            <th>Item</th>
-            <th>Out Qty</th>
-            <th>Balance Qty</th>
-            </tr>
-            </thead>
-            {{-- <tbody>
-            <tr>
-            @foreach ($items as $item)
-            <td> {{ $item->item }} </td>
-            </tr>
-            @endforeach
-            </tr>
-            </tbody> --}}
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Distributor</th>
+                        <th>Invoice No</th>
+                        <th>Out Qty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($sales as $key => $sale)
+                        <tr>
+                            <td>{{ $sale->updated_at }}</td>
+                            <td>{{ Helper::get_distributor_name_by_bcid($sale->bcid) }}</td>
+                            <td>{{ $sale->nuc->oid ?? '' }}</td>
+                            <td>
+                                {{ $sale->sales_details[0]['quantity'] }}    
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
-            </div>
-            
+        </div>    
     </div>
     <script>
         document.getElementById("start_date").valueAsDate = new Date();

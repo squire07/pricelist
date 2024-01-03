@@ -56,6 +56,10 @@ class Sales extends Model
         return $this->hasOne('App\Models\Origin', 'id', 'origin_id');
     }
 
+    public function nuc()
+    {
+        return $this->hasOne('App\Models\Nuc', 'uuid', 'uuid');
+    }
 
     // getter and setter
     public function getTotalAmountAttribute($value)

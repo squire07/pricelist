@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Item;
 use App\Models\StockCard;
+use App\Models\Sales;
+use App\Models\SalesDetails;
 use Illuminate\Http\Request;
 
 class StockCardController extends Controller
@@ -10,9 +13,17 @@ class StockCardController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('stockcard.index');
+        $sales = Sales::with('sales_details')
+                        ->where('status_id', 4)
+                        ->where('deleted', 0)
+                        ->whereRelation('sales_details', function($query) {
+                            $query->where('item_code','CF');
+                        })
+                        ->get();
+
+        return view('stockcard.index', compact('sales'));
     }
 
     /**

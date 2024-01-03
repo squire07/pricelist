@@ -18,7 +18,7 @@ class TransactionTypeSeeder extends Seeder
     public function run(): void
     {
         // ERPNext 
-        $param = '/api/resource/Price List?limit=500&filters=[["selling","=","1"]]';
+        $param = '/api/resource/Price List?limit=500&filters=[["selling","=","1"],["enabled","=","1"]]';
         $data = Helper::get_erpnext_data($param);
         $data = json_decode($data->getBody()->getContents(), true);
 

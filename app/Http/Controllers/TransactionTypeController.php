@@ -18,7 +18,13 @@ class TransactionTypeController extends Controller
      */
     public function index()
     {
-        $transaction_types = TransactionType::with('validity','accounts')->whereDeleted(false)->get();
+        $transaction_types = TransactionType::whereDeleted(false)
+                                ->with('validity', function($query) {
+                                    $query->where('deleted', 0);
+                                })
+                                ->with('accounts', function($query) {
+                                    $query->where('deleted', 0);
+                                })->get();
         return view('TransactionType.index', compact('transaction_types'));
     }
 

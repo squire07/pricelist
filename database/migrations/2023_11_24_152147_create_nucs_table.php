@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('branch')->nullable();
             $table->string('oid')->nullable(); // invoice number
             $table->string('state', 15)->nullable();
-            $table->tinyInteger('status')->default(0); // 0 - uncredited; 1 - credited; 2 - cancelled;
+            $table->tinyInteger('status')->default(0); // 0 - uncredited; 1 - credited; 2 - cancelled; 3 - on-hold (ex. cod)
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
             $table->softDeletes();

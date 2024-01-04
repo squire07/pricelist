@@ -183,7 +183,7 @@ class ForInvoicingController extends Controller
     {
         $uuid = $request->uuid ?? $uuid;
         
-        $sales = Sales::with('branch')->whereUuid($uuid)->whereDeleted(false)->firstOrFail();  
+        $sales = Sales::with('branch','payment')->whereUuid($uuid)->whereDeleted(false)->firstOrFail();  
 
         if($sales->version == $request->version) {
             // check if request contains status_id = 1
@@ -272,11 +272,10 @@ class ForInvoicingController extends Controller
                     *   post NUC points to prime - indirectly; let the system push the nuc points using scheduled job
                     *   save only the transaction with nuc points
                     */
-                    if($sales->total_nuc > 0) {
+                    if($sales->total_nuc > 0 && $sales->origin_id !== 1) { // if origin is NOT distributor shop; 
                         /* NUC Status
-                        *   0 - not credited;  1 - credited;  2 - cancelled
+                        *   0 - not credited;  1 - credited;  2 - cancelled;  3 - on-hold
                         */
-
                         $nuc = new Nuc();
                         $nuc->uuid = $sales->uuid;
                         $nuc->bcid = $sales->bcid;

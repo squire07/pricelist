@@ -6,7 +6,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Build Report</h1>
+                <h1>NUC Report</h1>
             </div>
         </div>
     </div>
@@ -68,7 +68,7 @@
                             </tr>
                         @endforeach
                     </tbody>
-                    <tfoot>
+                    {{-- <tfoot>
                         <tr>
                             <th class="d-none"></th>
                             <th class="d-none"></th>
@@ -77,7 +77,7 @@
                             <th class="d-none" style="text-align: right">TOTAL</th>
                             <th class="d-none">sum_nuc</th>
                         </tr>
-                    </tfoot>
+                    </tfoot> --}}
                 </table>
             </div>    
         </div>
@@ -109,43 +109,43 @@
                     extend: 'excel',
                     text: 'Export to Excel',
                     footer: true,
-                    filename: 'NUC_Build_' + getCurrentDate(),
-                    customize: function(xlsx) {
-                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                    filename: 'NUC_Report_' + getCurrentDate(),
+                    // customize: function(xlsx) {
+                    //     var sheet = xlsx.xl.worksheets['sheet1.xml'];
 
-                        // Get the data from DataTable
-                        var data_table = $('#dt_sales_orders').DataTable();
-                        var data = data_table.rows().data();
+                    //     // Get the data from DataTable
+                    //     var data_table = $('#dt_sales_orders').DataTable();
+                    //     var data = data_table.rows().data();
 
-                        // Calculate the sum of data in sum nuc
-                        var sum = 0;
-                        data.each(function(value, index) {
-                            sum += parseFloat(value[5]);
-                        });
+                    //     // Calculate the sum of data in sum nuc
+                    //     var sum = 0;
+                    //     data.each(function(value, index) {
+                    //         sum += parseFloat(value[5]);
+                    //     });
 
-                        // Add the sum to the Excel file
-                        var sum_row = sheet.createElement('row');
-                        var c6 = sum_row.appendChild(sheet.createElement('c'));
-                        var t6 = c6.appendChild(sheet.createElement('t'));
-                        t6.innerHTML = '<t>' + sum + '</t>';
-                        sheet.getElementsByTagName('sheetData')[0].appendChild(sum_row);
-                    }
+                    //     // Add the sum to the Excel file
+                    //     var sum_row = sheet.createElement('row');
+                    //     var c6 = sum_row.appendChild(sheet.createElement('c'));
+                    //     var t6 = c6.appendChild(sheet.createElement('t'));
+                    //     t6.innerHTML = '<t>' + sum + '</t>';
+                    //     sheet.getElementsByTagName('sheetData')[0].appendChild(sum_row);
+                    // }
                 },
             ],
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
-            },
-            footerCallback: function (row, data, start, end, display) {
-                var api = this.api();
-
-                // Calculate the sum of data in sum nuc across all pages
-                var sum_nuc = api.column(5).data().reduce(function (acc, val) {
-                    return acc + parseFloat(val);
-                }, 0);
-
-                // Update the footer
-                $(api.column(5).footer()).html(sum_nuc);
             }
+            // footerCallback: function (row, data, start, end, display) {
+            //     var api = this.api();
+
+            // // Calculate the sum of data in column 5 across all active pages
+            // var sum_nuc = api.rows({page: 'current'}).data().reduce(function (acc, val) {
+            //     return acc + parseFloat(val[5]);
+            // }, 0);
+
+            //     // Update the footer
+            //     $(api.column(5).footer()).html(sum_nuc);
+            // }
         });
     });
     

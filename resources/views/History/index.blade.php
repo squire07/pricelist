@@ -90,23 +90,36 @@
         // re-initialize the datatable
         $('#dt_sales_orders').DataTable({
             dom: 'Bfrtip',
-            // serverSide: true,
-            // processing: true,
             deferRender: true,
             paging: true,
             searching: true,
-            lengthMenu: [[10, 25, 50, -1], ['10 rows', '25 rows', '50 rows', "Show All"]],  
+            lengthMenu: [[10, 25, 50, -1], ['10 rows', '25 rows', '50 rows', 'Show All']],  
             buttons: [
                 {
                     extend: 'pageLength',
                     className: 'btn-default btn-sm',
                 },
+                {
+                    extend: 'excel',
+                    text: 'Export to Excel',
+                    footer: true,
+                    filename: 'Logs_Report_' + getCurrentDate(),
+                },
             ],
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
-            },
+            }
         });
     });
+    
+        // Function to get the current date in the format YYYY-MM-DD
+        function getCurrentDate() {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+            var yyyy = today.getFullYear();
+            return mm + '-' + dd + '-' + yyyy;
+        }
 </script>
 @endsection
 

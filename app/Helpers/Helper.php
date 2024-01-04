@@ -421,6 +421,7 @@ class Helper {
         // get the income and expense accounts
         $accounts = IncomeExpenseAccount::whereTransactionTypeId($sales->transaction_type_id)
                         ->whereCompanyId($sales->company_id)
+                        ->whereDeleted(0)
                         ->first();
 
 

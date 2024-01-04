@@ -65,8 +65,13 @@ class IncomeExpenseAccountController extends Controller
     public function show($uuid)
     {
         // Note: this is the index page of income and expense account page (sub of transaction types)
-        $accounts = TransactionType::with('accounts')->whereUuid($uuid)->first();
-        
+        $accounts = TransactionType::with(['accounts' => function ($query) {
+                            $query->where('deleted', 0);
+                        }])
+                        ->whereUuid($uuid)
+                        ->whereDeleted(false)
+                        ->first();
+
         $companies = Company::whereDeleted(false)->whereIn('status_id', [8,1])->get(); // 1 does not exists as status. To refactor soon as Active 1 = true, 0 = false;
         $data_currencies = Helper::get_erpnext_data('/api/resource/Currency?filters={"enabled":"1"}');
 

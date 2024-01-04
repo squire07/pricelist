@@ -592,6 +592,7 @@ class Helper {
 
     public static function sales_invoice_prefix($iteration) 
     {
+        // dev 
         $prefix = array(
             6 => 'A',
             11 => 'B',
@@ -602,6 +603,18 @@ class Helper {
             36 => 'G',
             41 => 'H',
         );
+
+        // prod 
+        // $prefix = array(
+        //     25001 => 'A',
+        //     50001 => 'B',
+        //     75001 => 'C',
+        //     100001 => 'D',
+        //     125001 => 'E',
+        //     150001 => 'F',
+        //     175001 => 'G',
+        //     200001 => 'H',
+        // );
 
         foreach ($prefix as $lower_limit => $letter) {
             $upper_limit = $lower_limit + 5; // change this to actual 
@@ -619,5 +632,40 @@ class Helper {
         return TransactionType::where('name', 'LIKE', '%product pack%')
                                     ->orWhere('name', 'LIKE', '%uno cafe%')
                                     ->pluck('id')->toArray();
+    }
+
+    public static function get_batch_id($item_code)
+    {
+        $param = '/api/resource/Batch?filters=[["item", "=", "' . $item_code . '"]]&fields=["batch_id", "item_name","item","expiry_date","batch_qty"]';
+                    
+        $batches = Helper::get_erpnext_data($param);
+
+        if($batches->getStatusCode() == 200) {
+            $data = json_decode($batches->getBody()->getContents(), true);
+
+            // Get the current date
+            $current_date = date('Y-m-d');
+
+            // Initialize variables to track the nearest expiry date and corresponding batch ID
+            $nearest_expiry_date = null;
+            $nearest_batch_id = null;
+
+            // Iterate through the data to find the nearest expiry date
+            foreach ($data['data'] as $batch) {
+                $expiry_date = $batch['expiry_date'];
+
+                // Check if the expiry date is after the current date and find the nearest one
+                if ($expiry_date >= $current_date) {
+                    if ($nearest_expiry_date === null || $expiry_date < $nearest_expiry_date) {
+                        $nearest_expiry_date = $expiry_date;
+                        $nearest_batch_id = $batch['batch_id'];
+                    }
+                }
+            }
+
+            return $nearest_batch_id;
+        } 
+        
+        return 'ERROR';
     }
 }

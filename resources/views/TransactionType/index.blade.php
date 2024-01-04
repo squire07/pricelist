@@ -95,7 +95,7 @@
                 </table>
             </div>   
             <div class="card-footer">
-                <button class="btn btn-sm btn-primary" id="btn-sync" {{ !in_array(Auth::user()->role_id, [11,12]) ? 'disabled' : '' }}><i class="fas fa-sync mr-1"></i>Sync</button>     
+                <button class="btn btn-sm btn-primary" id="btn-sync" {{ !in_array(Auth::user()->role_id, [11,12]) ? 'disabled' : '' }} disabled><i class="fas fa-sync mr-1"></i>Sync</button>     
             </div> 
         </div>
     </div>

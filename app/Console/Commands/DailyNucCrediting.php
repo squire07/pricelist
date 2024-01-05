@@ -7,6 +7,8 @@ use GuzzleHttp\Client;
 use App\Models\Nuc;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use App\Helpers\Helper;
+use Illuminate\Support\Facades\Log;
 
 class DailyNucCrediting extends Command
 {
@@ -46,7 +48,7 @@ class DailyNucCrediting extends Command
             $to = date('Y-m-d 23:59:59');
 
             // nucs
-            $nucs = Nuc::whereBetween('created_at', [$from, $to])
+            $nucs = Nuc::with('sales')->whereBetween('created_at', [$from, $to])
                         ->whereStatus(0)
                         ->get();
 
@@ -55,21 +57,8 @@ class DailyNucCrediting extends Command
                 // remove comma from total nuc points
                 $total_nuc = str_replace(',','',$nuc->total_nuc);
 
-                // Regular Distributor
-                // if($nuc->account_type_id == 1) {
-                //     // api - [NewULCashPurchases]
-                //     $res = Http::withHeaders(['Content-Type' => 'application/json','Authorization' => 'Bearer ' . $global_token['access_token'], 'Accept' => 'application/json'])
-                //                 ->post(env('PRIME_API') . 'nuccredit/newulcashpurchases/' . $nuc->bcid . '/' . $total_nuc);
-                                
-                //     if($res->status() == 200) {
-                //         // update nuc
-                //         $nuc->status = 1;
-                //         $nuc->updated_at = Carbon::now()->toDateTimeString();
-                //         $nuc->update();
-                //     }
-
-                // UBC and UPC 
-                // } else { 
+                // UBC, UPC
+                if(in_array($nuc->sales->transaction_type_id, Helper::get_upc_ubc_transaction_ids())) {
                     $res = Http::withHeaders(['Content-Type' => 'application/json','Authorization' => 'Bearer ' . $global_token['access_token'], 'Accept' => 'application/json'])
                                 ->post(env('PRIME_API') . 'nuccredit/newulcreditlimit/' . $nuc->bcid . '/' . $total_nuc . '/' . $nuc->branch . '/' . $nuc->oid);
 
@@ -79,8 +68,22 @@ class DailyNucCrediting extends Command
                         $nuc->updated_at = Carbon::now()->toDateTimeString();
                         $nuc->update();
                     }
-                // }
+
+                // RS
+                } else { 
+                    // api - [NewULCashPurchases]
+                    $res = Http::withHeaders(['Content-Type' => 'application/json','Authorization' => 'Bearer ' . $global_token['access_token'], 'Accept' => 'application/json'])
+                                ->post(env('PRIME_API') . 'nuccredit/newulcashpurchases/' . $nuc->bcid . '/' . $total_nuc . '/' . $nuc->branch . '/' . $nuc->oid);
+
+                    if($res->status() == 200) {
+                        // update nuc
+                        $nuc->status = 1;
+                        $nuc->updated_at = Carbon::now()->toDateTimeString();
+                        $nuc->update();
+                    }
+                }
                 sleep(8);
+
             }
         }
         return 0;

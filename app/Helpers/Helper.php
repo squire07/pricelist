@@ -677,4 +677,10 @@ class Helper {
                                     ->orWhere('name', 'LIKE', '%upc%')
                                     ->pluck('id')->toArray();
     }
+
+    public static function get_is_cash_payment_names()
+    {
+        // Return must be array only
+        return PaymentMethod::whereIsCash(1)->whereDeleted(0)->pluck('name')->toArray();
+    }
 }

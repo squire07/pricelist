@@ -669,4 +669,12 @@ class Helper {
         
         return 'ERROR';
     }
+
+    public static function get_upc_ubc_transaction_ids() 
+    {
+        // Return must be array only
+        return TransactionType::where('name', 'LIKE', '%ubc%')
+                                    ->orWhere('name', 'LIKE', '%upc%')
+                                    ->pluck('id')->toArray();
+    }
 }

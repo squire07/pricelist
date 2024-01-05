@@ -197,7 +197,7 @@ class SalesController extends Controller
             Helper::transaction_history($sales->id, $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->so_no, 'Sales Order', 'Create Sales Order', NULL);
         }
 
-        return redirect('sales-orders')->with('success','Sales Order Saved!');
+        return redirect('sales-orders')->with('success', $sales->so_no . ' Saved!');
     }
 
     /**

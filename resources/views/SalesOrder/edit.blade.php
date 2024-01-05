@@ -997,6 +997,31 @@ tbody tr:nth-child(odd) {
         });
 
         // =========== END OF ORIGIN ===========
+
+
+        $('#quantity').on('focus', function() {
+            let item_id = $('#item_name').val();
+            let branch_id = $('#branch').val();
+
+            fetch(window.location.origin + '/api/item/stock_by_warehouse/' + item_id + '/' + branch_id, {
+                method: 'get',
+                headers: {
+                    'Content-type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then((response) => {
+                obj = JSON.parse(JSON.stringify(response));
+                $(this).attr('placeholder', obj.total_quantity + ' In Stock');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        $('#quantity').on('blur', function() {
+            $(this).attr('placeholder', '');
+        });
 });
 </script>
 @endsection

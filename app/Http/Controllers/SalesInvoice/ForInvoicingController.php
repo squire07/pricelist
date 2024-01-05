@@ -237,6 +237,7 @@ class ForInvoicingController extends Controller
                 $sales->updated_by = Auth::user()->name;
 
                 if($sales->update()) {
+
                     // update the sales invoice assignment details
                     $si_assignment = SalesInvoiceAssignmentDetail::whereId($request->si_assignment_id)->first();
                     $si_assignment->used = 1;
@@ -276,11 +277,12 @@ class ForInvoicingController extends Controller
                         /* NUC Status
                         *   0 - not credited;  1 - credited;  2 - cancelled;  3 - on-hold
                         */
+
                         $nuc = new Nuc();
                         $nuc->uuid = $sales->uuid;
                         $nuc->bcid = $sales->bcid;
                         $nuc->total_nuc = str_replace(',', '', $sales->total_nuc);
-
+                        $nuc->status = $payment->payment_type == 'COD' ? 3 : 0;
                         $nuc->branch = $sales->branch->name;
                         $nuc->oid = Helper::get_si_assignment_no($sales->si_assignment_id);
                         $nuc->save();

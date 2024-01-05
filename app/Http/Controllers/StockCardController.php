@@ -3,10 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
-use App\Models\StockCard;
+use App\Models\User;
 use App\Models\Sales;
+use App\Models\Branch;
+use App\Models\StockCard;
 use App\Models\SalesDetails;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use App\Models\TransactionType;
+use Illuminate\Support\Facades\Auth;
 
 class StockCardController extends Controller
 {
@@ -15,14 +20,28 @@ class StockCardController extends Controller
      */
     public function index(Request $request)
     {
-        $sales = Sales::with('sales_details')
-                        ->where('status_id', 4)
-                        ->where('deleted', 0)
-                        ->whereRelation('sales_details', function($query) {
-                            $query->where('item_code','CF');
-                        })
-                        ->get();
 
+        // get current users branch ids 
+        $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
+        
+        $sales = Sales::with('sales_details','transaction_type','branch')
+                        ->where(function ($query) use ($request) {
+                            if ($request->has('daterange')) {
+                                $date = explode(' - ', $request->daterange);
+                                $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
+                                $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
+                    
+                                // Apply the whereBetween condition
+                                $query->whereBetween('created_at', [$from, $to]);
+                            }
+                        })
+                            ->where('status_id', 4) //where status 4 is released
+                            ->where('deleted', 0)
+                            ->when(!empty($user_branch), function($query) use ($user_branch) {
+                                $query->whereIn('branch_id', explode(',',$user_branch));
+                        })
+                        ->get();  
+    
         return view('stockcard.index', compact('sales'));
     }
 

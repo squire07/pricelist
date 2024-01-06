@@ -55,7 +55,7 @@
                     @foreach($sales as $key => $sale)
                         <tr>
                             <td>{{ $sale->updated_at->format('m/d/Y') }}</td>
-                            <td>{{ $sale->branch->name }}</td>
+                            <td>{{ $sale->branch->name ?? NULL }}</td>
                             <td>{{ $sale->payment->created_by }}</td>
                             <td>{{ $sale->branch->cost_center }}</td>
                             <td>{{ Helper::get_si_assignment_no($sale->si_assignment_id) }}</td>

@@ -2,17 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TransactionListing;
+use App\Models\User;
+use App\Models\Sales;
 use Illuminate\Http\Request;
+use App\Models\TransactionListing;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionListingController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('transactionlisting.index');
+            // get current users branch ids 
+        $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
+        
+        $sales = Sales::with('sales_details','transaction_type','branch','payment','income_expense_account')
+                        ->where(function ($query) use ($request) {
+                            if ($request->has('daterange')) {
+                                $date = explode(' - ', $request->daterange);
+                                $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
+                                $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
+                    
+                                // Apply the whereBetween condition
+                                $query->whereBetween('created_at', [$from, $to]);
+                            }
+                        })
+                            ->where('status_id', 4) //where status 4 is released
+                            ->where('deleted', 0)
+                            ->when(!empty($user_branch), function($query) use ($user_branch) {
+                                $query->whereIn('branch_id', explode(',',$user_branch));
+                        })
+                        ->get();  
+    
+        return view('transactionlisting.index', compact('sales'));
     }
 
     /**

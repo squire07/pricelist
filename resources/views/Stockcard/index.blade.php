@@ -93,20 +93,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @isset($sales)
-                        @foreach($sales as $key => $sale)
-                            <tr>
-                                <td>{{ $sale->updated_at->format('m/d/Y') }}</td>
-                                <td>{{ $sale->branch->name }}</td>
-                                <td>{{ $sale->sales_details[0]['item_name'] }}</td>
-                                <td>{{ $sale->transaction_type->name }}</td>
-                                <td>{{ Helper::get_si_assignment_no($sale->si_assignment_id) }}</td>
-                                <td>{{ $sale->bcid }}</td>
-                                <td>{{ Helper::get_distributor_name_by_bcid($sale->bcid) }}</td>
-                                <td>{{ $sale->sales_details[0]['quantity'] }}</td>
-                            </tr>
+                    @foreach($sales as $key => $sale)
+                        <tr>
+                            <td>{{ $sale->updated_at->format('m/d/Y') }}</td>
+                            <td>{{ $sale->branch->name ?? NULL }}</td>
+                            <td>{{ $sale->sales_details[0]['item_name'] }}</td>
+                            <td>{{ $sale->transaction_type->name }}</td>
+                            <td>{{ Helper::get_si_assignment_no($sale->si_assignment_id) }}</td>
+                            <td>{{ $sale->bcid }}</td>
+                            <td>{{ Helper::get_distributor_name_by_bcid($sale->bcid) }}</td>
+                            <td>{{ $sale->sales_details[0]['quantity'] }}</td>
+                        </tr>
                         @endforeach
-                    @endisset
                 </tbody>
             </table>
         </div>

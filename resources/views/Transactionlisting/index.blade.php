@@ -57,7 +57,7 @@
                             <td>{{ $sale->updated_at->format('m/d/Y') }}</td>
                             <td>{{ $sale->branch->name ?? NULL }}</td>
                             <td>{{ $sale->payment->created_by }}</td>
-                            <td>{{ $sale->branch->cost_center }}</td>
+                            <td>{{ $sale->branch->cost_center ?? NULL }}</td>
                             <td>{{ Helper::get_si_assignment_no($sale->si_assignment_id) }}</td>
                             <td>{{ Helper::get_distributor_name_by_bcid($sale->bcid) }}</td>
                             <td>{{ $sale->transaction_type->name }}</td>

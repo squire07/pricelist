@@ -40,7 +40,7 @@
                                 <td class="text-center">{{ $nuc->sales->so_no ?? '' }}</td>
                                 <td class="text-center">{{ $nuc->sales->si_no ?? '' }}</td>
                                 <td class="text-right">{{ $nuc->total_nuc }}</td>
-                                <td class="text-center">{{ $nuc->status == 0 ? null : 'Credited' }}</td>
+                                <td class="text-center">{!! Helper::get_nuc_status($nuc->status) !!}</td>
                                 <td class="text-center">{{ $nuc->created_at }}</td>
                             </tr>
                         @endforeach

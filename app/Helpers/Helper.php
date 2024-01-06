@@ -683,4 +683,18 @@ class Helper {
         // Return must be array only
         return PaymentMethod::whereIsCash(1)->whereDeleted(0)->pluck('name')->toArray();
     }
+
+    public static function get_nuc_status($status_id)
+    {
+        switch($status_id) {
+            case 1: 
+                return '<span class="badge bg-success">Credited</span>';
+            case 2: 
+                return '<span class="badge bg-danger">Cancelled</span>';
+            case 3: 
+                return '<span class="badge bg-warning">On-hold</span>';
+            default: 
+                return '';
+        }
+    }
 }

@@ -126,3 +126,9 @@ Route::middleware(['auth','superadmin'])->group(function () {
         Route::resource('payload', PayloadController::class)->only(['index', 'show']);
     });
 });
+
+// no gate
+Route::middleware(['auth'])->group(function() {
+    Route::put('update-payment-details/{uuid}', [ForValidationController::class, 'update_payment_details'])->name('update_payment_details');
+});
+

@@ -7,6 +7,8 @@ use App\Models\History;
 use App\Models\Sales;
 use App\Models\SalesInvoiceForValidation;
 use App\Models\Payload;
+use App\Models\Payment;
+use App\Models\PaymentMethod;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -99,7 +101,7 @@ class ForValidationController extends Controller
         if ($sales_order->relationLoaded('payment')) {
             // json_decode has already been applied at $sales_order->payment->details
             foreach($sales_order->payment->details as $payment) {
-                $is_cash = in_array(strtolower($payment['name']), ['cash']);
+                $is_cash = in_array($payment['name'], Helper::get_is_cash_payment_names()); 
                 $ref_no = empty($payment['ref_no']);
                 if(!$is_cash && $ref_no) {
                     $has_issue = true;
@@ -112,34 +114,44 @@ class ForValidationController extends Controller
 
             $todays_date = Carbon::now()->format('Y-m-d'); // do not change the date format!
 
-            $items = '';
 
-            foreach($sales_order->sales_details as $item) {
-                $param = '/api/resource/Stock Ledger Entry?filters=[["item_code", "=", "' . $item->item_code . '"], ["posting_date", "<=", "' . $todays_date . '"], ["warehouse", "=", "' . $sales_order->branch->warehouse . '"]]&fields=["item_code", "warehouse", "sum(actual_qty) as total_qty"]';
-                
-                $item_inventory = Helper::get_erpnext_data($param);
+            // check if the sales order transaction type is NOT Product Pack
+            if(!in_array($sales_order->transaction_type_id, Helper::get_product_assembly_ids())) {
+                $items = '';
 
-                if($item_inventory->getStatusCode() == 200) {
-                    $data = json_decode($item_inventory->getBody()->getContents(), true);
-                    $item_inventory = $data['data']; // note: this has status_code and data AND the server response is always 200
-                    if($item_inventory[0]['total_qty'] == null || $item_inventory[0]['total_qty'] <= $item->quantity) {
-                        $has_issue = true;
-                        $items .= '&#8594; ' . $item->item_code . ' - ' . $item->item_name . '<br>';
+                foreach($sales_order->sales_details as $item) {
+                    $param = '/api/resource/Stock Ledger Entry?filters=[["item_code", "=", "' . $item->item_code . '"], ["posting_date", "<=", "' . $todays_date . '"], ["warehouse", "=", "' . $sales_order->branch->warehouse . '"]]&fields=["item_code", "warehouse", "sum(actual_qty) as total_qty"]';
+                    
+                    $item_inventory = Helper::get_erpnext_data($param);
+
+                    if($item_inventory->getStatusCode() == 200) {
+                        $data = json_decode($item_inventory->getBody()->getContents(), true);
+                        $item_inventory = $data['data']; // note: this has status_code and data AND the server response is always 200
+                        if($item_inventory[0]['total_qty'] == null || $item_inventory[0]['total_qty'] <= $item->quantity) {
+                            $has_issue = true;
+                            $items .= '&#8594; ' . $item->item_code . ' - ' . $item->item_name . '<br>';
+                        }
                     }
-                }
-            }   
+                }   
 
-            $item_count = count($sales_order->sales_details) > 1 ? 's':'';
-            
-            if($has_issue) {
-                $message_issue .= '&bull;&nbsp;Warehouse ' . $sales_order->branch->warehouse . ' has insufficient quantity for item' . $item_count . ': <br>' . $items;
-            }
+                $item_count = count($sales_order->sales_details) > 1 ? 's':'';
+                
+                if($has_issue) {
+                    $message_issue .= '&bull;&nbsp;Warehouse ' . $sales_order->branch->warehouse . ' has insufficient quantity for item' . $item_count . ': <br>' . $items;
+                }
+            } 
         }
 
+        // for editing payment method using modal 
+        $payment_methods = PaymentMethod::whereDeleted(0)
+                                ->whereCompanyId($sales_order->company_id)
+                                ->orderBy('name')
+                                ->get();
+
         if($has_issue) {
-            return view('SalesInvoice.for_validation.show', compact('sales_order','histories'))->with('error', $message_issue);
+            return view('SalesInvoice.for_validation.show', compact('sales_order','histories','payment_methods'))->with('error', $message_issue);
         } else {
-            return view('SalesInvoice.for_validation.show', compact('sales_order','histories'));
+            return view('SalesInvoice.for_validation.show', compact('sales_order','histories','payment_methods'));
         }
     }
 
@@ -279,8 +291,43 @@ class ForValidationController extends Controller
                                 $si_data = json_decode($payload->si, true);
 
                                 // Add "sales_order" key to each item in the "items" array
-                                foreach ($si_data['items'] as &$item) {
-                                    $item['sales_order'] = $so_doc_name; 
+
+                                if(!in_array($sales->transaction_type_id, Helper::get_product_assembly_ids())) {
+                                    
+                                    foreach ($si_data['items'] as &$item) {
+                                        $item['sales_order'] = $so_doc_name; 
+                                    }
+
+                                } else {
+
+                                    /*
+                                    * ===================================================================
+                                    *   For Product Pack and UNO Cafe
+                                    *   1. get the SO response body payload and get the "packed_items" array
+                                    *   2. update the SI payload and add the "packed_items" in the array
+                                    * ===================================================================
+                                    */
+
+                                    $so_data = json_decode($payload->so_response_body, true);
+
+                                    // extract the "packed_items" array from so payload
+                                    $so_packed_items = $so_data['data']['packed_items'];
+                                    
+                                    // create a empty array that will handle all the packed_items with batch_id
+                                    $packed_items = array();
+                                    $item = array();
+
+                                    foreach($so_packed_items as $packed) {
+                                        // pass the item code to helper function and get the batch id
+                                        $batch_id = Helper::get_batch_id($packed['item_code']);
+
+                                        $item['item_code'] = $packed['item_code'];
+                                        $item['batch_no'] = $batch_id;
+ 
+                                        array_push($packed_items, $item);
+                                    }
+
+                                    $si_data['packed_items'] = $packed_items;
                                 }
                                 
                                 // Convert back to JSON
@@ -492,6 +539,51 @@ class ForValidationController extends Controller
             return view('SalesInvoice.print.local', compact('sales_order'));
         } else {
             return view('SalesInvoice.print.premier', compact('sales_order'));
+        }
+    }
+
+    /*
+    *   Do not combine with the update() method
+    */
+    public function update_payment_details(Request $request)
+    {
+        $payment = Payment::whereId($request->payment_id)->first();
+
+        $sales = Sales::whereUuid($payment->uuid)->first();
+        
+        $payment_details = json_decode($payment->details,true);
+
+        // will be used in log history
+        $old_payment_method_name = $payment_details[0]['name'];
+        $old_payment_ref_no = $payment_details[0]['ref_no'];
+
+        // get the payment method name by id
+        $payment_method = PaymentMethod::whereId($request->payment_method_id)->first();
+
+        // update the payment_details (json);
+        $payment_details[0]['id'] = $payment_method->id;
+        $payment_details[0]['name'] = $payment_method->name;
+        $payment_details[0]['ref_no'] = $request->ref_no;
+
+        // finally, update the payment_type and details from [Payment] table
+        $payment->payment_type = $payment_method->name;
+        $payment->details = $payment_details;
+
+        if($payment->update()) {
+            
+            // update the payload details as well; Sales UUID = Payment UUID = Payload UUID
+            $payload = Payload::whereDeleted(0)->whereUuid($payment->uuid)->first();
+            $payload->payment = Helper::create_payment_payload($payment->sales_id);
+            $payload->update();
+
+            // log the update
+            $old_ref_no = $old_payment_ref_no != '' ? ' - ' . $old_payment_ref_no : '';
+            $remarks = $old_payment_method_name . $old_ref_no . ' to ' . $payment_method->name . ' - ' . $request->ref_no; 
+            Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->si_no, 'Sales Invoice', 'Update Payment Details', $remarks);
+
+            return redirect()->back()->with('success', 'Payment details updated');
+        } else {
+            return redirect()->back()->with('error', 'Unable to update payment details. Please contact system administrator.');
         }
     }
 }

@@ -266,6 +266,10 @@ $(document).ready(function() {
             }
         });
     });
+
+    $('#btn_payment_edit').on('click', function() {
+        $('#modal-edit-payment-details').modal('show');
+    });
 });
 
 @if(isset($error))

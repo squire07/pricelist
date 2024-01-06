@@ -104,7 +104,7 @@
                     extend: 'excel',
                     text: 'Export to Excel',
                     footer: true,
-                    filename: 'StockCard_Report_' + getCurrentDate(),
+                    filename: 'Translist_Report_' + getCurrentDate(),
                 },
             ],
             language: {

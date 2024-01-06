@@ -71,6 +71,13 @@ class ForValidationController extends Controller
     public function show($uuid)
     {
         $sales_order = Sales::with('branch','payment','transaction_type','income_expense_account','payload')
+                            ->with(['income_expense_account' => function($query) use ($uuid) {
+
+                                // Fetch the sales order inside the closure
+                                $sales_order = Sales::whereUuid($uuid)->firstOrFail();
+
+                                $query->where('company_id', $sales_order->company_id);
+                            }])
                             ->with('sales_details', function($query) {
                                 $query->where('deleted',0);
                             })

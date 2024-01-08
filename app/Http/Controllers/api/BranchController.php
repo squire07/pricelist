@@ -8,21 +8,6 @@ use App\Models\Branch;
 use App\Models\User;
 
 class BranchController extends Controller
-// {
-//     public function get_branches_by_cashiers_id($id) {
-
-//         $user = User::whereDeleted(false)->whereId($id)->first();
-
-//         $explode = explode(',', $user->branch_id);
-
-//         $cashiers_branches = Branch::whereDeleted(false)
-//                                 ->whereIn('id', $explode)
-//                                 ->get();
-
-//         return $cashiers_branches;        
-//     }    
-// }
-
 {
     public function get_branches_by_cashiers_id($id) {
 
@@ -32,18 +17,8 @@ class BranchController extends Controller
 
         $cashiers_branches = Branch::whereDeleted(false)
                                 ->whereIn('id', $explode)
+                                ->where('status_id', 8) // get only the active; To refactor soon as status with boolean data type; 1 = active/true  2 = inactive/false
                                 ->get();
-
-        // Add status information to each branch
-        $branches_with_status = $cashiers_branches->map(function ($branch) {
-            return [
-                'id' => $branch->id,
-                'name' => $branch->name,
-                'company_status' => $branch->company->status_id,
-                'branch_status' => $branch->status_id,
-            ];
-        });
-
-        return $branches_with_status;        
+        return $cashiers_branches;        
     }    
 }

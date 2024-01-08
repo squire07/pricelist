@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
+use App\Models\Company;
 use App\Models\SalesInvoiceAssignment;
 use App\Models\SalesInvoiceAssignmentDetail;
 use App\Models\User;
@@ -20,21 +21,89 @@ class SalesInvoiceAssignmentController extends Controller
      */
     public function index()
     {
-        $cashiers = User::whereDeleted(false)
-                        ->whereActive(true)
-                        ->whereBlocked(false)
-                        ->whereRoleId(2)
-                        // ->where(function ($query) {
-                        //     foreach (explode(',', Auth::user()->branch_id) as $branch_id) {
-                        //         $query->whereRaw('FIND_IN_SET(?, branch_id)', [$branch_id]);
-                        //     }
-                        // })
-                        ->where(function ($query) {
-                            if(!in_array(Auth::user()->role_id, [11,12])) {
-                                $query->whereBranchId(Auth::user()->branch_id);
-                            }
-                        })
-                        ->get();
+        /*  
+        *   Who can assign booklets to cashier?
+        *   1. Super/admin
+        *   2. Head Cashier
+        *   3. Branch Manager
+        */ 
+
+        // get the active companies 
+        $active_companies = Company::whereStatusId(8)->pluck('id'); // Must be refactor! status_id to status with boolean datatype: 0 = inactive/false; 1 = active/true;
+        
+        // get the active branches
+        $active_branches = Branch::whereStatusId(8)->pluck('id'); // Must be refactor! status_id to status with boolean datatype: 0 = inactive/false; 1 = active/true;
+
+
+        if(in_array(Auth::user()->role_id, [11,12])) {
+            $cashiers = User::whereDeleted(false)
+                                ->whereActive(true)
+                                ->whereBlocked(false)
+                                ->whereRoleId(2)
+                                ->where(function($query) use($active_companies) {
+                                    $query->whereIn('company_id', $active_companies)
+                                        ->orWhere(function ($query) use ($active_companies) {
+                                            foreach ($active_companies as $active_company) {
+                                                $query->orWhereRaw('FIND_IN_SET(?, company_id)', [$active_company]);
+                                            }
+                                        });
+                                })
+                                ->where(function($query) use($active_branches) {
+                                    $query->whereIn('branch_id', $active_branches)
+                                        ->orWhere(function ($query) use ($active_branches) {
+                                            foreach ($active_branches as $active_branch) {
+                                                $query->orWhereRaw('FIND_IN_SET(?, branch_id)', [$active_branch]);
+                                            }
+                                        });
+                                })
+                                ->get();
+        } else if(Auth::user()->role_id == 4) { // Head Cashier; additional condition might be added soon
+            $cashiers = User::whereDeleted(false)
+                                ->whereActive(true)
+                                ->whereBlocked(false)
+                                ->whereRoleId(2)
+                                ->where(function($query) use($active_companies) {
+                                    $query->whereIn('company_id', $active_companies)
+                                        ->orWhere(function ($query) use ($active_companies) {
+                                            foreach ($active_companies as $active_company) {
+                                                $query->orWhereRaw('FIND_IN_SET(?, company_id)', [$active_company]);
+                                            }
+                                        });
+                                })
+                                ->where(function($query) use($active_branches) {
+                                    $query->whereIn('branch_id', $active_branches)
+                                        ->orWhere(function ($query) use ($active_branches) {
+                                            foreach ($active_branches as $active_branch) {
+                                                $query->orWhereRaw('FIND_IN_SET(?, branch_id)', [$active_branch]);
+                                            }
+                                        });
+                                })
+                                ->whereIn('branch_id', [Auth::user()->branch_id])
+                                ->get();
+        } else if(Auth::user()->role_id == 6) { // Branch Manager; additional condition might be added soon
+            $cashiers = User::whereDeleted(false)
+                                ->whereActive(true)
+                                ->whereBlocked(false)
+                                ->whereRoleId(2)
+                                ->where(function($query) use($active_companies) {
+                                    $query->whereIn('company_id', $active_companies)
+                                        ->orWhere(function ($query) use ($active_companies) {
+                                            foreach ($active_companies as $active_company) {
+                                                $query->orWhereRaw('FIND_IN_SET(?, company_id)', [$active_company]);
+                                            }
+                                        });
+                                })
+                                ->where(function($query) use($active_branches) {
+                                    $query->whereIn('branch_id', $active_branches)
+                                        ->orWhere(function ($query) use ($active_branches) {
+                                            foreach ($active_branches as $active_branch) {
+                                                $query->orWhereRaw('FIND_IN_SET(?, branch_id)', [$active_branch]);
+                                            }
+                                        });
+                                })
+                                ->whereIn('branch_id', [Auth::user()->branch_id])
+                                ->get();
+        }
 
         $booklets = SalesInvoiceAssignment::with('booklet_details')
                         ->whereDeleted(false)
@@ -62,7 +131,6 @@ class SalesInvoiceAssignmentController extends Controller
             $booklet['percentage_used'] = $used_count == 0 ? 0 : round(($used_count / $booklet->count) * 100);
         }
 
-
         return view('sales_invoice_assignment.index', compact('booklets','cashiers'));
     }
 
@@ -79,23 +147,15 @@ class SalesInvoiceAssignmentController extends Controller
      */
     public function store(Request $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'branch_id' => 'required|int',
-        //     'series_from' => 'required|int',
-        //     'series_to' => 'required|int',
-        // ]);
-    
-        // if ($validator->fails()) {
-        //     return redirect()->back()->with('error', 'Data Incomplete!');
-        // }
-    
-
         $series_number = [
             substr(str_repeat(0, 6).$request->series_from, - 6), 
             substr(str_repeat(0, 6).$request->series_to, - 6)
         ];
 
         $branch_id = $request->cashier_branch_id ?? User::whereDeleted(false)->whereId($request->cashier_id)->first()->branch_id;
+
+        // get the company id from branch 
+        $company_id = Branch::whereId($branch_id)->first();
 
         // checker
         $details = SalesInvoiceAssignment::with('booklet_details')
@@ -108,9 +168,9 @@ class SalesInvoiceAssignmentController extends Controller
 
         // counter
         $details_branch = SalesInvoiceAssignment::with('booklet_details')
-                        ->whereDeleted(false)
-                        ->whereBranchId($branch_id)
-                        ->get();
+                                ->whereDeleted(false)
+                                ->whereBranchId($branch_id)
+                                ->get();
 
         // merge all the results into a single collection so we can count all the invoices
         $merged_details = collect();
@@ -130,9 +190,9 @@ class SalesInvoiceAssignmentController extends Controller
             return redirect()->back()->with('error', 'The series number already exists!'); 
         } else {
             $booklet = new SalesInvoiceAssignment();
-            $booklet->uuid = Str::uuid();
+            $booklet->uuid = Helper::uuid(new SalesInvoiceAssignment);
             $booklet->user_id = $request->cashier_id;
-            $booklet->branch_id = $branch_id; // get the cashier's designated branch
+            $booklet->branch_id = $request->cashier_branch_id; 
             $booklet->series_from = $request->series_from; // prefix (leading zero's) automatically added from model's setter
             $booklet->series_to = $request->series_to; // prefix (leading zero's) automatically added from model's setter
             $booklet->count = $total_request_count;

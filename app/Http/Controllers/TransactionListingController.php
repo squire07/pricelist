@@ -29,7 +29,7 @@ class TransactionListingController extends Controller
                                 $query->whereBetween('created_at', [$from, $to]);
                             }
                         })
-                            ->where('status_id', 4) //where status 4 is released
+                            ->whereIn('status_id', [4,5])
                             ->where('deleted', 0)
                             ->when(!empty($user_branch), function($query) use ($user_branch) {
                                 $query->whereIn('branch_id', explode(',',$user_branch));

@@ -596,7 +596,9 @@ class ForValidationController extends Controller
 
             // log the update
             $old_ref_no = $old_payment_ref_no != '' ? ' - ' . $old_payment_ref_no : '';
-            $remarks = $old_payment_method_name . $old_ref_no . ' to ' . $payment_method->name . ' - ' . $request->ref_no; 
+            $new_ref_no = $request->ref_no != '' ? ' - ' . $request->ref_no : '';
+
+            $remarks = $old_payment_method_name . $old_ref_no . ' to ' . $payment_method->name . $new_ref_no; 
             Helper::transaction_history($sales->id,  $sales->uuid, $sales->transaction_type_id, $sales->status_id, $sales->si_no, 'Sales Invoice', 'Update Payment Details', $remarks);
 
             return redirect()->back()->with('success', 'Payment details updated');

@@ -189,6 +189,50 @@ class Helper {
         return implode(',', $branch_names);  //do not add space between ','
     }
 
+    public static function get_branch_names_by_id_for_si_assignment($ids) {
+        $ids = explode(',', $ids);
+        $branch_names = [];
+        foreach ($ids as $branch_id) {
+            $branch = Branch::whereId($branch_id)
+                        ->with('company')
+                        ->whereHas('company', function ($query) {
+                            $query->where('status_id', 8);
+                        })
+                        ->where('status_id', 8)
+                        ->whereDeleted(false)->first(); // get the active only
+            if ($branch) {
+                $branch_names[] = $branch->name;
+            }
+        }
+        return implode(',', $branch_names);  //do not add space between ','
+    }
+
+    public static function get_branch_ids_for_si_assignment($ids) {
+        $ids = explode(',', $ids);
+        $branch_ids = [];
+        foreach ($ids as $branch_id) {
+            $branch = Branch::whereId($branch_id)
+                        ->with('company')
+                        ->whereHas('company', function ($query) {
+                            $query->where('status_id', 8);
+                        })
+                        ->where('status_id', 8)
+                        ->whereDeleted(false)->first(); // get the active only
+            if ($branch) {
+                $branch_ids[] = $branch->id;
+            }
+        }
+        return implode(',', $branch_ids);  //do not add space between ','
+    }
+
+    public static function intersect_ids_in_si_assignment($first_id_set, $second_id_set) {
+        // this will return only the matching ids ex. 1,7 and 7   result: 7
+        $first_set_explode = collect(explode(',', $first_id_set));
+        $second_set_explode = collect(explode(',', $second_id_set));
+        $ids = $first_set_explode->intersect($second_set_explode);
+        return $ids->implode(',');
+    }
+
     public static function get_company_names_by_id($ids) {
         $ids = explode(',', $ids);
         $company_names = [];
@@ -595,17 +639,35 @@ class Helper {
     {
         // dev 
         $prefix = array(
-            6 => 'A',
-            11 => 'B',
-            16 => 'C',
-            21 => 'D',
-            26 => 'E',
-            31 => 'F',
-            36 => 'G',
-            41 => 'H',
+            21 => 'A',
+            41 => 'B',
+            61 => 'C',
+            81 => 'D',
+            101 => 'E',
+            121 => 'F',
+            141 => 'G',
+            161 => 'H',
+            181 => 'I',
+            201 => 'J',
+            221 => 'K',
+            241 => 'L',
+            261 => 'M',
+            281 => 'N',
+            301 => 'O',
+            321 => 'P',
+            341 => 'Q',
+            361 => 'R',
+            381 => 'S',
+            401 => 'T',
+            421 => 'U',
+            441 => 'V',
+            461 => 'W',
+            481 => 'X',
+            501 => 'Y',
+            521 => 'Z',
         );
 
-        // prod 
+        // prod (actual)
         // $prefix = array(
         //     25001 => 'A',
         //     50001 => 'B',
@@ -618,7 +680,7 @@ class Helper {
         // );
 
         foreach ($prefix as $lower_limit => $letter) {
-            $upper_limit = $lower_limit + 5; // change this to actual 
+            $upper_limit = $lower_limit + 20; // change this to actual 
     
             if ($iteration >= $lower_limit && $iteration <= $upper_limit) {
                 return $letter;

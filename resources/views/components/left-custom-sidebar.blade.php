@@ -210,7 +210,7 @@
                         <li class="nav-item">
                             <a href="{{ url('reports/build-report') }}" class="nav-link {{ $url_segment_2 == 'build-report' ? 'active':'' }}" target="_self">
                                 <i class="far fa-file-alt nav-icon"></i>
-                                <p>Build Report</p>
+                                <p>Item Build Report</p>
                             </a>
                         </li>
                     @endif
@@ -219,6 +219,14 @@
                             <a href="{{ url('reports/logs') }}" class="nav-link {{ $url_segment_2 == 'logs' ? 'active':'' }}" target="_self">
                                 <i class="far fa-file-alt nav-icon"></i>
                                 <p>Logs</p>
+                            </a>
+                        </li>
+                    @endif
+                    @if(Helper::MP(24,1))
+                        <li class="nav-item">
+                            <a href="{{ url('reports/nuc') }}" class="nav-link {{ $url_segment_2 == 'nuc' ? 'active':'' }}" target="_self">
+                                <i class="far fa-file-alt nav-icon"></i>
+                                <p>NUC Report</p>
                             </a>
                         </li>
                     @endif

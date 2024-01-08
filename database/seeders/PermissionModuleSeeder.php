@@ -35,12 +35,13 @@ class PermissionModuleSeeder extends Seeder
             
             17 => array('name' => 'Build Report', 'type' => 'report', 'controller' => 'BuildReportController', 'redirect' => 'reports/build-report', 'sequence' => 20),
             18 => array('name' => 'Logs', 'type' => 'report', 'controller' => 'HistoryController', 'redirect' => 'reports/logs', 'sequence' => 21),
-            19 => array('name' => 'Stock Card', 'type' => 'report', 'controller' => 'StockCardController', 'redirect' => 'reports/stock-card', 'sequence' => 22),
-            20 => array('name' => 'Transaction Listing', 'type' => 'report', 'controller' => 'TransactionListingController', 'redirect' => 'reports/transaction-listing', 'sequence' => 23),
+            19 => array('name' => 'Stock Card', 'type' => 'report', 'controller' => 'StockCardController', 'redirect' => 'reports/stock-card', 'sequence' => 23),
+            20 => array('name' => 'Transaction Listing', 'type' => 'report', 'controller' => 'TransactionListingController', 'redirect' => 'reports/transaction-listing', 'sequence' => 24),
 
             21 => array('name' => 'Shipping Fee', 'type' => 'module', 'controller' => 'ShippingFeeController', 'redirect' => 'shipping-fee', 'sequence' => 16),
             22 => array('name' => 'Income Expense Account', 'type' => 'module', 'controller' => 'IncomeExpenseAccountController', 'redirect' => 'income-expense-accounts', 'sequence' => 11),
             23 => array('name' => 'Sales Invoice - For Posting', 'type' => 'module', 'controller' => 'ForPostingController', 'redirect' => 'sales-invoice/for-posting', 'sequence' => 4),
+            24 => array('name' => 'NUC Report', 'type' => 'report', 'controller' => 'ForPostingController', 'redirect' => 'reports/nuc', 'sequence' => 22),
         ];
 
         foreach($modules as $key => $module) {

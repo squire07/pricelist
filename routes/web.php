@@ -29,6 +29,7 @@ use App\Http\Controllers\TransactionListingController;
 use App\Http\Controllers\TransactionTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserPermissionController;
+use App\Http\Controllers\Report\NucReportController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\GateMiddleware;
@@ -106,6 +107,7 @@ Route::middleware(['auth','gate'])->group(function () {
         Route::get('stockcard_list', [StockCardController::class, 'stockcard_list'])->name('stockcard_list');
         Route::resource('stock-card', StockCardController::class)->only('index');
         Route::resource('transaction-listing', TransactionListingController::class)->only('index');
+        Route::resource('nuc', NucReportController::class);
     });
 
     Route::get('test-build-report', [TestBuildReportController::class, 'testbuildreport'])->name('testbuildreport');
@@ -131,4 +133,3 @@ Route::middleware(['auth','superadmin'])->group(function () {
 Route::middleware(['auth'])->group(function() {
     Route::put('update-payment-details/{uuid}', [ForValidationController::class, 'update_payment_details'])->name('update_payment_details');
 });
-

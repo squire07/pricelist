@@ -586,6 +586,11 @@ class ForValidationController extends Controller
             
             // update the payload details as well; Sales UUID = Payment UUID = Payload UUID
             $payload = Payload::whereDeleted(0)->whereUuid($payment->uuid)->first();
+
+            // update si payload
+            $payload->si = Helper::create_si_payload($sales->id);
+            
+            // update payment payload
             $payload->payment = Helper::create_payment_payload($payment->sales_id);
             $payload->update();
 

@@ -125,7 +125,7 @@ class ForInvoicingController extends Controller
         $si_assignments = SalesInvoiceAssignment::with('booklet_details')
                             ->whereDeleted(false)
                             ->where('branch_id', $sales_order->branch_id)
-                            ->orWhere('user_id', Auth::user()->id)
+                            ->where('user_id', Auth::user()->id)
                             ->get();
 
         // get the next available booklet

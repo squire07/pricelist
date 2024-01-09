@@ -34,7 +34,6 @@ class SalesInvoiceAssignmentController extends Controller
         // get the active branches
         $active_branches = Branch::whereStatusId(8)->pluck('id'); // Must be refactor! status_id to status with boolean datatype: 0 = inactive/false; 1 = active/true;
 
-
         if(in_array(Auth::user()->role_id, [11,12])) {
             $cashiers = User::whereDeleted(false)
                                 ->whereActive(true)
@@ -57,7 +56,7 @@ class SalesInvoiceAssignmentController extends Controller
                                         });
                                 })
                                 ->get();
-        } else if(Auth::user()->role_id == 4) { // Head Cashier; additional condition might be added soon
+        } else if(in_array(Auth::user()->role_id, [4,5,6])) { // Head Cashier; additional condition might be added soon
             $cashiers = User::whereDeleted(false)
                                 ->whereActive(true)
                                 ->whereBlocked(false)
@@ -78,32 +77,16 @@ class SalesInvoiceAssignmentController extends Controller
                                             }
                                         });
                                 })
-                                ->whereIn('branch_id', [Auth::user()->branch_id])
-                                ->get();
-        } else if(Auth::user()->role_id == 6) { // Branch Manager; additional condition might be added soon
-            $cashiers = User::whereDeleted(false)
-                                ->whereActive(true)
-                                ->whereBlocked(false)
-                                ->whereRoleId(2)
-                                ->where(function($query) use($active_companies) {
-                                    $query->whereIn('company_id', $active_companies)
-                                        ->orWhere(function ($query) use ($active_companies) {
-                                            foreach ($active_companies as $active_company) {
-                                                $query->orWhereRaw('FIND_IN_SET(?, company_id)', [$active_company]);
+                                ->where(function($query) {
+                                    $query->whereIn('branch_id', [Auth::user()->branch_id])
+                                        ->orWhere(function ($query) {
+                                            foreach(explode(',', Auth::user()->branch_id) as $auth_user_branch) {
+                                                $query->orWhereRaw('FIND_IN_SET(?, branch_id)', [$auth_user_branch]);
                                             }
                                         });
                                 })
-                                ->where(function($query) use($active_branches) {
-                                    $query->whereIn('branch_id', $active_branches)
-                                        ->orWhere(function ($query) use ($active_branches) {
-                                            foreach ($active_branches as $active_branch) {
-                                                $query->orWhereRaw('FIND_IN_SET(?, branch_id)', [$active_branch]);
-                                            }
-                                        });
-                                })
-                                ->whereIn('branch_id', [Auth::user()->branch_id])
                                 ->get();
-        }
+        } 
 
         $booklets = SalesInvoiceAssignment::with('booklet_details')
                         ->whereDeleted(false)
@@ -192,7 +175,7 @@ class SalesInvoiceAssignmentController extends Controller
             $booklet = new SalesInvoiceAssignment();
             $booklet->uuid = Helper::uuid(new SalesInvoiceAssignment);
             $booklet->user_id = $request->cashier_id;
-            $booklet->branch_id = $request->cashier_branch_id; 
+            $booklet->branch_id = $request->cashier_branch_id ?? $branch_id; 
             $booklet->series_from = $request->series_from; // prefix (leading zero's) automatically added from model's setter
             $booklet->series_to = $request->series_to; // prefix (leading zero's) automatically added from model's setter
             $booklet->count = $total_request_count;

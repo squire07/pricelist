@@ -83,6 +83,7 @@
 
                 <form class="form-horizontal" action="{{ route('sales-invoice-assignment.store') }}" method="POST" id="form_modal_add" autocomplete="off">
                     @csrf
+                    <input type="hidden" id="auth_user_id" value={{ Auth::user()->id }}>
                     <div class="modal-body">
                         <div class="container">
                             <div class="form-group">
@@ -163,6 +164,7 @@
             $('#series_to').val('');
         });
 
+        let auth_user_id = $('#auth_user_id').val();
 
         $('#dt_booklet').DataTable({
             dom: 'Bfrtip',
@@ -244,7 +246,7 @@
                 $('#div_cashier_branch_id').removeClass('d-none');
 
                 // fetch the data by using the cashier's id
-                fetch(window.location.origin + '/api/branches_by_cashiers_id/' + $('#cashier_id').val(), {
+                fetch(window.location.origin + '/api/branches_by_cashiers_id/' + $('#cashier_id').val() + '/' + auth_user_id, {
                     method: 'get',
                     headers: {
                         'Content-type': 'application/json',
@@ -281,19 +283,7 @@
             // Disable the button to prevent multiple submissions
             $(this).prop('disabled', true);
 
-            // Check if there is an active branch selected
-            // if ($('#cashier_branch_id').val() !== null) {
-                // Submit the form
-                $('#form_modal_add').submit();
-            // } else {
-            //     // Enable the button and show a message or take appropriate action
-            //     $(this).prop('disabled', false);
-            //     Swal.fire({
-            //         icon: 'error',
-            //         title: 'Error',
-            //         text: 'Company or Branch is Inactive.',
-            //     });
-            // }
+            $('#form_modal_add').submit();
         });
     
         // Prevent from redirecting back to homepage when cancel button is clicked accidentally

@@ -31,7 +31,7 @@
                 </div>
             </div>
         </form>
-        {{-- <form id="form_filter" class="form-horizontal" action="{{ url('/reports/stock-card') }}" method="get">
+        <form id="filter_request" class="form-horizontal" action="{{ url('reports/stock-card') }}" method="get">
             <div class="row">
                 <div class="col-md-3 col-sm-12">
                     <div class="form-group">
@@ -39,7 +39,7 @@
                         <select class="form-control form-control-sm select2 select2-primary" id="branch_id" name="branch" data-dropdown-css-class="select2-primary" style="width: 100%;">
                             <option value="" selected="true" disabled>-- Select branch --</option>
                             @foreach($branches as $branch)
-                                <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                <option value="{{ $branch->id }}" {{ Request::get('branch') == $branch->id ? 'selected' : '' }}>{{ $branch->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -47,10 +47,10 @@
                 <div class="col-md-3 col-sm-12">
                     <div class="form-group">
                         <label>Item</label>
-                        <select class="form-control form-control-sm select2 select2-primary" id="item_id" name="item" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
+                        <select class="form-control form-control-sm select2 select2-primary" id="item_id" name="item" data-dropdown-css-class="select2-primary" style="width: 100%;">
                             <option value="" selected="true" disabled>-- Select Item --</option>
                             @foreach($items as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                <option value="{{ $item->id }}" {{ Request::get('item') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -58,7 +58,7 @@
                 <div class="col-md-3 col-sm-12">
                     <div class="form-group">
                         <label>BCID</label>
-                        <input type="text" class="form-control form-control-sm" id="bcid" name="bcid">
+                        <input type="text" class="form-control form-control-sm" id="bcid" name="bcid" value="{{ Request::get('bcid') }}">
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-12">
@@ -67,14 +67,16 @@
                         <select class="form-control form-control-sm select2 select2-primary" id="transaction_type_id" name="transaction_type" data-dropdown-css-class="select2-primary" style="width: 100%;">
                             <option value="" selected="true" disabled>-- Select Transaction Type --</option>
                             @foreach($transaction_types as $transaction_type)
-                                <option value="{{ $transaction_type->id }}">{{ $transaction_type->name }}</option>
+                                <option value="{{ $transaction_type->id }}" {{ Request::get('transaction_type') == $transaction_type->id ? 'selected' : '' }}>{{ $transaction_type->name }}</option>
                             @endforeach
                         </select>
                     </div>
                 </div>
             </div>
-            <input type="submit" class="btn btn-info" name="submit" id="btn-generate" value="Generate">
-        </form> --}}
+            <button class="btn btn-md btn-outline-info" id="btn-filter" onclick="document.getElementById('filter_request').submit();">Filter</button>
+            <input type="button" class="btn btn-md btn-outline-warning" id="btn-reset" onclick="window.location.assign('{{ url('reports/stock-card') }}')" value="Reset">
+        </form>
+    </div>
     </div>
 
     <div class="container-fluid">
@@ -126,7 +128,7 @@
         });
 
         // re-initialize the datatable with additional column filters
-        var table = $('#dt_sales_orders').DataTable({
+        $('#dt_sales_orders').DataTable({
             dom: 'Brtip',
             deferRender: true,
             paging: true,
@@ -147,25 +149,6 @@
             ],
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
-            }
-        });
-
-        // Add a single header row for both original titles and filter inputs
-        $('#dt_sales_orders thead tr').clone(true).appendTo('#dt_sales_orders thead').attr('id', 'filterRow');
-        $('#dt_sales_orders thead tr:eq(1) th').each(function (i) {
-            var title = $(this).text();
-            if (i >= 1 && i <= 5) { // filters for columns branch to BCID
-                $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
-                $('input', this).on('keyup change', function () {
-                    if (table.column(i).search() !== this.value) {
-                        table
-                            .column(i)
-                            .search(this.value)
-                            .draw();
-                    }
-                });
-            } else {
-                $(this).html('');
             }
         });
 

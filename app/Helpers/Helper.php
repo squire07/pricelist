@@ -293,6 +293,18 @@ class Helper {
         }
     }
 
+    public static function get_erpnext_data_v2($param) {
+        $client = new Client();
+
+        $response = $client->get(env('ERPNEXT_URL') . $param, [
+            'headers' => [
+                'Authorization' => 'Token ' . env('ERPNEXT_API_KEY') . ':' . env('ERPNEXT_API_SECRET'),
+                'Accept' => 'application/json', 
+            ],
+        ]);
+        return $response;
+    }
+
     public static function post_erpnext_data($param, $post_data) {
         $client = new Client();
     

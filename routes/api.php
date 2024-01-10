@@ -28,6 +28,7 @@ Route::get('distributor/{id}', [DistributorController::class, 'get_distributor_b
 Route::get('item/transaction_type/{transaction_type_id}', [ItemController::class, 'get_item_by_transaction_type']);
 Route::get('item/stock_by_warehouse/{item_id}/{branch_id}', [ItemController::class, 'get_stock_by_warehouse']);
 Route::get('item/{id}', [ItemController::class, 'get_item_by_id']);
+Route::get('item/bundle/{bundle_code}', [ItemController::class, 'get_item_bundle']);
 Route::get('shippingfee/{id}', [ShippingFeeController::class, 'get_shippingfee_by_id']);
 Route::get('branches_by_cashiers_id/{cashiers_id}/{auth_user_id}', [BranchController::class, 'get_branches_by_cashiers_id']);
 

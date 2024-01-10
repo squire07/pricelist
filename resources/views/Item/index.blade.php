@@ -25,6 +25,8 @@
                             <th class="text-center">Type</th>
                             <th class="text-center">Amount</th>
                             <th class="text-center">NUC</th>
+                            <th class="text-center">RS Points</th>
+                            <th class="text-center">PV Points</th>
                             <th class="text-center">Last Sync At</th>
                             <th class="text-center">Last Sync By</th>
                         </tr>
@@ -34,10 +36,18 @@
                             <tr>
                                 <td class="text-center">{{ $item->id }}</td>
                                 <td class="text-center">{{ $item->code }}</td>
-                                <td>{{ $item->name }}</td>
+                                <td>
+                                    @if($item->item_bundle->isNotEmpty())
+                                        <a class="item_code" data-id="{{ $item->code }}" style="cursor: pointer;">{{ $item->name }}</a>
+                                    @else
+                                        {{ $item->name }}
+                                    @endif
+                                </td>
                                 <td class="text-center">{{ $item->description }}</td>
                                 <td class="text-right">{{ $item->amount }}</td>
                                 <td class="text-right">{{ $item->nuc }}</td>
+                                <td class="text-right">{{ $item->rs_points }}</td>
+                                <td class="text-right">{{ $item->pv_points }}</td>
                                 <td class="text-center">{{ $item->updated_at }}</td>
                                 <td class="text-center">{{ $item->updated_by }}</td>
                             </tr>
@@ -48,6 +58,29 @@
             <div class="card-footer">
                 <button class="btn btn-sm btn-primary" id="btn-sync" {{ !in_array(Auth::user()->role_id, [11,12]) ? 'disabled' : '' }}><i class="fas fa-sync mr-1"></i>Sync</button>     
             </div>    
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-item-bundle" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="col-12">
+                            <table class="table table-bordered table-sm" id="item-bundle-table"></table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="modal_add_close" >Close</button>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -118,6 +151,46 @@
                         location.reload();
                     })
                 }
+            })
+        });
+
+        $(document).on('click', '.item_code', function() {
+
+            // clear all the table contents
+            $('#item-bundle-table > tr').remove();
+
+            let item_code = $(this).attr('data-id');
+
+            fetch(window.location.origin + '/api/item/bundle/' + item_code, {
+                method: 'get',
+                headers: {
+                    'Content-type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then((response) => {
+                obj = JSON.parse(JSON.stringify(response));
+
+                $('.modal-title').text(obj[0]['bundle_description']);
+
+                var el = '<tr>' + 
+                            '<th class="text-center">Code</th>' + 
+                            '<th class="text-center">Description</th>' +
+                            '<th class="text-center">Quantity</th>' +
+                            '<th class="text-center">UOM</th>' +
+                        '</tr>';
+                $.each(obj, function(key, data) {
+                    el += '<tr>' +
+                            '<td class="text-center">' + data['item_code'] + '</td>' + 
+                            '<td>' + data['item_description'] + '</td>' + 
+                            '<td class="text-center">' + data['quantity'] + '</td>' + 
+                            '<td class="text-center">' + data['uom'] + '</td>' + 
+                        '</tr>'
+                });
+
+                $("#item-bundle-table").append(el); 
+
+                $('#modal-item-bundle').modal('show');
             })
         });
     });

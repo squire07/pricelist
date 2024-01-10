@@ -25,6 +25,11 @@ class Item extends Model
         return $this->hasOne('App\Models\TransactionType', 'id', 'transaction_type_id');
     }
 
+    public function item_bundle()
+    {
+        return $this->hasMany('App\Models\ItemBundle', 'bundle_name', 'code');
+    }
+
     // getter and setter
     public function getAmountAttribute($value)
     {
@@ -37,6 +42,11 @@ class Item extends Model
     }
 
     public function getRsPointsAttribute($value)
+    {
+        return number_format($value,2,'.',',');
+    }
+
+    public function getPvPointsAttribute($value)
     {
         return number_format($value,2,'.',',');
     }

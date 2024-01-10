@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Branch;
 use App\Models\Item;
+use App\Models\ItemBundle;
 use Carbon\Carbon;
 use App\Helpers\Helper;
 class ItemController extends Controller
@@ -72,5 +73,10 @@ class ItemController extends Controller
         }
 
         return $items;
+    }
+
+    public function get_item_bundle($bundle_code)
+    {
+        return ItemBundle::whereDeleted(0)->whereBundleName($bundle_code)->orderBy('item_description')->get();
     }
 }

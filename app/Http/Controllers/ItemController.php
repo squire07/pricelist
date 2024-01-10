@@ -19,7 +19,7 @@ class ItemController extends Controller
      */
     public function index()
     {
-        $items = Item::whereDeleted(false)->get();
+        $items = Item::with('item_bundle')->whereDeleted(false)->get();
         return view('item.index', compact('items'));
     }
 

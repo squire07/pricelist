@@ -21,6 +21,7 @@ return new class extends Migration
             $table->double('amount')->unsigned()->default(0);
             $table->double('nuc')->unsigned()->default(0);
             $table->double('rs_points')->unsigned()->default(0);
+            $table->double('pv_points')->unsigned()->default(0);
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();
             $table->softDeletes();

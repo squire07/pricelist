@@ -35,7 +35,8 @@ class ItemSeeder extends Seeder
                     'description' => $price_list->name, // no defined item description in erpnext
                     'amount' => isset($item['price_list_rate']) && !empty($item['price_list_rate']) ? $item['price_list_rate'] : 0,
                     'nuc' => isset($item['nuc']) && !empty($item['nuc']) ? $item['nuc'] : 0,
-                    'rs_points' => 0, // no defined rs_points in erpnext
+                    'rs_points' => isset($item['rs_points']) && !empty($item['rs_points']) ? $item['rs_points'] : 0,
+                    'pv_points' => isset($item['pv_points']) && !empty($item['pv_points']) ? $item['pv_points'] : 0,
                     'created_at' => Carbon::now()->toDateTimeString(),
                     'updated_at' => Carbon::now()->toDateTimeString(),
                     'created_by' => Auth::user()->name ?? 'System',

@@ -22,7 +22,7 @@ class ItemSeeder extends Seeder
 
         foreach($transaction_types as $price_list) {
 
-            $param = '/api/resource/Item Price?filters=[["Item Price","price_list","in", ["' . $price_list->name .'"]]]&fields=["name","item_code","item_name","price_list","currency","price_list_rate","nuc"]&limit=1000';
+            $param = '/api/resource/Item Price?filters=[["Item Price","price_list","in", ["' . $price_list->name .'"]]]&fields=["name","item_code","item_name","price_list","currency","price_list_rate","nuc","rs_points","pv_points"]&limit=1000';
             $data = Helper::get_erpnext_data($param);
             $data = json_decode($data->getBody()->getContents(), true);
 

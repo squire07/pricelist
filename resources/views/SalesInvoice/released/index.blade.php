@@ -82,7 +82,7 @@
                                 <td class="text-center">{{ $sales_order->transaction_type->name }}</td>
                                 <td class="text-center">{{ $sales_order->bcid }}</td>
                                 <td class="text-center">{{ $sales_order->distributor_name }}</td>
-                                <td class="text-right">{{ $sales_order->total_amount }}</td>
+                                <td class="text-right">{{ $sales_order->grandtotal_amount }}</td>
                                 <td class="text-right">{{ $sales_order->total_nuc }}</td>
                                 <td class="text-center"><span class="badge {{ Helper::badge($sales_order->status_id) }}">{{ $sales_order->status->name }}</span></td>
                                 <td class="text-center">{{ $sales_order->created_by }}</td>

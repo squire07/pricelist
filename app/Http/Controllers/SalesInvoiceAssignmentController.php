@@ -175,7 +175,7 @@ class SalesInvoiceAssignmentController extends Controller
             $booklet = new SalesInvoiceAssignment();
             $booklet->uuid = Helper::uuid(new SalesInvoiceAssignment);
             $booklet->user_id = $request->cashier_id;
-            $booklet->branch_id = $request->cashier_branch_id ?? $branch_id; 
+            $booklet->branch_id = $branch_id; 
             $booklet->series_from = $request->series_from; // prefix (leading zero's) automatically added from model's setter
             $booklet->series_to = $request->series_to; // prefix (leading zero's) automatically added from model's setter
             $booklet->count = $total_request_count;

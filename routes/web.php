@@ -101,11 +101,11 @@ Route::middleware(['auth','gate'])->group(function () {
 
     // REPORTS
     Route::group(['prefix' => 'reports', 'alias' => 'reports'], function() {
-        Route::get('buildreport_list', [BuildReportController::class, 'buildreport_list'])->name('buildreport_list');
         Route::resource('build-report', BuildReportController::class)->only('index');
+        Route::get('/excel-nuc', [BuildReportController::class, 'exportToExcel'])->name('excel.nuc.report');
         Route::resource('logs', HistoryController::class);
-        Route::get('stockcard_list', [StockCardController::class, 'stockcard_list'])->name('stockcard_list');
         Route::resource('stock-card', StockCardController::class)->only('index');
+        Route::get('/excel-stockcard', [StockCardController::class, 'exportToExcel'])->name('excel.stockcard.report');
         Route::resource('transaction-listing', TransactionListingController::class)->only('index');
         Route::resource('nuc', NucReportController::class);
     });

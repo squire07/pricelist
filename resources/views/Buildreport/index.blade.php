@@ -3,173 +3,162 @@
 @section('title', 'NUC Build Report')
 
 @section('content_header')
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1>NUC Report</h1>
-            </div>
-        </div>
-    </div>
-@stop
-
-@section('content')
-    <div class="container-fluid">
-        <div class="card">
-            <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-                
-                <form id="request_date" class="form-horizontal" action="{{ url('reports/build-report') }}" method="get">
-                    @csrf
-                    <label for="daterange">Request Date</label>
-                    <div class="row">
-                        <div class="col-lg-4 col-md-4">
-                            <div class="form-group form-group-sm">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                        <i class="far fa-calendar-alt"></i>
-                                        </span>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm float-right" name="daterange" id="daterange" value="{{ Request::get('daterange') }}">
-
-                                    <div class="input-group-append" onclick="document.getElementById('request_date').submit();">
-                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                    </div>
-                                    <div class="input-group-append" onclick="window.location.assign('{{ url('reports/build-report') }}')">
-                                        <span class="input-group-text"><i class="fas fa-sync-alt"></i></span>
-                                    </div>
+<h1>NUC Report</h1>
+    <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
+        <div class="modal fade" id="modal-add-data" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Filter by Data</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="filter_request" class="form-horizontal" action="{{ url('reports/build-report') }}" method="get">
+                        <div class="container fluid">
+                            <div class="col-m col-sm-12">
+                                <div class="form-group">
+                                    <label>Branch</label>
+                                    <select class="form-control form-control-sm select2 select2-primary" id="branch_id" name="branch" data-dropdown-css-class="select2-primary" style="width: 100%;">
+                                        <option value="" disabled selected>-- Select Branch --</option>
+                                            @foreach($branches as $branch)
+                                                <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                            @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-m col-sm-12">
+                                <div class="form-group">
+                                    <label>BCID</label>
+                                    <input type="text" class="form-control form-control-sm" id="bcid" name="bcid" value="{{ Request::get('bcid') }}">
+                                </div>
+                            </div>
+                            <div class="col-m col-sm-12">
+                                <div class="form-group">
+                                    <button class="btn btn-md btn-info" id="btn-filter" onclick="document.getElementById('filter_request').submit();">Generate</button>
+                                    <input type="button" class="btn btn-md btn-warning" id="btn-reset" onclick="window.location.assign('{{ url('reports/build-report') }}')" value="Reset">
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-
-                <table id="dt_sales_orders" class="table table-bordered table-hover table-striped" width="100%">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Date</th>
-                            <th class="text-center">Branch</th>
-                            <th class="text-center">OID #</th>
-                            <th class="text-center">BCID</th>
-                            <th class="text-center">Name</th>
-                            <th class="text-center">Total NUC</th>
-                            <th class="text-center">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($sales_orders as $sales_order)
-                            <tr>
-                                <td class="text-center">{{ $sales_order->updated_at->format('m/d/Y') }}</td>
-                                <td class="text-center">{{ $sales_order->branch }}</td>
-                                <td class="text-center">{{ $sales_order->oid }}</td>
-                                <td class="text-center">{{ $sales_order->bcid }}</td>
-                                <td class="text-center">{{ $sales_order->distributor->name ?? null }}</td>
-                                <td class="text-right">{{ $sales_order->total_nuc }}</td>
-                                <td class="text-center">{{ $sales_order->status == 1 ? 'Credited' : null }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                    {{-- <tfoot>
-                        <tr>
-                            <th class="d-none"></th>
-                            <th class="d-none"></th>
-                            <th class="d-none"></th>
-                            <th class="d-none"></th>
-                            <th class="d-none" style="text-align: right">TOTAL</th>
-                            <th class="d-none">sum_nuc</th>
-                        </tr>
-                    </tfoot> --}}
-                </table>
-            </div>    
+                    </form>
+                </div>
+            </div>
         </div>
-    </div>
+
+        <div class="modal fade" id="modal-add-date" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Filter by Date</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                        <form id="request_date" class="form-horizontal" action="{{ url('reports/build-report') }}" method="get">
+                            @csrf
+                            <div class="container fluid">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="far fa-calendar-alt"></i>
+                                                </span>
+                                            </div>
+                                            <input type="text" class="form-control form-control-sm float-right" name="daterange" id="daterange-btn" value="{{ Request::get('daterange') }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            <div class="form-group">
+                                <div class="col-m col-sm-12">
+                                <input type="button" class="btn btn-md btn-info" id="daterange-gen" onclick="document.getElementById('request_date').submit();" value="Generate">
+                                <input type="button" class="btn btn-md btn-warning" id="btn-reset" onclick="window.location.assign('{{ url('reports/build-report') }}')" value="Reset">
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add-data" {{ Helper::BP(7,2) }}>
+                <i class="fas fa-database"></i> Filter by Data
+            </button>
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add-date" {{ Helper::BP(7,2) }}>
+                <i class="fas fa-calendar"></i> Filter by Date
+            </button>
+            <button type="button" class="btn btn-warning" {{ Helper::BP(7,2) }} onclick="window.location.assign('{{ url('reports/build-report') }}')">
+                <i class="fas fa-undo-alt"></i> Reset
+            </button>
+            <button id="exportToExcelBtn" class="btn btn-success" {{ Helper::BP(7,2) }}>
+                <i class="far fa-file-excel"></i> Export to Excel
+            </button>
+        </div><br>
+
+        <table id="dt_sales_orders" class="table table-bordered table-hover table-striped" width="100%">
+            <thead>
+                <tr>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Branch</th>
+                    <th class="text-center">Invoice #</th>
+                    <th class="text-center">BCID</th>
+                    <th class="text-center">Name</th>
+                    <th class="text-right">NUC</th>
+                    <th class="text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($sales_orders as $sales_order)
+                    <tr>
+                        <td class="text-center">{{ $sales_order->updated_at->format('m/d/Y') }}</td>
+                        <td class="text-center">{{ $sales_order->branch ?? NULL}}</td>
+                        <td class="text-center">{{ $sales_order->oid }}</td>
+                        <td class="text-center">{{ $sales_order->bcid }}</td>
+                        <td class="text-center">{{ $sales_order->distributor->name ?? null }}</td>
+                        <td class="text-right">{{ $sales_order->total_nuc }}</td>
+                        <td class="text-center">{{ $sales_order->status == 1 ? 'Credited' : null }}</td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="7" style="text-align: center">No Data Available in Table.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>                   
+
 @endsection
 
 @section('adminlte_js')
 <script>
     $(document).ready(function() {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
+        // initialize select2 on this page using bootstrap 4 theme
+        $('.select2').select2({
+            theme: 'bootstrap4'
         });
 
-        // re-initialize the datatable
-        $('#dt_sales_orders').DataTable({
-            dom: 'Bfrtip',
-            deferRender: true,
-            paging: true,
-            searching: true,
-            lengthMenu: [[10, 25, 50, -1], ['10 rows', '25 rows', '50 rows', 'Show All']],  
-            buttons: [
-                {
-                    extend: 'pageLength',
-                    className: 'btn-default btn-sm',
-                },
-                {
-                    extend: 'excel',
-                    text: 'Export to Excel',
-                    footer: true,
-                    filename: 'NUC_Report_' + getCurrentDate(),
-                    // customize: function(xlsx) {
-                    //     var sheet = xlsx.xl.worksheets['sheet1.xml'];
+     //Date range as a button
+     $('#daterange-btn').daterangepicker(
+      {
+        ranges   : {
+          'Today'       : [moment(), moment()],
+          'Yesterday'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+          'Last 7 Days' : [moment().subtract(6, 'days'), moment()],
+          'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+          'This Month'  : [moment().startOf('month'), moment().endOf('month')],
+          'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        },
+        startDate: moment(),
+        endDate  : moment()
+      },
+      function (start, end) {
+        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+      }
+    )
 
-                    //     // Get the data from DataTable
-                    //     var data_table = $('#dt_sales_orders').DataTable();
-                    //     var data = data_table.rows().data();
-
-                    //     // Calculate the sum of data in sum nuc
-                    //     var sum = 0;
-                    //     data.each(function(value, index) {
-                    //         sum += parseFloat(value[5]);
-                    //     });
-
-                    //     // Add the sum to the Excel file
-                    //     var sum_row = sheet.createElement('row');
-                    //     var c6 = sum_row.appendChild(sheet.createElement('c'));
-                    //     var t6 = c6.appendChild(sheet.createElement('t'));
-                    //     t6.innerHTML = '<t>' + sum + '</t>';
-                    //     sheet.getElementsByTagName('sheetData')[0].appendChild(sum_row);
-                    // }
-                },
-            ],
-            language: {
-                processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
-            }
-            // footerCallback: function (row, data, start, end, display) {
-            //     var api = this.api();
-
-            // // Calculate the sum of data in column 5 across all active pages
-            // var sum_nuc = api.rows({page: 'current'}).data().reduce(function (acc, val) {
-            //     return acc + parseFloat(val[5]);
-            // }, 0);
-
-            //     // Update the footer
-            //     $(api.column(5).footer()).html(sum_nuc);
-            // }
-        });
+    $('#exportToExcelBtn').click(function () {
+            // Redirect to the export route
+            window.location.href = "{{ route('excel.nuc.report') }}";
     });
-    
-        // Function to get the current date in the format YYYY-MM-DD
-        function getCurrentDate() {
-            var today = new Date();
-            var dd = String(today.getDate()).padStart(2, '0');
-            var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
-            var yyyy = today.getFullYear();
-            return mm + '-' + dd + '-' + yyyy;
-        }
-</script>
-@endsection
-
-@section('adminlte_js')
-<script>
-  $(function () {
-    //Initialize Select2 Elements
-    $('.select2').select2()
-
-    //Initialize Select2 Elements
-    $('.select2bs4').select2({
-      theme: 'bootstrap4'
-    })
-  })
+});
 </script>
 @endsection

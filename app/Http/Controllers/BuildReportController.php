@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Nuc;
+use App\Models\User;
 use App\Models\Sales;
 use App\Models\Branch;
 use App\Helpers\Helper;
+use App\Models\Company;
 use App\Models\History;
 use App\Models\BuildReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -20,7 +23,10 @@ class BuildReportController extends Controller
      */
     public function index(Request $request)
     {
-        $sales_orders = Nuc::with('distributor','branch')
+        // get current users branch ids 
+        $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
+
+        $sales_orders = Sales::with('branch','nuc')
                             ->where(function ($query) use ($request) {
                                 if ($request->has('daterange')) {
                                     $date = explode(' - ', $request->daterange);
@@ -29,15 +35,58 @@ class BuildReportController extends Controller
                         
                                     // Apply the whereBetween condition
                                     $query->whereBetween('created_at', [$from, $to]);
-                                } else {
-                                    $query->whereDate('created_at', '=', now()->toDateString());
+                                // } else {
+                                //     $query->whereDate('created_at', '=', now()->toDateString());
+                                }
+                                if ($request->has('branch')) {
+                                    $query->whereHas('branch', function ($subquery) use ($request) {
+                                        $subquery->where('branch_id', $request->input('branch'));
+                                    });
+                                }
+                            
+                                if ($request->has('bcid')) {
+                                    $query->where('bcid', $request->input('bcid'));
+                                }
+                                // Global search filter
+                                if ($request->has('search')) {
+                                    $global_search = $request->input('search');
+                                    $query->where(function ($sub_query) use ($global_search) {
+                                        $sub_query->where('distributor_name', 'LIKE', "%$global_search%")
+                                            ->orWhere('si_assignment_id', 'LIKE', "%$global_search%")
+                                            ->orWhere('bcid', 'LIKE', "%$global_search%")
+                                            ->orWhereHas('branch', function ($branch_query) use ($global_search) {
+                                                $branch_query->where('name', 'LIKE', "%$global_search%");
+                                            });
+                                    });
                                 }
                             })                       
                             ->orderByDesc('id')
-                            ->where('status', 1)
+                            // ->where('status', 1)
+                            ->when(!empty($user_branch), function ($query) use ($user_branch) {
+                                $query->whereIn('branch_id', explode(',', $user_branch));
+                            })
                             ->get();
 
-        $branches = Branch::whereDeleted(false)->get();
+            $companies = Company::whereDeleted(false)->whereIn('status_id', [8,1])->get(); // 1 does not exists in status table as active/enable
+
+            $company_ids = [];
+            foreach($companies as $company) {
+                $company_ids[] = $company->id;
+            }
+    
+            // users without branch id
+            $branches = Branch::whereDeleted(false)->whereIn('status_id',[8,1])->whereIn('company_id', $company_ids)->orderBy('name')->get(['id','name']);   
+    
+            // users with branch id
+            if(!empty(Auth::user()->branch_id)) {
+                $branch_ids = explode(',', Auth::user()->branch_id);
+    
+                $branches = Branch::whereDeleted(false)
+                                ->whereIn('id', $branch_ids)
+                                ->whereIn('company_id', $company_ids)
+                                ->whereIn('status_id',[8,1])
+                                ->get(['id','name']);
+            }
                 
         return view('buildreport.index', compact('sales_orders','branches'));
     }
@@ -53,8 +102,8 @@ class BuildReportController extends Controller
         $sheet->setCellValue('C1', 'Invoice #');
         $sheet->setCellValue('D1', 'BCID');
         $sheet->setCellValue('E1', 'Name');
-        $sheet->setCellValue('F1', 'NUC');
-        $sheet->setCellValue('G1', 'Status');
+        $sheet->setCellValue('F1', 'Status');
+        $sheet->setCellValue('G1', 'NUC');
     
         $font_bold = $sheet->getStyle('A1:G1')->getFont();
         $font_bold->setBold(true);
@@ -67,21 +116,21 @@ class BuildReportController extends Controller
             $sheet->setCellValue('C' . $row, $sale->oid?? null);
             $sheet->setCellValue('D' . $row, $sale->bcid ?? null);
             $sheet->setCellValue('E' . $row, $sale->distributor->name ?? null);
-            $sheet->setCellValue('F' . $row, $sale->total_nuc ?? 0);
-            $sheet->setCellValue('G' . $row, $sale->status == 1 ? 'Credited' : null );
+            $sheet->setCellValue('F' . $row, $sale->status == 1 ? 'Credited' : null );
+            $sheet->setCellValue('G' . $row, $sale->total_nuc ?? 0);
     
             $total_qty += $sale->total_nuc;
 
             $row++;
         }
     
-        $sheet->setCellValue('E' . $row, 'Total:');
-        $sheet->setCellValue('F' . $row, $total_qty);
-    
-        $font_bold = $sheet->getStyle('E' . $row)->getFont();
-        $font_bold->setBold(true);
+        $sheet->setCellValue('F' . $row, 'Total:');
+        $sheet->setCellValue('G' . $row, $total_qty);
     
         $font_bold = $sheet->getStyle('F' . $row)->getFont();
+        $font_bold->setBold(true);
+    
+        $font_bold = $sheet->getStyle('G' . $row)->getFont();
         $font_bold->setBold(true);
     
         $filename = 'NUC_report.xlsx';

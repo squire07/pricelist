@@ -127,7 +127,7 @@ class StockCardController extends Controller
             $sheet->setCellValue('B' . $row, $sale->branch->name ?? null);
             $sheet->setCellValue('C' . $row, $sale->sales_details[0]['item_name'] ?? null);
             $sheet->setCellValue('D' . $row, $sale->transaction_type->name ?? null);
-            $sheet->setCellValue('E' . $row, Helper::get_si_assignment_no($sale->si_assignment_id) ?? null);
+            $sheet->setCellValue('E' . $row, Helper::get_si_assignment_no($sale->si_assignment_id));
             $sheet->setCellValue('F' . $row, $sale->bcid ?? null);
             $sheet->setCellValue('G' . $row, Helper::get_distributor_name_by_bcid($sale->bcid) ?? null);
             $sheet->setCellValue('H' . $row, $sale->sales_details[0]['quantity'] ?? null);

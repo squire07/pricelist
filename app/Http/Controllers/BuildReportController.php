@@ -67,11 +67,11 @@ class BuildReportController extends Controller
             $sheet->setCellValue('C' . $row, $sale->oid?? null);
             $sheet->setCellValue('D' . $row, $sale->bcid ?? null);
             $sheet->setCellValue('E' . $row, $sale->distributor->name ?? null);
-            $sheet->setCellValue('F' . $row, $sale->total_nuc);
+            $sheet->setCellValue('F' . $row, $sale->total_nuc ?? 0);
             $sheet->setCellValue('G' . $row, $sale->status == 1 ? 'Credited' : null );
     
-            $total_qty += $sale->total_nuc ?? 0;
-    
+            $total_qty += $sale->total_nuc;
+
             $row++;
         }
     

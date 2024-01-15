@@ -272,6 +272,10 @@ class Helper {
         return $status->created_by;
     }
 
+    public static function get_transaction_type_name_by_id($id) {
+        $transaction_type = TransactionType::whereId($id)->first();
+        return trim($transaction_type->name);
+    }
 
 
     /* 
@@ -501,7 +505,7 @@ class Helper {
             'delivery_date' => date("Y-m-d", strtotime($sales->created_at)),
             'taxes_and_charges' => $taxes_and_charges,
             'debit_to' => $debit_to,
-            'update_stock' => 1,
+            'update_stock' => !in_array($sales->transaction_type_id, Helper::get_product_assembly_ids()) ? 1 : 0,
             'docstatus' => 1,
             'taxes' => [
                 [
@@ -770,5 +774,28 @@ class Helper {
             default: 
                 return '';
         }
+    }
+
+    public static function has_income_expense_account($sales_id)
+    {
+        // use by For Validation controller
+        // Important! Check if sales order has income and expense account `by company id`. 
+        $sales_order = Sales::whereId($sales_id)->first();
+
+        $now = Carbon::now()->toDateString();
+
+        $account = IncomeExpenseAccount::whereTransactionTypeId($sales_order->transaction_type_id)
+                        ->whereCompanyId($sales_order->company_id)
+                        ->whereDeleted(false)
+                        ->where(function($query) use ($now) {
+                            $query->where([
+                                ['valid_from', '<=', $now],
+                                ['valid_to', '>=', $now],
+                                ['deleted', 0],
+                            ])->orWhereNull('valid_from')->orWhereNull('valid_to');
+                        })
+                        ->first();
+
+        return $account != null ? true : false;
     }
 }

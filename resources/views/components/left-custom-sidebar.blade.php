@@ -199,7 +199,7 @@
 
 
         {{-- REPORTS MENU: Sub menus are sorted alphabetically --}}
-        @if(Helper::MP(17,1) || Helper::MP(18,1) || Helper::MP(19,1) || Helper::MP(20,1))
+        @if(Helper::MP(17,1) || Helper::MP(18,1) || Helper::MP(19,1) || Helper::MP(20,1) || Helper::MP(24,1))
             <li class="nav-item {{ $url_segment_1 == 'reports' ? 'menu-open':'' }}">
                 <a href="#" class="nav-link {{ $url_segment_1 == 'reports' ? 'active':'' }}" target="_self">
                     <i class="nav-icon fas fa-registered"></i>

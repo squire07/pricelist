@@ -22,5 +22,5 @@
     </span>
 </li>
 <li class="nav-item">
-    <span class="nav-link">{{ Session::get('branch_name') ?? Helper::get_user_branch_name() }}</span>
+    <span class="nav-link">{!! Session::get('branch_name') ?? Helper::get_user_branch_name() !!}</span>
 </li>

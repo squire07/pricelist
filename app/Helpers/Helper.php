@@ -146,7 +146,14 @@ class Helper {
         if(!empty($user->branch_id)) {
             $explode = explode(',', $user->branch_id);
 
-            if(count($explode) > 1) {
+            if(count($explode) > 2) {
+
+                $branch_name .= ''; // temporary do not display more than 3 branch names
+
+                // for future updates
+                // $branch_name .= '<span id="main-nav-top-branches">' . count($explode) . ' Branches</span>';
+                
+            } else if(count($explode) > 1 && count($explode) < 3) {
                 for($i = 0; $i < count($explode); $i++) {
                     // add separator in between branch names, if loop reaches the last, do not add a separator
                     $separator = $i != count($explode) - 1 ? ' / ' : '';

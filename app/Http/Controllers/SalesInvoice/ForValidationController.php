@@ -98,12 +98,17 @@ class ForValidationController extends Controller
         $message_issue = null;
 
         // check if the transaction has income and expense account 
-        if ($sales_order->relationLoaded('income_expense_account')) {
-            if (!$sales_order->income_expense_account || $sales_order->income_expense_account->income_account === null || $sales_order->income_expense_account->expense_account === null) {
-                $has_issue = true;
-                $message_issue .= '&bull;&nbsp;Income and Expense Account is required for ' . $sales_order->transaction_type->name . '<br>';
-            }
-        } 
+        // if ($sales_order->relationLoaded('income_expense_account')) {
+        //     if (!$sales_order->income_expense_account || $sales_order->income_expense_account->income_account === null || $sales_order->income_expense_account->expense_account === null) {
+        //         $has_issue = true;
+        //         $message_issue .= '&bull;&nbsp;Income and Expense Account is required for ' . $sales_order->transaction_type->name . '<br>';
+        //     }
+        // } 
+        if(Helper::has_income_expense_account($sales_order->id) == false) {
+            // Important: check if Sales Invoice has income and expense account AND by company id;
+            $has_issue = true;
+            $message_issue .= '&bull;&nbsp;Income and Expense Account is required for ' . $sales_order->transaction_type->name . '<br>';
+        }
         // check if payment method is not cash AND reference number exists
         if ($sales_order->relationLoaded('payment')) {
             // json_decode has already been applied at $sales_order->payment->details
@@ -300,14 +305,11 @@ class ForValidationController extends Controller
                                     $si_data = json_decode($payload->si, true);
 
                                     // Add "sales_order" key to each item in the "items" array
+                                    foreach ($si_data['items'] as &$item) {
+                                        $item['sales_order'] = $so_doc_name; 
+                                    }
 
-                                    if(!in_array($sales->transaction_type_id, Helper::get_product_assembly_ids())) {
-                                        
-                                        foreach ($si_data['items'] as &$item) {
-                                            $item['sales_order'] = $so_doc_name; 
-                                        }
-
-                                    } else {
+                                    if(in_array($sales->transaction_type_id, Helper::get_product_assembly_ids())) {
 
                                         /*
                                         * ===================================================================

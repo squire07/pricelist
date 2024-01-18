@@ -11,6 +11,7 @@ use App\Models\ItemBundle;
 use App\Models\TransactionType;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class ItemBundleSeeder extends Seeder
 {
@@ -42,9 +43,7 @@ class ItemBundleSeeder extends Seeder
                         $data = json_decode($data->getBody()->getContents(), true);
                         foreach($data as $key => $bundles) {
                            
-                            // dump($bundles['description']);
                             foreach($bundles['items'] as $bk => $bundle) {
-                                // dump($bundle);
                                 ItemBundle::firstOrCreate([
                                     // 'uuid' => Str::uuid(),
                                     'bundle_name' => $bundles['name'], // with 's'
@@ -67,5 +66,8 @@ class ItemBundleSeeder extends Seeder
                 sleep(2);
             }
         }
+
+        // delete duplicates; issue with ERPNext
+        DB::raw('delete ib1 FROM item_bundles ib1 INNER JOIN item_bundles ib2 WHERE ib1.id > ib2.id AND ib1.bundle_name = ib2.bundle_name AND ib1.bundle_description = ib2.bundle_description AND ib1.item_code = ib2.item_code AND ib1.quantity = ib2.quantity AND ib1.uom = ib2.uom');
     }
 }

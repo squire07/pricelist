@@ -273,7 +273,7 @@ class ForInvoicingController extends Controller
                     *   post NUC points to prime - indirectly; let the system push the nuc points using scheduled job
                     *   save only the transaction with nuc points
                     */
-                    if($sales->total_nuc > 0 && $sales->origin_id == null) { // if origin is NOT distributor shop; 
+                    if($sales->total_nuc > 0 && $sales->origin_id == null) { // if origin is NOT distributor shop etc; 
                         /* NUC Status
                         *   0 - not credited;  1 - credited;  2 - cancelled;  3 - on-hold
                         */
@@ -282,7 +282,7 @@ class ForInvoicingController extends Controller
                         $nuc->uuid = $sales->uuid;
                         $nuc->bcid = $sales->bcid;
                         $nuc->total_nuc = str_replace(',', '', $sales->total_nuc);
-                        $nuc->status = $payment->payment_type == 'COD' ? 3 : 0;
+                        $nuc->status = ($payment->payment_type == 'COD' || $payment->payment_type == 'cod') ? 3 : 0;
                         $nuc->branch = $sales->branch->name;
                         $nuc->oid = Helper::get_si_assignment_no($sales->si_assignment_id);
                         $nuc->save();

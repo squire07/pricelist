@@ -4,15 +4,54 @@ namespace App\Http\Controllers\Report;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Branch;
+use App\Models\Nuc;
+use Carbon\Carbon;
+use App\Helpers\Helper;
+use Auth;
 
 class NucReportController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('report.nuc.index');
+        // default to today's date
+        $from = Carbon::now()->format('Y-m-d') . ' 00:00:00';
+        $to = Carbon::now()->format('Y-m-d') . ' 23:59:59';
+
+        if($request->has('daterange')) {
+            $date = explode(' - ',$request->daterange);
+            $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';                                                                                                                                                      
+            $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
+        } 
+
+        $nucs = Nuc::with('sales')
+                    ->whereDeleted(false)
+                    ->whereBetween('created_at', [$from, $to])
+                    ->where(function ($query) use ($request) {
+                        if ($request->has('branch_id') && $request->branch_id != '') {
+                            $query->whereIn('branch', [Helper::get_branch_name_by_id($request->branch_id)]);
+                        } else {
+                            $query->when(!in_array(Auth::user()->role_id, [11, 12]), function($query) {
+                                $branch_ids = explode(',', Auth::user()->branch_id);
+                                $branch_names = explode(',', Helper::get_branch_name_by_id(Auth::user()->branch_id));
+                                $query->whereIn('branch', $branch_names);
+                            });
+                        }
+                    })  
+                    ->get();
+
+        // users branch
+        $branches = Branch::whereStatusId(8)
+                        ->when(!in_array(Auth::user()->role_id, [11, 12]), function($query) {
+                            $branch_ids = explode(',', Auth::user()->branch_id);
+                            $query->whereIn('id', $branch_ids);
+                        })
+                        ->orderBy('name')->get();
+        
+        return view('report.nuc.index', compact('nucs','branches'));
     }
 
     /**

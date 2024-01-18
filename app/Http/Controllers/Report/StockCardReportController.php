@@ -35,18 +35,16 @@ class StockCardReportController extends Controller
 
         $companies = Company::whereStatusId(8)
                         ->when(!in_array(Auth::user()->role_id, [11, 12]), function ($query) {
-                            $query->where(function ($subquery) {
-                                $subquery->whereRaw('FIND_IN_SET(?, id)', [Auth::user()->company_id]);
-                            });
+                            $query->whereIn('id', explode(',',Auth::user()->company_id));
                         })
                         ->orderBy('name')->get();
 
         $branches = Branch::whereStatusId(8)
                         ->when(!in_array(Auth::user()->role_id, [11, 12]), function($query) {
-                            $query->whereIn('id', [Auth::user()->branch_id]);
+                            $query->whereIn('id', explode(',',Auth::user()->branch_id));
                         })
                         ->orderBy('name')->get();
-        
+
         $transaction_types = TransactionType::whereDeleted(0)
                                 ->whereIsActive(1)
                                 ->orderBy('name')->get();
@@ -56,19 +54,6 @@ class StockCardReportController extends Controller
 
     public function generate(Request $request)
     {
-        // dd($request->branch_id/);
-        if($request->branch_id == null) {
-            $branch_ids = Branch::whereStatusId(8)
-                            ->when(!in_array(Auth::user()->role_id, [11, 12]), function($query) {
-                                $query->where(function ($query) {
-                                    $query->whereIn('id', [Auth::user()->branch_id]);
-                                });
-                            })
-                            ->get('id')->toArray();
-        } else {
-            $branch_ids = $request->branch_id;
-        }
-
         // `as of` definition
         // first day of the month + the selected date 
         $selected_date = Carbon::createFromFormat('m/d/Y', $request->as_of);
@@ -80,18 +65,26 @@ class StockCardReportController extends Controller
         $sales = Sales::leftJoin('sales_details as sd', 'sd.sales_id', '=', 'sales.id')
                         ->join('sales_invoice_assignment_details as siad', 'siad.id', '=', 'sales.si_assignment_id')
                         ->select('sales.id', 'sales.updated_at', 'sales.bcid', 'sales.distributor_name', 'sd.item_code', 'sd.item_name', 'siad.prefix_value', 'siad.series_number', 'sd.quantity')
-                        ->where(function ($query) use ($request, $date_1, $date_2, $branch_ids) {
-                            if ($request->has('company_id') && $request->company_id != null) {
-                                $query->where('company_id', $request->company_id);
-                            }
-                            if($request->has('branch_id') && $request->branch_id != null) {
-                                $query->whereIn('branch_id', [$branch_ids]);
-                            }
+                        ->where(function ($query) use ($request, $date_1, $date_2) {
                             if($request->has('transaction_type_id') && $request->transaction_type_id != null) {
                                 $query->where('transaction_type_id', $request->transaction_type_id);
                             }
                             if($request->has('as_of') && $request->as_of !== null) {
                                 $query->whereBetween('sales.updated_at', [$date_1, $date_2]);
+                            }
+                        })
+                        ->when($request->has('company_id'), function($query) use ($request) {
+                            if ($request->company_id != null) {
+                                $query->where('company_id', $request->company_id);
+                            } else {
+                                $query->whereIn('company_id', explode(',',Auth::user()->company_id));
+                            }
+                        })
+                        ->when($request->has('branch_id'), function($query) use ($request) {
+                            if ($request->branch_id != null) {
+                                $query->where('branch_id', $request->branch_id);
+                            } else {
+                                $query->whereIn('branch_id', explode(',',Auth::user()->branch_id));
                             }
                         })
                         ->orderBy('sd.item_name')

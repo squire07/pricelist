@@ -62,7 +62,8 @@ class SalesController extends Controller
                                     $sub_query->whereNotExists(function ($validity_sub_query) {
                                         $validity_sub_query
                                             ->from('transaction_type_validities')
-                                            ->whereRaw('transaction_type_validities.transaction_type_id = transaction_types.id');
+                                            ->whereRaw('transaction_type_validities.transaction_type_id = transaction_types.id')
+                                            ->where('transaction_type_validities.deleted', 0);
                                     });
                                 })->orWhere(function ($sub_query) use ($now) {
                                     // Include transaction types with a valid period that includes the current date
@@ -71,7 +72,8 @@ class SalesController extends Controller
                                             ->from('transaction_type_validities')
                                             ->whereRaw('transaction_type_validities.transaction_type_id = transaction_types.id')
                                             ->where('transaction_type_validities.valid_from', '<=', $now)
-                                            ->where('transaction_type_validities.valid_to', '>=', $now);
+                                            ->where('transaction_type_validities.valid_to', '>=', $now)
+                                            ->where('transaction_type_validities.deleted', 0);
                                     });
                                 })->orWhere(function ($sub_query) use ($now) {
                                     // Include transaction types with a valid period that includes the current date
@@ -80,7 +82,8 @@ class SalesController extends Controller
                                             ->from('transaction_type_validities')
                                             ->whereRaw('transaction_type_validities.transaction_type_id = transaction_types.id')
                                             ->where('transaction_type_validities.valid_from', null)
-                                            ->where('transaction_type_validities.valid_to', null);
+                                            ->where('transaction_type_validities.valid_to', null)
+                                            ->where('transaction_type_validities.deleted', 0);
                                     });
                                 });
                             })->orderBy('name')->get();

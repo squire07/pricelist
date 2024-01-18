@@ -785,7 +785,7 @@ class Helper {
 
     public static function has_income_expense_account($sales_id)
     {
-        // use by For Validation controller
+        // used by For Validation controller
         // Important! Check if sales order has income and expense account `by company id`. 
         $sales_order = Sales::whereId($sales_id)->first();
 
@@ -794,13 +794,13 @@ class Helper {
         $account = IncomeExpenseAccount::whereTransactionTypeId($sales_order->transaction_type_id)
                         ->whereCompanyId($sales_order->company_id)
                         ->whereDeleted(false)
-                        ->where(function($query) use ($now) {
-                            $query->where([
-                                ['valid_from', '<=', $now],
-                                ['valid_to', '>=', $now],
-                                ['deleted', 0],
-                            ])->orWhereNull('valid_from')->orWhereNull('valid_to');
-                        })
+                        // ->where(function($query) use ($now) {
+                        //     $query->where([
+                        //         ['valid_from', '<=', $now],
+                        //         ['valid_to', '>=', $now],
+                        //         ['deleted', 0],
+                        //     ])->orWhereNull('valid_from')->orWhereNull('valid_to');
+                        // })
                         ->first();
 
         return $account != null ? true : false;

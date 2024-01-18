@@ -29,7 +29,11 @@ use App\Http\Controllers\TransactionListingController;
 use App\Http\Controllers\TransactionTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserPermissionController;
+
+
+use App\Http\Controllers\Report\StockCardReportController;
 use App\Http\Controllers\Report\NucReportController;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\GateMiddleware;
@@ -103,16 +107,16 @@ Route::middleware(['auth','gate'])->group(function () {
     Route::group(['prefix' => 'reports', 'alias' => 'reports'], function() {
         Route::resource('build-report', BuildReportController::class)->only('index');
         Route::get('/excel-nuc', [BuildReportController::class, 'exportToExcel'])->name('excel.nuc.report');
+        
+        
         Route::resource('logs', HistoryController::class);
-        Route::resource('stock-card', StockCardController::class)->only('index');
-        Route::get('/excel-stockcard', [StockCardController::class, 'exportToExcel'])->name('excel.stockcard.report');
-        Route::resource('transaction-listing', TransactionListingController::class)->only('index');
         Route::resource('nuc', NucReportController::class);
+        Route::get('stock-card', [StockCardReportController::class, 'index']);
+        Route::get('stock-card/generate', [StockCardReportController::class, 'generate'])->name('generate-stock-card-report');
+        
+        
+        Route::resource('transaction-listing', TransactionListingController::class)->only('index');
     });
-
-    Route::get('test-build-report', [TestBuildReportController::class, 'testbuildreport'])->name('testbuildreport');
-    Route::resource('test-build-report', TestBuildReportController::class)->only('index');
-
 
     // UPDATE PASSWORD
     Route::patch('update-password', [UserController::class, 'update_password'])->name('update-password');

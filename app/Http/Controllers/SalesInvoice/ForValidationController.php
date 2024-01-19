@@ -498,6 +498,7 @@ class ForValidationController extends Controller
                             // mark as released
                             $sales->status_id = 4;
                             $sales->version = $sales->version + 1;
+                            $sales->validated_at = Carbon::now()->toDateTimeString();
 
                             if($sales->update()) {
 

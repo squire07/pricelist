@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('so_no', 25);
             $table->string('si_no', 25)->nullable();
             $table->string('si_assignment_id', 25)->nullable();
+            $table->string('oid', 12)->nullable(); // for future use
             $table->bigInteger('bcid');
             $table->string('distributor_name');
             $table->double('shipping_fee')->default(0);
@@ -40,6 +41,14 @@ return new class extends Migration
             $table->tinyInteger('deleted')->default(false);
             $table->text('cashiers_remarks')->nullable();
             $table->timestamps();
+            
+            // for future use: created_at = drafted_at; full details at history
+            $table->datetime('submitted_at')->nullable();
+            $table->datetime('invoiced_at')->nullable();
+            $table->datetime('validated_at')->nullable();
+            $table->datetime('released_at')->nullable(); // same as posted_at
+            $table->datetime('cancelled_at')->nullable();
+
             $table->softDeletes();
             $table->string('created_by',55)->nullable();
             $table->string('updated_by',55)->nullable();

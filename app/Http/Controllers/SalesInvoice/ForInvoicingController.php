@@ -235,6 +235,7 @@ class ForInvoicingController extends Controller
                 $sales->version = $sales->version + 1;
                 $sales->cashiers_remarks = $request->cashiers_remarks;
                 $sales->updated_by = Auth::user()->name;
+                $sales->invoiced_at = Carbon::now()->toDateTimeString();
 
                 if($sales->update()) {
 

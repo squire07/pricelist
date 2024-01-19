@@ -26,6 +26,7 @@ class SalesInvoiceAssignmentController extends Controller
         *   1. Super/admin
         *   2. Head Cashier
         *   3. Branch Manager
+        *   4. Office in charge
         */ 
 
         // get the active companies 
@@ -33,6 +34,14 @@ class SalesInvoiceAssignmentController extends Controller
         
         // get the active branches
         $active_branches = Branch::whereStatusId(8)->pluck('id'); // Must be refactor! status_id to status with boolean datatype: 0 = inactive/false; 1 = active/true;
+
+        // remove inactive companies from Auth::user()->company_id with role_id 4,5 and 6
+        $auth_user_active_company_ids = array_intersect([Auth::user()->company_id], $active_companies->toArray());
+
+        // retain only the branches with active company ids
+        $auth_user_active_branch_ids = Branch::whereStatusId(8)
+                                            ->whereIn('company_id', $auth_user_active_company_ids)->get('id')->toArray();
+
 
         if(in_array(Auth::user()->role_id, [11,12])) {
             $cashiers = User::whereDeleted(false)
@@ -77,10 +86,10 @@ class SalesInvoiceAssignmentController extends Controller
                                             }
                                         });
                                 })
-                                ->where(function($query) {
-                                    $query->whereIn('branch_id', [Auth::user()->branch_id])
-                                        ->orWhere(function ($query) {
-                                            foreach(explode(',', Auth::user()->branch_id) as $auth_user_branch) {
+                                ->where(function($query) use ($auth_user_active_branch_ids) {
+                                    $query->whereIn('branch_id', $auth_user_active_branch_ids)
+                                        ->orWhere(function ($query) use ($auth_user_active_branch_ids) {
+                                            foreach($auth_user_active_branch_ids as $auth_user_branch) {
                                                 $query->orWhereRaw('FIND_IN_SET(?, branch_id)', [$auth_user_branch]);
                                             }
                                         });

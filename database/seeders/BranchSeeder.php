@@ -114,6 +114,13 @@ class BranchSeeder extends Seeder
                 'cost_center_name' => '015 - CAFE-WEST INSULA - PREMIER',
                 'warehouse' => 'Uno Café Merchandise - PREMIER'
             ),
+            15 => array(
+                'name' => 'UBC Local', 
+                'code' => 'UBC', 'company_id' => 3, 
+                'cost_center' => '009',
+                'cost_center_name' => '009 - UBC - LOCAL',
+                'warehouse' => 'UBC West Insula Merchandise - LOCAL'
+            ),
         ];
 
         foreach($branches as $key => $branch) {

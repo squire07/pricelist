@@ -255,6 +255,8 @@ class SalesController extends Controller
                 $sales->status_id = $request->status_id;
                 $sales->updated_by = Auth::user()->name; // updated_at will be automatically filled by laravel
                 $sales->version = $sales->version + 1;
+                // submitted at
+                $sales->submitted_at = Carbon::now()->toDateTimeString();
                 if($sales->update()) {
                     // pass the message to user if the update is successful
                     $message = $sales->so_no . ' successfully marked for invoicing';

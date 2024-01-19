@@ -254,12 +254,16 @@ class Helper {
 
     public static function get_si_assignment_no($id) {
         $si_assignment_detail = SalesInvoiceAssignmentDetail::whereId($id)->first();
-        return $si_assignment_detail->prefix_value . $si_assignment_detail->series_number;
+        if($si_assignment_detail) {
+            return $si_assignment_detail->prefix_value . $si_assignment_detail->series_number;
+        } else {
+            return null;
+        }
     }
 
     public static function get_distributor_name_by_bcid($bcid) {
         $distributor = Distributor::whereBcid($bcid)->first();
-        return trim($distributor->name);
+        return trim($distributor->name) ?? null;
     }
 
     public static function get_sales_status($si_assignment_id) {
@@ -270,18 +274,18 @@ class Helper {
     public static function get_redemptions_name_from_history($so_id) {
         // get the redemptions name who finalized the sales order 
         $status = History::whereRecordId($so_id)->whereStatusId(2)->first();
-        return $status->created_by;
+        return $status->created_by ?? null;
     }
 
     public static function get_cashiers_name_from_history($si_id) {
         // get the cashier name who finalized the sales order 
         $status = History::whereRecordId($si_id)->whereStatusId(5)->first();
-        return $status->created_by;
+        return $status->created_by ?? null;
     }
 
     public static function get_transaction_type_name_by_id($id) {
         $transaction_type = TransactionType::whereId($id)->first();
-        return trim($transaction_type->name);
+        return trim($transaction_type->name) ?? null;
     }
 
 

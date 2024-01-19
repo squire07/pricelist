@@ -25,7 +25,7 @@ class StockCardReportController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $sales = Sales::leftJoin('sales_details as sd', 'sd.sales_id', '=', 'sales.id')
                         ->join('sales_invoice_assignment_details as siad', 'siad.id', '=', 'sales.si_assignment_id')
@@ -34,14 +34,18 @@ class StockCardReportController extends Controller
                         ->get();
 
         $companies = Company::whereStatusId(8)
-                        ->when(!in_array(Auth::user()->role_id, [11, 12]), function ($query) {
-                            $query->whereIn('id', explode(',',Auth::user()->company_id));
+                        ->where(function ($query) {
+                            if(Auth::user()->company_id !== null) { // users with company ids
+                                $query->whereIn('id', explode(',',Auth::user()->company_id));
+                            }
                         })
                         ->orderBy('name')->get();
 
         $branches = Branch::whereStatusId(8)
-                        ->when(!in_array(Auth::user()->role_id, [11, 12]), function($query) {
-                            $query->whereIn('id', explode(',',Auth::user()->branch_id));
+                        ->where(function ($query) {
+                            if(Auth::user()->branch_id !== null) { // users with branch ids
+                                $query->whereIn('id', explode(',',Auth::user()->branch_id));
+                            }
                         })
                         ->orderBy('name')->get();
 
@@ -60,6 +64,26 @@ class StockCardReportController extends Controller
         $date_1 = $selected_date->format('Y') . '-' . $selected_date->format('m') . '-01 00:00:00';
         $date_2 = $selected_date->format('Y-m-d') . ' 23:59:59';
 
+        $company_ids = '';
+        if($request->company_id != NULL) {
+            $company_ids = $request->company_id;
+        } else if ($request->company_id == NULL && Auth::user()->company_id == NULL) {
+            $active_companies = Company::where('deleted', false)->where('status_id', 8)->pluck('id')->toArray();
+            $company_ids = implode(',',$active_companies);
+        } else if ($request->company_id == NULL && Auth::user()->company_id != NULL) {
+            $company_ids = Auth::user()->company_id;
+        }
+
+        $branch_ids = '';
+        if($request->branch_id != NULL) {
+            $branch_ids = $request->branch_id;
+        } else if ($request->branch_id == NULL && Auth::user()->branch_id == NULL) {
+            $active_branches = Branch::where('deleted', false)->where('status_id', 8)->pluck('id')->toArray();
+            $branch_ids = implode(',',$active_branches);
+        } else if ($request->branch_id == NULL && Auth::user()->branch_id != NULL) {
+            $branch_ids = Auth::user()->branch_id;
+        }
+
         // released
         // eloquent with raw query definition
         $sales = Sales::leftJoin('sales_details as sd', 'sd.sales_id', '=', 'sales.id')
@@ -73,28 +97,28 @@ class StockCardReportController extends Controller
                                 $query->whereBetween('sales.updated_at', [$date_1, $date_2]);
                             }
                         })
-                        ->when($request->has('company_id'), function($query) use ($request) {
-                            if ($request->company_id != null) {
-                                $query->where('company_id', $request->company_id);
-                            } else {
-                                $query->whereIn('company_id', explode(',',Auth::user()->company_id));
-                            }
+                        ->where(function ($query) use ($request, $company_ids) {
+                            $query->whereIn('sales.company_id', explode(',', $company_ids));
                         })
-                        ->when($request->has('branch_id'), function($query) use ($request) {
-                            if ($request->branch_id != null) {
-                                $query->where('branch_id', $request->branch_id);
-                            } else {
-                                $query->whereIn('branch_id', explode(',',Auth::user()->branch_id));
-                            }
+                        ->where(function ($query) use ($request, $branch_ids) {
+                            $query->whereIn('sales.branch_id', explode(',', $branch_ids));
                         })
-                        ->orderBy('sd.item_name')
+                        ->where('status_id', 4) // released
+                        ->orderBy('sd.item_name', 'asc')
+                        ->orderBy('sales.updated_at', 'asc')
                         ->get();
 
         $stock_card_for = $request->branch_id == null ? 'All Branches' : Helper::get_branch_name_by_id($request->branch_id);
         $as_of = $request->as_of ?? Carbon::now()->format('m/d/Y');
         $transaction_type = $request->transaction_type_id == null ? 'Transaction Type: All' : Helper::get_transaction_type_name_by_id($request->transaction_type_id);
 
-        $templatePath = public_path('excel_templates/stock-card-report-template.xlsx');
+        if($request->company_id == 2) {
+            $templatePath = public_path('excel_templates/stock-card-report-template-pr.xlsx');
+        } elseif($request->company_id == 3) {
+            $templatePath = public_path('excel_templates/stock-card-report-template-lo.xlsx');
+        } else {
+            $templatePath = public_path('excel_templates/stock-card-report-template.xlsx');
+        }
         $spreadsheet = IOFactory::load($templatePath);
 
 
@@ -109,6 +133,7 @@ class StockCardReportController extends Controller
         $sheet->setCellValue('A4', 'As of ' . $as_of);
         $sheet->setCellValue('A5', $transaction_type);
         $sheet->setCellValue('F4', 'Date Printed: ' . Carbon::now()->format('m/d/Y h:i:s A'));
+        $sheet->setCellValue('F5', 'Prepared By: ' . Auth::user()->name);
 
         
         // body; Starts as A8
@@ -162,9 +187,9 @@ class StockCardReportController extends Controller
         $current_datetime = Carbon::now()->format('Y-m-d hia');
         $filename = 'Stock Card Report - ' . $current_datetime . '.xlsx';
         $writer = new Xlsx($spreadsheet);
-        $writer->save($filename);
+        $writer->save(storage_path() . '/app/public/' . $filename);
 
         // Return a download response if needed and (IMPORTANT!) delete the temporary file
-        return response()->download($filename)->deleteFileAfterSend(true);
+        return response()->download(storage_path() . '/app/public/' . $filename)->deleteFileAfterSend(true);
     }
 }

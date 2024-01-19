@@ -22,7 +22,7 @@
                         <div class="col-3">
                             <div class="form-group">
                                 <label>Company</label>
-                                <select class="form-control form-control-sm select2 select2-primary" name="company_id" data-dropdown-css-class="select2-primary" style="width: 100%;">
+                                <select class="form-control form-control-sm" name="company_id" id="company_id" data-dropdown-css-class="select2-primary" style="width: 100%; height:35px;">
                                     @if(count($companies) > 1)
                                         <option value="" selected="true">-- All --</option>
                                     @endif
@@ -35,12 +35,12 @@
                         <div class="col-3">
                             <div class="form-group">
                                 <label>Branch</label>
-                                <select class="form-control form-control-sm select2 select2-primary" name="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;">
+                                <select class="form-control form-control-sm" name="branch_id" id="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%; height:35px;">
                                     @if(count($branches) > 1)
                                         <option value="" selected="true">-- All --</option>
                                     @endif
                                     @foreach($branches as $branch)
-                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                        <option value="{{ $branch->id }}" data-company-id="{{ $branch->company_id }}">{{ $branch->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -79,6 +79,14 @@
     </div>
 @endsection
 
+@section('adminlte_css')
+<style>
+    select option { 
+        line-height: 20px;
+    }
+</style>
+@endsection
+
 @section('adminlte_js')
 <script>
 $(function () {
@@ -95,6 +103,23 @@ $(function () {
         todayHighlight: true,
         showAnim: 'fold',
     });
+
+    $('#company_id').on('change', function() {
+        let company_id = $(this).val();
+
+        if (company_id == 2) {
+            $('#branch_id').find('option[data-company-id="3"]').hide();
+            $('#branch_id').find('option[data-company-id="2"]').show();
+        } else if (company_id == 3) {
+            $('#branch_id').find('option[data-company-id="2"]').hide();
+            $('#branch_id').find('option[data-company-id="3"]').show();
+        } else {
+            $('#branch_id').find('option[data-company-id]').show();
+        }
+
+        $('#branch_id').val(null).trigger('change');
+
+    }); 
 
 });
 </script>

@@ -12,208 +12,169 @@ use App\Models\History;
 use App\Models\BuildReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class BuildReportController extends Controller
 {
+    public function __construct()
+    {
+        $this->active_companies = Company::whereStatusId(8)->pluck('id');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        // get current users branch ids 
-        $user_branch = User::whereId(Auth::user()->id)->value('branch_id');
 
-        $sales_orders = Sales::with('branch','nuc')
-                            ->where(function ($query) use ($request) {
-                                if ($request->has('daterange')) {
-                                    $date = explode(' - ', $request->daterange);
-                                    $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
-                                    $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
-                        
-                                    // Apply the whereBetween condition
-                                    $query->whereBetween('created_at', [$from, $to]);
-                                // } else {
-                                //     $query->whereDate('created_at', '=', now()->toDateString());
-                                }
-                                if ($request->has('branch')) {
-                                    $query->whereHas('branch', function ($subquery) use ($request) {
-                                        $subquery->where('branch_id', $request->input('branch'));
-                                    });
-                                }
-                            
-                                if ($request->has('bcid')) {
-                                    $query->where('bcid', $request->input('bcid'));
-                                }
-                                // Global search filter
-                                if ($request->has('search')) {
-                                    $global_search = $request->input('search');
-                                    $query->where(function ($sub_query) use ($global_search) {
-                                        $sub_query->where('distributor_name', 'LIKE', "%$global_search%")
-                                            ->orWhere('si_assignment_id', 'LIKE', "%$global_search%")
-                                            ->orWhere('bcid', 'LIKE', "%$global_search%")
-                                            ->orWhereHas('branch', function ($branch_query) use ($global_search) {
-                                                $branch_query->where('name', 'LIKE', "%$global_search%");
-                                            });
-                                    });
-                                }
-                            })                       
-                            ->orderByDesc('id')
-                            // ->where('status', 1)
-                            ->when(!empty($user_branch), function ($query) use ($user_branch) {
-                                $query->whereIn('branch_id', explode(',', $user_branch));
+        $sales = Sales::leftJoin('sales_details as sd', 'sd.sales_id', '=', 'sales.id')
+                        ->join('transaction_types as ttype', 'ttype.id', '=', 'sales.id')
+                        ->select('sales.id', 'sales.updated_at', 'sd.item_code', 'sd.item_name', 'sd.quantity', 'ttype.name')
+                        ->orderBy('sd.item_name')
+                        ->get();
+
+        $companies = Company::whereStatusId(8)
+                        ->when(!in_array(Auth::user()->role_id, [11, 12]), function ($query) {
+                            $query->where(function ($subquery) {
+                                $subquery->whereRaw('FIND_IN_SET(?, id)', [Auth::user()->company_id]);
+                            });
+                        })
+                        ->orderBy('name')->get();
+
+        $branches = Branch::whereStatusId(8)
+                        ->when(!in_array(Auth::user()->role_id, [11, 12]), function($query) {
+                            $query->whereIn('id', [Auth::user()->branch_id]);
+                        })
+                        ->orderBy('name')->get();
+        
+
+        return view('buildreport.index', compact('companies', 'branches','sales'));
+    }
+
+    public function generate(Request $request)
+    {
+
+        // dd($request->branch_id/);
+        if($request->branch_id == null) {
+            $branch_ids = Branch::whereStatusId(8)
+                            ->when(!in_array(Auth::user()->role_id, [11, 12]), function($query) {
+                                $query->where(function ($query) {
+                                    $query->whereIn('id', [Auth::user()->branch_id]);
+                                });
                             })
-                            ->get();
+                            ->get('id')->toArray();
+        } else {
+            $branch_ids = $request->branch_id;
+        }
 
-            $companies = Company::whereDeleted(false)->whereIn('status_id', [8,1])->get(); // 1 does not exists in status table as active/enable
+        // eloquent with raw query definition
+        $sales = DB::table('sales as s')
+                    ->select('s.id', 's.transaction_type_id', 's.updated_at', 't.name','sd.item_code', 'sd.item_name', DB::raw('SUM(sd.quantity) as quantity'))
+                    ->leftJoin('sales_details as sd', 'sd.sales_id', '=', 's.id')
+                    ->join('transaction_types as t', 't.id', '=', 's.transaction_type_id')
+                    ->where(function ($query) use ($request, $branch_ids) {
+                            if ($request->has('company_id') && $request->company_id != null) {
+                                $query->where('company_id', $request->company_id);
+                            }
+                            if($request->has('branch_id') && $request->branch_id != null) {
+                                $query->whereIn('branch_id', [$branch_ids]);
+                            }
+                        })
+                    ->where('s.deleted', 0)
+                    ->whereIn('s.status_id', [4, 5]) // validated and released
+                    ->when($request->has('daterange') && $request->daterange !== null, function ($query) use ($request) {
+                        $date = explode(' - ', $request->daterange);
+                        $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
+                        $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
+                        $query->whereBetween('s.updated_at', [$from, $to]);
+                    })
+                    ->groupBy('s.id', 't.name', 's.updated_at', 'sd.item_name', 's.transaction_type_id', 'sd.item_code')
+                    ->orderBy('t.name', 'asc')
+                    ->orderBy('sd.item_name', 'asc')
+                    ->get();
 
-            $company_ids = [];
-            foreach($companies as $company) {
-                $company_ids[] = $company->id;
-            }
-    
-            // users without branch id
-            $branches = Branch::whereDeleted(false)->whereIn('status_id',[8,1])->whereIn('company_id', $company_ids)->orderBy('name')->get(['id','name']);   
-    
-            // users with branch id
-            if(!empty(Auth::user()->branch_id)) {
-                $branch_ids = explode(',', Auth::user()->branch_id);
-    
-                $branches = Branch::whereDeleted(false)
-                                ->whereIn('id', $branch_ids)
-                                ->whereIn('company_id', $company_ids)
-                                ->whereIn('status_id',[8,1])
-                                ->get(['id','name']);
-            }
-                
-        return view('buildreport.index', compact('sales_orders','branches'));
-    }
-    public function exportToExcel(Request $request)
-    {
-        $filtered_sales = $this->SalesData($request);
-    
-        $spreadsheet = new Spreadsheet();
+        $item_build_for = $request->branch_id == null ? 'All Branches' : Helper::get_branch_name_by_id($request->branch_id);
+        $daterange = $request->daterange ?? Carbon::now()->format('m/d/Y');
+        $company = $request->company_id !== null ? Helper::get_company_names_by_id($request->company_id) : null;
+
+        $templatePath = public_path('excel_templates/item-build-report-template.xlsx');
+        $spreadsheet = IOFactory::load($templatePath);
+
+
+        // Create a new Spreadsheet instance
+        $new_spreadsheet = new Spreadsheet();
+        $sheet = $new_spreadsheet->getActiveSheet();
+
+
+        // header
         $sheet = $spreadsheet->getActiveSheet();
-    
-        $sheet->setCellValue('A1', 'Date');
-        $sheet->setCellValue('B1', 'Branch');
-        $sheet->setCellValue('C1', 'Invoice #');
-        $sheet->setCellValue('D1', 'BCID');
-        $sheet->setCellValue('E1', 'Name');
-        $sheet->setCellValue('F1', 'Status');
-        $sheet->setCellValue('G1', 'NUC');
-    
-        $font_bold = $sheet->getStyle('A1:G1')->getFont();
-        $font_bold->setBold(true);
-    
-        $row = 2;
-        $total_qty = 0;
-        foreach ($filtered_sales as $sale) {
-            $sheet->setCellValue('A' . $row, $sale->updated_at->format('m/d/Y'));
-            $sheet->setCellValue('B' . $row, $sale->branch->name ?? null);
-            $sheet->setCellValue('C' . $row, $sale->oid?? null);
-            $sheet->setCellValue('D' . $row, $sale->bcid ?? null);
-            $sheet->setCellValue('E' . $row, $sale->distributor->name ?? null);
-            $sheet->setCellValue('F' . $row, $sale->status == 1 ? 'Credited' : null );
-            $sheet->setCellValue('G' . $row, $sale->total_nuc ?? 0);
-    
-            $total_qty += $sale->total_nuc;
+        $sheet->setCellValue('A1', $company);
+        $sheet->setCellValue('A3', 'Item Build Report for ' . $item_build_for);
+        $sheet->setCellValue('A4', 'Date: ' . $daterange);
+     
+        $sheet->setCellValue('F3', 'Date Printed: ' . Carbon::now()->format('m/d/Y h:i:s A'));
 
-            $row++;
+        // body; Starts as A6
+        $unique_items = [];
+        $row = 6; // Initialize $row
+        
+        foreach ($sales as $ks => $sale) {
+            // Check if the current item_name is not in the list of displayed item_names
+            if (!in_array($sale->item_code, $unique_items)) {
+                // Display the item_code
+                $sheet->setCellValue('A' . $row, $sale->item_code);
+                $sheet->getStyle('A' . $row)->getFont()->setBold(true); // Make item_code bold
+                $row++; // Move to the next row
+        
+                // Display each corresponding transaction type and calculate total quantity for each transaction type
+                $unique_transaction_names = [];
+                foreach ($sales as $inner_sale) {
+                    if ($inner_sale->item_code == $sale->item_code && !in_array($inner_sale->name, $unique_transaction_names)) {
+                        $total_transaction_name = 0;
+                        foreach ($sales as $inner_sale2) {
+                            if ($inner_sale2->item_code == $sale->item_code && $inner_sale2->name == $inner_sale->name) {
+                                $total_transaction_name += $inner_sale2->quantity;
+                            }
+                        }
+        
+                        $sheet->setCellValue('B' . $row, $inner_sale->name);
+                        $sheet->setCellValue('I' . $row, $total_transaction_name);
+                        $unique_transaction_names[] = $inner_sale->name;
+                        $row++; // Move to the next row
+                    }
+                }
+
+                $sheet->setCellValue('H' . $row, 'Total');
+                $sheet->getStyle('H' . $row)->getFont()->setBold(true);
+        
+                // Sum the quantity for each unique item_code
+                $total_item_code = 0;
+                foreach ($sales as $inner_sale) {
+                    if ($inner_sale->item_code == $sale->item_code) {
+                        $total_item_code += $inner_sale->quantity;
+                    }
+                }
+        
+                $sheet->setCellValue('I' . $row, $total_item_code);
+                $sheet->getStyle('I' . $row)->getFont()->setBold(true);
+                $row++; // Move to the next row
+        
+                // Add the item_code to the list of displayed item_codes
+                $unique_items[] = $sale->item_code;
+            }
         }
-    
-        $sheet->setCellValue('F' . $row, 'Total:');
-        $sheet->setCellValue('G' . $row, $total_qty);
-    
-        $font_bold = $sheet->getStyle('F' . $row)->getFont();
-        $font_bold->setBold(true);
-    
-        $font_bold = $sheet->getStyle('G' . $row)->getFont();
-        $font_bold->setBold(true);
-    
-        $filename = 'NUC_report.xlsx';
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="' . $filename . '"');
-        header('Cache-Control: max-age=0');
-    
+        
+        // Save the spreadsheet to a file
+        $current_datetime = Carbon::now()->format('Y-m-d hia');
+        $filename = 'Item Build Report - ' . $current_datetime . '.xlsx';
         $writer = new Xlsx($spreadsheet);
-        $writer->save('php://output');
-    
-        exit;
-    }
-    /**
-     * Fetch filtered sales data based on request parameters.
-     */
-    private function SalesData(Request $request)
-    {
-        $query = Nuc::where('deleted', false);
-    
-        if ($request->has('daterange')) {
-            $date = explode(' - ', $request->daterange);
-            $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
-            $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
-    
-            $query->whereBetween('created_at', [$from, $to]);
-        }
-    
-        if ($request->filled('branch')) {
-            $query->where('branch_id', $request->input('branch'));
-        }
-    
-        if ($request->filled('bcid')) {
-            $query->where('bcid', $request->input('bcid'));
-        }
-    
-        return $query->with(['branch'])->get();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(BuildReport $buildReport)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(BuildReport $buildReport)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, BuildReport $buildReport)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(BuildReport $buildReport)
-    {
-        //
+        $writer->save(storage_path() . '/app/public/' . $filename);
+        
+        // Return a download response if needed and (IMPORTANT!) delete the temporary file
+        return response()->download(storage_path() . '/app/public/' . $filename)->deleteFileAfterSend(true);
     }
 }

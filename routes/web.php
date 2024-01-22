@@ -37,6 +37,7 @@ use App\Http\Controllers\Report\NucReportController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\GateMiddleware;
+use App\Models\TransactionListing;
 
 /*
 |--------------------------------------------------------------------------
@@ -106,8 +107,9 @@ Route::middleware(['auth','gate'])->group(function () {
     // REPORTS
     Route::group(['prefix' => 'reports', 'alias' => 'reports'], function() {
         Route::resource('build-report', BuildReportController::class)->only('index');
-        Route::get('/excel-nuc', [BuildReportController::class, 'exportToExcel'])->name('excel.nuc.report');
-        
+        Route::get('build-report/generate', [BuildReportController::class, 'generate'])->name('generate-item-build-report');
+        Route::resource('transaction-listing', TransactionListingController::class)->only('index');
+        Route::get('transaction-listing/generate', [TransactionListing::class, 'generate'])->name('generate-transaction-list-report');
         
         Route::resource('logs', HistoryController::class);
         Route::resource('nuc', NucReportController::class);
@@ -115,7 +117,7 @@ Route::middleware(['auth','gate'])->group(function () {
         Route::get('stock-card/generate', [StockCardReportController::class, 'generate'])->name('generate-stock-card-report');
         
         
-        Route::resource('transaction-listing', TransactionListingController::class)->only('index');
+        
     });
 
     // UPDATE PASSWORD

@@ -14,6 +14,7 @@ use App\Models\Sales;
 use App\Models\TransactionType;
 use App\Helpers\Helper;
 use Auth;
+use Illuminate\Support\Facades\DB;
 
 class StockCardReportController extends Controller
 {
@@ -58,11 +59,26 @@ class StockCardReportController extends Controller
 
     public function generate(Request $request)
     {
-        // `as of` definition
-        // first day of the month + the selected date 
-        $selected_date = Carbon::createFromFormat('m/d/Y', $request->as_of);
-        $date_1 = $selected_date->format('Y') . '-' . $selected_date->format('m') . '-01 00:00:00';
-        $date_2 = $selected_date->format('Y-m-d') . ' 23:59:59';
+        $a4_title = null;
+        $date_1 = null;
+        $date_2 = null;
+        if($request->as_of_report != null) {
+            // `as of` definition
+            // first day of the month + the selected date 
+            $selected_date = Carbon::createFromFormat('m/d/Y', $request->as_of);
+            $date_1 = $selected_date->format('Y') . '-' . $selected_date->format('m') . '-01 00:00:00';
+            $date_2 = $selected_date->format('Y-m-d') . ' 23:59:59';
+
+            $a4_title = 'As of ' . $selected_date->format('m/d/Y');
+        } else {
+            list($startDate, $endDate) = explode(' - ', $request->period);
+
+            // Parse the start and end dates using Carbon
+            $date1 = Carbon::createFromFormat('m/d/Y h:i A', trim($startDate));
+            $date2 = Carbon::createFromFormat('m/d/Y h:i A', trim($endDate));
+
+            $a4_title = 'Period of ' . $request->period;
+        }
 
         $company_ids = '';
         if($request->company_id != NULL) {
@@ -88,13 +104,14 @@ class StockCardReportController extends Controller
         // eloquent with raw query definition
         $sales = Sales::leftJoin('sales_details as sd', 'sd.sales_id', '=', 'sales.id')
                         ->join('sales_invoice_assignment_details as siad', 'siad.id', '=', 'sales.si_assignment_id')
-                        ->select('sales.id', 'sales.updated_at', 'sales.bcid', 'sales.distributor_name', 'sd.item_code', 'sd.item_name', 'siad.prefix_value', 'siad.series_number', 'sd.quantity')
+                        ->join('distributors as d', 'd.bcid', '=', DB::raw('LPAD(sales.bcid, 12, "0")'))
+                        ->select('sales.id', 'sales.updated_at', 'sales.bcid', 'sales.distributor_name', 'sd.item_code', 'sd.item_name', 'siad.prefix_value', 'siad.series_number', 'sd.quantity', 'd.group', 'd.subgroup')
                         ->where(function ($query) use ($request, $date_1, $date_2) {
                             if($request->has('transaction_type_id') && $request->transaction_type_id != null) {
                                 $query->where('transaction_type_id', $request->transaction_type_id);
                             }
                             if($request->has('as_of') && $request->as_of !== null) {
-                                $query->whereBetween('sales.updated_at', [$date_1, $date_2]);
+                                $query->whereBetween('sales.invoiced_at', [$date_1, $date_2]);
                             }
                         })
                         ->where(function ($query) use ($request, $company_ids) {
@@ -130,10 +147,10 @@ class StockCardReportController extends Controller
         // header
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A3', 'Stock Card for ' . $stock_card_for);
-        $sheet->setCellValue('A4', 'As of ' . $as_of);
+        $sheet->setCellValue('A4', $a4_title);
         $sheet->setCellValue('A5', $transaction_type);
-        $sheet->setCellValue('F4', 'Date Printed: ' . Carbon::now()->format('m/d/Y h:i:s A'));
-        $sheet->setCellValue('F5', 'Prepared By: ' . Auth::user()->name);
+        $sheet->setCellValue('H4', 'Date Printed: ' . Carbon::now()->format('m/d/Y h:i:s A'));
+        $sheet->setCellValue('H5', 'Prepared By: ' . Auth::user()->name);
 
         
         // body; Starts as A8
@@ -148,7 +165,7 @@ class StockCardReportController extends Controller
                     // $row++;
                     $sheet->setCellValue('B' . $row, 'Total');
                     $sheet->getStyle('B' . $row)->getFont()->setBold(true); // Make total item name bold
-                    $sheet->setCellValue('H' . $row, $total);
+                    $sheet->setCellValue('J' . $row, $total);
                     $total = 0;
         
                     // Add space below total
@@ -165,8 +182,10 @@ class StockCardReportController extends Controller
             $sheet->insertNewRowBefore($row, 1);
             $sheet->setCellValue('A' . $row, date('m/d/Y', strtotime($sale->updated_at)))->getStyle('A' . $row)->getFont()->setBold(false); 
             $sheet->setCellValue('B' . $row, $sale->distributor_name);
-            $sheet->setCellValue('F' . $row, $sale->prefix_value . $sale->series_number);
-            $sheet->setCellValue('H' . $row, $sale->quantity);
+            $sheet->setCellValue('F' . $row, $sale->group);
+            $sheet->setCellValue('G' . $row, $sale->subgroup);
+            $sheet->setCellValue('H' . $row, $sale->prefix_value . $sale->series_number);
+            $sheet->setCellValue('J' . $row, $sale->quantity);
         
             // Update total
             $total += $sale->quantity;

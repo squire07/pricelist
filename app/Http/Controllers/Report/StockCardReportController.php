@@ -74,8 +74,10 @@ class StockCardReportController extends Controller
             list($startDate, $endDate) = explode(' - ', $request->period);
 
             // Parse the start and end dates using Carbon
-            $date1 = Carbon::createFromFormat('m/d/Y h:i A', trim($startDate));
-            $date2 = Carbon::createFromFormat('m/d/Y h:i A', trim($endDate));
+            $request_date_1 = Carbon::createFromFormat('m/d/Y h:i A', trim($startDate));
+            $date_1 = $request_date_1->format('Y-m-d H:i:s');
+            $request_date_2 = Carbon::createFromFormat('m/d/Y h:i A', trim($endDate));
+            $date_2 = $request_date_2->format('Y-m-d H:i:59');
 
             $a4_title = 'Period of ' . $request->period;
         }
@@ -199,7 +201,7 @@ class StockCardReportController extends Controller
             // $row++;
             $sheet->setCellValue('B' . $row, 'Total');
             $sheet->getStyle('B' . $row)->getFont()->setBold(true); // Make last total item name bold
-            $sheet->setCellValue('H' . $row, $total); 
+            $sheet->setCellValue('J' . $row, $total); 
         }
         
         // Save the spreadsheet to a file

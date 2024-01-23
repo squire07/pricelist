@@ -37,19 +37,10 @@ class BuildReportController extends Controller
                         ->orderBy('sd.item_name')
                         ->get();
 
-        $companies = Company::whereStatusId(8)
-                        ->when(!in_array(Auth::user()->role_id, [11, 12]), function ($query) {
-                            $query->where(function ($subquery) {
-                                $subquery->whereRaw('FIND_IN_SET(?, id)', [Auth::user()->company_id]);
-                            });
-                        })
-                        ->orderBy('name')->get();
+        $companies = Company::whereStatusId(8)->whereDeleted(false)->get();
 
-        $branches = Branch::whereStatusId(8)
-                        ->when(!in_array(Auth::user()->role_id, [11, 12]), function($query) {
-                            $query->whereIn('id', [Auth::user()->branch_id]);
-                        })
-                        ->orderBy('name')->get();
+
+        $branches = Branch::whereStatusId(8)->whereDeleted(false)->get();
         
 
         return view('buildreport.index', compact('companies', 'branches','sales'));

@@ -23,11 +23,11 @@
                             <div class="form-group">
                                 <label>Company</label>
                                 <select class="form-control form-control-sm" name="company_id" id="company_id" data-dropdown-css-class="select2-primary" style="width: 100%; height:35px;" required>
-                                    @if(count($companies) > 1)
-                                        <option value="" selected="true" disabled>-- Select Company --</option>
-                                    @endif
+                                    <option value="" selected disabled>-- Select Company --</option>
                                     @foreach($companies as $company)
-                                        <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                        @if(in_array($company->status_id, [8,1]))
+                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
@@ -35,10 +35,8 @@
                         <div class="col-4">
                             <div class="form-group">
                                 <label>Branch</label>
-                                <select class="form-control form-control-sm" name="branch_id" id="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%; height:35px;">
-                                    @if(count($branches) > 1)
-                                        <option value="" selected="true">-- All --</option>
-                                    @endif
+                                <select class="form-control form-control-sm" name="branch_id" id="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%; height:35px;" disabled>
+                                    <option value="" selected disabled>-- Select Branch --</option>
                                     @foreach($branches as $branch)
                                         <option value="{{ $branch->id }}" data-company-id="{{ $branch->company_id }}">{{ $branch->name }}</option>
                                     @endforeach
@@ -98,6 +96,7 @@ $(function () {
 
     $('#company_id').on('change', function() {
         let company_id = $(this).val();
+        $('#branch_id').prop('disabled', false);
 
         if (company_id == 2) {
             $('#branch_id').find('option[data-company-id="3"]').hide();

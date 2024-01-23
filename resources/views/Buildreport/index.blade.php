@@ -23,11 +23,11 @@
                             <div class="form-group">
                                 <label>Company</label>
                                 <select class="form-control form-control-sm" name="company_id" id="company_id" data-dropdown-css-class="select2-primary" style="width: 100%; height:35px;" required>
-                                    <option value="" selected disabled>-- Select Company --</option>
+                                    {{-- @if(count($companies) > 1) --}}
+                                        <option value="" selected="true">-- Select --</option>
+                                    {{-- @endif --}}
                                     @foreach($companies as $company)
-                                        @if(in_array($company->status_id, [8,1]))
-                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
-                                        @endif
+                                        <option value="{{ $company->id }}">{{ $company->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -36,7 +36,9 @@
                             <div class="form-group">
                                 <label>Branch</label>
                                 <select class="form-control form-control-sm" name="branch_id" id="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%; height:35px;" disabled>
-                                    <option value="" selected disabled>-- Select Branch --</option>
+                                    @if(count($branches) > 1)
+                                        <option value="" selected="true">-- All --</option>
+                                    @endif
                                     @foreach($branches as $branch)
                                         <option value="{{ $branch->id }}" data-company-id="{{ $branch->company_id }}">{{ $branch->name }}</option>
                                     @endforeach

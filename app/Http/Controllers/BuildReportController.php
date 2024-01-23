@@ -37,10 +37,21 @@ class BuildReportController extends Controller
                         ->orderBy('sd.item_name')
                         ->get();
 
-        $companies = Company::whereStatusId(8)->whereDeleted(false)->get();
+        $companies = Company::whereStatusId(8)
+                        ->where(function ($query) {
+                            if(Auth::user()->company_id !== null) { // users with company ids
+                                $query->whereIn('id', explode(',',Auth::user()->company_id));
+                            }
+                        })
+                        ->orderBy('name')->get();
 
-
-        $branches = Branch::whereStatusId(8)->whereDeleted(false)->get();
+        $branches = Branch::whereStatusId(8)
+                        ->where(function ($query) {
+                            if(Auth::user()->branch_id !== null) { // users with branch ids
+                                $query->whereIn('id', explode(',',Auth::user()->branch_id));
+                            }
+                        })
+                        ->orderBy('name')->get();
         
 
         return view('buildreport.index', compact('companies', 'branches','sales'));

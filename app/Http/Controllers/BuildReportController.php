@@ -60,19 +60,6 @@ class BuildReportController extends Controller
 
     public function generate(Request $request)
     {
-        // dd($request->branch_id/);
-        if($request->branch_id == null) {
-            $branch_ids = Branch::whereStatusId(8)
-                            ->when(!in_array(Auth::user()->role_id, [11, 12]), function($query) {
-                                $query->where(function ($query) {
-                                    $query->whereIn('id', [Auth::user()->branch_id]);
-                                });
-                            })
-                            ->get('id')->toArray();
-        } else {
-            $branch_ids = $request->branch_id;
-        }
-
         $a4_title = null;
         $date_1 = null;
         $date_2 = null;
@@ -96,21 +83,41 @@ class BuildReportController extends Controller
             $a4_title = 'Period of ' . $request->period;
         }
 
+        $company_ids = '';
+        if($request->company_id != NULL) {
+            $company_ids = $request->company_id;
+        } else if ($request->company_id == NULL && Auth::user()->company_id == NULL) {
+            $active_companies = Company::where('deleted', false)->where('status_id', 8)->pluck('id')->toArray();
+            $company_ids = implode(',',$active_companies);
+        } else if ($request->company_id == NULL && Auth::user()->company_id != NULL) {
+            $company_ids = Auth::user()->company_id;
+        }
+
+        $branch_ids = '';
+        if($request->branch_id != NULL) {
+            $branch_ids = $request->branch_id;
+        } else if ($request->branch_id == NULL && Auth::user()->branch_id == NULL) {
+            $active_branches = Branch::where('deleted', false)->where('status_id', 8)->pluck('id')->toArray();
+            $branch_ids = implode(',',$active_branches);
+        } else if ($request->branch_id == NULL && Auth::user()->branch_id != NULL) {
+            $branch_ids = Auth::user()->branch_id;
+        }
+
         // eloquent with raw query definition
         $sales = DB::table('sales as s')
                     ->select('s.id', 's.transaction_type_id', 's.updated_at', 't.name','sd.item_code', 'sd.item_name', DB::raw('SUM(sd.quantity) as quantity'))
                     ->leftJoin('sales_details as sd', 'sd.sales_id', '=', 's.id')
                     ->join('transaction_types as t', 't.id', '=', 's.transaction_type_id')
                     ->where(function ($query) use ($request, $branch_ids, $date_1, $date_2) {
-                            if ($request->has('company_id') && $request->company_id != null) {
-                                $query->where('company_id', $request->company_id);
-                            }
-                            if($request->has('branch_id') && $request->branch_id != null) {
-                                $query->whereIn('branch_id', [$branch_ids]);
-                            }
                             if($request->has('as_of') && $request->as_of !== null) {
                                 $query->whereBetween('s.updated_at', [$date_1, $date_2]);
                             }
+                        })
+                        ->where(function ($query) use ($request, $company_ids) {
+                            $query->whereIn('s.company_id', explode(',', $company_ids));
+                        })
+                        ->where(function ($query) use ($request, $branch_ids) {
+                            $query->whereIn('s.branch_id', explode(',', $branch_ids));
                         })
                     ->where('s.deleted', 0)
                     ->whereIn('s.status_id', [4, 5]) // validated and released
@@ -134,7 +141,13 @@ class BuildReportController extends Controller
         // $daterange = $request->daterange ?? Carbon::now()->format('m/d/Y');
         $company = $request->company_id !== null ? Helper::get_company_names_by_id($request->company_id) : null;
 
-        $templatePath = public_path('excel_templates/item-build-report-template.xlsx');
+        if($request->company_id == 2) {
+            $templatePath = public_path('excel_templates/item-build-report-template-pr.xlsx');
+        } elseif($request->company_id == 3) {
+            $templatePath = public_path('excel_templates/item-build-report-template-lo.xlsx');
+        } else {
+            $templatePath = public_path('excel_templates/item-build-report-template.xlsx');
+        }
         $spreadsheet = IOFactory::load($templatePath);
 
 
@@ -148,7 +161,8 @@ class BuildReportController extends Controller
         $sheet->setCellValue('A1', $company);
         $sheet->setCellValue('A3', 'Item Build Report for ' . $item_build_for);
         $sheet->setCellValue('A4', $a4_title);
-        $sheet->setCellValue('G3', 'Date Printed: ' . Carbon::now()->format('m/d/Y h:i:s A'));
+        $sheet->setCellValue('H3', 'Date Printed: ' . Carbon::now()->format('m/d/Y h:i:s A'));
+        $sheet->setCellValue('H4', 'Prepared By: ' . Auth::user()->name);
 
         // body; Starts as A7
         $row = 7; // Initialize $row

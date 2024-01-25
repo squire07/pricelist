@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('bundle_description');
             $table->string('item_code');
             $table->string('item_description');
-            $table->integer('quantity')->unsigned();
+            $table->double('quantity')->unsigned();
             $table->string('uom');
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();

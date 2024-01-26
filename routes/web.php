@@ -115,8 +115,7 @@ Route::middleware(['auth','gate'])->group(function () {
         Route::resource('nuc', NucReportController::class);
         Route::get('stock-card', [StockCardReportController::class, 'index']);
         Route::get('stock-card/generate', [StockCardReportController::class, 'generate'])->name('generate-stock-card-report');
-        
-        
+        Route::get('stock-card/download/{filename}', [StockCardReportController::class, 'download']);
         
     });
 

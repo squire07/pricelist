@@ -8,12 +8,25 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
 <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}">
+<link rel="stylesheet" href="{{ asset('fonts/BMREA___.TTF') }}">
 </head>
 <style>
     @media print {
         .print-none {
             color: transparent;
         }
+        /* @font-face {
+            font-family: 'BMREA';
+            src: url('/fonts/BMREA___.TTF') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        } */
+        body {
+            font-family: 'BMREA', sans-serif;
+        }
+    }
+    body {
+        font-family: 'BMREA', sans-serif;
     }
 </style>
 <body>

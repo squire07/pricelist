@@ -10,6 +10,7 @@ use App\Helpers\Helper;
 use App\Models\Company;
 use App\Models\History;
 use App\Models\BuildReport;
+use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\TransactionType;
@@ -104,50 +105,114 @@ class BuildReportController extends Controller
         }
 
         // eloquent with raw query definition
+
         $sales = DB::table('sales as s')
-                    ->select('s.id', 's.transaction_type_id', 's.updated_at', 't.name','sd.item_code', 'sd.item_name', DB::raw('SUM(sd.quantity) as quantity'))
-                    ->leftJoin('sales_details as sd', 'sd.sales_id', '=', 's.id')
-                    ->join('transaction_types as t', 't.id', '=', 's.transaction_type_id')
-                    ->where(function ($query) use ($request, $branch_ids, $date_1, $date_2) {
-                            if($request->has('as_of') && $request->as_of !== null) {
-                                $query->whereBetween('s.updated_at', [$date_1, $date_2]);
-                            }
-                        })
-                        ->where(function ($query) use ($request, $company_ids) {
-                            $query->whereIn('s.company_id', explode(',', $company_ids));
-                        })
-                        ->where(function ($query) use ($request, $branch_ids) {
-                            $query->whereIn('s.branch_id', explode(',', $branch_ids));
-                        })
-                    ->where('s.deleted', 0)
-                    ->whereIn('s.status_id', [4, 5]) // validated and released
-                    // ->when($request->has('daterange') && $request->daterange !== null, function ($query) use ($request) {
-                    //     $date = explode(' - ', $request->daterange);
-                    //     $from = date('Y-m-d', strtotime($date[0])) . ' 00:00:00';
-                    //     $to = date('Y-m-d', strtotime($date[1])) . ' 23:59:59';
-                    //     $query->whereBetween('s.updated_at', [$from, $to]);
-                    // })
-                    ->groupBy('s.id', 't.name', 's.updated_at', 'sd.item_name', 's.transaction_type_id', 'sd.item_code')
-                    ->orderBy('t.name', 'asc')
-                    ->orderBy('sd.item_name', 'asc')
-                    ->get();
+                ->select(
+                    's.id',
+                    's.transaction_type_id',
+                    's.updated_at',
+                    'sd.item_code',
+                    DB::raw('IFNULL(ib.item_description, sd.item_name) as item_name'),
+                    'sd.item_name as original_item_name',
+                    'ib.item_code',
+                    'ib.item_description',
+                    DB::raw('CASE WHEN ib.item_description IS NOT NULL THEN COALESCE(ib.quantity, 0) ELSE SUM(sd.quantity) END as quantity'),
+                    DB::raw('COALESCE(SUM(CASE WHEN ib.bundle_name IS NOT NULL THEN sd.quantity ELSE 0 END), 0) as quantity_from_sales_details')
+                )
+                ->leftJoin('sales_details as sd', 'sd.sales_id', '=', 's.id')
+                ->leftJoin('item_bundles as ib', 'ib.bundle_name', '=', 'sd.item_code')
+                ->where(function ($query) use ($request, $branch_ids, $date_1, $date_2) {
+                    if ($request->has('as_of') && $request->as_of !== null) {
+                        $query->whereBetween('s.updated_at', [$date_1, $date_2]);
+                    }
+                })
+                ->where(function ($query) use ($request, $company_ids) {
+                    $query->whereIn('s.company_id', explode(',', $company_ids));
+                })
+                ->where(function ($query) use ($request, $branch_ids) {
+                    $query->whereIn('s.branch_id', explode(',', $branch_ids));
+                })
+                ->groupBy('s.id', 's.transaction_type_id', 's.updated_at', 'sd.item_code', 'item_name', 'ib.item_code', 'ib.item_description', 'ib.quantity')
+                ->get();
+
+        // $sales = Sales::select(
+        //     'sales.id',
+        //     'sales.transaction_type_id',
+        //     'sales.updated_at',
+        //     'sd.item_code',
+        //     DB::raw('IFNULL(ib.item_description, sd.item_name) as item_name'),
+        //     'sd.item_name as original_item_name',
+        //     'ib.item_code',
+        //     'ib.item_description',
+        //     DB::raw('SUM(sd.quantity) as quantity')
+        // )
+        // ->leftJoin('sales_details as sd', 'sd.sales_id', '=', 'sales.id')
+        // ->leftJoin('item_bundles as ib', 'ib.bundle_name', '=', 'sd.item_code')
+        //         ->where(function ($query) use ($request, $branch_ids, $date_1, $date_2) {
+        //             if ($request->has('as_of') && $request->as_of !== null) {
+        //                 $query->whereBetween('sales.updated_at', [$date_1, $date_2]);
+        //             }
+        //         })
+        //         ->where(function ($query) use ($request, $company_ids) {
+        //             $query->whereIn('sales.company_id', explode(',', $company_ids));
+        //         })
+        //         ->where(function ($query) use ($request, $branch_ids) {
+        //             $query->whereIn('sales.branch_id', explode(',', $branch_ids));
+        //         })
+        // ->groupBy('sales.id', 'sales.transaction_type_id', 'sales.updated_at', 'sd.item_code', 'item_name', 'ib.item_code', 'ib.item_description')
+        // ->where('sales.deleted', 0)
+        // ->whereIn('sales.status_id', [4, 5]) // validated and released
+        // ->groupBy('sales.id', 'sales.transaction_type_id', 'sales.updated_at', 'sd.item_code', 'sd.item_name', 'ib.item_code', 'ib.item_description')
+        // ->orderBy('sd.item_name', 'asc')
+        // ->get();
+
+        // $sales = DB::table('sales as s')
+        //         ->leftJoin('sales_details as sd', 'sd.sales_id', '=', 's.id')
+        //         ->leftJoin('item_bundles as ib', 'ib.bundle_name', '=', 'sd.item_code')
+        //         ->select(
+        //             's.id',
+        //             's.transaction_type_id',
+        //             's.updated_at',
+        //             'sd.item_code',
+        //             'sd.item_name',
+        //             'ib.item_code',
+        //             'ib.item_description',
+        //             DB::raw('SUM(sd.quantity) as quantity')
+        //         )
+        //         ->where(function ($query) use ($request, $branch_ids, $date_1, $date_2) {
+        //             if ($request->has('as_of') && $request->as_of !== null) {
+        //                 $query->whereBetween('s.updated_at', [$date_1, $date_2]);
+        //             }
+        //         })
+        //         ->where(function ($query) use ($request, $company_ids) {
+        //             $query->whereIn('s.company_id', explode(',', $company_ids));
+        //         })
+        //         ->where(function ($query) use ($request, $branch_ids) {
+        //             $query->whereIn('s.branch_id', explode(',', $branch_ids));
+        //         })
+        // ->where('s.deleted', 0)
+        // ->whereIn('s.status_id', [4, 5]) // validated and released
+        // ->groupBy('s.id', 's.transaction_type_id', 's.updated_at', 'sd.item_code', 'sd.item_name', 'ib.item_code', 'ib.item_description')
+        // ->orderBy('sd.item_name', 'asc')
+        // ->get();
 
         $transaction_types = TransactionType::whereDeleted(0)
                             ->whereIsActive(1)
                             ->orderBy('id')
                             ->get();
 
-        $item_build_for = $request->branch_id == null ? 'All Branches' : Helper::get_branch_name_by_id($request->branch_id);
+        $item_build_for = ($request->branch_id === null) ? 'All Branches' : ($request->branch_id == 14 ? Helper::get_branch_name_by_id($request->branch_id) : 'All Branches');
         // $daterange = $request->daterange ?? Carbon::now()->format('m/d/Y');
         $company = $request->company_id !== null ? Helper::get_company_names_by_id($request->company_id) : null;
 
-        if($request->company_id == 2) {
+        if ($request->company_id == 2) {
             $templatePath = public_path('excel_templates/item-build-report-template-pr.xlsx');
-        } elseif($request->company_id == 3) {
+        } elseif ($request->company_id == 3) {
             $templatePath = public_path('excel_templates/item-build-report-template-lo.xlsx');
         } else {
             $templatePath = public_path('excel_templates/item-build-report-template.xlsx');
         }
+        
         $spreadsheet = IOFactory::load($templatePath);
 
 
@@ -175,9 +240,21 @@ class BuildReportController extends Controller
             $transaction_type_column++;
         }
 
+        $items = Item::whereDeleted(false)
+                ->where(function ($query) {
+                    $query->where('name', 'not like', '%PACKAGE%')
+                        ->where('name', 'not like', '%PACKAGES%')
+                        ->where('name', 'not like', '%12OZ%')
+                        ->where('name', 'not like', '%12 OZ%')
+                        ->where('name', 'not like', '%16OZ%')
+                        ->where('name', 'not like', '%22OZ%');
+                })
+                ->orderBy('name')
+                ->get();
+                
         $sheet->setCellValue($transaction_type_column . '6', 'TOTAL');
         $sheet->getStyle($transaction_type_column . '6')->getFont()->setBold(true);
-        $item_names = collect($sales)->pluck('item_name')->unique()->values(); //get a unique list of item names from the $sales set
+        $item_names = collect($items)->pluck('name')->unique()->values(); //get a unique list of item names from the $sales set
         foreach ($item_names as $item_name) {
             // Display the item_name
             $sheet->setCellValue('A' . $row, $item_name);
@@ -204,7 +281,7 @@ class BuildReportController extends Controller
             if ($total_quantity > 0) {
                 $sheet->setCellValue($quantity_column . $item_name_row, $total_quantity);
             } else {
-                $sheet->setCellValue($quantity_column . $item_name_row, '');
+                $sheet->setCellValue($quantity_column . $item_name_row, '0');
             }
 
             $sheet->getStyle($quantity_column . $item_name_row)->getFont()->setBold(true);

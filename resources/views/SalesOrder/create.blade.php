@@ -308,6 +308,8 @@
     outline: none;
     margin: 0;
     width: 125px;
+    /* for dark mode only; remove if not dark-mode */
+    color: white; 
 } 
 
 .custom-input-text:read-only {
@@ -325,12 +327,12 @@ tfoot tr td:first-child {
 /* Dynamic rows - tbody */
 /* Apply styles to even rows */
 tbody tr:nth-child(even) {
-  background-color: #ffffff;
+  background-color: transparent;
 }
 
 /* Apply styles to odd rows */
 tbody tr:nth-child(odd) {
-  background-color: #f2f2f2;
+  background-color: transparent;
 }
 </style>
 @endsection

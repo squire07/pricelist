@@ -47,13 +47,13 @@
                                         <button class="btn btn-sm calendar-icon" 
                                             data-transaction-type-id="{{ $transaction_type->id }}"
                                             data-validity="{{ $transaction_type->validity->valid_from . ' - ' . $transaction_type->validity->valid_to }}">
-                                            <i class="far fa-calendar-alt"></i>
+                                            <i class="far fa-calendar-alt text-white"></i>
                                         </button>
                                     @else 
                                         <span class="text-bold">&#8734;</span>
 
                                         <button class="btn btn-sm calendar-icon" data-transaction-type-id="{{ $transaction_type->id }}">
-                                            <i class="far fa-calendar-alt"></i>
+                                            <i class="far fa-calendar-alt text-white"></i>
                                         </button>
                                     @endif
                                 </td>

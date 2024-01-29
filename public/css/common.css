@@ -196,3 +196,44 @@ a.disabled {
     text-decoration: none;
     cursor: not-allowed; 
 }
+
+/*
+* SELECT2 Dark Mode
+*/
+
+.select2-container--bootstrap4.select2-container--disabled .select2-selection, .select2-container--bootstrap4.select2-container--disabled.select2-container--focus .select2-selection {
+    cursor: not-allowed;
+    background-color: #454d55 !important;
+    border-color: #ced4da;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
+    padding-left: 0.75rem;
+    line-height: calc(1.5em + .75rem);
+    color: white !important;
+    background: #454d55;
+}
+
+/*
+*  LOGIN Background Color
+*/
+
+.login-page, .register-page {
+    -ms-flex-align: center;
+    align-items: center;
+    background-color: #343a40;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    height: 100vh;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+.dark-mode input:-webkit-autofill, .dark-mode input:-webkit-autofill:focus, .dark-mode input:-webkit-autofill:hover, .dark-mode select:-webkit-autofill, .dark-mode select:-webkit-autofill:focus, .dark-mode select:-webkit-autofill:hover, .dark-mode textarea:-webkit-autofill, .dark-mode textarea:-webkit-autofill:focus, .dark-mode textarea:-webkit-autofill:hover {
+    background-color: #343a40 !important;
+    -webkit-text-fill-color: #343a40;
+} 

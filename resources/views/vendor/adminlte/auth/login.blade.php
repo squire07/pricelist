@@ -28,7 +28,7 @@
         {{-- Username field --}}
         <div class="input-group mb-3">
             <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
-                   value="{{ old('username') }}" placeholder="{{ __('Username') }}" autofocus id="input-username">
+                   value="{{ old('username') }}" placeholder="{{ __('Username') }}" autofocus id="input-username" autocomplete="off" style="background:#454d55">
 
             <div class="input-group-append">
                 <div class="input-group-text">
@@ -45,7 +45,7 @@
         {{-- Password field --}}
         <div class="input-group mb-3">
             <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                   placeholder="{{ __('adminlte::adminlte.password') }}" maxlength="12" id="input-password">
+                   placeholder="{{ __('adminlte::adminlte.password') }}" maxlength="12" id="input-password" autocomplete="new-password">
 
             <div class="input-group-append">
                 <div class="input-group-text">

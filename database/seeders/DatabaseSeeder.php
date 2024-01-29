@@ -29,5 +29,6 @@ class DatabaseSeeder extends Seeder
 
         // dummy data only
         $this->call(ItemSeeder::class);
+        $this->call(ItemBundleSeeder::class);
     }
 }

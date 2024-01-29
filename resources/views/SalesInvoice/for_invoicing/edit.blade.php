@@ -196,7 +196,7 @@
                             <input type="hidden" name="si_assignment_id" value="{{ $first_booklet ? $first_booklet->id : null }}">
                             <h2>
                                 <span>Invoice No:</span>
-                                <input type="text" id="si_assignment_no" class="custom-input-text"
+                                <input type="text" id="si_assignment_no" class="custom-input-text text-white"
                                     data-id="{{ $first_booklet ? $first_booklet->id : null }}" 
                                     value="{{ $first_booklet ? $first_booklet->prefix_value . $first_booklet->series_number : null }}" 
                                     readonly tabindex="-1">

@@ -11,6 +11,7 @@ use App\Models\Company;
 use App\Models\History;
 use App\Models\BuildReport;
 use App\Models\Item;
+use App\Models\ItemBundle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\TransactionType;
@@ -105,7 +106,6 @@ class BuildReportController extends Controller
         }
 
         // eloquent with raw query definition
-
         $sales = DB::table('sales as s')
                 ->select(
                     's.id',
@@ -135,74 +135,16 @@ class BuildReportController extends Controller
                 ->groupBy('s.id', 's.transaction_type_id', 's.updated_at', 'sd.item_code', 'item_name', 'ib.item_code', 'ib.item_description', 'ib.quantity')
                 ->get();
 
-        // $sales = Sales::select(
-        //     'sales.id',
-        //     'sales.transaction_type_id',
-        //     'sales.updated_at',
-        //     'sd.item_code',
-        //     DB::raw('IFNULL(ib.item_description, sd.item_name) as item_name'),
-        //     'sd.item_name as original_item_name',
-        //     'ib.item_code',
-        //     'ib.item_description',
-        //     DB::raw('SUM(sd.quantity) as quantity')
-        // )
-        // ->leftJoin('sales_details as sd', 'sd.sales_id', '=', 'sales.id')
-        // ->leftJoin('item_bundles as ib', 'ib.bundle_name', '=', 'sd.item_code')
-        //         ->where(function ($query) use ($request, $branch_ids, $date_1, $date_2) {
-        //             if ($request->has('as_of') && $request->as_of !== null) {
-        //                 $query->whereBetween('sales.updated_at', [$date_1, $date_2]);
-        //             }
-        //         })
-        //         ->where(function ($query) use ($request, $company_ids) {
-        //             $query->whereIn('sales.company_id', explode(',', $company_ids));
-        //         })
-        //         ->where(function ($query) use ($request, $branch_ids) {
-        //             $query->whereIn('sales.branch_id', explode(',', $branch_ids));
-        //         })
-        // ->groupBy('sales.id', 'sales.transaction_type_id', 'sales.updated_at', 'sd.item_code', 'item_name', 'ib.item_code', 'ib.item_description')
-        // ->where('sales.deleted', 0)
-        // ->whereIn('sales.status_id', [4, 5]) // validated and released
-        // ->groupBy('sales.id', 'sales.transaction_type_id', 'sales.updated_at', 'sd.item_code', 'sd.item_name', 'ib.item_code', 'ib.item_description')
-        // ->orderBy('sd.item_name', 'asc')
-        // ->get();
-
-        // $sales = DB::table('sales as s')
-        //         ->leftJoin('sales_details as sd', 'sd.sales_id', '=', 's.id')
-        //         ->leftJoin('item_bundles as ib', 'ib.bundle_name', '=', 'sd.item_code')
-        //         ->select(
-        //             's.id',
-        //             's.transaction_type_id',
-        //             's.updated_at',
-        //             'sd.item_code',
-        //             'sd.item_name',
-        //             'ib.item_code',
-        //             'ib.item_description',
-        //             DB::raw('SUM(sd.quantity) as quantity')
-        //         )
-        //         ->where(function ($query) use ($request, $branch_ids, $date_1, $date_2) {
-        //             if ($request->has('as_of') && $request->as_of !== null) {
-        //                 $query->whereBetween('s.updated_at', [$date_1, $date_2]);
-        //             }
-        //         })
-        //         ->where(function ($query) use ($request, $company_ids) {
-        //             $query->whereIn('s.company_id', explode(',', $company_ids));
-        //         })
-        //         ->where(function ($query) use ($request, $branch_ids) {
-        //             $query->whereIn('s.branch_id', explode(',', $branch_ids));
-        //         })
-        // ->where('s.deleted', 0)
-        // ->whereIn('s.status_id', [4, 5]) // validated and released
-        // ->groupBy('s.id', 's.transaction_type_id', 's.updated_at', 'sd.item_code', 'sd.item_name', 'ib.item_code', 'ib.item_description')
-        // ->orderBy('sd.item_name', 'asc')
-        // ->get();
+        foreach ($sales as $sale) {
+        $sale->item_name = str_replace('&amp;', '&', $sale->item_name);
+        }
 
         $transaction_types = TransactionType::whereDeleted(0)
                             ->whereIsActive(1)
                             ->orderBy('id')
                             ->get();
 
-        $item_build_for = ($request->branch_id === null) ? 'All Branches' : ($request->branch_id == 14 ? Helper::get_branch_name_by_id($request->branch_id) : 'All Branches');
-        // $daterange = $request->daterange ?? Carbon::now()->format('m/d/Y');
+        $item_build_for = $request->branch_id == null ? 'All Branches' : Helper::get_branch_name_by_id($request->branch_id);
         $company = $request->company_id !== null ? Helper::get_company_names_by_id($request->company_id) : null;
 
         if ($request->company_id == 2) {

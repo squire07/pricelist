@@ -108,6 +108,7 @@ Route::middleware(['auth','gate'])->group(function () {
     Route::group(['prefix' => 'reports', 'alias' => 'reports'], function() {
         Route::resource('build-report', BuildReportController::class)->only('index');
         Route::get('build-report/generate', [BuildReportController::class, 'generate'])->name('generate-item-build-report');
+        Route::get('build-report/generate-cafe', [BuildReportController::class, 'generateCafe'])->name('generate-cafe-item-build-report');
         Route::resource('transaction-listing', TransactionListingController::class)->only('index');
         Route::get('transaction-listing/generate', [TransactionListing::class, 'generate'])->name('generate-transaction-list-report');
         

@@ -14,9 +14,9 @@
 
 @section('content')
 <div class="container-fluid">
-    <form action="{{ Route('generate-item-build-report') }}" method="get" id="period_report">
-        @csrf
-    
+    <form action="{{ Route('generate-item-build-report') }}" method="get" id="period_report" autocomplete="off">
+            @csrf
+        
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -39,7 +39,7 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label>Branch</label>
-                                        <select class="form-control form-control-sm" name="branch_id" id="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%; height:35px;" disabled>
+                                        <select class="form-control form-control-sm" name="branch_id" id="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%; height:35px;">
                                             @if(count($branches) > 1)
                                                 <option value="" selected="true">-- All --</option>
                                             @endif
@@ -149,7 +149,6 @@ $(document).ready(function() {
 
     $('#company_id').on('change', function() {
         let company_id = $(this).val();
-        $('#branch_id').prop('disabled', false);
 
         if (company_id == 2) {
             $('#branch_id').find('option[data-company-id="3"]').hide();
@@ -163,6 +162,13 @@ $(document).ready(function() {
 
         $('#branch_id').val(null).trigger('change');
     }); 
+        $('#branch_id').on('change', function () {
+        if ($(this).val() == 14) {
+            $('#period_report').attr('action', '{{ route('generate-cafe-item-build-report') }}');
+        } else {
+            $('#period_report').attr('action', '{{ route('generate-item-build-report') }}');
+        }
+    });
 });
 </script>
 @endsection

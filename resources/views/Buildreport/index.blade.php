@@ -163,7 +163,9 @@ $(document).ready(function() {
         $('#branch_id').val(null).trigger('change');
     }); 
         $('#branch_id').on('change', function () {
-        if ($(this).val() == 14) {
+        let branch_id = $(this).val();
+        
+        if (branch_id == 14) {
             $('#period_report').attr('action', '{{ route('generate-cafe-item-build-report') }}');
         } else {
             $('#period_report').attr('action', '{{ route('generate-item-build-report') }}');

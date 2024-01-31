@@ -182,16 +182,22 @@ class BuildReportController extends Controller
         // body; Starts as A7
         $row = 7; // Initialize $row
 
+        $excluded_transaction_ids = [ 1, 2, 4, 5, 50, 51, 38, 39, 40, 41, 42 ];
+
         // Display transaction types in row 6 starting from column B horizontally
         $transaction_type_column = 'B';
         foreach ($transaction_types as $transaction_type) {
-            $sheet->setCellValue($transaction_type_column . '6', $transaction_type->name);
-            $sheet->getStyle($transaction_type_column . '6')->getFont()->setBold(true);
-            $transaction_type_column++;
+            if (!in_array($transaction_type->id, $excluded_transaction_ids)) {
+                $sheet->setCellValue($transaction_type_column . '6', $transaction_type->name);
+                $sheet->getStyle($transaction_type_column . '6')->getFont()->setBold(true);
+                $transaction_type_column++;
+            }
         }
 
         $items = Item::whereDeleted(false)
-                        ->whereNotIn('transaction_type_id', [1,2,3,30,31,32,33,34,35,36,37,43,50,51,38,39,40,41,42])
+                        ->whereNotIn('transaction_type_id', [1,2,3,50,51,38,39,40,41,42])
+                        ->where('name', 'not like', '%PACKAGE%')
+                        ->where('name', 'not like', '%SHIPPING%')
                         ->orderBy('name')
                         ->get();
 
@@ -228,7 +234,8 @@ class BuildReportController extends Controller
 
             foreach ($transaction_types as $transaction_type) {
                 //get the quantity for a specific combination of item_name and transaction_type_id from the $sales.
-                //$quantity = collect($sales)->where('item_name', $item_name)->where('transaction_type_id', $transaction_type->id)->first()->quantity ?? 0;
+                if (!in_array($transaction_type->id, $excluded_transaction_ids)) {
+                // $quantity = collect($sales)->where('item_description', $item_name)->where('transaction_type_id', $transaction_type->id)->first()->quantity ?? 0;
                 $quantity = collect($sales)
                     ->where('item_description', $item_name)
                     ->where('transaction_type_id', $transaction_type->id)
@@ -242,9 +249,9 @@ class BuildReportController extends Controller
                     $sheet->getStyle($quantity_column . $item_name_row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
                 }
 
-
                 $total_quantity += $quantity;
                 $quantity_column++;
+                }
             }
             
             if ($total_quantity > 0) {

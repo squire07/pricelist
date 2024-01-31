@@ -112,12 +112,19 @@ class BuildReportController extends Controller
                     's.transaction_type_id',
                     's.updated_at',
                     'sd.item_code',
-                    DB::raw('IFNULL(ib.item_description, sd.item_name) as item_name'),
-                    'sd.item_name as original_item_name',
+                    DB::raw('IFNULL(ib.item_description, sd.item_name) AS item_name'),
+                    'sd.item_name AS original_item_name',
                     'ib.item_code',
                     'ib.item_description',
-                    DB::raw('CASE WHEN ib.item_description IS NOT NULL THEN COALESCE(ib.quantity, 0) ELSE SUM(sd.quantity) END as quantity'),
-                    DB::raw('COALESCE(SUM(CASE WHEN ib.bundle_name IS NOT NULL THEN sd.quantity ELSE 0 END), 0) as quantity_from_sales_details')
+                    DB::raw('CASE
+                        WHEN ib.item_description IS NOT NULL THEN COALESCE(ib.quantity, 0)
+                        ELSE COALESCE(SUM(sd.quantity), 0)
+                    END AS quantity'),
+                    DB::raw('COALESCE(SUM(CASE WHEN ib.bundle_name IS NOT NULL THEN sd.quantity ELSE 0 END), 0) AS quantity_from_sales_details'),
+                    DB::raw('(CASE
+                        WHEN ib.item_description IS NOT NULL THEN COALESCE(ib.quantity, 0)
+                        ELSE COALESCE(SUM(sd.quantity), 0)
+                    END) * COALESCE(SUM(CASE WHEN ib.bundle_name IS NOT NULL THEN sd.quantity ELSE 0 END), 0) AS total_quantity')
                 )
                 ->leftJoin('sales_details as sd', 'sd.sales_id', '=', 's.id')
                 ->leftJoin('item_bundles as ib', 'ib.bundle_name', '=', 'sd.item_code')
@@ -216,7 +223,11 @@ class BuildReportController extends Controller
 
             foreach ($transaction_types as $transaction_type) {
                 //get the quantity for a specific combination of item_name and transaction_type_id from the $sales.
-                $quantity = collect($sales)->where('item_name', $item_name)->where('transaction_type_id', $transaction_type->id)->first()->quantity ?? 0;
+                //$quantity = collect($sales)->where('item_name', $item_name)->where('transaction_type_id', $transaction_type->id)->first()->quantity ?? 0;
+                $quantity = collect($sales)
+                    ->where('item_description', $item_name)
+                    ->where('transaction_type_id', $transaction_type->id)
+                    ->sum('total_quantity');
 
                 if ($quantity > 0) {
                     $sheet->setCellValue($quantity_column . $item_name_row, $quantity);
@@ -293,12 +304,19 @@ class BuildReportController extends Controller
                     's.transaction_type_id',
                     's.updated_at',
                     'sd.item_code',
-                    DB::raw('IFNULL(ib.item_description, sd.item_name) as item_name'),
-                    'sd.item_name as original_item_name',
+                    DB::raw('IFNULL(ib.item_description, sd.item_name) AS item_name'),
+                    'sd.item_name AS original_item_name',
                     'ib.item_code',
                     'ib.item_description',
-                    DB::raw('CASE WHEN ib.item_description IS NOT NULL THEN COALESCE(ib.quantity, 0) ELSE SUM(sd.quantity) END as quantity'),
-                    DB::raw('COALESCE(SUM(CASE WHEN ib.bundle_name IS NOT NULL THEN sd.quantity ELSE 0 END), 0) as quantity_from_sales_details')
+                    DB::raw('CASE
+                        WHEN ib.item_description IS NOT NULL THEN COALESCE(ib.quantity, 0)
+                        ELSE COALESCE(SUM(sd.quantity), 0)
+                    END AS quantity'),
+                    DB::raw('COALESCE(SUM(CASE WHEN ib.bundle_name IS NOT NULL THEN sd.quantity ELSE 0 END), 0) AS quantity_from_sales_details'),
+                    DB::raw('(CASE
+                        WHEN ib.item_description IS NOT NULL THEN COALESCE(ib.quantity, 0)
+                        ELSE COALESCE(SUM(sd.quantity), 0)
+                    END) * COALESCE(SUM(CASE WHEN ib.bundle_name IS NOT NULL THEN sd.quantity ELSE 0 END), 0) AS total_quantity')
                 )
                 ->leftJoin('sales_details as sd', 'sd.sales_id', '=', 's.id')
                 ->leftJoin('item_bundles as ib', 'ib.bundle_name', '=', 'sd.item_code')
@@ -386,7 +404,11 @@ class BuildReportController extends Controller
             foreach ($transaction_types as $transaction_type) {
                 //get the quantity for a specific combination of item_name and transaction_type_id from the $sales.
                 if (in_array($transaction_type->id, $transaction_ids)) {
-                $quantity = collect($sales)->where('item_description', $item_name)->where('transaction_type_id', $transaction_type->id)->first()->quantity ?? 0;
+                // $quantity = collect($sales)->where('item_description', $item_name)->where('transaction_type_id', $transaction_type->id)->first()->quantity ?? 0;
+                $quantity = collect($sales)
+                    ->where('item_description', $item_name)
+                    ->where('transaction_type_id', $transaction_type->id)
+                    ->sum('total_quantity');
 
                 if ($quantity > 0) {
                     $sheet->setCellValue($quantity_column . $item_name_row, $quantity);

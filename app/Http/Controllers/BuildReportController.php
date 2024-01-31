@@ -191,23 +191,28 @@ class BuildReportController extends Controller
         }
 
         $items = Item::whereDeleted(false)
-                ->where(function ($query) {
-                    $query->where('name', 'not like', '%PACKAGE%')
-                        ->where('name', 'not like', '%PACKAGES%')
-                        ->where('name', 'not like', '%12OZ%')
-                        ->where('name', 'not like', '%12 OZ%')
-                        ->where('name', 'not like', '%16OZ%')
-                        ->where('name', 'not like', '%22OZ%')
-                        ->where('name', 'not like', '%PRINTER%')
-                        ->where('name', 'not like', '%APPLICATION%')
-                        ->where('name', 'not like', '%CARD%')
-                        ->where('name', 'not like', '%BETADINE%')
-                        ->where('name', 'not like', '%INKJET%')
-                        ->where('name', 'not like', '%SWITCH%');
-                })
-                ->whereNotIn('transaction_type_id', [50, 51, 1])
-                ->orderBy('name')
-                ->get();
+                        ->whereNotIn('transaction_type_id', [1,2,3,30,31,32,33,34,35,36,37,43,50,51,38,39,40,41,42])
+                        ->orderBy('name')
+                        ->get();
+
+        // $items = Item::whereDeleted(false)
+        //         ->where(function ($query) {
+        //             $query->where('name', 'not like', '%PACKAGE%')
+        //                 ->where('name', 'not like', '%PACKAGES%')
+        //                 ->where('name', 'not like', '%12OZ%')
+        //                 ->where('name', 'not like', '%12 OZ%')
+        //                 ->where('name', 'not like', '%16OZ%')
+        //                 ->where('name', 'not like', '%22OZ%')
+        //                 ->where('name', 'not like', '%PRINTER%')
+        //                 ->where('name', 'not like', '%APPLICATION%')
+        //                 ->where('name', 'not like', '%CARD%')
+        //                 ->where('name', 'not like', '%BETADINE%')
+        //                 ->where('name', 'not like', '%INKJET%')
+        //                 ->where('name', 'not like', '%SWITCH%');
+        //         })
+        //         ->whereNotIn('transaction_type_id', [50, 51, 1])
+        //         ->orderBy('name')
+        //         ->get();
                 
         $sheet->setCellValue($transaction_type_column . '6', 'TOTAL');
         $sheet->getStyle($transaction_type_column . '6')->getFont()->setBold(true);

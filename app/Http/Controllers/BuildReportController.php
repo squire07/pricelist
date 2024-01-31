@@ -205,7 +205,7 @@ class BuildReportController extends Controller
                         ->where('name', 'not like', '%INKJET%')
                         ->where('name', 'not like', '%SWITCH%');
                 })
-                ->whereNot('transaction_type_id', 50)
+                ->whereNotIn('transaction_type_id', [50, 51, 1])
                 ->orderBy('name')
                 ->get();
                 

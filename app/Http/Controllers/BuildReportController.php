@@ -195,9 +195,8 @@ class BuildReportController extends Controller
         }
 
         $items = Item::whereDeleted(false)
-                        ->whereNotIn('transaction_type_id', [1,2,3,50,51,38,39,40,41,42])
-                        ->where('name', 'not like', '%PACKAGE%')
-                        ->where('name', 'not like', '%SHIPPING%')
+                        ->whereNotIn('transaction_type_id', [1,2,3,30,31,32,33,34,35,36,37,43,50,51,38,39,40,41,42])
+                        ->orWhere('id', 898)
                         ->orderBy('name')
                         ->get();
 

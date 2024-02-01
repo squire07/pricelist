@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Auth;
 use App\Helpers\Helper;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class SalesInvoiceAssignmentController extends Controller
 {
@@ -31,17 +32,26 @@ class SalesInvoiceAssignmentController extends Controller
 
         // get the active companies 
         $active_companies = Company::whereStatusId(8)->pluck('id'); // Must be refactor! status_id to status with boolean datatype: 0 = inactive/false; 1 = active/true;
-        
+
         // get the active branches
         $active_branches = Branch::whereStatusId(8)->pluck('id'); // Must be refactor! status_id to status with boolean datatype: 0 = inactive/false; 1 = active/true;
+       
+        // find all the active company ids and branch ids in Auth::user() with role_id 4,5 and 6
+        $auth_user_active_company_ids = array_intersect(explode(',', Auth::user()->company_id), $active_companies->toArray());
 
-        // remove inactive companies from Auth::user()->company_id with role_id 4,5 and 6
-        $auth_user_active_company_ids = array_intersect([Auth::user()->company_id], $active_companies->toArray());
+        // get the branches where user's active company is tagged
+        $auth_user_branches_by_active_company = Branch::whereIn('company_id', $auth_user_active_company_ids)->pluck('id');
 
-        // retain only the branches with active company ids
-        $auth_user_active_branch_ids = Branch::whereStatusId(8)
-                                            ->whereIn('company_id', $auth_user_active_company_ids)->get('id')->toArray();
+        // intersect $active_branches with $auth_user_branches_by_active_company
+        $final_branches_sp1 = array_intersect($auth_user_branches_by_active_company->toArray(), $active_branches->toArray());
 
+        $final_branches_sp2 = array_intersect($auth_user_branches_by_active_company->toArray(), $final_branches_sp1);
+
+        // intesect
+        $final_branches = array_intersect($final_branches_sp2, explode(',',Auth::user()->branch_id));
+
+        // Important: to make and empty array if intersect returns null
+        $final_branches = empty($final_branches) ? [null] : $final_branches;
 
         if(in_array(Auth::user()->role_id, [11,12])) {
             $cashiers = User::whereDeleted(false)
@@ -64,36 +74,19 @@ class SalesInvoiceAssignmentController extends Controller
                                             }
                                         });
                                 })
+                                ->orderBy('name')
                                 ->get();
         } else if(in_array(Auth::user()->role_id, [4,5,6])) { // Head Cashier; additional condition might be added soon
             $cashiers = User::whereDeleted(false)
                                 ->whereActive(true)
                                 ->whereBlocked(false)
                                 ->whereRoleId(2)
-                                ->where(function($query) use($active_companies) {
-                                    $query->whereIn('company_id', $active_companies)
-                                        ->orWhere(function ($query) use ($active_companies) {
-                                            foreach ($active_companies as $active_company) {
-                                                $query->orWhereRaw('FIND_IN_SET(?, company_id)', [$active_company]);
-                                            }
-                                        });
+                                ->where(function ($query) use ($final_branches) {
+                                    foreach ($final_branches as $auth_user_branch) {
+                                        $query->orWhereRaw("FIND_IN_SET(?, branch_id)", [$auth_user_branch]);
+                                    }
                                 })
-                                ->where(function($query) use($active_branches) {
-                                    $query->whereIn('branch_id', $active_branches)
-                                        ->orWhere(function ($query) use ($active_branches) {
-                                            foreach ($active_branches as $active_branch) {
-                                                $query->orWhereRaw('FIND_IN_SET(?, branch_id)', [$active_branch]);
-                                            }
-                                        });
-                                })
-                                ->where(function($query) use ($auth_user_active_branch_ids) {
-                                    $query->whereIn('branch_id', $auth_user_active_branch_ids)
-                                        ->orWhere(function ($query) use ($auth_user_active_branch_ids) {
-                                            foreach($auth_user_active_branch_ids as $auth_user_branch) {
-                                                $query->orWhereRaw('FIND_IN_SET(?, branch_id)', [$auth_user_branch]);
-                                            }
-                                        });
-                                })
+                                ->orderBy('name')
                                 ->get();
         } 
 

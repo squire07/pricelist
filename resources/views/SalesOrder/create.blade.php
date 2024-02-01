@@ -375,10 +375,9 @@ tbody tr:nth-child(odd) {
         if(url_param == 'delivery') {
             $('#tfoot_sf_total_amount').prop('required', true);
         }
-
+        
         // fetch the items details by transaction type id using FETCH API
         $('#transaction_type').on('change', function(e) {
-
             // count the change event
             change_count++;
 
@@ -391,7 +390,7 @@ tbody tr:nth-child(odd) {
 
             // check if there is/are item(s) in the details table
             if(item_count > 0 && currently_selected != old_transaction_type) {
-                 // show notification
+                // show notification
                 Swal.fire({
                     title: 'Change Transaction Type?',
                     text: 'Your current sales order will be deleted.',
@@ -406,40 +405,41 @@ tbody tr:nth-child(odd) {
                     if (result.isConfirmed) {
                         // just refresh the page and remove all existing data; no longer needed to remove all data from elements
                         location.reload();
-                    } 
+                    } else {
+                        // Set the value to the old_transaction_type
+                        // this also fixes the "Maximum call stack size exceeded" issue;
+                        $('#transaction_type').val(old_transaction_type).trigger('change.select2');
+                    }
+                });
+            }
+            
+            fetch(window.location.origin + '/api/item/transaction_type/' + old_transaction_type, {
+                method: 'get',
+                headers: {
+                    'Content-type': 'application/json',
+                }
+
+            })
+            .then(response => response.json())
+            .then((response) => {
+                obj = JSON.parse(JSON.stringify(response));
+                $('#bcid').attr('disabled', false);
+                // make sure the select element is empty before populating with values
+                $('#item_name').empty();
+                // add blank as first value
+                $('#item_name').append($('<option></option>').val('').html('-- Select Item --'));
+                // add some values to item dropdown element
+                $.each(obj, function(key, data) {
+                    $('#item_name').append($('<option></option>').val(data.id).html(data.name));
                 });
 
-                $(this).select2('val', old_transaction_type);
-            }
+                // clear the sessionStorage first before storing another obj
+                sessionStorage.clear();
 
-            if(this.value !== '') {
-                fetch(window.location.origin + '/api/item/transaction_type/' + this.value, {
-                    method: 'get',
-                    headers: {
-                        'Content-type': 'application/json',
-                    }
-
-                })
-                .then(response => response.json())
-                .then((response) => {
-                    obj = JSON.parse(JSON.stringify(response));
-                    $('#bcid').attr('disabled', false);
-                    // make sure the select element is empty before populating with values
-                    $('#item_name').empty();
-                    // add blank as first value
-                    $('#item_name').append($('<option></option>').val('').html('-- Select Item --'));
-                    // add some values to item dropdown element
-                    $.each(obj, function(key, data) {
-                        $('#item_name').append($('<option></option>').val(data.id).html(data.name));
-                    });
-
-                    // clear the sessionStorage first before storing another obj
-                    sessionStorage.clear();
-
-                    // store the `obj` to sessionStorage
-                    window.sessionStorage.setItem('item_object', JSON.stringify(obj));
-                })
-            }
+                // store the `obj` to sessionStorage
+                window.sessionStorage.setItem('item_object', JSON.stringify(obj));
+            });
+            
         });
 
         // fetch the distributor's name by bcid using FETCH API

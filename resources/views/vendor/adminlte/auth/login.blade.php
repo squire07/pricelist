@@ -28,7 +28,7 @@
         {{-- Username field --}}
         <div class="input-group mb-3">
             <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
-                   value="{{ old('username') }}" placeholder="{{ __('Username') }}" autofocus id="input-username" autocomplete="off" style="background:#454d55">
+                   value="{{ old('username') }}" placeholder="{{ __('Username') }}" autofocus id="input-username" autocomplete="off">
 
             <div class="input-group-append">
                 <div class="input-group-text">
@@ -45,7 +45,7 @@
         {{-- Password field --}}
         <div class="input-group mb-3">
             <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                   placeholder="{{ __('adminlte::adminlte.password') }}" maxlength="12" id="input-password" autocomplete="new-password">
+                   placeholder="{{ __('adminlte::adminlte.password') }}" maxlength="12" id="input-password" autocomplete="off">
 
             <div class="input-group-append">
                 <div class="input-group-text">
@@ -91,6 +91,38 @@
     @stop
 @endif
 
+@section('adminlte_css')
+<style>
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active  {
+        transition: background-color 5000s;
+        -webkit-text-fill-color: #fff !important;
+    }
+</style>
+@endsection
+
+{{-- @section('auth_footer')
+    {{-- Password reset link --}}
+    {{-- @if($password_reset_url)
+        <p class="my-0">
+            <a href="{{ $password_reset_url }}">
+                {{ __('adminlte::adminlte.i_forgot_my_password') }}
+            </a>
+        </p>
+    @endif --}}
+
+    {{-- Register link --}}
+    {{-- @if($register_url)
+        <p class="my-0">
+            <a href="{{ $register_url }}">
+                {{ __('adminlte::adminlte.register_a_new_membership') }}
+            </a>
+        </p>
+    @endif 
+@stop --}}
+
 @section('adminlte_js')
     <script>
         $(document).ready(function(){
@@ -103,23 +135,3 @@
         });
     </script>
 @endsection
-
-{{-- @section('auth_footer')  --}}
-        {{-- Password reset link --}}
-        {{-- @if($password_reset_url)
-            <p class="my-0">
-                <a href="{{ $password_reset_url }}">
-                    {{ __('adminlte::adminlte.i_forgot_my_password') }}
-                </a>
-            </p>
-        @endif --}}
-
-        {{-- Register link --}}
-        {{-- @if($register_url)
-            <p class="my-0">
-                <a href="{{ $register_url }}">
-                    {{ __('adminlte::adminlte.register_a_new_membership') }}
-                </a>
-            </p>
-        @endif --}}
-    {{-- @stop --}}

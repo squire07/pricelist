@@ -200,8 +200,9 @@
             let a = this.value;
             let b = $('#series_to').val();
             let cashier_id = $('#cashier_id').val();
+
             if(b.trim() !== '') {
-                if ((parseFloat(a) < parseFloat(b)) && cashier_id !== null) {
+                if ((parseFloat(a) < parseFloat(b)) && cashier_id !== null && a > 0) {
                     $('#btn-modal-save').prop('disabled',false);
                 } else {
                     $('#btn-modal-save').prop('disabled',true);
@@ -217,7 +218,7 @@
             let b = $('#series_from').val();
             let cashier_id = $('#cashier_id').val();
             if(b.trim() !== '') {
-                if ((parseFloat(a) > parseFloat(b)) && cashier_id !== null) {
+                if ((parseFloat(a) > parseFloat(b)) && cashier_id !== null && b > 0) {
                     $('#btn-modal-save').prop('disabled',false);
                 } else {
                     $('#btn-modal-save').prop('disabled',true);

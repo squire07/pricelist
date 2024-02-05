@@ -36,7 +36,7 @@ class BuildReportController extends Controller
 
         $sales = Sales::leftJoin('sales_details as sd', 'sd.sales_id', '=', 'sales.id')
                         ->join('transaction_types as ttype', 'ttype.id', '=', 'sales.id')
-                        ->select('sales.id', 'sales.updated_at', 'sd.item_code', 'sd.item_name', 'sd.quantity', 'ttype.name')
+                        ->select('sales.id', 'sales.invoiced_at', 'sd.item_code', 'sd.item_name', 'sd.quantity', 'ttype.name')
                         ->orderBy('sd.item_name')
                         ->get();
 

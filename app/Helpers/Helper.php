@@ -809,4 +809,9 @@ class Helper {
 
         return $account != null ? true : false;
     }
+
+    public static function get_cashier_name_by_id($id) {
+        $cashier = User::whereId($id)->first();
+        return trim($cashier->name) ?? null;
+    }
 }

@@ -36,7 +36,7 @@ class BuildReportController extends Controller
 
         $sales = Sales::leftJoin('sales_details as sd', 'sd.sales_id', '=', 'sales.id')
                         ->join('transaction_types as ttype', 'ttype.id', '=', 'sales.id')
-                        ->select('sales.id', 'sales.invoiced_at', 'sd.item_code', 'sd.item_name', 'sd.quantity', 'ttype.name')
+                        ->select('sales.id', 'sales.updated_at', 'sd.item_code', 'sd.item_name', 'sd.quantity', 'ttype.name')
                         ->orderBy('sd.item_name')
                         ->get();
 
@@ -130,6 +130,9 @@ class BuildReportController extends Controller
                 ->leftJoin('item_bundles as ib', 'ib.bundle_name', '=', 'sd.item_code')
                 ->where(function ($query) use ($request, $branch_ids, $date_1, $date_2) {
                     if ($request->has('as_of') && $request->as_of !== null) {
+                        $query->whereBetween('s.updated_at', [$date_1, $date_2]);
+                    }
+                    if ($request->has('period') && $request->period !== null) {
                         $query->whereBetween('s.updated_at', [$date_1, $date_2]);
                     }
                 })
@@ -335,12 +338,15 @@ class BuildReportController extends Controller
                     if ($request->has('as_of') && $request->as_of !== null) {
                         $query->whereBetween('s.updated_at', [$date_1, $date_2]);
                     }
+                    if ($request->has('period') && $request->period !== null) {
+                        $query->whereBetween('s.updated_at', [$date_1, $date_2]);
+                    }
                 })
                 ->where(function ($query) use ($request, $company_ids) {
                     $query->whereIn('s.company_id', explode(',', $company_ids));
                 })
                 ->whereIn('status_id', [4,5])
-                ->groupBy('s.id', 's.transaction_type_id', 's.updated_at', 'sd.item_code', 'item_name', 'ib.item_code', 'ib.item_description', 'ib.quantity')
+                ->groupBy('s.id', 's.transaction_type_id', 's.updated_at', 's.status_id', 'sd.item_code', 'item_name', 'ib.item_code', 'ib.item_description', 'ib.quantity')
                 ->get();
 
         $transaction_types = TransactionType::whereDeleted(0)

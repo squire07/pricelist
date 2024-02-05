@@ -1,30 +1,150 @@
 @extends('adminlte::page')
 
-@section('title', 'Transaction List')
+@section('title', 'Transaction List Report')
 
 @section('content_header')
-    <h1>Transaction List</h1>
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Transaction List Report</h1>
+            </div>
+        </div>
+    </div>
+@endsection
 
-    <div class="card-body table-responsive" style="overflow:auto;width:100%;position:relative;">
-        <form id="request_date" class="form-horizontal" action="{{ url('reports/transaction-listing') }}" method="get">
+@section('content')
+    <div class="container-fluid">
+        <form action="{{ Route('generate-transaction-list-report') }}" method="get" id="period_report">
             @csrf
-            <label for="daterange">Request Date</label>
-            <div class="row">
-                <div class="col-lg-4 col-md-4">
-                    <div class="form-group form-group-sm">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="far fa-calendar-alt"></i>
-                                </span>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">                            
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Company</label>
+                                            <select class="form-control form-control-sm" name="company_id" id="company_id" data-dropdown-css-class="select2-primary" style="width: 100%; height:35px;" required>
+                                                {{-- @if(count($companies) > 1) --}}
+                                                    <option value="" selected="true">-- Select --</option>
+                                                {{-- @endif --}}
+                                                @foreach($companies as $company)
+                                                    <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Branch</label>
+                                            <select class="form-control form-control-sm" name="branch_id" id="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%; height:35px;">
+                                                @if(count($branches) > 1)
+                                                    <option value="" selected="true">-- All --</option>
+                                                @endif
+                                                @foreach($branches as $branch)
+                                                    <option value="{{ $branch->id }}" data-company-id="{{ $branch->company_id }}">{{ $branch->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Transaction Type</label>
+                                            <select class="form-control form-control-sm select2 select2-primary" name="transaction_type_id" id="transaction_type_id" data-dropdown-css-class="select2-primary" style="width: 100%;">
+                                                <option value="" selected="true">-- All --</option>
+                                                @foreach($transaction_types as $transaction_type)
+                                                    <option value="{{ $transaction_type->id }}">{{ $transaction_type->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Items</label>
+                                            <select class="form-control form-control-sm select2 select2-primary" name="item" id="item" data-dropdown-css-class="select2-primary" style="width: 100%;">
+                                                <option value="" selected="true">-- All --</option>
+                                                @foreach($items as $item)
+                                                    <option value="{{ $item->id }}" data-item-id="{{ $item->id }}">{{ $item->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Invoice #</label>
+                                            <input type="text" class="form-control form-control-sm" name="invoice" id="invoice" data-dropdown-css-class="select2-primary" style="width: 100%;" placeholder="-- All --">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Cashier Name</label>
+                                            <select class="form-control form-control-sm mt-2 select2 select2-primary" name="cashier" id="cashier_id" data-dropdown-css-class="select2-primary" style="width: 100%; height:35px;">
+                                                    <option value="" selected="true">-- All --</option>
+                                                @foreach($cashiers as $cashier)
+                                                    <option value="{{ $cashier->id }}" data-user-id="{{ $cashier->id }}">{{ $cashier->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <input type="text" class="form-control form-control-sm float-right" name="daterange" id="daterange" value="{{ Request::get('daterange') }}">
+                        </div>
+                    </div>
+                </div>
 
-                            <div class="input-group-append" onclick="document.getElementById('request_date').submit();">
-                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+            <div class="row">
+                <div class="col-6">
+                    <div class="card card-outline card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">As Of</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        {{-- <div class="input-group date" id="as_of" data-target-input="nearest">
+                                            <div class="input-group-prepend" data-target="#as_of" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                            <input type="text" name="as_of" id="as_of" class="form-control datetimepicker-input" data-target="#as_of">
+                                        </div> --}}
+
+                                        <div class="input-group date" id="as_of" data-target-input="nearest">
+                                            <div class="input-group-prepend" data-target="#as_of" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                            <input type="text" name="as_of" id="as_of_input" class="form-control datetimepicker-input" data-target="#as_of">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <input type="submit" class="btn btn-default" name="as_of_report" value="Generate Report">
+                                </div>
                             </div>
-                            <div class="input-group-append" onclick="window.location.assign('{{ url('reports/transaction-listing') }}')">
-                                <span class="input-group-text"><i class="fas fa-sync-alt"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="card card-outline card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Period</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="far fa-clock"></i></span>
+                                            </div>
+                                            <input type="text" name="period" id="period" class="form-control float-right" >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <input type="submit" class="btn btn-default" name="period_report" value="Generate Report">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -32,113 +152,61 @@
             </div>
         </form>
     </div>
+@endsection
 
-    <div class="container-fluid">
-        <div class="card-body table-responsive p-0">
-            <table id="dt_sales_orders" class="table table-bordered table-hover table-striped" width="100%">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Branch</th>
-                        <th>Cashier</th>
-                        <th>Cost Center</th>
-                        <th>Invoice No</th>
-                        <th>Distributor</th>
-                        <th>Transaction Type</th>
-                        <th>Payment Type</th>
-                        <th>Item</th>
-                        <th>Account</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($sales as $key => $sale)
-                        <tr>
-                            <td>{{ $sale->updated_at->format('m/d/Y') }}</td>
-                            <td>{{ $sale->branch->name ?? NULL }}</td>
-                            <td>{{ $sale->payment->created_by }}</td>
-                            <td>{{ $sale->branch->cost_center ?? NULL }}</td>
-                            <td>{{ Helper::get_si_assignment_no($sale->si_assignment_id) }}</td>
-                            <td>{{ Helper::get_distributor_name_by_bcid($sale->bcid) }}</td>
-                            <td>{{ $sale->transaction_type->name }}</td>
-                            <td>{{ $sale->payment->payment_type }}</td>
-                            <td>{{ $sale->sales_details[0]['item_name'] }}</td>
-                            <td>{{ $sale->income_expense_account->income_account ?? NULL}}</td>
-                            <td>{{ $sale->grandtotal_amount }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
+@section('adminlte_css')
+<style>
+    select option { 
+        line-height: 20px;
+    }
+</style>
 @endsection
 
 @section('adminlte_js')
 <script>
-    $(document).ready(function() {
-        // initialize select2 on this page using bootstrap 4 theme
-        $('.select2').select2({
-            theme: 'bootstrap4'
-        });
-
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        // re-initialize the datatable with additional column filters
-        var table = $('#dt_sales_orders').DataTable({
-            dom: 'Brtip',
-            deferRender: true,
-            paging: true,
-            searching: true,
-            lengthMenu: [[10, 25, 50, -1], ['10 rows', '25 rows', '50 rows', 'Show All']],
-            order: [[0, 'desc']],
-            buttons: [
-                {
-                    extend: 'pageLength',
-                    className: 'btn-default btn-sm',
-                },
-                {
-                    extend: 'excel',
-                    text: 'Export to Excel',
-                    footer: true,
-                    filename: 'Translist_Report_' + getCurrentDate(),
-                },
-            ],
-            language: {
-                processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."
-            }
-        });
-
-        // Add a single header row for both original titles and filter inputs
-        $('#dt_sales_orders thead tr').clone(true).appendTo('#dt_sales_orders thead').attr('id', 'filterRow');
-        $('#dt_sales_orders thead tr:eq(1) th').each(function (i) {
-            var title = $(this).text();
-            if (i >= 1 && i <= 8) { // filters for columns branch to items
-                $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
-                $('input', this).on('keyup change', function () {
-                    if (table.column(i).search() !== this.value) {
-                        table
-                            .column(i)
-                            .search(this.value)
-                            .draw();
-                    }
-                });
-            } else {
-                $(this).html('');
-            }
-        });
-
-        // Function to get the current date in the format MM-DD-YYYY
-        function getCurrentDate() {
-            var today = new Date();
-            var dd = String(today.getDate()).padStart(2, '0');
-            var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
-            var yyyy = today.getFullYear();
-            return mm + '-' + dd + '-' + yyyy;
-        }
+$(document).ready(function() {
+    // initialize select2 on this page using bootstrap 4 theme
+    $('.select2').select2({
+        theme: 'bootstrap4'
     });
+
+    $('#as_of').datetimepicker({
+        format: 'L',
+        defaultDate: new Date(),
+        maxDate: new Date(),
+        autoclose: true,
+        todayHighlight: true,
+        showAnim: 'fold',
+    });
+
+    $('#as_of_input').focus(function () {
+        $('#as_of').datetimepicker('toggle');
+    });
+
+    $('#period').daterangepicker({
+      timePicker: true,
+      timePickerIncrement: 30,
+      locale: {
+        format: 'MM/DD/YYYY hh:mm A'
+      },
+      maxDate: new Date(),
+    })
+
+    $('#company_id').on('change', function() {
+        let company_id = $(this).val();
+
+        if (company_id == 2) {
+            $('#branch_id').find('option[data-company-id="3"]').hide();
+            $('#branch_id').find('option[data-company-id="2"]').show();
+        } else if (company_id == 3) {
+            $('#branch_id').find('option[data-company-id="2"]').hide();
+            $('#branch_id').find('option[data-company-id="3"]').show();
+        } else {
+            $('#branch_id').find('option[data-company-id]').show();
+        }
+
+        $('#branch_id').val(null).trigger('change');
+    }); 
+});
 </script>
 @endsection

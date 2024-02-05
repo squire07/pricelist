@@ -110,7 +110,7 @@ Route::middleware(['auth','gate'])->group(function () {
         Route::get('build-report/generate', [BuildReportController::class, 'generate'])->name('generate-item-build-report');
         Route::get('build-report/generate-cafe', [BuildReportController::class, 'generateCafe'])->name('generate-cafe-item-build-report');
         Route::resource('transaction-listing', TransactionListingController::class)->only('index');
-        Route::get('transaction-listing/generate', [TransactionListing::class, 'generate'])->name('generate-transaction-list-report');
+        Route::get('transaction-listing/generate', [TransactionListingController::class, 'generate'])->name('generate-transaction-list-report');
         
         Route::resource('logs', HistoryController::class);
         Route::resource('nuc', NucReportController::class);

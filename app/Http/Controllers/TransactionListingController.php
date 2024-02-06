@@ -158,7 +158,7 @@ class TransactionListingController extends Controller
                 ->leftJoin('item_bundles as ib', 'ib.bundle_name', '=', 'sd.item_code')
                 ->where(function ($query) use ($request, $date_1, $date_2) {
                     if($request->has('transaction_type_id') && $request->transaction_type_id != null) {
-                        $query->where('transaction_type_id', $request->transaction_type_id);
+                        $query->where('sales.transaction_type_id', $request->transaction_type_id);
                     }
                     if ($request->has('as_of') && $request->as_of !== null) {
                         $query->whereBetween('sales.invoiced_at', [$date_1, $date_2]);
@@ -166,13 +166,16 @@ class TransactionListingController extends Controller
                     if ($request->has('period') && $request->period !== null) {
                         $query->whereBetween('sales.invoiced_at', [$date_1, $date_2]);
                     }
-                    if($request->has('item') && $request->item != null) {
-                        $query->where('sd.item_name', $request->item);
+                    if ($request->has('item') && $request->item != null) {
+                        $query->where(function ($query) use ($request) {
+                            $query->where('sd.item_name', $request->item)
+                                  ->orWhere('ib.item_description', 'LIKE', '%' . $request->item . '%');
+                        });
                     }
-                    if($request->has('invoice_number') && $request->invoice != null) {
-                        $query->where('siad.invoice_number', $request->invoice);
+                    if ($request->has('invoice') && $request->invoice != null) {
+                        $query->where(DB::raw("CONCAT(COALESCE(siad.prefix_value, ''), COALESCE(siad.series_number, ''))"), $request->invoice);
                     }
-                    if($request->has('cashier') && $request->cashier != null) {
+                    if ($request->has('cashier') && $request->cashier != null) {
                         $query->where('p.created_by', $request->cashier);
                     }
                 })
@@ -185,17 +188,20 @@ class TransactionListingController extends Controller
                 ->orderBy('sales.id')
                 ->get();
 
+            //dd($request);
+
         foreach ($sales as $sale) {
         $sale->item_name = str_replace('&amp;', '&', $sale->item_name);
         $sale->item_description = str_replace('&amp;', '&', $sale->item_description);
         }
 
 
-        $translist_for = $request->branch_id == null ? 'All Branches' : Helper::get_branch_name_by_id($request->branch_id);
+        $translist_for = $request->branch_id == null ? 'Branch: All' : Helper::get_branch_name_by_id($request->branch_id);
         $as_of = $request->as_of ?? Carbon::now()->format('m/d/Y');
         $transaction_type = $request->transaction_type_id == null ? 'Transaction Type: All' : Helper::get_transaction_type_name_by_id($request->transaction_type_id);
-        $item = $request->item == null ? 'All Items' : 'Item : ' . ($request->item);
-        $cashier = $request->cashier == null ? 'All Cashiers' : 'Cashier : ' . Helper::get_cashier_name_by_id($request->cashier);
+        $item = $request->item == null ? 'Item: All' : 'Item : ' . ($request->item);
+        $cashier = $request->cashier == null ? 'Cashier: All' : 'Cashier : ' . Helper::get_cashier_name_by_id($request->cashier);
+        $invoice = $request->invoice == null ? 'Invoice #: All' : 'Invoice #: ' . ($request->invoice);
 
         if($request->company_id == 2) {
             $templatePath = public_path('excel_templates/transaction-list-report-template-pr.xlsx');
@@ -219,6 +225,7 @@ class TransactionListingController extends Controller
         $sheet->setCellValue('A5', $transaction_type);
         $sheet->setCellValue('A6', $item);
         $sheet->setCellValue('A7', $cashier);
+        $sheet->setCellValue('F6', $invoice);
         $sheet->setCellValue('F4', 'Date Printed: ' . Carbon::now()->format('m/d/Y h:i:s A'));
         $sheet->setCellValue('F5', 'Prepared By: ' . Auth::user()->name);
 
@@ -227,7 +234,6 @@ class TransactionListingController extends Controller
     $previous_invoice_number = null;
     $previous_item_names = null;
     $row = 8;
-    $total = 0;
 
     foreach ($sales as $ks => $sale) {
         // Check if the current item_name is different from the previous one
@@ -236,7 +242,6 @@ class TransactionListingController extends Controller
             if ($previous_invoiced_at !== null) {
                 $row++;
             }
-            $row++;
             $sheet->setCellValue('A' . $row, date('m/d/Y', strtotime($sale->invoiced_at)))->getStyle('A' . $row)->getFont()->setBold(false);
             $sheet->getStyle('A' . $row)->getFont()->setBold(true); // Make item name bold
             $row++; // Move to the next row for data
@@ -250,11 +255,9 @@ class TransactionListingController extends Controller
                 $row++;
             }
             $sheet->setCellValue('B' . $row, $sale->invoice_number);
-            $sheet->getStyle('B' . $row)->getFont()->setBold(true);
-    
+            $sheet->getStyle('B' . $row)->getFont()->setBold(true); 
             $row++; // Move to the next row for data
-            $sheet->setCellValue('B' . $row, $sale->distributor_name);
-            $row++;
+            $sheet->setCellValue('B' . $row, $sale->distributor_name . ' [' . $sale->bcid . ']');
     
             $previous_invoice_number = $sale->invoice_number; // Update previous_invoice_number
         }

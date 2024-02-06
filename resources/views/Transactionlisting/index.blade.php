@@ -64,7 +64,7 @@
                                             <select class="form-control form-control-sm select2 select2-primary" name="item" id="item" data-dropdown-css-class="select2-primary" style="width: 100%;">
                                                 <option value="" selected="true">-- All --</option>
                                                 @foreach($items as $item)
-                                                    <option value="{{ $item->id }}" data-item-id="{{ $item->id }}">{{ $item->name }}</option>
+                                                    <option value="{{ $item->name }}" data-item-name="{{ $item->name }}">{{ $item->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>

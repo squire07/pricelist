@@ -79,11 +79,15 @@ class MaintainedMemberController extends Controller
             'Content-type' => 'application/x-www-form-urlencoded; charset=utf-8'
         ]);
 
+        $last_id = 0;
         // get the last data id
         $last_data_id = MaintainedMember::orderBy('id','desc')->first();
+        if($last_data_id) {
+            $last_id = $last_data_id->data_id;
+        }
         
         $res = Http::withHeaders(['Content-Type' => 'application/json','Authorization' => 'Bearer ' . $global_token['access_token'], 'Accept' => 'application/json'])
-                                ->get(env('PRIME_API') . 'maintained-members/' . $last_data_id);
+                                ->get(env('PRIME_API') . 'maintained-members/' . $last_id);
  
         if($res->status() == 200) {
             // append the maintained members

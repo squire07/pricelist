@@ -35,20 +35,28 @@ class SalesInvoiceAssignmentController extends Controller
 
         // get the active branches
         $active_branches = Branch::whereStatusId(8)->pluck('id'); // Must be refactor! status_id to status with boolean datatype: 0 = inactive/false; 1 = active/true;
-       
-        // find all the active company ids and branch ids in Auth::user() with role_id 4,5 and 6
-        $auth_user_active_company_ids = array_intersect(explode(',', Auth::user()->company_id), $active_companies->toArray());
 
-        // get the branches where user's active company is tagged
-        $auth_user_branches_by_active_company = Branch::whereIn('company_id', $auth_user_active_company_ids)->pluck('id');
+        if(in_array(Auth::user()->role_id, [11,12])) {
 
-        // intersect $active_branches with $auth_user_branches_by_active_company
-        $final_branches_sp1 = array_intersect($auth_user_branches_by_active_company->toArray(), $active_branches->toArray());
+            $final_branches = Branch::whereStatusId(8)
+                                ->whereIn('company_id', $active_companies->toArray())
+                                ->pluck('id');
 
-        $final_branches_sp2 = array_intersect($auth_user_branches_by_active_company->toArray(), $final_branches_sp1);
+        } else { 
+            // find all the active company ids and branch ids in Auth::user() with role_id 4,5 and 6
+            $auth_user_active_company_ids = array_intersect(explode(',', Auth::user()->company_id), $active_companies->toArray());
 
-        // intesect
-        $final_branches = array_intersect($final_branches_sp2, explode(',',Auth::user()->branch_id));
+            // get the branches where user's active company is tagged
+            $auth_user_branches_by_active_company = Branch::whereIn('company_id', $auth_user_active_company_ids)->pluck('id');
+
+            // intersect $active_branches with $auth_user_branches_by_active_company
+            $final_branches_sp1 = array_intersect($auth_user_branches_by_active_company->toArray(), $active_branches->toArray());
+
+            $final_branches_sp2 = array_intersect($auth_user_branches_by_active_company->toArray(), $final_branches_sp1);
+
+            // intesect
+            $final_branches = array_intersect($final_branches_sp2, explode(',',Auth::user()->branch_id));
+        }
 
         // Important: to make and empty array if intersect returns null
         $final_branches = empty($final_branches) ? [null] : $final_branches;
@@ -58,25 +66,14 @@ class SalesInvoiceAssignmentController extends Controller
                                 ->whereActive(true)
                                 ->whereBlocked(false)
                                 ->whereRoleId(2)
-                                ->where(function($query) use($active_companies) {
-                                    $query->whereIn('company_id', $active_companies)
-                                        ->orWhere(function ($query) use ($active_companies) {
-                                            foreach ($active_companies as $active_company) {
-                                                $query->orWhereRaw('FIND_IN_SET(?, company_id)', [$active_company]);
-                                            }
-                                        });
-                                })
-                                ->where(function($query) use($active_branches) {
-                                    $query->whereIn('branch_id', $active_branches)
-                                        ->orWhere(function ($query) use ($active_branches) {
-                                            foreach ($active_branches as $active_branch) {
-                                                $query->orWhereRaw('FIND_IN_SET(?, branch_id)', [$active_branch]);
-                                            }
-                                        });
+                                ->where(function ($query) use ($final_branches) {
+                                    foreach ($final_branches as $auth_user_branch) {
+                                        $query->orWhereRaw("FIND_IN_SET(?, branch_id)", [$auth_user_branch]);
+                                    }
                                 })
                                 ->orderBy('name')
                                 ->get();
-        } else if(in_array(Auth::user()->role_id, [4,5,6])) { // Head Cashier; additional condition might be added soon
+        } else if(in_array(Auth::user()->role_id, [4,5,6])) { // Head Cashier, OIC, BM; additional condition might be added soon
             $cashiers = User::whereDeleted(false)
                                 ->whereActive(true)
                                 ->whereBlocked(false)
@@ -93,9 +90,6 @@ class SalesInvoiceAssignmentController extends Controller
         $booklets = SalesInvoiceAssignment::with('booklet_details')
                         ->whereDeleted(false)
                         ->where(function ($query) use ($cashiers) {
-                            // foreach($cashiers as $branch_id) {
-                            //     $query->whereRaw('FIND_IN_SET(?, branch_id)', [$branch_id]);
-                            // }
                             if(!in_array(Auth::user()->role_id, [11,12])) {
                                 $query->whereIn('branch_id', explode(',', Auth::user()->branch_id));
                             }
@@ -137,8 +131,23 @@ class SalesInvoiceAssignmentController extends Controller
             substr(str_repeat(0, 6).$request->series_to, - 6)
         ];
 
-        $branch_id = $request->cashier_branch_id ?? User::whereDeleted(false)->whereId($request->cashier_id)->first()->branch_id;
-
+        // fix the issue with branch_id.             ↓ This branch_id could contain multiple ids if the first dropdown user has multiple branch but one of companies which belongs to the branch has been deactivated
+        $branch_ids = $request->cashier_branch_id ?? User::whereDeleted(false)->whereId($request->cashier_id)->first()->branch_id;
+        
+        $branch_id = null;
+        if (strpos($branch_ids, ',') !== false) {
+            // explode $branch_ids 
+            $branch_ids = explode(',', $branch_ids);
+            // get only the correct branch_id from active companies and branches
+            $active_company_ids = Company::whereStatusId(8)->pluck('id');
+            $active_branch_ids = Branch::whereIn('company_id', $active_company_ids)->pluck('id');
+            // final 
+            $branch_ids = array_intersect($branch_ids, $active_branch_ids->toArray());  
+            $branch_id = empty($branch_ids) ? null : reset($branch_ids);
+        } else {
+            $branch_id = $branch_ids; // this is actually a single branch id only
+        }
+        
         // get the company id from branch 
         $company_id = Branch::whereId($branch_id)->first();
 
@@ -157,6 +166,8 @@ class SalesInvoiceAssignmentController extends Controller
                                 ->whereBranchId($branch_id)
                                 ->get();
 
+                                // dd($details_branch);
+
         // merge all the results into a single collection so we can count all the invoices
         $merged_details = collect();
         foreach ($details_branch as $booklet_details) {
@@ -168,8 +179,9 @@ class SalesInvoiceAssignmentController extends Controller
             $existing_invoice_total_count = count($merged_details);
         }
 
-
         $total_request_count = intval($request->series_to) - intval($request->series_from) + 1; // ex: (0003200 - 0003101) = 99 + 1 => 100;
+
+        $overall_total_count = $existing_invoice_total_count + $total_request_count;
 
         if($details->isNotEmpty()) {
             return redirect()->back()->with('error', 'The series number already exists!'); 
@@ -185,12 +197,16 @@ class SalesInvoiceAssignmentController extends Controller
 
             if($booklet->save()) {
 
-                $loop_count = 1;
+                if($total_request_count > $existing_invoice_total_count) {
+                    $loop_count = $request->series_from;
+                } else {
+                    $loop_count = $existing_invoice_total_count + 1;
+                }
 
                 for($i = $request->series_from; $i <= $request->series_to; $i++) {
 
                     // prefix, run once only; IMPORTANT! do not inline;
-                    $prefix = Helper::sales_invoice_prefix($existing_invoice_total_count + $loop_count);
+                    $prefix = Helper::sales_invoice_prefix($loop_count);
 
                     $details = new SalesInvoiceAssignmentDetail();
                     $details->uuid = $booklet->uuid;
@@ -216,9 +232,9 @@ class SalesInvoiceAssignmentController extends Controller
     public function show($uuid)
     {
         $series = SalesInvoiceAssignment::with(['booklet_details','cashier'])
-                    ->whereDeleted(false)
-                    ->whereUuid($uuid)
-                    ->firstOrFail();
+                                            ->whereDeleted(false)
+                                            ->whereUuid($uuid)
+                                            ->firstOrFail();
 
         /* add cost center to object; 
         * note: this is for presentation only in the details page

@@ -707,8 +707,11 @@ class Helper {
         // );
 
         foreach ($prefix as $lower_limit => $letter) {
-            $upper_limit = $lower_limit + 20; // change this to actual 
+            // dev
+            $upper_limit = $lower_limit + 19; 
     
+            // prod
+            // $upper_limit = $lower_limit + 24999;
             if ($iteration >= $lower_limit && $iteration <= $upper_limit) {
                 return $letter;
             }

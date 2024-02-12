@@ -61,7 +61,7 @@ class SalesInvoiceAssignmentController extends Controller
         // Important: to make and empty array if intersect returns null
         $final_branches = empty($final_branches) ? [null] : $final_branches;
 
-        if(in_array(Auth::user()->role_id, [11,12])) {
+        if(in_array(Auth::user()->role_id, [4,5,6])) { // Head Cashier, OIC, BM; additional condition might be added soon
             $cashiers = User::whereDeleted(false)
                                 ->whereActive(true)
                                 ->whereBlocked(false)
@@ -73,7 +73,7 @@ class SalesInvoiceAssignmentController extends Controller
                                 })
                                 ->orderBy('name')
                                 ->get();
-        } else if(in_array(Auth::user()->role_id, [4,5,6])) { // Head Cashier, OIC, BM; additional condition might be added soon
+        } else { 
             $cashiers = User::whereDeleted(false)
                                 ->whereActive(true)
                                 ->whereBlocked(false)

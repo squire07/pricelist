@@ -109,8 +109,10 @@ Route::middleware(['auth','gate'])->group(function () {
         Route::resource('build-report', BuildReportController::class)->only('index');
         Route::get('build-report/generate', [BuildReportController::class, 'generate'])->name('generate-item-build-report');
         Route::get('build-report/generate-cafe', [BuildReportController::class, 'generateCafe'])->name('generate-cafe-item-build-report');
+        Route::get('build-report/generate-marketing-materials', [BuildReportController::class, 'generateMarketingMaterials'])->name('generate-marketing-materials-report');
         Route::resource('transaction-listing', TransactionListingController::class)->only('index');
         Route::get('transaction-listing/generate', [TransactionListingController::class, 'generate'])->name('generate-transaction-list-report');
+        Route::get('transaction-listing/generate-summary', [TransactionListingController::class, 'generateSummary'])->name('generate-summary-transaction-list-report');
         
         Route::resource('logs', HistoryController::class);
         Route::resource('nuc', NucReportController::class);

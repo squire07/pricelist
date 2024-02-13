@@ -49,6 +49,12 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label>Marketing Materials Only</label>
+                                        <input type="checkbox" name="marketing_materials" id="marketing_materials">
+                                    </div>
+                                </div>
                             </div>
                     </div>
                 </div>
@@ -162,11 +168,22 @@ $(document).ready(function() {
 
         $('#branch_id').val(null).trigger('change');
     }); 
-        $('#branch_id').on('change', function () {
+
+    $('#marketing_materials').on('change', function () {
+        if ($(this).prop('checked')) {
+                $('#period_report').attr('action', '{{ route('generate-marketing-materials-report') }}');
+        } else {
+                $('#period_report').attr('action', '{{ route('generate-item-build-report') }}');
+        }
+    });
+
+    $('#branch_id').on('change', function () {
         let branch_id = $(this).val();
-        
+
         if (branch_id == 14) {
             $('#period_report').attr('action', '{{ route('generate-cafe-item-build-report') }}');
+        } else if (branch_id == 14 && $('#marketing_materials').is(':checked')) {
+            $('#period_report').attr('action', '{{ route('generate-marketing-materials-report') }}');
         } else {
             $('#period_report').attr('action', '{{ route('generate-item-build-report') }}');
         }

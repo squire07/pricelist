@@ -86,6 +86,12 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Summary Only</label>
+                                            <input type="checkbox" name="summary_report" id="summary_report">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -206,7 +212,15 @@ $(document).ready(function() {
         }
 
         $('#branch_id').val(null).trigger('change');
-    }); 
+    });
+
+        $('#summary_report').on('change', function () {
+            if ($(this).prop('checked')) {
+                $('#period_report').attr('action', '{{ route('generate-summary-transaction-list-report') }}');
+            } else {
+                $('#period_report').attr('action', '{{ route('generate-transaction-list-report') }}');
+            }
+    });
 });
 </script>
 @endsection

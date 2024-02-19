@@ -540,7 +540,11 @@ class Helper {
                 'income_account' => $accounts->income_account ?? null,
                 'expense_account' => $accounts->expense_account ?? null, 
                 'cost_center' => $sales->branch->cost_center_name,
-                'docstatus' => 1
+                'docstatus' => 1,
+
+                // add batch no (ERPNext v15.x)
+                'use_serial_batch_fields' => 1,
+                'batch_no' => Helper::get_batch_id($detail->item_code)
             ];
         }
 
@@ -768,6 +772,24 @@ class Helper {
         return TransactionType::where('name', 'LIKE', '%ubc%')
                                     ->orWhere('name', 'LIKE', '%upc%')
                                     ->pluck('id')->toArray();
+    }
+
+    public static function is_upc_ubc_transaction($transaction_id) 
+    {
+        // Return true or false
+        $result = TransactionType::whereId($transaction_id)
+                                ->where(function($query) {
+                                    $query->where('name', 'LIKE', '%ubc%')
+                                        ->orWhere('name', 'LIKE', '%upc%');
+                                }) 
+                                ->get();
+
+        // Return the results as a valid JSON
+        if (!$result->isEmpty()) {
+            return response()->json(true);
+        } else {
+            return response()->json(false);
+        }
     }
 
     public static function get_is_cash_payment_names()

@@ -288,6 +288,9 @@ tfoot tr td {
     border: none !important;
 }
 
+.select2-container--default .select2-selection--multiple {
+    background-color: #343a40 !important;
+}
 </style>
 @endsection
 

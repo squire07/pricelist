@@ -142,6 +142,35 @@
 
 @section('adminlte_css')
     <link rel="stylesheet" href="{{ asset('vendor/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+
+    <style>
+        /* Style the dropdown container */
+        .select2-container--default .select2-selection--single {
+            background-color: #343a40; /* Dark background color */
+            color: white; /* Light text color */
+            border: 1px solid #6c757d;
+            border-radius: 5px;
+        }
+
+        /* Style the dropdown arrow */
+        /* .select2-container--default .select2-selection__arrow {
+            background-color: #343a40;
+            border-top: 1px solid #6c757d;
+        } */
+
+        /* Style the dropdown items */
+        .select2-container--default .select2-results__option {
+            background-color: #2c3136; /* Darker background color for items */
+            color: white; /* Light text color for items */
+        }
+
+        /* Style the placeholder color and selected option */
+        .select2-container--default .select2-selection--single .select2-selection__placeholder,
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: white; /* Light text color for placeholder and selected option */
+        }
+
+    </style>
 @endsection
 
 @section('adminlte_js')

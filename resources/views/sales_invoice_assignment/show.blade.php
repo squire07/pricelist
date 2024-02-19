@@ -30,7 +30,7 @@
                         <table class="table">
                             <tr>
                                 <th style="width:50%">Series Number:</th>
-                                <td>{{ $series->cost_center . '-' . $series->prefix_value . $series->series_from . ' - ' . $series->cost_center . '-' . $series->prefix_value . $series->series_to }}</td>
+                                <td>{{ $series->cost_center . '-' . Helper::sales_invoice_prefix($series->series_from) . $series->series_from . ' - ' . $series->cost_center . '-' . Helper::sales_invoice_prefix($series->series_to) . $series->series_to }}</td>
                             </tr>
                             <tr>
                                 <th>Branch:</th>

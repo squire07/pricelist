@@ -9,15 +9,15 @@
                 <h1>Users</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add" {{ Helper::BP(15,2) }}>Add User</button>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add" {{ Helper::BP(1,1) }}>Add User</button>
             </div>
         </div>
     </div>
 @stop
 
 @php
-    $edit_user_button_state = Helper::BP(15,4);
-    $edit_user_permission_button_state = Helper::BP(16,4)
+    $edit_user_button_state = Helper::BP(11,4);
+    $edit_user_permission_button_state = Helper::BP(11,4)
 @endphp
 
 @section('content')
@@ -29,11 +29,7 @@
                         <tr>
                             <th class="text-center">ID</th>
                             <th class="text-center" style="min-width:125px;">Name</th>
-                            <th class="text-center">Username</th>
-                            <th class="text-center">Email</th>
                             <th class="text-center" style="min-width:125px;">Role</th>
-                            <th class="text-center" style="min-width:125px;">Branch</th>
-                            <th class="text-center" style="min-width:230px;">Company</th>
                             <th class="text-center">Active</th>
                             <th class="text-center">Blocked</th>
                             <th class="text-center" style="min-width:130px">Action</th>
@@ -44,15 +40,7 @@
                             <tr>
                                 <td class="text-center">{{ $user->id }}</td>
                                 <td class="text-left">{{ $user->name }}</td>
-                                <td class="text-left">{{ $user->username }}</td>
-                                <td class="text-left">{{ $user->email }}</td>
                                 <td class="text-center">{{ $user->role->name ?? '' }}</td>
-                                <td class="text-center">
-                                    {{ !is_null($user->branch_id) ? str_replace(',', ', ', Helper::get_branch_name_by_id($user->branch_id)) : '' }}
-                                </td>
-                                <td class="text-center">
-                                    {{ !is_null($user->company_id) ? str_replace(',', ', ', Helper::get_company_names_by_id($user->company_id)) : '' }}
-                                </td>
                                 <td class="text-center">
                                     @if($user->active == 1)
                                         <i class="fas fa-check-circle" style="color:#28a745"></i>
@@ -67,23 +55,23 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-primary btn_edit" 
-                                    data-toggle="modal" 
-                                    data-target="#modal-edit" 
-                                    data-id="{{ $user->id }}" 
-                                    data-uuid="{{ $user->uuid }}" 
-                                    data-user-name="{{ $user->name }}" 
-                                    data-user-username="{{ $user->username }}" 
-                                    data-user-email="{{ $user->email }}"
-                                    data-branch-id="{{ $user->branch_id }}" 
-                                    data-role-id="{{ $user->role_id }}"
-                                    data-company-id="{{ $user->company_id }}"
-                                    data-user-active="{{ $user->active }}"
-                                    data-user-blocked="{{ $user->blocked }}"
-                                    {{ $edit_user_button_state }}>
-                                    <i class="fas fa-pencil-alt"></i>&nbsp;Edit
-                                </button>
-                                    <a href="{{  url('permissions/' . $user->uuid . '/edit' ) }}" class="btn btn-sm btn-success {{ $edit_user_permission_button_state }}" target="_self"><i class="fas fa-tasks"></i></a>
+                                    <button type="button" class="btn btn-sm btn-primary btn_edit" 
+                                        data-toggle="modal" 
+                                        data-target="#modal-edit" 
+                                        data-id="{{ $user->id }}" 
+                                        data-uuid="{{ $user->uuid }}" 
+                                        data-user-name="{{ $user->name }}" 
+                                        data-user-username="{{ $user->username }}" 
+                                        data-user-email="{{ $user->email }}"
+                                        data-branch-id="{{ $user->branch_id }}" 
+                                        data-role-id="{{ $user->role_id }}"
+                                        data-company-id="{{ $user->company_id }}"
+                                        data-user-active="{{ $user->active }}"
+                                        data-user-blocked="{{ $user->blocked }}"
+                                        {{ $edit_user_button_state }}>
+                                        <i class="fas fa-pencil-alt"></i>&nbsp;Edit
+                                    </button>
+                                        <a href="{{  url('permissions/' . $user->uuid . '/edit' ) }}" class="btn btn-sm btn-success {{ $edit_user_permission_button_state }}" target="_self"><i class="fas fa-tasks"></i></a>
                                 </td>
                             </tr>
                         @endforeach
@@ -108,29 +96,29 @@
                     <div class="modal-body">
                         <div class="container-fluid">
                             <div class="col-12">
-                                <label for="name">Name</label>
+                                <label for="name" data-required="true">Name</label>
                                 <input type="text" class="form-control form-control-sm" name="name" maxlength="25" id="modal_add_name" required>
                             </div>
                             <div class="col-12">
-                                <label for="name">Username</label>
+                                <label for="name" data-required="true">Username</label>
                                 <input type="text" class="form-control form-control-sm" name="username" maxlength="25" id="modal_add_username" required>
                             </div>
-                            <div class="col-12">
+                            {{-- <div class="col-12">
                                 <label for="name">Email</label>
                                 <input type="email" class="form-control form-control-sm" name="email" maxlength="55" id="modal_add_email" required>
-                            </div>
+                            </div> --}}
                             <div class="col-12">
-                                <label for="password">Password</label>
+                                <label for="password" data-required="true">Password</label>
                                 <input type="password" class="form-control form-control-sm" name="password" id="password" maxlength="12" minlength="8" required>
                             </div>
                             <div class="col-12">
-                                <label for="confirmpassword">Confirm Password</label>
+                                <label for="confirmpassword" data-required="true">Confirm Password</label>
                                 <input type="password" class="form-control form-control-sm" id="confirmpassword" maxlength="12" minlength="8" required>
                                 <div class="form-text confirm-message"></div>
                             </div>
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label for="role_id">Role</label>
+                                    <label for="role_id" data-required="true">Role</label>
                                     <select class="form-control form-control-sm" name="role_id" id="modal_add_role_id" required>
                                         <option value="" disabled selected>-- Select Role --</option>
                                         @foreach($roles as $role)
@@ -138,31 +126,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            </div>
-                            <div class="col-md-12 col-sm-12">
-                                <div class="form-group">
-                                    <label for="companies">Companies</label>
-                                    <select class="select2" multiple="multiple" id="modal_add_company_id" name="company_id[]" data-name="company_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                        @foreach($companies as $company)
-                                            @if(in_array($company->status_id, [8,1]))
-                                                <option value="{{ $company->id }}">{{ $company->name }}</option>
-                                            @endif
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-12 col-sm-12">
-                                <div class="form-group">
-                                    <label for="companies">Branches</label>
-                                    <select class="select2" multiple="multiple" id="modal_add_branch_id" name="branch_id[]" data-name="branch_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required disabled>
-                                        @foreach($branches as $branch)
-                                            @if(in_array($branch->status_id, [8,1]))
-                                                <option value="{{ $branch->id }}" class="{{ $branch->company_id == 3 ? 'branch-local' : 'branch-premier' }}">{{ $branch->name }}</option>
-                                            @endif
-                                        @endforeach
-                                    </select>                                 
-                                </div>
-                            </div>
+                            </div>  
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -191,29 +155,29 @@
                     @csrf
                     <div class="modal-body">
                         <div class="col-12">
-                            <label for="name">Name</label>
+                            <label for="name" data-required="true">Name</label>
                             <input type="text" class="form-control form-control-sm" name="name" id="modal_edit_name" maxlength="25" required>
                         </div>
                         <div class="col-12">
-                            <label for="name">Username</label>
+                            <label for="name" data-required="true">Username</label>
                             <input type="text" class="form-control form-control-sm" name="username" id="modal_edit_username" maxlength="25" readonly>
                         </div>
-                        <div class="col-12">
+                        {{-- <div class="col-12">
                             <label for="name">Email</label>
                             <input type="email" class="form-control form-control-sm" name="email" id="modal_edit_email" maxlength="55" required>
-                        </div>
+                        </div> --}}
                         <div class="col-12">
-                            <label for="password">Password</label>
+                            <label for="password" data-required="true">Password</label>
                             <input type="password" class="form-control form-control-sm" name="password" id="password_edit" maxlength="12" minlength="8">
                         </div>
                         <div class="col-12">
-                            <label for="confirmpassword">Confirm Password</label>
+                            <label for="confirmpassword" data-required="true">Confirm Password</label>
                             <input type="password" class="form-control form-control-sm" id="confirmpassword_edit" maxlength="12" minlength="8">
                             <div class="form-text confirm-message"></div>
                         </div>
                         <div class="col-12">
                             <div class="form-group">
-                                <label for="comapny_id">Role</label>
+                                <label for="comapny_id" data-required="true">Role</label>
                                 <select class="form-control form-control-sm" name="role_id" id="modal_edit_role_id" required>
                                     <option value="" disabled selected>-- Select Role --</option>
                                     @foreach($roles as $role)
@@ -244,55 +208,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-12 col-sm-12">
-                            <div class="form-group">
-                                <label for="companies">Companies</label>
-                                <select class="form-control select2" multiple="multiple" id="modal_edit_company_id" name="company_id[]" data-name="company_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;">
-                                    @foreach($companies as $company)
-                                        @php
-                                            $companyStatus = $company->status_id == 9 ? 'inactive-company' : 'active-company';
-                                        @endphp
-                                        <option value="{{ $company->id }}" class="{{ $companyStatus }}" @if($company->status_id == 9) disabled @endif>{{ $company->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12">
-                            <div class="form-group">
-                                <label for="companies">Current Companies</label>
-                                <select class="form-control select22" multiple="multiple" id="modal_edit_company_names" name="company_id[]" data-name="company_name[]" data-dropdown-css-class="select22-primary" style="width: 100%;">
-                                    @foreach($companies as $company)
-                                        <option value="{{ $company->id }}" class="{{ $companyStatus }}" @if($company->status_id == 9) disabled @endif>{{ $company->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12"> 
-                            <div class="form-group">
-                                <label for="companies">Branches</label>
-                                <select class="form-control select2" multiple="multiple" id="modal_edit_branch_id" name="branch_id[]" data-name="branch_name[]" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                    @foreach($branches as $branch)
-                                    @php
-                                    // Determine classes based on conditions
-                                    $companyClass = $branch->company_id == 3 ? 'branch-local' : 'branch-premier';
-                                    $statusClass = $branch->status_id == 9 ? 'inactive-branch' : 'active-branch';
-                                    @endphp
-                                        <option value="{{ $branch->id }}" class="{{ $companyClass }} {{ $statusClass }}">{{ $branch->name }}</option>
-                                    @endforeach
-                                </select>                             
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12"> 
-                            <div class="form-group">
-                                <label for="companies">Current Branches</label>
-                                <select class="form-control select22" multiple="multiple" id="modal_edit_branch_names" name="branch_id[]" data-name="branch_name[]" data-dropdown-css-class="select22-primary" style="width: 100%;" disabled>
-                                    @foreach($branches as $branch)
-                                        <option value="{{ $branch->id }}" class="{{ $companyClass }} {{ $statusClass }}">{{ $branch->name }}</option>
-                                    @endforeach
-                                </select>                             
-                            </div>
-                        </div>
-                    </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="modal_edit_close" >Close</button>
                         <button type="submit" class="btn btn-primary btn-sm m-2"><i class="fas fa-save mr-2"></i>Update</button>
@@ -321,6 +236,12 @@
     #modal_edit_company_names + .select2-container .select2-selection,
     #modal_edit_branch_names + .select2-container .select2-selection {
         border: none !important;
+    }
+
+        /* Style for text within labels */
+        label[for][data-required="true"]::after {
+        content: " *";
+        color: red;
     }
 </style>
 @endsection
@@ -351,7 +272,7 @@ $(document).ready(function() {
         ],
         columnDefs: [ 
             {
-                targets: [9], // column index (start from 0)
+                targets: [5], // column index (start from 0)
                 orderable: false, // set orderable false for selected columns
             }
         ],

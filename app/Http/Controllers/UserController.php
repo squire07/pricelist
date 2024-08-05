@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Branch;
 use App\Models\Company;
+use App\Models\Department;
 use App\Models\PermissionModule;
 use App\Models\Role;
 use App\Models\User;
@@ -30,10 +31,10 @@ class UserController extends Controller
             $company_ids[] = $company->id;
         }
 
-        $branches = Branch::whereDeleted(false)->whereIn('company_id', $company_ids)->orderBy('company_id')->orderBy('name')->get();
+        $departments = Department::whereDeleted(false)->get();
 
         $roles = Role::whereDeleted(false)->whereNotIn('id', [12])->get();
-        return view('user.index', compact('users','branches','companies','roles'));
+        return view('user.index', compact('users','departments','companies','roles'));
     }
 
     /**
@@ -49,39 +50,35 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if (User::where('username', $request->username)->where('email', $request->email)->exists()) {
-            return redirect()->back()->with('error', "User with username {$request->username} and email {$request->email} already exists!");
-        } else if (User::where('username', $request->username)->exists()) {
+        if (User::where('username', $request->username)->exists()) {
             return redirect()->back()->with('error', "User with username {$request->username} already exists!");
-        } else if (User::where('email', $request->email)->exists()) {
-            return redirect()->back()->with('error', "User with email {$request->email} already exists!");
-        } 
+        }
         
         // Validate company and branch selections
-        $selected_company_id = isset($request->company_id) ? $request->company_id : [];
-        $selected_branch_id = isset($request->branch_id) ? $request->branch_id : [];
+        // $selected_company_id = isset($request->company_id) ? $request->company_id : [];
+        // $selected_branch_id = isset($request->branch_id) ? $request->branch_id : [];
 
-        // Create an array to store selected branches for each company
-        $selected_branched_by_company = [];
+        // // Create an array to store selected branches for each company
+        // $selected_branched_by_company = [];
 
-        // Group selected branches by company
-        foreach ($selected_branch_id as $branchId) {
-            $branch = Branch::find($branchId);
-            $companyId = $branch->company_id;
+        // // Group selected branches by company
+        // foreach ($selected_branch_id as $branchId) {
+        //     $branch = Branch::find($branchId);
+        //     $companyId = $branch->company_id;
 
-            if (!isset($selected_branched_by_company[$companyId])) {
-                $selected_branched_by_company[$companyId] = [];
-            }
+        //     if (!isset($selected_branched_by_company[$companyId])) {
+        //         $selected_branched_by_company[$companyId] = [];
+        //     }
 
-            $selected_branched_by_company[$companyId][] = $branchId;
-        }
+        //     $selected_branched_by_company[$companyId][] = $branchId;
+        // }
 
-        // Check if at least one branch is selected for each company
-        foreach ($selected_company_id as $companyId) {
-            if (!isset($selected_branched_by_company[$companyId])) {
-                return redirect()->back()->with('error', "Please select at least one branch for each company!");
-            }
-        }
+        // // Check if at least one branch is selected for each company
+        // foreach ($selected_company_id as $companyId) {
+        //     if (!isset($selected_branched_by_company[$companyId])) {
+        //         return redirect()->back()->with('error', "Please select at least one branch for each company!");
+        //     }
+        // }
 
         $user = new User();
         $user->uuid = Str::uuid();
@@ -89,8 +86,10 @@ class UserController extends Controller
         $user->username = $request->username;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
-        $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';
-        $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
+        $user->company_id = 1; // Default company id
+        $user->branch_id = 1; //Default branch id
+        // $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';
+        // $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : '';
         $user->role_id = $request->role_id;
         $user->active = 1; //set default status to Active
         $user->created_by = Auth::user()->name;
@@ -141,9 +140,9 @@ class UserController extends Controller
      */
     public function update(Request $request, $uuid)
     {
-        if (User::where('email', $request->email)->whereNot('uuid', $uuid)->exists()) {
-            return redirect()->back()->with('error', "User with email {$request->email} already exists!");
-        } 
+        // if (User::where('email', $request->email)->whereNot('uuid', $uuid)->exists()) {
+        //     return redirect()->back()->with('error', "User with email {$request->email} already exists!");
+        // } 
     
         $user = User::whereUuid($uuid)->whereDeleted(false)->firstOrFail();
         $user->name = $request->name;
@@ -181,8 +180,8 @@ class UserController extends Controller
                 }
             }
         }
-        $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';
-        $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : $user->branch_id;
+        // $user->company_id = isset($request->company_id) ? implode(',', $request->company_id) : '';
+        // $user->branch_id = isset($request->branch_id) ? implode(',', $request->branch_id) : $user->branch_id;
         $user->role_id = $request->role_id;
         $user->active = $request->active; 
         $user->blocked = $request->blocked; 

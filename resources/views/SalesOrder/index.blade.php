@@ -9,7 +9,7 @@
                 <h1>Sales Orders</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <a href="#" class="btn btn-primary {{ Helper::BP(1,2) }}" data-toggle="modal" data-target="#modal-so-option"><i class="fas fa-cart-plus"></i> Create Sales Order</a>
+                <a href="{{ url('sales-orders/create') }}" class="btn btn-primary {{ Helper::BP(1,2) }}"><i class="fas fa-cart-plus"></i> Create Sales Order</a>
             </div>
         </div>
     </div>
@@ -88,7 +88,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal-so-option">
+    {{-- <div class="modal fade" id="modal-so-option">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -96,23 +96,14 @@
                         <h3>Select Delivery Option</h3>
                         <div class="d-grid col-6 mx-auto">
                             <a href="{{ url('sales-orders/create?so=branch-pickup') }}" class="btn btn-app" id="btn-pickup" style="min-width: 150px;"><i class="fas fa-shopping-bag"></i>Branch Pickup</a>
-
                             <a href="{{ url('sales-orders/create?so=delivery') }}" class="btn btn-app" id="btn-shipping" style="min-width: 150px;"><i class="fas fa-shipping-fast"></i>Delivery</a>
-
-
-                            {{-- <button type="button" class="btn btn-app" id="btn-pickup" style="min-width: 150px;">
-                                <i class="fas fa-shopping-bag"></i>Branch Pickup
-                            </button>
-                            <button type="button" class="btn btn-app" id="btn-shipping" style="min-width: 150px;">
-                                <i class="fas fa-shipping-fast"></i>Delivery
-                            </button> --}}
                         </div>
                     </div>    
                 </div>
 
             </div>
         </div>
-    </div>
+    </div> --}}
 @endsection
 
 @section('adminlte_js')
@@ -137,6 +128,12 @@
                     extend: 'pageLength',
                     className: 'btn-default btn-sm',
                 },
+            ],
+            columnDefs: [
+                { 
+                    orderable: false,
+                    targets: 0 
+                }
             ],
             language: {
                 processing: "<img src='{{ asset('images/spinloader.gif') }}' width='32px'>&nbsp;&nbsp;Loading. Please wait..."

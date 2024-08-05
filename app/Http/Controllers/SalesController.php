@@ -245,7 +245,6 @@ class SalesController extends Controller
      */
     public function update(Request $request, $uuid)
     {   
-        $uuid = $request->uuid ?? $uuid;
         
         $sales = Sales::whereUuid($uuid)->whereDeleted(false)->firstOrFail();  
         

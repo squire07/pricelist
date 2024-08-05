@@ -22,64 +22,6 @@
                     <input type="hidden" name="signee_name" id="signee_name">
                     <input type="hidden" name="origin_id" id="origin_id">
                     <div class="row">
-                        <div class="col-md-4 col-sm-12">
-                            <div class="form-group">
-                                <label>Transaction Type</label>
-                                <select class="form-control form-control-sm select2 select2-primary" id="transaction_type" name="transaction_type_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                    <option value="" selected="true" disabled>-- Select Transaction Type --</option>
-                                    @foreach($transaction_types as $transaction_type)
-                                        <option value="{{ $transaction_type->id }}">{{ $transaction_type->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-sm-12">
-                            <div class="form-group">
-                                <label>Branch</label>
-                                <select class="form-control form-control-sm select2 select2-primary" id="branch_id" name="branch_id" data-dropdown-css-class="select2-primary" style="width: 100%;" required {{ count($branches) > 1 ? '':'readonly' }}>
-                                    @if(count($branches) > 1)
-                                        <option value="" selected="true" disabled>-- Select Branch --</option>
-                                        @foreach($branches as $branch)
-                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                                        @endforeach
-                                    @else
-                                        @foreach($branches as $branch)
-                                            <option value="{{ $branch->id }}" selected>{{ $branch->name }}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4 col-sm-12 mb-3">
-                            <div class="input-group input-group-sm">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text text-bold">BCID&nbsp;<span class="required"></span></span>
-                                </div>
-                                <input type="text" class="form-control form-control-sm" id="bcid" min="0" maxlength="12" name="bcid" disabled>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-sm-12 mb-3">
-                            <div class="input-group input-group-sm">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text text-bold">Name&nbsp;<span class="required"></span></span>
-                                </div>
-                                <input type="text" class="form-control form-control-sm" id="distributor_name" name="distributor_name" readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-sm-12 mb-3">
-                            <div class="input-group input-group-sm">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text text-bold">Group&nbsp;<span class="required"></span></span>
-                                </div>
-                                <input type="text" class="form-control form-control-sm" id="group_name" name="group_name" readonly>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
                         <div class="col-md-1 col-2 d-none">
                             <label for="rs_points">Item Code</label>
                             <input type="text" class="form-control form-control-sm" id="item_code" disabled>
@@ -129,22 +71,13 @@
                                 <tbody></tbody>
                                 <tfoot>
                                     <tr>
-                                        <td class="text-right text-bold" colspan="4">Sub Total</td>
+                                        <td class="text-right text-bold" colspan="2">&nbsp;</td>
+                                        <td class="text-right text-bold text-center"><span id="total_quantity_count">0</span></td>
+                                        <td class="text-right text-bold">Sub Total</td>
                                         <td class="text-right text-bold">
                                             <input type="text" class="text-right custom-input-text" name="total_amount" id="tfoot_subtotal_amount" value="0.00" readonly>
                                         </td>
                                     </tr>
-                                    @if(Request::get('so') == 'delivery')
-                                        <tr>
-                                            <td class="text-right text-bold" colspan="4">
-                                                <input type="checkbox" name="sf_checkbox" id="sf_checkbox" data-toggle="modal" disabled/>
-                                                <span class="ml-1">Shipping Fee</span>
-                                            </td>
-                                            <td class="text-right text-bold">
-                                                <input type="text" class="text-right custom-input-text" name="shipping_fee" id="tfoot_sf_total_amount" value="0.00" readonly/>
-                                            </td>
-                                        </tr>
-                                    @endif
                                     <tr>
                                         <td class="text-right text-bold" colspan="4">VATable Sales</td>
                                         <td class="text-right text-bold">
@@ -169,27 +102,6 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-12">
-                            <div class="form-group clearfix">
-                                <div class="icheck-primary d-inline">
-                                    <input type="checkbox" name="new_signup" id="checkbox_new_signup">
-                                    <label for="checkbox_new_signup">New sign up:</label>
-                                    <span class="ml-2" id="span_signee_name"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-group clearfix">
-                                <div class="icheck-primary d-inline">
-                                    <input type="checkbox" name="origin" id="checkbox_origin">
-                                    <label for="checkbox_origin">Origin:</label>
-                                    <span class="ml-2" id="span_origin"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
                         <div class="col-12 text-center">
                             <input type="button" value="Cancel" id="btn_cancel_so" class="btn btn-lg btn-danger">
                             <button class="btn btn-primary btn-lg m-2 " id="btn_save_so" {{ Helper::BP(1,2) }}><i class="fas fa-save mr-2"></i>Save Sales Order</button>
@@ -197,103 +109,6 @@
                     </div>
                 {{-- </form> --}}
             </div>    
-        </div>
-    </div>
-
-    <div class="modal fade" id="modal-add-sf" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Add Shipping Fee</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-7 col-sm-12">
-                            <div class="form-group">
-                                <label for="modal_select_sf">Parcel Size and Region</label>
-                                <select class="form-control form-control-sm select2 select2-primary" id="modal_select_sf" data-dropdown-css-class="select2-primary" style="width: 100%;">
-                                    <option value="" selected="true" disabled>-- Select Size and Region --</option>
-                                    @foreach($shipping_fees as $shipping_fee)
-                                        <option value="{{ $shipping_fee->id }}" data-parcel-rate="{{ $shipping_fee->parcel_rate }}">{{ $shipping_fee->parcel_size}} - {{ $shipping_fee->region}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-5 col-sm-12">    
-                            <div class="form-group">
-                                <label for="modal_sf_amount">Shipping Fee Amount</label>
-                                <input type="text" class="form-control form-control-sm" id="modal_sf_amount" style="text-align:right;" placeholder="0.00">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="btn-sf-close">Close</button>
-                    <input type="button" class="btn btn-primary btn-sm m-2" id="btn-add-sf" value="Save" disabled>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="modal-add-new-signup" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">New Sign Up</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-12">    
-                            <div class="form-group">
-                                <label for="modal_new_signup_name">Name</label>
-                                <input type="text" class="form-control form-control-sm" id="modal_new_signup_name" placeholder="Complete Name">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="btn-new-signup-cancel">Cancel</button>
-                    <input type="button" class="btn btn-primary btn-sm m-2" id="btn-add-new-signup" value="Add" disabled>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="modal-add-origin" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Origin</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-12">    
-                            <div class="form-group">
-                                <label for="modal_origin_name">Name</label>
-                                <select class="form-control form-control-sm select2 select2-primary" id="modal-select-origin-id" data-dropdown-css-class="select2-primary" style="width: 100%;" required>
-                                    <option value="" selected="true">-- Select Origin --</option>
-                                    @foreach($origins as $origin)
-                                        <option value="{{ $origin->id }}">{{ $origin->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default btn-sm m-2" data-dismiss="modal" id="btn-origin-cancel">Cancel</button>
-                    <input type="button" class="btn btn-primary btn-sm m-2" id="btn-add-origin" value="Add" disabled>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -347,15 +162,25 @@ tbody tr:nth-child(odd) {
             theme: 'bootstrap4'
         });
 
-        $('#btn_add_sf').prop('disabled', true);
 
         // set the focus on search field after clicking the select2 dropdown
         $(document).on('select2:open', () => {
             document.querySelector('.select2-search__field').focus();
         });
 
+        $('#posting_datetime').datetimepicker({ 
+            icons: { 
+                time: 'far fa-clock' 
+            } 
+        });
+
+        $('#created_at').focus(function () {
+            $('#posting_datetime').datetimepicker('toggle');
+        });
+
         // initialize item counter: this will trigger if there is/are items in the table; This will be used by btn-delete-item AND transaction_type change event 
         var item_count = 0;
+        var total_quantity_count = 0;
 
         // default state
         var old_transaction_type = 0;
@@ -368,6 +193,9 @@ tbody tr:nth-child(odd) {
         var shipping_fee = 0;
         var grand_total_amount = 0;
 
+        var api_url = null;
+        var title = null;
+
 
         // check if SO is for delivery
         let url_param = getUrlParameter('so');
@@ -375,9 +203,25 @@ tbody tr:nth-child(odd) {
         if(url_param == 'delivery') {
             $('#tfoot_sf_total_amount').prop('required', true);
         }
+
+
+        function update_item_dropdown(response) {
+            obj = JSON.parse(JSON.stringify(response));
+
+            $('#bcid').attr('disabled', false);
+            $('#item_name').empty().append($('<option></option>').val('').html('-- Select Item --'));
+
+            $.each(obj, function(key, data) {
+                $('#item_name').append($('<option></option>').val(data.id).html(data.name).attr('data-item-name', data.name));
+            });
+
+            sessionStorage.clear();
+            window.sessionStorage.setItem('item_object', JSON.stringify(obj));
+        }
         
         // fetch the items details by transaction type id using FETCH API
         $('#transaction_type').on('change', function(e) {
+
             // count the change event
             change_count++;
 
@@ -388,111 +232,102 @@ tbody tr:nth-child(odd) {
                 old_transaction_type = this.value
             }
 
-            // check if there is/are item(s) in the details table
+            // additional, check if bcid field is not empty
+            var bcid = $('#bcid').val();
+
             if(item_count > 0 && currently_selected != old_transaction_type) {
-                // show notification
-                Swal.fire({
-                    title: 'Change Transaction Type?',
-                    text: 'Your current sales order will be deleted.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes',
-                    allowEnterKey: false,
-                    allowOutsideClick: false
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // just refresh the page and remove all existing data; no longer needed to remove all data from elements
-                        location.reload();
-                    } else {
-                        // Set the value to the old_transaction_type
-                        // this also fixes the "Maximum call stack size exceeded" issue;
-                        $('#transaction_type').val(old_transaction_type).trigger('change.select2');
-                    }
-                });
-            }
-            
-            fetch(window.location.origin + '/api/item/transaction_type/' + old_transaction_type, {
-                method: 'get',
-                headers: {
-                    'Content-type': 'application/json',
-                }
+                    // show notification
+                    Swal.fire({
+                        title: 'Change Transaction Type?',
+                        text: 'Your current sales order will be deleted.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes',
+                        allowEnterKey: false,
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // just refresh the page and remove all existing data; no longer needed to remove all data from elements
+                            // location.reload();
 
-            })
-            .then(response => response.json())
-            .then((response) => {
-                obj = JSON.parse(JSON.stringify(response));
-                $('#bcid').attr('disabled', false);
-                // make sure the select element is empty before populating with values
-                $('#item_name').empty();
-                // add blank as first value
-                $('#item_name').append($('<option></option>').val('').html('-- Select Item --'));
-                // add some values to item dropdown element
-                $.each(obj, function(key, data) {
-                    $('#item_name').append($('<option></option>').val(data.id).html(data.name));
-                });
+                            fetch(window.location.origin + '/api/item/transaction_type/' + this.value, {
+                                method: 'get',
+                                headers: {
+                                    'Content-type': 'application/json',
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(update_item_dropdown);
 
-                // clear the sessionStorage first before storing another obj
-                sessionStorage.clear();
+                            // clear the sessionStorage first before assigning new values
+                            sessionStorage.removeItem("item_selected");
 
-                // store the `obj` to sessionStorage
-                window.sessionStorage.setItem('item_object', JSON.stringify(obj));
-            });
-            
-        });
+                            // remove existing item/s
+                            $('#table_item_details > tbody').empty();
 
-        // fetch the distributor's name by bcid using FETCH API
-        $('#bcid').on('focusout', function() {
-            if(this.value !== "" || this.value.length !== 0) {
+                            // reset all the amount
+                            var reset_amount = 0;
+                            $('#tfoot_subtotal_amount').val(reset_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                            $('#tfoot_vatable_sales').val(reset_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                            $('#tfoot_vat_amount').val(reset_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                            $('#tfoot_grand_total_amount').val(reset_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 
-                // add leading zero's to bcid
-                let bcid = $(this).val().toString().padStart(12, '0')
+                            sub_total_amount = 0;
+                            total_nuc = 0;
+                            modal_sf_amount = 0;
+                            shipping_fee = 0;
+                            grand_total_amount = 0;
 
-                fetch(window.location.origin + '/api/distributor/' + bcid, {
+                            // empty the arrays
+                            $('#hidden_item_code').val('');
+                            $('#hidden_item_name').val('');
+                            $('#hidden_quantity').val('');
+                            $('#hidden_amount').val('');
+                            $('#hidden_nuc').val('');
+                            $('#hidden_rs_points').val('');
+                            $('#hidden_subtotal_nuc').val('');
+                            $('#hidden_subtotal_amount').val('');
+                            $('#hidden_subtotal_rs_points').val(''); 
+
+                            // update the total quantity count 
+                            total_quantity_count = 0;
+                            $('#total_quantity_count').text(total_quantity_count);
+
+                        } else {
+                            // Set the value to the old_transaction_type
+                            // this also fixes the "Maximum call stack size exceeded" issue;
+                            $('#transaction_type').val(old_transaction_type).trigger('change.select2');
+                        }
+                    });
+
+                    fetch(window.location.origin + '/api/item/transaction_type/' + old_transaction_type, {
+                        method: 'get',
+                        headers: {
+                            'Content-type': 'application/json',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(update_item_dropdown);
+            } else {
+                fetch(window.location.origin + '/api/item/transaction_type/' + this.value, {
                     method: 'get',
                     headers: {
                         'Content-type': 'application/json',
                     }
                 })
                 .then(response => response.json())
-                .then((response) => {
-                    obj = JSON.parse(JSON.stringify(response));
-                    if(obj[0] == undefined) {
-                        // show modal bcid not found
-                        Swal.fire({
-                            title: 'BCID not found!',
-                            icon: 'error',
-                            allowEnterKey: false,
-                        });
-                        // remove name field content
-                        $('#distributor_name').val('');
-                        $('#group_name').val('');
-
-                    } else {
-                        if(obj[0].name != '') {
-                            $('#distributor_name').val(obj[0].name);
-                            $('#group_name').val(obj[0].group);
-                            $('#bcid').attr('readonly','readonly');
-                            $('#item_name').attr('disabled', false);
-                            $('#quantity').attr('disabled', false);
-                            $('#sf_checkbox').attr('disabled', false);
-                        } else {
-                            $('#distributor_name').val('');
-                            $('#group_name').val('');
-                        }
-                    }
-                })
-                .catch(err => console.error(err));
-            } else {
-                // be sure to empty the name field
-                $('#distributor_name').val('');
-                $('#group_name').val('');
+                .then(update_item_dropdown);
             }
         });
 
+
         // item name dropdown
         $('#item_name').on('change', function() {
+
+            var selected_item_name = $(this).find('option:selected').data('item-name');
+
             var item_id = this.value;
 
             // get the sessionStorage object
@@ -501,32 +336,251 @@ tbody tr:nth-child(odd) {
             // create object 
             obj = JSON.parse(items);
 
-            $.each(obj, function(key, data) {
-                // item_id is the id of item from dropdown Item Name
-                if(item_id == data.id) {
+            if (typeof selected_item_name === 'string') {
 
-                    // DISPLAY: populate amount, nuc and rs rewards fields
-                    $('#amount').val(data.amount);
-                    $('#nuc').val(data.nuc);
-                    $('#rs_points').val(data.rs_points);
+                // check if the item name contains the word 'shipping' or 'freight'
+                if (selected_item_name.toLowerCase().includes('shipping') || selected_item_name.toLowerCase().includes('freight')) {
 
-                    // clear the sessionStorage first before assigning new values
-                    sessionStorage.removeItem("item_selected");
+                    // show the shipping fee modal amount 
+                    Swal.fire({
+                        title: "Shipping Fee",
+                        input: "text",
+                        inputLabel: "Amount",
+                        inputPlaceholder: "0.00",
+                        inputAttributes: {
+                            maxlength: "10",
+                            autocapitalize: "off",
+                            autocorrect: "off"
+                        },
+                        showCancelButton: true,
+                        allowEnterKey: false,
+                        allowOutsideClick: false,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        inputValidator: (value) => {
+                            if (!value.trim()) {
+                                return 'Please enter a valid amount';
+                            }
+                            // Regular expression to check if value is a valid double
+                            if (!/^\d+(\.\d{1,2})?$/.test(value.trim())) {
+                                return 'Please enter a valid amount (up to 2 decimal places)';
+                            }
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.each(obj, function(key, data) {
 
-                    // store the selected item to sessionStorage so the Add Item button can get the details
-                    window.sessionStorage.setItem('item_selected', JSON.stringify(data));
+                                // item_id is the id of item from dropdown Item Name
+                                if(item_id == data.id) {
+                                    
+                                    $('#quantity').val(1);
+                                    $('#amount').val(result.value);
+                                    $('#nuc').val(data.nuc);
+                                    $('#rs_points').val(data.rs_points);
+
+                                    // Update the amount property of the data object with result.value
+                                    data.amount = result.value;
+
+                                    // clear the sessionStorage first before assigning new values
+                                    sessionStorage.removeItem("item_selected");
+
+                                    // store the selected item to sessionStorage so the Add Item button can get the details
+                                    window.sessionStorage.setItem('item_selected', JSON.stringify(data));
+                                }
+                            });
+                        } else if (result.dismiss === Swal.DismissReason.cancel) {
+                            console.log('Cancelled!'); // Log a message if cancel was clicked
+
+                            $('#quantity').val('');
+                            $('#amount').val('');
+                            $('#nuc').val('');
+                            $('#rs_points').val('');
+
+                            // clear the sessionStorage first before assigning new values
+                            sessionStorage.removeItem("item_selected");
+
+                            $('#item_name').val(null).trigger('change');
+                        }
+                    });
+
+                } else if (selected_item_name.toLowerCase().includes('estore - clicked') || selected_item_name.toLowerCase().includes('transfer of ownership - premier')) {
+
+                // show the shipping fee modal amount 
+                Swal.fire({
+                    title: "",
+                    input: "text",
+                    inputLabel: "Amount",
+                    inputPlaceholder: "0.00",
+                    inputAttributes: {
+                        maxlength: "10",
+                        autocapitalize: "off",
+                        autocorrect: "off"
+                    },
+                    showCancelButton: true,
+                    allowEnterKey: false,
+                    allowOutsideClick: false,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    inputValidator: (value) => {
+                        if (!value.trim()) {
+                            return 'Please enter a valid amount';
+                        }
+                        // Regular expression to check if value is a valid double
+                        if (!/^\d+(\.\d{1,2})?$/.test(value.trim())) {
+                            return 'Please enter a valid amount (up to 2 decimal places)';
+                        }
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.each(obj, function(key, data) {
+
+                            // item_id is the id of item from dropdown Item Name
+                            if(item_id == data.id) {
+                                
+                                $('#quantity').val(1);
+                                $('#amount').val(result.value);
+                                $('#nuc').val(data.nuc);
+                                $('#rs_points').val(data.rs_points);
+
+                                // Update the amount property of the data object with result.value
+                                data.amount = result.value;
+
+                                // clear the sessionStorage first before assigning new values
+                                sessionStorage.removeItem("item_selected");
+
+                                // store the selected item to sessionStorage so the Add Item button can get the details
+                                window.sessionStorage.setItem('item_selected', JSON.stringify(data));
+                            }
+                        });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        console.log('Cancelled!'); // Log a message if cancel was clicked
+
+                        $('#quantity').val('');
+                        $('#amount').val('');
+                        $('#nuc').val('');
+                        $('#rs_points').val('');
+
+                        // clear the sessionStorage first before assigning new values
+                        sessionStorage.removeItem("item_selected");
+
+                        $('#item_name').val(null).trigger('change');
+                    }
+                });
+
+            } else if (selected_item_name.toLowerCase().includes('less estore clicked')) {
+
+                // show the shipping fee modal amount 
+                Swal.fire({
+                    title: "",
+                    input: "text",
+                    inputLabel: "Amount",
+                    inputPlaceholder: "0.00",
+                    inputAttributes: {
+                        maxlength: "10",
+                        autocapitalize: "off",
+                        autocorrect: "off"
+                    },
+                    showCancelButton: true,
+                    allowEnterKey: false,
+                    allowOutsideClick: false,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    inputValidator: (value) => {
+                        if (!value.trim()) {
+                            return 'Please enter a valid amount';
+                        }
+                        // Regular expression to check if value is a valid double
+                        if (!/^\d+(\.\d{1,2})?$/.test(value.trim())) {
+                            return 'Please enter a valid amount (up to 2 decimal places)';
+                        }
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                    let input_value = result.value.trim();
+                    if (!input_value.startsWith('-')) {
+                        input_value = '-' + input_value;
+                    }
+                    $.each(obj, function(key, data) {
+                        // item_id is the id of item from dropdown Item Name
+                        if(item_id == data.id) {
+                            $('#quantity').val(1);
+                            $('#amount').val(input_value);
+                            $('#nuc').val(data.nuc);
+                            $('#rs_points').val(data.rs_points);
+
+                            // Update the amount property of the data object with input_value
+                            data.amount = input_value;
+
+                                // clear the sessionStorage first before assigning new values
+                                sessionStorage.removeItem("item_selected");
+
+                                // store the selected item to sessionStorage so the Add Item button can get the details
+                                window.sessionStorage.setItem('item_selected', JSON.stringify(data));
+                            }
+                        });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        console.log('Cancelled!'); // Log a message if cancel was clicked
+
+                        $('#quantity').val('');
+                        $('#amount').val('');
+                        $('#nuc').val('');
+                        $('#rs_points').val('');
+
+                        // clear the sessionStorage first before assigning new values
+                        sessionStorage.removeItem("item_selected");
+
+                        $('#item_name').val(null).trigger('change');
+                    }
+                });
+                
+                } else {
+                    $.each(obj, function(key, data) {
+
+                        // item_id is the id of item from dropdown Item Name
+                        if(item_id == data.id) {
+
+                            // when shipping/freight is replaced, set the quantity field as empty so the validator will require it
+                            $('#quantity').val('');
+
+                            // DISPLAY: populate amount, nuc and rs rewards fields
+                            $('#amount').val(data.amount);
+                            $('#nuc').val(data.nuc);
+                            $('#rs_points').val(data.rs_points);
+
+                            // clear the sessionStorage first before assigning new values
+                            sessionStorage.removeItem("item_selected");
+
+                            // store the selected item to sessionStorage so the Add Item button can get the details
+                            window.sessionStorage.setItem('item_selected', JSON.stringify(data));
+                        }
+                    });
+
+                    // set the focus to quantity
+                    if (item_id !== "") {
+                        // async
+                        setTimeout(function(){ $('#quantity').focus(); }, 100);
+                    } 
                 }
-            });
-
-            // set the focus to quantity
-            if (item_id !== "") {
-                // async
-                setTimeout(function(){ $('#quantity').focus(); }, 100);
-            } 
+            }
         }); 
+
+
 
         // add item 
         $('#add_item').on('click', function() {
+
+            if(item_count >= 14) { // this is actually 15, item_count starts at 0
+                Swal.fire({
+                    title: 'Maximum item count reached.',
+                    text: 'You can no longer add new item.',
+                    icon: 'warning',
+                    allowEnterKey: false,
+                    allowOutsideClick: false
+                });
+                // disable the add button
+
+                $('#add_item').prop('disabled', true);
+            }
 
             $('#quantity').attr('placeholder', '');
 
@@ -581,6 +635,12 @@ tbody tr:nth-child(odd) {
                     // get the quantity
                     var quantity = parseInt($('#quantity').val());
 
+                    // add to total_quantity_count
+                    total_quantity_count += quantity;
+
+                    // update the total quantity count 
+                    $('#total_quantity_count').text(total_quantity_count);
+
                     // clear the item name, quantity and other fields after clicking the Add Item button
                     $('#item_name').val(null).trigger('change');
                     $('#item_code').val('');
@@ -628,15 +688,16 @@ tbody tr:nth-child(odd) {
                                 '<td class="text-right">' + (item_price * quantity).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
                                 '<td class="text-center"><a href="#" class="btn-delete-item" data-quantity="' + quantity + '" data-amount="' + quantity * item_price + '" data-nuc="' + quantity * item_selected.nuc + '"><i class="far fa-trash-alt"></i></a></td>' +
                                 // hidden elements
-                                '<input type="hidden" name="item_code[]" value="' + item_selected.code + '" required>' + 
-                                '<input type="hidden" name="item_name[]" value="' + item_selected.name + '" required>' + 
-                                '<input type="hidden" name="quantity[]" value="' + quantity + '" required>' + 
-                                '<input type="hidden" name="amount[]" value="' + item_price + '" required>' + 
-                                '<input type="hidden" name="nuc[]" value="' + item_selected.nuc + '" required>' + 
-                                '<input type="hidden" name="rs_points[]" value="' + item_selected.rs_points + '" required>' + 
+                                '<input type="hidden" id="hidden_item_code" name="item_code[]" value="' + item_selected.code + '" required>' + 
+                                '<input type="hidden" id="hidden_item_name" name="item_name[]" value="' + item_selected.name + '" required>' + 
+                                '<input type="hidden" id="hidden_quantity" name="quantity[]" value="' + quantity + '" required>' + 
+                                '<input type="hidden" id="hidden_amount" name="amount[]" value="' + item_price + '" required>' + 
+                                '<input type="hidden" id="hidden_nuc" name="nuc[]" value="' + item_selected.nuc + '" required>' + 
+                                '<input type="hidden" id="hidden_rs_points" name="rs_points[]" value="' + item_selected.rs_points + '" required>' + 
                                 // hidden elements: computed
-                                '<input type="hidden" name="subtotal_nuc[]" value="' + item_selected.nuc * quantity + '" required>' + 
-                                '<input type="hidden" name="subtotal_amount[]" value="' + item_price * quantity + '" required>' + 
+                                '<input type="hidden" id="hidden_subtotal_nuc" name="subtotal_nuc[]" value="' + item_selected.nuc * quantity + '" required>' + 
+                                '<input type="hidden" id="hidden_subtotal_amount" name="subtotal_amount[]" value="' + item_price * quantity + '" required>' + 
+                                '<input type="hidden" id="hidden_subtotal_rs_points" name="subtotal_rs_points[]" value="' + item_selected.rs_points * quantity + '" required>' + 
                                 '</tr>';
 
                     // increment the item counter
@@ -680,6 +741,9 @@ tbody tr:nth-child(odd) {
             var amount = $(this).attr("data-amount");
             var nuc = $(this).attr("data-nuc");
 
+            // deduct the quantity to total_quantity_count
+            total_quantity_count -= quantity;
+
             // get the current sub total amount value
             var current_sub_total_amount = $('#tfoot_subtotal_amount').val();
 
@@ -704,7 +768,7 @@ tbody tr:nth-child(odd) {
 
                     // subtract the amount to sub_total_amount, total_nuc and grand_total_amount
                     sub_total_amount = parseFloat(sub_total_amount) - parseFloat(amount.replace(/,/g, ''));
-                    console.log(sub_total_amount);
+
                     if(!isNaN(sub_total_amount)) {
                         $('#tfoot_subtotal_amount').val(sub_total_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
                     } else {
@@ -740,6 +804,14 @@ tbody tr:nth-child(odd) {
                         allowEnterKey: false,
                         allowOutsideClick: false
                     });
+                    
+                    if(item_count <= 14) { // this is actually 15, item_count starts at 0
+                        $('#add_item').prop('disabled', false);
+                    }
+
+                    // update the total quantity count 
+                    $('#total_quantity_count').text(total_quantity_count);
+
                 }
             });
             

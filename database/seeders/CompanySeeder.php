@@ -19,9 +19,7 @@ class CompanySeeder extends Seeder
     {
         // STATIC: 
         $companies = [
-            1 => array('id' => 1, 'name' => 'HOW Holdings Corporation', 'code' => 'HW', 'status_id' => 9),
-            2 => array('id' => 2, 'name' => 'Uno Premier Philippines International Corporation', 'code' => 'PR', 'status_id' => 8), 
-            3 => array('id' => 3, 'name' => 'Unlimited Network of Opportunities Int\'l Corp', 'code' => 'LO', 'status_id' => 8),
+            1 => array('id' => 1, 'name' => 'TDT Powersteel Corporation', 'code' => 'TDT', 'status' => 1),
         ];
 
         foreach($companies as $key => $company) {
@@ -29,7 +27,7 @@ class CompanySeeder extends Seeder
                 'uuid' => Str::uuid(),
                 'name' => $company['name'],
                 'code' => $company['code'],
-                'status_id' => $company['status_id'],
+                'status' => $company['status'],
                 'created_at' => Carbon::now()->toDateTimeString(),
                 'updated_at' => Carbon::now()->toDateTimeString(),
                 'created_by' => Auth::user()->name ?? 'System',

@@ -26,8 +26,8 @@
                             <th class="text-center">Name</th>
                             <th class="text-center">Code</th>
                             <th class="text-center">Status</th>
-                            <th class="text-center">Last Sync By</th>
-                            <th class="text-center">Last Sync At</th>
+                            <th class="text-center">Created By</th>
+                            <th class="text-center">Updated At</th>
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -35,9 +35,9 @@
                         @foreach($companies as $company)
                             <tr>
                                 <td class="text-center">{{ $company->id }}</td>
-                                <td>{{ $company->name }}</td>
+                                <td class="text-center">{{ $company->name }}</td>
                                 <td class="text-center">{{ $company->code }}</td>
-                                <td class="text-center"><span class="badge {{ Helper::badge($company->status_id) }}">{{ $company->status->name }}</span></td>
+                                <td class="text-center">{{ $company->status == 0 ? 'Inactive' : 'Active' }}</td>
                                 <td class="text-center">{{ $company->updated_by }}</td>
                                 <td class="text-center">{{ $company->updated_at }}</td>
                                 <td class="text-center">
@@ -47,7 +47,7 @@
                                     data-uuid="{{ $company->uuid }}"
                                     data-company-name="{{ $company->name }}" 
                                     data-company-code="{{ $company->code }}"
-                                    data-company-status_id="{{ $company->status->name}}"
+                                    data-company-status_id="{{ $company->status == 0 ? 'Inactive' : 'Active' }}"
                                     data-company-remarks="{{ $company->remarks }}"
                                     data-company-updated_by="{{ $company->updated_by }}"
                                     {{ Helper::BP(8,3) }}>
@@ -59,7 +59,7 @@
                                     data-uuid="{{ $company->uuid }}" 
                                     data-company-name="{{ $company->name }}" 
                                     data-company-code="{{ $company->code }}"
-                                    data-company-status_id="{{ $company->status->name}}"
+                                    data-company-status="{{ $company->status == 0 ? 'Inactive' : 'Active' }}"
                                     data-company-remarks="{{ $company->remarks }}"
                                     {{ Helper::BP(8,4) }}>
                                     <i class="fas fa-pencil-alt"></i>&nbsp;Edit

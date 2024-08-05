@@ -268,10 +268,14 @@ class TransactionListingController extends Controller
         $previous_invoiced_at = null;
         $previous_invoice_number = null;
         $previous_item_names = null;
-        $previous_income_account = null;
-        $previous_payment = null;
+        $previous_income_account_code = null;
+        $previous_payment_code = null;
         $row = 9;
         $total = 0;
+
+        // Initialize arrays to store totals for payment codes and income account codes
+        $paymentCodeTotals = [];
+        $incomeAccountTotals = [];
 
         foreach ($sales as $ks => $sale) {
             // Check if the current item_name is different from the previous one
@@ -286,6 +290,19 @@ class TransactionListingController extends Controller
                 $row++; // Move to the next row for data
                 $previous_invoiced_at = $sale->invoiced_at; // Update previous_invoiced_at
             }
+        // Update or initialize the total for the payment code based on the unique ID
+        $paymentCodeId = $sale->payment_code;
+        if (!isset($paymentCodeTotals[$paymentCodeId])) {
+            $paymentCodeTotals[$paymentCodeId]['debit'] = 0;
+        }
+        $paymentCodeTotals[$paymentCodeId]['debit'] += $sale->debit;
+
+        // Update or initialize the total for the income account code based on the unique ID
+        $incomeAccountCodeId = $sale->income_account_code;
+        if (!isset($incomeAccountTotals[$incomeAccountCodeId])) {
+            $incomeAccountTotals[$incomeAccountCodeId]['credit'] = 0;
+        }
+        $incomeAccountTotals[$incomeAccountCodeId]['credit'] += $sale->credit;
         
             // Check if the current invoice_number is different from the previous one
             if ($sale->invoice_number != $previous_invoice_number) {
@@ -347,15 +364,24 @@ class TransactionListingController extends Controller
             $sheet->setCellValue('D' . $row, 'ACCOUNT SUMMARIES:');
             $sheet->getStyle('D' . $row)->getFont()->setBold(true);
             $row++;
-            $sheet->setCellValue('D' . $row, $sale->payment_code);
-            $sheet->setCellValue('F' . $row, $sale->payment_description);
-            $sheet->getStyle('G' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
-            $sheet->setCellValue('G' . $row, $sale->debit);
+        
+        // Display totals for payment codes
+        foreach ($paymentCodeTotals as $paymentCodeId => $total) {
             $row++;
-            $sheet->setCellValue('D' . $row, $sale->income_account_code);
-            $sheet->setCellValue('F' . $row, $sale->income_account);
+            $sheet->setCellValue('D' . $row, $paymentCodeId); // If you want to display the ID, replace with the actual field you want to display
+            $sheet->getStyle('G' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+            $sheet->setCellValue('G' . $row, $total['debit']);
+            $row++;
+        }
+
+        // Display totals for income account codes
+        foreach ($incomeAccountTotals as $incomeAccountCodeId => $total) {
+            $row++;
+            $sheet->setCellValue('D' . $row, $incomeAccountCodeId); // If you want to display the ID, replace with the actual field you want to display
             $sheet->getStyle('H' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
-            $sheet->setCellValue('H' . $row, $sale->credit);
+            $sheet->setCellValue('H' . $row, $total['credit']);
+            $row++;
+        }
             
         // Save the spreadsheet to a file
         $current_datetime = Carbon::now()->format('Y-m-d hia');
@@ -367,198 +393,263 @@ class TransactionListingController extends Controller
         return response()->download(storage_path() . '/app/public/' . $filename)->deleteFileAfterSend(true);
     }
 
-    // public function generateSummary(Request $request)
-    // {
-    //     $a4_title = null;
-    //     $date_1 = null;
-    //     $date_2 = null;
-    //     if($request->as_of_report != null) {
-    //         // `as of` definition
-    //         // first day of the month + the selected date 
-    //         $selected_date = Carbon::createFromFormat('m/d/Y', $request->as_of);
-    //         $date_1 = $selected_date->format('Y') . '-' . $selected_date->format('m') . '-01 00:00:00';
-    //         $date_2 = $selected_date->format('Y-m-d') . ' 23:59:59';
+    public function generateSummary(Request $request)
+    {
+        $a4_title = null;
+        $date_1 = null;
+        $date_2 = null;
+        if($request->as_of_report != null) {
+            // `as of` definition
+            // first day of the month + the selected date 
+            $selected_date = Carbon::createFromFormat('m/d/Y', $request->as_of);
+            $date_1 = $selected_date->format('Y') . '-' . $selected_date->format('m') . '-01 00:00:00';
+            $date_2 = $selected_date->format('Y-m-d') . ' 23:59:59';
 
-    //         $a4_title = 'As of ' . $selected_date->format('m/d/Y');
-    //     } else {
-    //         list($startDate, $endDate) = explode(' - ', $request->period);
+            $a4_title = 'As of ' . $selected_date->format('m/d/Y');
+        } else {
+            list($startDate, $endDate) = explode(' - ', $request->period);
 
-    //         // Parse the start and end dates using Carbon
-    //         $request_date_1 = Carbon::createFromFormat('m/d/Y h:i A', trim($startDate));
-    //         $date_1 = $request_date_1->format('Y-m-d H:i:s');
-    //         $request_date_2 = Carbon::createFromFormat('m/d/Y h:i A', trim($endDate));
-    //         $date_2 = $request_date_2->format('Y-m-d H:i:59');
+            // Parse the start and end dates using Carbon
+            $request_date_1 = Carbon::createFromFormat('m/d/Y h:i A', trim($startDate));
+            $date_1 = $request_date_1->format('Y-m-d H:i:s');
+            $request_date_2 = Carbon::createFromFormat('m/d/Y h:i A', trim($endDate));
+            $date_2 = $request_date_2->format('Y-m-d H:i:59');
 
-    //         $a4_title = 'Period of ' . $request->period;
-    //     }
-    //     $company_ids = '';
-    //     if($request->company_id != NULL) {
-    //         $company_ids = $request->company_id;
-    //     } else if ($request->company_id == NULL && Auth::user()->company_id == NULL) {
-    //         $active_companies = Company::where('deleted', false)->where('status_id', 8)->pluck('id')->toArray();
-    //         $company_ids = implode(',',$active_companies);
-    //     } else if ($request->company_id == NULL && Auth::user()->company_id != NULL) {
-    //         $company_ids = Auth::user()->company_id;
-    //     }
+            $a4_title = 'Period of ' . $request->period;
+        }
+        $company_ids = '';
+        if($request->company_id != NULL) {
+            $company_ids = $request->company_id;
+        } else if ($request->company_id == NULL && Auth::user()->company_id == NULL) {
+            $active_companies = Company::where('deleted', false)->where('status_id', 8)->pluck('id')->toArray();
+            $company_ids = implode(',',$active_companies);
+        } else if ($request->company_id == NULL && Auth::user()->company_id != NULL) {
+            $company_ids = Auth::user()->company_id;
+        }
 
-    //     $branch_ids = '';
-    //     if($request->branch_id != NULL) {
-    //         $branch_ids = $request->branch_id;
-    //     } else if ($request->branch_id == NULL && Auth::user()->branch_id == NULL) {
-    //         $active_branches = Branch::where('deleted', false)->where('status_id', 8)->pluck('id')->toArray();
-    //         $branch_ids = implode(',',$active_branches);
-    //     } else if ($request->branch_id == NULL && Auth::user()->branch_id != NULL) {
-    //         $branch_ids = Auth::user()->branch_id;
-    //     }
+        $branch_ids = '';
+        if($request->branch_id != NULL) {
+            $branch_ids = $request->branch_id;
+        } else if ($request->branch_id == NULL && Auth::user()->branch_id == NULL) {
+            $active_branches = Branch::where('deleted', false)->where('status_id', 8)->pluck('id')->toArray();
+            $branch_ids = implode(',',$active_branches);
+        } else if ($request->branch_id == NULL && Auth::user()->branch_id != NULL) {
+            $branch_ids = Auth::user()->branch_id;
+        }
         
-    //     $sales = Sales::where('sales.deleted', false)
-    //         ->leftJoin('sales_details as sd', function(JoinClause $join) {
-    //             $join->on('sd.sales_id', '=', 'sales.id')
-    //                     ->where('sd.deleted', 0);
-    //         })
-    //         ->leftJoin('item_bundles as ib', function(JoinClause $join) {
-    //             $join->on('ib.bundle_name', '=', 'sd.item_code')
-    //                     ->where('ib.deleted', 0);
-    //         })
-    //         ->join('items as i', function(JoinClause $join) {
-    //             $join->on('i.code', '=', 'sd.item_code')
-    //                     ->on('i.transaction_type_id', '=', 'sales.transaction_type_id')
-    //                     ->where('i.deleted', 0);
-    //         })
-    //         ->join('sales_invoice_assignment_details as siad', function(JoinClause $join) {
-    //             $join->on('sales.si_assignment_id', '=', 'siad.id')
-    //                     ->where('siad.deleted', 0);
-    //         })
-    //         ->join('branches as b', function(JoinClause $join) {
-    //             $join->on('b.id', '=', 'sales.branch_id')
-    //                     ->where('b.deleted', 0);
-    //         })
-    //         ->join('transaction_types as tt', function(JoinClause $join) {
-    //             $join->on('tt.id', '=', 'sales.transaction_type_id')
-    //                     ->where('tt.deleted', 0);
-    //         })
-    //         ->join('payments as p', function(JoinClause $join) {
-    //             $join->on('p.id', '=', 'sales.payment_id')
-    //                     ->on('p.sales_id', '=', 'sales.id')
-    //                     ->where('p.deleted', 0);
-    //         })
-    //         ->join('payment_methods as pm', function(JoinClause $join) {
-    //             $join->on('pm.name', '=', 'p.payment_type')
-    //                     ->on('pm.company_id', '=', 'sales.company_id')
-    //                     ->where('pm.deleted', 0);
-    //         })
-    //         ->join('income_expense_accounts as iea', function(JoinClause $join) {
-    //             $join->on('iea.transaction_type_id', '=', 'sales.transaction_type_id')
-    //                     ->on('iea.company_id', '=', 'sales.company_id')
-    //                     ->where('iea.deleted', 0);
-    //         })
-    //         ->select(
-    //             'sales.id',
-    //             'sales.invoiced_at',
-    //             DB::raw("CONCAT(COALESCE(siad.prefix_value, ''), COALESCE(siad.series_number, '')) AS invoice_number"),
-    //             'sales.distributor_name',
-    //             'tt.name AS transaction_type_name',
-    //             'sd.quantity',
-    //             DB::raw("JSON_UNQUOTE(JSON_EXTRACT(p.details, '$[0].ref_no')) AS ref_no"),
-    //             'sd.item_name',
-    //             'ib.item_description',
-    //             'i.amount AS item_amount',
-    //             'p.payment_type',
-    //             'pm.code AS payment_code',
-    //             'pm.description AS payment_description',
-    //             DB::raw("SUBSTRING(iea.income_account, 1, 7) AS income_account_code"),
-    //             'b.cost_center',
-    //             'iea.income_account',
-    //             'sales.total_amount AS debit',
-    //             'sd.amount AS credit',
-    //             'sales.transaction_type_id',
-    //             'sales.branch_id',
-    //             'sales.bcid',
-    //             'p.remarks',
-    //             'p.created_by AS cashier'
-    //         )
-    //     ->orderBy('sales.id')
-    //     ->where('sales.id', 7)
-    //     ->get();
+        $sales = Sales::where('sales.deleted', false)
+            ->leftJoin('sales_details as sd', function(JoinClause $join) {
+                $join->on('sd.sales_id', '=', 'sales.id')
+                        ->where('sd.deleted', 0);
+            })
+            ->leftJoin('item_bundles as ib', function(JoinClause $join) {
+                $join->on('ib.bundle_name', '=', 'sd.item_code')
+                        ->where('ib.deleted', 0);
+            })
+            ->join('items as i', function(JoinClause $join) {
+                $join->on('i.code', '=', 'sd.item_code')
+                        ->on('i.transaction_type_id', '=', 'sales.transaction_type_id')
+                        ->where('i.deleted', 0);
+            })
+            ->join('sales_invoice_assignment_details as siad', function(JoinClause $join) {
+                $join->on('sales.si_assignment_id', '=', 'siad.id')
+                        ->where('siad.deleted', 0);
+            })
+            ->join('branches as b', function(JoinClause $join) {
+                $join->on('b.id', '=', 'sales.branch_id')
+                        ->where('b.deleted', 0);
+            })
+            ->join('transaction_types as tt', function(JoinClause $join) {
+                $join->on('tt.id', '=', 'sales.transaction_type_id')
+                        ->where('tt.deleted', 0);
+            })
+            ->join('payments as p', function(JoinClause $join) {
+                $join->on('p.id', '=', 'sales.payment_id')
+                        ->on('p.sales_id', '=', 'sales.id')
+                        ->where('p.deleted', 0);
+            })
+            ->join('payment_methods as pm', function(JoinClause $join) {
+                $join->on('pm.name', '=', 'p.payment_type')
+                        ->on('pm.company_id', '=', 'sales.company_id')
+                        ->where('pm.deleted', 0);
+            })
+            ->join('income_expense_accounts as iea', function(JoinClause $join) {
+                $join->on('iea.transaction_type_id', '=', 'sales.transaction_type_id')
+                        ->on('iea.company_id', '=', 'sales.company_id')
+                        ->where('iea.deleted', 0);
+            })
+            ->select(
+                'sales.id',
+                'sales.invoiced_at',
+                DB::raw("CONCAT(COALESCE(siad.prefix_value, ''), COALESCE(siad.series_number, '')) AS invoice_number"),
+                'sales.distributor_name',
+                'tt.name AS transaction_type_name',
+                'sd.quantity',
+                DB::raw("JSON_UNQUOTE(JSON_EXTRACT(p.details, '$[0].ref_no')) AS ref_no"),
+                'i.amount AS item_amount',
+                'p.payment_type',
+                'pm.code AS payment_code',
+                'pm.description AS payment_description',
+                DB::raw("SUBSTRING(iea.income_account, 1, 7) AS income_account_code"),
+                'b.cost_center',
+                'iea.income_account',
+                'sales.total_amount AS debit',
+                'sd.amount AS credit',
+                'sales.transaction_type_id',
+                'sales.branch_id',
+                'sales.bcid',
+                'p.remarks',
+                'p.created_by AS cashier'
+            )
+            ->where(function ($query) use ($request, $date_1, $date_2) {
+                if($request->has('transaction_type_id') && $request->transaction_type_id != null) {
+                    $query->where('sales.transaction_type_id', $request->transaction_type_id);
+                }
+                if ($request->has('as_of') && $request->as_of !== null) {
+                    $query->whereBetween('sales.invoiced_at', [$date_1, $date_2]);
+                }
+                if ($request->has('period') && $request->period !== null) {
+                    $query->whereBetween('sales.invoiced_at', [$date_1, $date_2]);
+                }
+                if ($request->has('item') && $request->item != null) {
+                    $query->where(function ($query) use ($request) {
+                        $query->where('sd.item_name', $request->item)
+                            ->orWhere('ib.item_description', 'LIKE', '%' . $request->item . '%');
+                    });
+                }
+                if ($request->has('invoice') && $request->invoice != null) {
+                    $query->where(DB::raw("CONCAT(COALESCE(siad.prefix_value, ''), COALESCE(siad.series_number, ''))"), $request->invoice);
+                }
+                if ($request->has('cashier') && $request->cashier != null) {
+                    $query->where('p.created_by', $request->cashier);
+                }
+            })
+            ->where(function ($query) use ($request, $company_ids) {
+                $query->whereIn('sales.company_id', explode(',', $company_ids));
+            })
+            ->where(function ($query) use ($request, $branch_ids) {
+                $query->whereIn('sales.branch_id', explode(',', $branch_ids));
+            })
+            ->orderBy('sales.id')
+            ->distinct()
+            ->get();
 
-    //         //dd($request);
+            //dd($request);
 
-    //     $translist_for = $request->branch_id == null ? 'Branch: All' : Helper::get_branch_name_by_id($request->branch_id);
-    //     $as_of = $request->as_of ?? Carbon::now()->format('m/d/Y');
-    //     $transaction_type = $request->transaction_type_id == null ? 'Transaction Type: All' : Helper::get_transaction_type_name_by_id($request->transaction_type_id);
-    //     $item = $request->item == null ? 'Item: All' : 'Item : ' . ($request->item);
-    //     $cashier = $request->cashier == null ? 'Cashier: All' : 'Cashier : ' . Helper::get_cashier_name_by_id($request->cashier);
-    //     $invoice = $request->invoice == null ? 'Invoice #: All' : 'Invoice #: ' . ($request->invoice);
+        $translist_for = $request->branch_id == null ? 'Branch: All' : Helper::get_branch_name_by_id($request->branch_id);
+        $as_of = $request->as_of ?? Carbon::now()->format('m/d/Y');
+        $transaction_type = $request->transaction_type_id == null ? 'Transaction Type: All' : Helper::get_transaction_type_name_by_id($request->transaction_type_id);
+        $item = $request->item == null ? 'Item: All' : 'Item : ' . ($request->item);
+        $cashier = $request->cashier == null ? 'Cashier: All' : 'Cashier : ' . Helper::get_cashier_name_by_id($request->cashier);
+        $invoice = $request->invoice == null ? 'Invoice #: All' : 'Invoice #: ' . ($request->invoice);
 
-    //     if($request->company_id == 2) {
-    //         $templatePath = public_path('excel_templates/transaction-list-report-template-pr.xlsx');
-    //     } elseif($request->company_id == 3) {
-    //         $templatePath = public_path('excel_templates/transaction-list-report-template-lo.xlsx');
-    //     } else {
-    //         $templatePath = public_path('excel_templates/transaction-list-report-template.xlsx');
-    //     }
-    //     $spreadsheet = IOFactory::load($templatePath);
-
-
-    //     // Create a new Spreadsheet instance
-    //     $new_spreadsheet = new Spreadsheet();
-    //     $sheet = $new_spreadsheet->getActiveSheet();
+        if($request->company_id == 2) {
+            $templatePath = public_path('excel_templates/transaction-list-report-template-pr.xlsx');
+        } elseif($request->company_id == 3) {
+            $templatePath = public_path('excel_templates/transaction-list-report-template-lo.xlsx');
+        } else {
+            $templatePath = public_path('excel_templates/transaction-list-report-template.xlsx');
+        }
+        $spreadsheet = IOFactory::load($templatePath);
 
 
-    //     // header
-    //     $sheet = $spreadsheet->getActiveSheet();
-    //     $sheet->setCellValue('A3', 'Transaction List for ' . $translist_for);
-    //     $sheet->setCellValue('A4', $a4_title);
-    //     $sheet->setCellValue('A5', $transaction_type);
-    //     $sheet->setCellValue('A6', $item);
-    //     $sheet->setCellValue('A7', $cashier);
-    //     $sheet->setCellValue('F6', $invoice);
-    //     $sheet->setCellValue('F4', 'Date Printed: ' . Carbon::now()->format('m/d/Y h:i:s A'));
-    //     $sheet->setCellValue('F5', 'Prepared By: ' . Auth::user()->name);
-    //     $sheet->setCellValue('F7', 'Summarized Report ');
+        // Create a new Spreadsheet instance
+        $new_spreadsheet = new Spreadsheet();
+        $sheet = $new_spreadsheet->getActiveSheet();
+
+
+        // header
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A3', 'Transaction List for ' . $translist_for);
+        $sheet->setCellValue('A4', $a4_title);
+        $sheet->setCellValue('A5', $transaction_type);
+        $sheet->setCellValue('A6', $item);
+        $sheet->setCellValue('A7', $cashier);
+        $sheet->setCellValue('F6', $invoice);
+        $sheet->setCellValue('F4', 'Date Printed: ' . Carbon::now()->format('m/d/Y h:i:s A'));
+        $sheet->setCellValue('F5', 'Prepared By: ' . Auth::user()->name);
+        $sheet->setCellValue('F7', 'Summarized Report ');
         
 
-    //     // body; Starts as A9
-    //     $row = 9;
+        // body; Starts as A9
+        $row = 9;
+        foreach($sales as $sale)
+                // Update or initialize the total for the payment code based on the unique ID
+                $paymentCodeId = $sale->payment_code;
+                if (!isset($paymentCodeTotals[$paymentCodeId])) {
+                    $paymentCodeTotals[$paymentCodeId]['debit'] = 0;
+                }
+                $paymentCodeTotals[$paymentCodeId]['debit'] += $sale->debit;
+        
+                // Update or initialize the total for the income account code based on the unique ID
+                $incomeAccountCodeId = $sale->income_account_code;
+                if (!isset($incomeAccountTotals[$incomeAccountCodeId])) {
+                    $incomeAccountTotals[$incomeAccountCodeId]['credit'] = 0;
+                }
+                $incomeAccountTotals[$incomeAccountCodeId]['credit'] += $sale->credit;
 
-    //     foreach ($sales as $ks => $sale) {
-    //         $sheet->setCellValue('E' . $row, $sale->payment_code);
-    //         $sheet->setCellValue('G' . $row, $sale->payment_description);
+        // Initialize arrays to store totals for payment codes and income account codes
+        $paymentCodeTotals = [];
+        $incomeAccountTotals = [];
 
-    //         $sheet->getStyle('I' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
-    //         $sheet->setCellValue('I' . $row, $sale->amount);
+        foreach ($sales as $ks => $sale) {
+        // Update or initialize the total for the payment code based on the unique ID
+        $paymentCodeId = $sale->payment_code;
+        if (!isset($paymentCodeTotals[$paymentCodeId])) {
+            $paymentCodeTotals[$paymentCodeId]['debit'] = 0;
+        }
+        $paymentCodeTotals[$paymentCodeId]['debit'] += $sale->debit;
 
-    //         $row++;
-    //         $sheet->setCellValue('E' . $row, $sale->income_account_code);
-    //         $sheet->setCellValue('G' . $row, $sale->income_account);
-
-    //         $sheet->getStyle('J' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
-    //         $sheet->setCellValue('J' . $row, $sale->amount);
-
-    //         $row++;
-    //     }
+        // Update or initialize the total for the income account code based on the unique ID
+        $incomeAccountCodeId = $sale->income_account_code;
+        if (!isset($incomeAccountTotals[$incomeAccountCodeId])) {
+            $incomeAccountTotals[$incomeAccountCodeId]['credit'] = 0;
+        }
+        $incomeAccountTotals[$incomeAccountCodeId]['credit'] += $sale->credit;
+        }
     
-    //     // Additional check after the loop to make sure the last $previous_invoiced_at is displayed only once
-    //     $row++;
-    //     $sheet->setCellValue('H' . $row, 'Grand Total:');
-
-    //     $sheet->getStyle('I' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
-    //     $sheet->setCellValue('I' . $row, "=SUM(I2:I" . ($row - 1) . ")"); // Adjust the range for the sum
-
-    //     $sheet->getStyle('J' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
-    //     $sheet->setCellValue('J' . $row, "=SUM(J2:J" . ($row - 1) . ")"); // Adjust the range for the sum
-
-    //     $sheet->getStyle('H' . $row)->getFont()->setBold(true);
-    //     $sheet->getStyle('I' . $row)->getFont()->setBold(true);
-    //     $sheet->getStyle('J' . $row)->getFont()->setBold(true);
+            $sheet->setCellValue('D' . $row, 'ACCOUNT SUMMARIES:');
+            $sheet->getStyle('D' . $row)->getFont()->setBold(true);
+            $row++;
         
-    //     // Save the spreadsheet to a file
-    //     $current_datetime = Carbon::now()->format('Y-m-d hia');
-    //     $filename = 'Transaction List Report - ' . $current_datetime . '.xlsx';
-    //     $writer = new Xlsx($spreadsheet);
-    //     $writer->save(storage_path() . '/app/public/' . $filename);
+        // Display totals for payment codes
+        foreach ($paymentCodeTotals as $paymentCodeId => $total) {
+            $sheet->setCellValue('D' . $row, $paymentCodeId); // If you want to display the ID, replace with the actual field you want to display
+            $sheet->setCellValue('F' . $row, $sale->payment_description);
+            $sheet->getStyle('G' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+            $sheet->setCellValue('G' . $row, $total['debit']);
+            $row++;
+        }
 
-    //     // Return a download response if needed and (IMPORTANT!) delete the temporary file
-    //     return response()->download(storage_path() . '/app/public/' . $filename)->deleteFileAfterSend(true);
-    // }
+        // Display totals for income account codes
+        foreach ($incomeAccountTotals as $incomeAccountCodeId => $total) {
+            $sheet->setCellValue('D' . $row, $incomeAccountCodeId); // If you want to display the ID, replace with the actual field you want to display
+            $sheet->setCellValue('F' . $row, $sale->income_account);
+            $sheet->getStyle('H' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+            $sheet->setCellValue('H' . $row, $total['credit']);
+            $row++;
+        }
+
+        $row++;
+        $sheet->setCellValue('F' . $row, 'Grand Total:');
+        $sheet->getStyle('F' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+        $sheet->getStyle('G' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+        $sheet->setCellValue('G' . $row, "=SUM(G2:G" . $row . ")");
+        
+        $sheet->getStyle('H' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+        $sheet->setCellValue('H' . $row, "=SUM(H2:H" . $row . ")");
+        $sheet->getStyle('F' . $row)->getFont()->setBold(true);
+        $sheet->getStyle('G' . $row)->getFont()->setBold(true);
+        $sheet->getStyle('H' . $row)->getFont()->setBold(true);
+        $row++;
+            
+        // Save the spreadsheet to a file
+        $current_datetime = Carbon::now()->format('Y-m-d hia');
+        $filename = 'Transaction List Report - ' . $current_datetime . '.xlsx';
+        $writer = new Xlsx($spreadsheet);
+        $writer->save(storage_path() . '/app/public/' . $filename);
+
+        // Return a download response if needed and (IMPORTANT!) delete the temporary file
+        return response()->download(storage_path() . '/app/public/' . $filename)->deleteFileAfterSend(true);
+    }
 }

@@ -2,25 +2,29 @@
 
 namespace App\Helpers;
 
-use Carbon\Carbon;
-use Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
-use App\Models\Branch;
-use App\Models\Company;
-use App\Models\Distributor;
-use App\Models\History;
-use App\Models\IncomeExpenseAccount;
-use App\Models\PaymentMethod;
-use App\Models\PermissionModule;
-use App\Models\Sales;
-use App\Models\SalesInvoiceAssignmentDetail;
-use App\Models\TransactionType;
-use App\Models\User;
-use App\Models\UserPermission;
 use Auth;
+use Request;
 use Session;
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Sales;
+use App\Models\Branch;
 use GuzzleHttp\Client;
+use App\Models\Company;
+use App\Models\History;
+use App\Models\Deliveries;
+use App\Models\Distributor;
+use App\Models\Employees;
+use Illuminate\Support\Str;
+use App\Models\PaymentMethod;
+use App\Models\UserPermission;
+use App\Models\TransactionType;
+use App\Models\PermissionModule;
+use Illuminate\Support\Facades\Log;
+use App\Models\IncomeExpenseAccount;
+use App\Models\Products;
+use App\Models\SalesInvoiceAssignmentDetail;
+
 class Helper {
 
     // create uuid - non repeating
@@ -62,26 +66,14 @@ class Helper {
         }
     }
 
-    public static function badge($status_id)
+    public static function badge($status)
     {
-        switch($status_id) {
+        switch($status) {
             case 1: 
                 return 'bg-info';
             case 2: 
-                return 'bg-warning';
+                return 'bg-success';
             case 3: 
-                return 'bg-danger';
-            case 4: 
-                return 'bg-success';
-            case 5: 
-                return 'bg-primary';
-            case 6: 
-                return 'bg-success';
-            case 7: 
-                return 'bg-danger';
-            case 8: 
-                return 'bg-success';
-            case 9: 
                 return 'bg-danger';
             default: 
                 return 'bg-primary';
@@ -731,40 +723,40 @@ class Helper {
                                     ->pluck('id')->toArray();
     }
 
-    public static function get_batch_id($item_code)
-    {
-        $param = '/api/resource/Batch?filters=[["item", "=", "' . $item_code . '"]]&fields=["batch_id", "item_name","item","expiry_date","batch_qty"]';
+    // public static function get_batch_id($item_code)
+    // {
+    //     $param = '/api/resource/Batch?filters=[["item", "=", "' . $item_code . '"]]&fields=["batch_id", "item_name","item","expiry_date","batch_qty"]';
                     
-        $batches = Helper::get_erpnext_data($param);
+    //     $batches = Helper::get_erpnext_data($param);
 
-        if($batches->getStatusCode() == 200) {
-            $data = json_decode($batches->getBody()->getContents(), true);
+    //     if($batches->getStatusCode() == 200) {
+    //         $data = json_decode($batches->getBody()->getContents(), true);
 
-            // Get the current date
-            $current_date = date('Y-m-d');
+    //         // Get the current date
+    //         $current_date = date('Y-m-d');
 
-            // Initialize variables to track the nearest expiry date and corresponding batch ID
-            $nearest_expiry_date = null;
-            $nearest_batch_id = null;
+    //         // Initialize variables to track the nearest expiry date and corresponding batch ID
+    //         $nearest_expiry_date = null;
+    //         $nearest_batch_id = null;
 
-            // Iterate through the data to find the nearest expiry date
-            foreach ($data['data'] as $batch) {
-                $expiry_date = $batch['expiry_date'];
+    //         // Iterate through the data to find the nearest expiry date
+    //         foreach ($data['data'] as $batch) {
+    //             $expiry_date = $batch['expiry_date'];
 
-                // Check if the expiry date is after the current date and find the nearest one
-                if ($expiry_date >= $current_date) {
-                    if ($nearest_expiry_date === null || $expiry_date < $nearest_expiry_date) {
-                        $nearest_expiry_date = $expiry_date;
-                        $nearest_batch_id = $batch['batch_id'];
-                    }
-                }
-            }
+    //             // Check if the expiry date is after the current date and find the nearest one
+    //             if ($expiry_date >= $current_date) {
+    //                 if ($nearest_expiry_date === null || $expiry_date < $nearest_expiry_date) {
+    //                     $nearest_expiry_date = $expiry_date;
+    //                     $nearest_batch_id = $batch['batch_id'];
+    //                 }
+    //             }
+    //         }
 
-            return $nearest_batch_id;
-        } 
+    //         return $nearest_batch_id;
+    //     } 
         
-        return 'ERROR';
-    }
+    //     return 'ERROR';
+    // }
 
     public static function get_upc_ubc_transaction_ids() 
     {
@@ -838,5 +830,74 @@ class Helper {
     public static function get_cashier_name_by_id($id) {
         $cashier = User::whereId($id)->first();
         return trim($cashier->name) ?? null;
+    }
+
+    public static function generateNextDRNo()
+    {
+        // Get the last dr_no from Deliveries table
+        $lastDelivery = Deliveries::orderBy('id', 'desc')->first();
+
+        if ($lastDelivery) {
+            // Extract the numeric part and increment it
+            $lastDRNo = $lastDelivery->dr_no;
+            $numericPart = (int) substr($lastDRNo, 5); // Extract numeric part after 'FRZDR'
+            $nextNumericPart = $numericPart + 1;
+        } else {
+            // If no previous deliveries exist, start with 1
+            $nextNumericPart = 1;
+        }
+
+        // Format the next numeric part with leading zeros
+        $formattedNumericPart = str_pad($nextNumericPart, 6, '0', STR_PAD_LEFT);
+
+        // Construct the next dr_no
+        $nextDRNo = 'FRZDR' . $formattedNumericPart;
+
+        return $nextDRNo;
+    }
+    public static function generateNextUPCNo()
+    {
+        // Get the last UPC from Products table
+        $lastProduct = Products::orderBy('id', 'desc')->first();
+    
+        if ($lastProduct) {
+            $lastUpc = $lastProduct->upc;
+            $numericPart = (int) substr($lastUpc, 6); // Extract numeric part after 'UPC'
+            $nextNumericPart = $numericPart + 1;
+        } else {
+            // If no previous products exist, start with a default numeric part
+            $nextNumericPart = 1;
+        }
+    
+        // Format the next numeric part with leading zeros
+        $formattedNumericPart = str_pad($nextNumericPart, 7, '0', STR_PAD_LEFT);
+    
+        // Construct the next UPC
+        $nextUpc = 'UPC' . $formattedNumericPart;
+    
+        return $nextUpc;
+    }
+
+    public static function generateNextEmployeeCode()
+    {
+        // Get the latest employee code from the database
+        $latestEmployee = Employees::orderBy('id', 'desc')->first();
+    
+        if ($latestEmployee) {
+            // Extract the numeric part of the employee code
+            $code = $latestEmployee->code;
+            $numericPart = substr($code, 5); // Extracts the numeric part (e.g., '0001')
+    
+            // Increment the numeric part
+            $nextNumericPart = str_pad((int)$numericPart + 1, strlen($numericPart), '0', STR_PAD_LEFT);
+        } else {
+            // If no employees exist yet, start with '0001'
+            $nextNumericPart = '0001';
+        }
+    
+        // Format the next employee code
+        $nextEmployeeCode = 'FZEMP' . $nextNumericPart;
+    
+        return $nextEmployeeCode;
     }
 }

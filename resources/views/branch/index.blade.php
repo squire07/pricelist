@@ -9,15 +9,15 @@
                 <h1>Branches</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add" {{ Helper::BP(7,2) }}>Add Branch</button>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add" {{ Helper::BP(11,2) }}>Add Branch</button>
             </div>
         </div>
     </div>
 @stop
 
 @php
-    $show_button_state = Helper::BP(7,3);
-    $edit_button_state = Helper::BP(7,4);
+    $show_button_state = Helper::BP(11,3);
+    $edit_button_state = Helper::BP(11,4);
 @endphp
 
 @section('content')
@@ -29,9 +29,9 @@
                         <tr>
                             <th class="text-center">Name</th>
                             <th class="text-center">Code</th>
-                            <th class="text-center">Cost Center</th>
-                            <th class="text-center">Cost Center Name</th>
-                            <th class="text-center">Warehouse</th>
+                            {{-- <th class="text-center">Test</th>
+                            <th class="text-center">Test</th>
+                            <th class="text-center">Test</th> --}}
                             <th class="text-center">Status</th>
                             <th class="text-center">Action</th>
                         </tr>
@@ -39,12 +39,12 @@
                     <tbody>
                         @foreach($branches as $branch)
                             <tr>
-                                <td>{{ $branch->name }}</td>
+                                <td class="text-center">{{ $branch->name }}</td>
                                 <td class="text-center">{{ $branch->code }}</td>
-                                <td class="text-center">{{ $branch->cost_center }}</td>
-                                <td>{{ $branch->cost_center_name }}</td>
-                                <td>{{ $branch->warehouse }}</td>
-                                <td class="text-center"><span class="badge {{ Helper::badge($branch->status_id) }}">{{ $branch->status->name }}</span></td>
+                                <td class="d-none">{{ $branch->cost_center }}</td>
+                                <td class="d-none">{{ $branch->cost_center_name }}</td>
+                                <td class="d-none">{{ $branch->warehouse }}</td>
+                                <td class="text-center">{{ $branch->status == 0 ? 'Inactive' : 'Active' }}</span></td>
                                 <td class="text-center">
                                     <button type="button" class="btn btn-sm btn-default btn_show" 
                                         data-toggle="modal"
@@ -56,7 +56,7 @@
                                         data-branch-cost_center="{{ $branch->cost_center }}"
                                         data-branch-cost_center_name="{{ $branch->cost_center_name }}"
                                         data-branch-warehouse="{{ $branch->warehouse }}"
-                                        data-branch-status_id="{{ $branch->status->name}}"
+                                        data-branch-status="{{ $branch->status == 0 ? 'Inactive' : 'Active' }}"
                                         data-branch-remarks="{{ $branch->remarks }}"
                                         data-branch-updated_by="{{ $branch->updated_by }}"
                                         {{ $show_button_state }}>
@@ -72,7 +72,7 @@
                                         data-branch-cost_center="{{ $branch->cost_center }}"
                                         data-branch-cost_center_name="{{ $branch->cost_center_name }}"
                                         data-branch-warehouse="{{ $branch->warehouse }}"
-                                        data-branch-status_id="{{ $branch->status->name}}"
+                                        data-branch-status="{{ $branch->status == 0 ? 'Inactive' : 'Active' }}"
                                         data-branch-remarks="{{ $branch->remarks }}"
                                         {{ $edit_button_state }}>
                                         <i class="fas fa-pencil-alt"></i>&nbsp;Edit

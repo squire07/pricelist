@@ -45,16 +45,16 @@
                                 <td class="text-center">{{ $module->id }}</td>
                                 <td>{{ $module->name }}</td>
                                 <td class="text-center">
-                                    {{ $module->type == 'Module' && ($module->id > 6 && $module->id != 23) ? 'Support ' . $module->type : $module->type }}
+                                    {{ $module->type == 'Module' && ($module->id > 4 && $module->id != 12   ) ? 'Support ' . $module->type : $module->type }}
                                 </td>
                                 <td>
                                     @foreach(json_decode($user->permission->user_permission, true) as $parent_key => $module_permission)
                                         @if($module->id == $parent_key)
                                             @foreach($module_permission as $child_key => $permission)
                                                 @php
-                                                    $disable_create = (in_array($module->id, [2, 3, 4, 5, 6, 9, 16, 23]) && $child_key == 2) ? 'disabled' : '';
-                                                    $disable_view = (in_array($module->id, [9, 23]) && $child_key == 3) ? 'disabled' : '';
-                                                    $disable_update = (in_array($module->id, [3, 5, 6, 9]) && $child_key == 4) ? 'disabled' : '';
+                                                    $disable_create = (in_array($module->id, []) && $child_key == 2) ? 'disabled' : '';
+                                                    $disable_view = (in_array($module->id, []) && $child_key == 3) ? 'disabled' : '';
+                                                    $disable_update = (in_array($module->id, []) && $child_key == 4) ? 'disabled' : '';
                                                     $is_check = ($permission == 1 && !$disable_create && !$disable_update) ? 'checked' : '';
                                                 @endphp
 
@@ -104,7 +104,7 @@
             };
 
             // Send the POST request using Fetch
-            fetch(window.location.origin + '/api/permission/', options)
+            fetch(window.location.origin + '/api/permission', options)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');

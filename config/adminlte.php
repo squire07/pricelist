@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'UNO GL',
+    'title' => 'TDT Powersteel Corporation',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -63,12 +63,12 @@ return [
     |
     */
 
-    'logo' => '<b>GL</b> v.2',
-    'logo_img' => 'images/uno_logo.png',
+    'logo' => '<b>TDT</b> Powersteel Corporation',
+    'logo_img' => '', 
     'logo_img_class' => 'brand-image',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'GL',
+    'logo_img_alt' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -86,8 +86,8 @@ return [
     'auth_logo' => [
         'enabled' => true,
         'img' => [
-            'path' => 'images/uno_logo.png',
-            'alt' => 'UNO',
+            'path' => '',
+            'alt' => '',
             'class' => '',
             'width' => 88,
             'height' => 50,
@@ -109,8 +109,8 @@ return [
     'preloader' => [
         'enabled' => false,
         'img' => [
-            'path' => 'images/uno_logo.png',
-            'alt' => 'UNO GL',
+            'path' => '',
+            'alt' => 'TDT Powersteel',
             'effect' => 'animation__shake',
             'width' => 88,
             'height' => 60,
@@ -216,7 +216,7 @@ return [
     'sidebar_collapse_remember' => false,
     'sidebar_collapse_remember_no_transition' => true,
     'sidebar_scrollbar_theme' => 'os-theme-dark',
-    'sidebar_scrollbar_auto_hide' => 'l',
+    'sidebar_scrollbar_auto_hide' => false,
     'sidebar_nav_accordion' => true,
     'sidebar_nav_animation_speed' => 300,
 
@@ -253,7 +253,7 @@ return [
     */
 
     'use_route_url' => false,
-    'dashboard_url' => 'sales-orders',
+    'dashboard_url' => 'dashboard',
     'logout_url' => 'logout',
     'login_url' => 'login',
     'register_url' => 'register',

@@ -8,9 +8,9 @@
             <div class="col-sm-6">
                 <h1>Payment Methods</h1>
             </div>
-            <div class="col-sm-6 text-right">
+            {{-- <div class="col-sm-6 text-right">
                 <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add" {{ Helper::BP(14,2) }}>Add Payment Method</button>
-            </div>
+            </div> --}}
         </div>
     </div>
 @stop
@@ -27,12 +27,12 @@
                 <table id="dt_payment" class="table table-bordered table-hover table-striped" width="100%">
                     <thead>
                         <tr>
-                            <th class="text-center">Name</th>
-                            <th class="text-center">Description</th>
-                            <th class="text-center">Account Number</th>
-                            <th class="text-center">Company</th>
-                            <th class="text-center">Is Cash</th>
-                            <th class="text-center">Is Debit To</th>
+                            <th class="text-center">Test</th>
+                            <th class="text-center">Test</th>
+                            <th class="text-center">Test</th>
+                            <th class="text-center">Test</th>
+                            <th class="text-center">Test</th>
+                            <th class="text-center">Test</th>
                             <th class="text-center">Status</th>
                             <th class="text-center">Action</th>
                         </tr>

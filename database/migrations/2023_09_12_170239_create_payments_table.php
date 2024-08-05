@@ -14,10 +14,15 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
-            $table->string('sales_id');
+            $table->string('delivery_id');
             $table->text('payment_type'); // cash, gcash, cc
+            $table->integer('payment_count'); // cash, gcash, cc
             $table->double('total_amount'); // 100, 50, 25
-            $table->text('details'); // Array: format -> 0 => 0.00   where first zero '0' is the id of payment method followed by amount.
+            $table->double('amount_paid')->default(0); // 100, 50, 25
+            $table->double('balance')->default(0); // 100, 50, 25
+            $table->double('total_amount_paid')->default(0); // 100, 50, 25
+            $table->text('details')->nullable(); 
+            $table->text('payment_references')->nullable(); // Array: format -> 0 => 0.00   where first zero '0' is the id of payment method followed by amount.
             $table->string('change'); // create, update, view, cancel
             $table->longText('remarks')->nullable();
             $table->tinyInteger('deleted')->default(false);

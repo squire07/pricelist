@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('uuid');
             $table->string('name', 125);
             $table->string('code', 12);
-            $table->tinyInteger('status_id')->default(8);
+            $table->tinyInteger('status')->default(1);
             $table->text('remarks')->nullable();
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();

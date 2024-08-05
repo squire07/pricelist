@@ -16,19 +16,12 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         $roles = [
-            'Redemption',
-            'Cashier',
-            'Head Redemption',
-            'Head Cashier',
-            'Officer in Charge',
-            'Branch Manager',
-            'Viewer',
-            'Accounting',
-            'Treasury',
-            'Manager',
             'Administrator',
-            'Superadmin',
-            'Accounting Manager'
+            'Super User',
+            'Office Staff',
+            'Truck Driver',
+            'Agent',
+            'Helper',
         ];
 
         foreach($roles as $key => $name) {

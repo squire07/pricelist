@@ -94,7 +94,7 @@
 
 @php
     $collapse = '';
-    if(Auth::check() && !in_array(Auth::user()->role_id, [11,12])) {
+    if(Auth::check() && !in_array(Auth::user()->role_id, [1,2,3,4,5])) {
         $collapse = 'sidebar-collapse';
     }
 @endphp

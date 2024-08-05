@@ -33,6 +33,7 @@
                     <br>
                     Sales Order Number: <span class="text-bold">{{ $sales_order->so_no }}</span>
                     <br>
+                    Date/Time: <span class="text-bold">{{ Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sales_order->created_at)->format('m/d/Y g:i A') }}</span>
                 </div>
             </div>
             <div class="row mt-4">

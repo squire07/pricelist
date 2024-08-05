@@ -145,7 +145,7 @@
                                             <input type="text" class="text-right custom-input-text" name="total_amount" id="tfoot_subtotal_amount" value="{{ $sales_order->total_amount }}" readonly>
                                         </td>
                                     </tr>
-                                    <tr>
+                                    {{-- <tr>
                                         <td class="text-right text-bold" colspan="4">
                                             <input type="checkbox" name="sf_checkbox" id="sf_checkbox" data-toggle="modal" {{  $sales_order->shipping_fee > 0 ? 'checked':'' }}/>
                                             <span class="ml-1">Shipping Fee</span>
@@ -153,7 +153,7 @@
                                         <td class="text-right text-bold">
                                             <input type="text" class="text-right custom-input-text" name="shipping_fee" id="tfoot_sf_total_amount" value="{{ $sales_order->shipping_fee }}" readonly/>
                                         </td>
-                                    </tr>
+                                    </tr> --}}
                                     <tr>
                                         <td class="text-right text-bold" colspan="4">VATable Sales</td>
                                         <td class="text-right text-bold">
@@ -172,31 +172,8 @@
                                             <input type="text" class="text-right custom-input-text text-bold" name="grandtotal_amount" id="tfoot_grand_total_amount" value="{{ $sales_order->grandtotal_amount }}" readonly>
                                         </td>
                                     </tr>
-
-                                    {{-- temporary --}}
-                                    <input type="hidden" name="total_nuc" id="tfoot_total_nuc" value="{{ $sales_order->total_nuc }}">
                                 </tfoot>
                             </table>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="form-group clearfix">
-                                <div class="icheck-primary d-inline">
-                                    <input type="checkbox" name="new_signup" id="checkbox_new_signup" {{ $sales_order->new_signup != null ? 'checked' : '' }}>
-                                    <label for="checkbox_new_signup">New sign up:</label>
-                                    <span class="ml-2" id="span_signee_name">{{ $sales_order->signee_name }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-group clearfix">
-                                <div class="icheck-primary d-inline">
-                                    <input type="checkbox" name="origin" id="checkbox_origin" {{ $sales_order->origin_id != null ? 'checked' : '' }}>
-                                    <label for="checkbox_origin">Origin:</label>
-                                    <span class="ml-2" id="span_origin">{{ $sales_order->origin != null ? $sales_order->origin->name : null }}</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -382,8 +359,6 @@ tbody tr:nth-child(odd) {
         
         // initialize total amount nuc grandtotal and shipping fee
         var sub_total_amount = $('#tfoot_subtotal_amount').val(); 
-        var total_nuc = $('#tfoot_total_nuc').val();
-        var shipping_fee = $('#tfoot_sf_total_amount').val();
         var grand_total_amount = $('#tfoot_grand_total_amount').val();
 
         // fetch the item details by transaction type id using FETCH API
@@ -508,25 +483,8 @@ tbody tr:nth-child(odd) {
                     sub_total_amount = sub_total_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                     $('#tfoot_subtotal_amount').val(sub_total_amount);
 
-
-                    // sum of nuc
-                    total_nuc = parseFloat(total_nuc.replace(/,/g, '')) + (parseFloat(quantity.replace(/,/g, '')) * parseFloat(item_selected.nuc.replace(/,/g, '')));
-                    // format the total_nuc with comma again so that parseFloat(total_nuc.replace(/,/g, '')) will not result in an error
-                    total_nuc = total_nuc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                    $('#tfoot_total_nuc').val(total_nuc);
-
-
-                    current_shipping_fee = $('#tfoot_sf_total_amount').val();
-
-
                     grand_total_amount = parseFloat(current_shipping_fee.replace(/,/g, '')) + parseFloat(sub_total_amount.replace(/,/g, ''));
                     $('#tfoot_grand_total_amount').val(grand_total_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-
-
-                    // // get the computed tax values
-                    vat_result = calculateVAT(grand_total_amount);
-                    $('#tfoot_vatable_sales').val(vat_result.vatable_sales);
-                    $('#tfoot_vat_amount').val(vat_result.vat_amount);
 
                     // populate the details table
                     let item_price = parseFloat(item_selected.amount.replace(/,/g, ''));
@@ -536,7 +494,6 @@ tbody tr:nth-child(odd) {
                                 '<td class="text-center">' + item_selected.name + '</td>' +
                                 '<td class="text-center">' + quantity + '</td>' +
                                 '<td class="text-right">' + item_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
-                                // '<td class="text-right">' + item_selected.rs_points + '</td>' +
                                 '<td class="text-right">' + (item_price * quantity).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
                                 '<td class="text-center"><a href="#" class="btn-delete-item" data-quantity="' + quantity + '" data-amount="' + quantity * item_price + '" data-nuc="' + quantity * item_selected.nuc + '"><i class="far fa-trash-alt"></i></a></td>' +
 
@@ -545,10 +502,7 @@ tbody tr:nth-child(odd) {
                                 '<input type="hidden" name="item_name[]" value="' + item_selected.name + '" required>' + 
                                 '<input type="hidden" name="quantity[]" value="' + quantity + '" required>' + 
                                 '<input type="hidden" name="amount[]" value="' + item_price + '" required>' + 
-                                '<input type="hidden" name="nuc[]" value="' + item_selected.nuc + '" required>' + 
-                                '<input type="hidden" name="rs_points[]" value="' + item_selected.rs_points + '" required>' + 
                                 // hidden elements: computed
-                                '<input type="hidden" name="subtotal_nuc[]" value="' + item_selected.nuc * quantity + '" required>' + 
                                 '<input type="hidden" name="subtotal_amount[]" value="' + item_price * quantity + '" required>' + 
                                 '</tr>';
 
@@ -636,8 +590,6 @@ tbody tr:nth-child(odd) {
                     } else {
                         $('#tfoot_subtotal_amount').val("0.00");
                     }
-
-                    
 
                     total_nuc = parseFloat(total_nuc.replace(/,/g, '')) - parseFloat(nuc);
                     if(!isNaN(total_nuc)) {

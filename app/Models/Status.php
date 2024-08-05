@@ -9,9 +9,9 @@ class Status extends Model
 {
     use HasFactory;
 
-    public function sales()
+    public function deliveries()
     {
-        return $this->belongsTo('App\Models\Sales', 'status_id', 'id');
+        return $this->belongsTo('App\Models\Deliveries', 'status_id', 'id');
     }
 
 }

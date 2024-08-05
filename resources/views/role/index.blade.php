@@ -9,15 +9,15 @@
                 <h1>Roles</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add" {{ Helper::BP(11,2) }}>Add Role</button>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-add" {{ Helper::BP(14,2) }}>Add Role</button>
             </div>
         </div>
     </div>
 @stop
 
 @php
-    $show_button_state = Helper::BP(11,3);
-    $edit_button_state = Helper::BP(11,4);
+    $show_button_state = Helper::BP(14,3);
+    $edit_button_state = Helper::BP(14,4);
 @endphp
 
 @section('content')
@@ -91,7 +91,7 @@
                     <div class="modal-body">
                         <div class="container-fluid">
                             <div class="col-12">
-                                <label for="name">Name</label>
+                                <label for="name" data-required="true">Name</label>
                                 <input type="text" class="form-control form-control-sm" name="name" maxlength="25" id="modal_add_name" pattern="[a-zA-Z0-9\s]+" required>
                             </div>
                         </div>
@@ -124,7 +124,7 @@
                         <div class="row">
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
-                                    <label for="name">Name</label>
+                                    <label for="name" data-required="true">Name</label>
                                     <input type="text" class="form-control form-control-sm" maxlength="25" name="name" id="modal_edit_name" required>
                                 </div>
                             </div>
@@ -176,6 +176,12 @@ input[type="text2"], textarea {
   border: none;
   outline: none;
   font-weight: bold;
+}
+
+/* Style for text within labels */
+label[for][data-required="true"]::after {
+    content: " *";
+    color: red;
 }
 </style>
 

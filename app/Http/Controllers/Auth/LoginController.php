@@ -103,7 +103,7 @@ class LoginController extends Controller
             }
 
             if(in_array($user->role_id, [1,3]) && in_array(1, $module_ids)) {
-                $redirect = 'sales-orders';
+                $redirect = 'dashboard';
             } else if(in_array($user->role_id, [2,4]) && in_array(2, $module_ids)) {
                 $redirect = 'sales-invoice/for-invoice';
             } else if(in_array($user->role_id, [8]) && in_array(4, $module_ids)) {
@@ -123,7 +123,7 @@ class LoginController extends Controller
                 }
 
                 $permission_module = PermissionModule::find($module_id);
-                $redirect = $permission_module ? $permission_module->redirect : 'sales-orders'; // Fallback to default
+                $redirect = $permission_module ? $permission_module->redirect : 'dashboard'; // Fallback to default
             }
 
             /*

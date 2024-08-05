@@ -17,10 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('code', 12);
             $table->integer('company_id')->default(1);
-            $table->tinyInteger('status_id')->default(8);
-            $table->string('cost_center', 12)->nullable();
-            $table->string('cost_center_name')->nullable();
-            $table->string('warehouse')->nullable();
+            $table->tinyInteger('status')->default(1);
             $table->text('remarks')->nullable();
             $table->tinyInteger('deleted')->default(false);
             $table->timestamps();

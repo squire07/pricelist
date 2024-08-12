@@ -63,8 +63,8 @@ return [
     |
     */
 
-    'logo' => '<b>TDT</b> Powersteel Corporation',
-    'logo_img' => '', 
+    'logo' => '<b>TDT</b> Powersteel',
+    'logo_img' => 'images/circle_logo.png', 
     'logo_img_class' => 'brand-image',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
@@ -86,7 +86,7 @@ return [
     'auth_logo' => [
         'enabled' => true,
         'img' => [
-            'path' => '',
+            'path' => 'images/circle_logo.png',
             'alt' => '',
             'class' => '',
             'width' => 88,
@@ -131,7 +131,7 @@ return [
 
     'usermenu_enabled' => true,
     'usermenu_header' => false,
-    'usermenu_header_class' => 'bg-primary dark-mode',
+    'usermenu_header_class' => 'bg-primary ',
     'usermenu_image' => false,
     'usermenu_desc' => false,
     'usermenu_profile_url' => false,
@@ -153,7 +153,7 @@ return [
     'layout_fixed_sidebar' => null,
     'layout_fixed_navbar' => null,
     'layout_fixed_footer' => null,
-    'layout_dark_mode' => true,
+    'layout_dark_mode' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -167,11 +167,11 @@ return [
     |
     */
 
-    'classes_auth_card' => 'card-outline card-primary dark-mode',
-    'classes_auth_header' => 'dark-mode',
-    'classes_auth_body' => 'dark-mode',
-    'classes_auth_footer' => 'dark-mode',
-    'classes_auth_icon' => 'dark-mode',
+    'classes_auth_card' => 'card-outline card-primary',
+    'classes_auth_header' => '',
+    'classes_auth_body' => '',
+    'classes_auth_footer' => '',
+    'classes_auth_icon' => '',
     'classes_auth_btn' => 'btn-flat btn-primary',
 
     /*text-white 
@@ -186,12 +186,12 @@ return [
     |
     */
 
-    'classes_body' => 'text-sm table-sm dark-mode',
+    'classes_body' => 'text-sm table-sm ',
     'classes_brand' => '',
     'classes_brand_text' => '',
-    'classes_content_wrapper' => 'dark-mode',
-    'classes_content_header' => 'dark-mode',
-    'classes_content' => 'dark-mode',
+    'classes_content_wrapper' => '',
+    'classes_content_header' => '',
+    'classes_content' => '',
     'classes_sidebar' => 'sidebar-dark-primary elevation-4',
     'classes_sidebar_nav' => '',
     'classes_topnav' => 'navbar-dark',

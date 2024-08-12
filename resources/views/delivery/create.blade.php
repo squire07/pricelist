@@ -401,23 +401,6 @@
     background-color: transparent;
     }
 
-    #add_customers + .select2-container .select2-selection,
-    #item_name + .select2-container .select2-selection {
-        background-color: transparent !important;
-    }
-
-    /* Target the Select2 dropdown text color */
-    .select2-container .select2-selection--single .select2-selection__rendered {
-        color: white !important;
-        font-size: 14px !important; /* Adjust the font size as needed */
-    }
-
-    /* Optionally, change the placeholder color to white */
-    .select2-container .select2-selection--single .select2-selection__placeholder {
-        color: white !important;
-        font-size: 14px !important; /* Adjust the font size as needed */
-    }
-
     /* Style for text within labels */
     label[for][data-required="true"]::after {
         content: " *";

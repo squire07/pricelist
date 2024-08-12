@@ -31,9 +31,9 @@
 
         widget.addEventListener('click', () => {
 
-            // Toggle dark-mode class on the body tag.
+            // Toggle  class on the body tag.
 
-            body.classList.toggle('dark-mode');
+            body.classList.toggle('');
 
             // Toggle the classes on the widget icon.
 
